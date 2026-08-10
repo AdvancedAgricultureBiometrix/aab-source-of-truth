@@ -1,0 +1,29 @@
+# Secrets and environment configuration
+.env
+.env.*
+!.env.example
+*secret*
+*credentials*
+*service-role*
+
+# Databases, personal data, and runtime logs
+*.db
+*.sqlite
+*.sqlite3
+*.log
+data/
+logs/
+
+# Local and generated files
+.DS_Store
+Thumbs.db
+node_modules/
+vendor/
+tmp/
+cache/
+coverage/
+
+# Deployment archives are published deliberately as release assets
+*.zip
+*.tar
+*.tar.gz
