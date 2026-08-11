@@ -1,6 +1,6 @@
 /**
  * AAB Governed Runtime Bootstrap
- * Loader reconciliation release: ID-LOADER-01, identity manifest v1.3.0
+ * Loader reconciliation release: ID-LOADER-01, identity manifest v1.4.0
  *
  * Canonical, deterministic loader for the validated AAB identity chain.
  * Read-only. Fail-closed. No authority, navigation, session, token, database,
@@ -10,7 +10,7 @@
   "use strict";
 
   const BUILD_ID = "ID-LOADER-01";
-  const VERSION = "1.3.0";
+  const VERSION = "1.4.0";
   const PASS = "PASS_READY_READ_ONLY";
   const BASE_PATH = "/aab-local/app/_rebuild/js/";
 
@@ -54,6 +54,11 @@
       buildId: "ID-08",
       file: "AAB-ID-08-PROTECTED-DASHBOARD-READ-POLICY-DECISION-CONTRACT.js",
       namespace: "AAB_PROTECTED_DASHBOARD_READ_POLICY_DECISION_08"
+    }),
+    Object.freeze({
+      buildId: "ID-09",
+      file: "AAB-ID-09-PROTECTED-DASHBOARD-READ-ADAPTER-HANDOFF-CONTRACT.js",
+      namespace: "AAB_PROTECTED_DASHBOARD_READ_ADAPTER_HANDOFF_09"
     })
   ]);
 
@@ -165,7 +170,7 @@
         navigationPerformed: false,
         startedAt: startedAt,
         completedAt: new Date().toISOString(),
-        nextAllowedBuild: "ID-09"
+        nextAllowedBuild: "ID-10"
       });
     } catch (error) {
       latestReport = freezeReport({
@@ -216,7 +221,7 @@
           "NO_NAVIGATION", "NO_DATABASE_WRITE", "NO_AUTH_ACTIVATION"
         ],
         identityChain: IDENTITY_CHAIN.map(function (item) { return item.buildId; }),
-        nextAllowedBuild: "ID-09"
+        nextAllowedBuild: "ID-10"
       });
     }
   });
