@@ -2,8 +2,8 @@
 
 **Last validated:** 11 August 2026 (Australia/Perth)  
 **Deployed runtime gate:** `PASS_READY_READ_ONLY`  
-**Formal closure:** Pending canonical GitHub loader v1.3.0 promotion  
-**Next approved build:** ID-09 after formal closure
+**Formal closure:** ID-08 closed  
+**Next approved build:** ID-09
 
 | Build | Result | Authority granted | Mutation/write | Supabase applied | Next |
 |---|---|---:|---:|---:|---|
@@ -14,8 +14,8 @@
 | ID-05 | PASS_READY_READ_ONLY | No | No | No | ID-06 |
 | ID-06 | PASS_READY_READ_ONLY | No | No | No | ID-07 |
 | ID-07 | PASS_READY_READ_ONLY | No | No | No | ID-08 |
-| ID-08 | PASS_READY_READ_ONLY (deployed; closure pending loader promotion) | No | No | No | ID-09 after closure |
-| ID-LOADER-01 | GitHub canonical v1.2.0; deployed v1.3.0 validated | No | No | No | Promotion pending |
+| ID-08 | PASS_READY_READ_ONLY (deployed, browser-validated and formally closed) | No | No | No | ID-09 |
+| ID-LOADER-01 | Canonical v1.3.0; controls ID-01 through ID-08 | No | No | No | ID-09 |
 
 ## Locked interpretation
 
@@ -27,7 +27,7 @@
 - ID-06 projects exact trusted scope into an immutable render-only dashboard context.
 - ID-07 creates an immutable, exact-scope-bound and non-executable read-request envelope.
 - ID-08 evaluates the trusted ID-07 envelope against an exact server-defined read policy and returns only an immutable, non-executable allow/deny compatibility decision.
-- Deployed ID-LOADER-01 v1.3.0 is the sole identity entry point and loads ID-01 through ID-08 sequentially with duplicate-execution protection. GitHub's canonical loader remains v1.2.0 until its production-facing replacement is explicitly approved.
+- ID-LOADER-01 v1.3.0 is the deployed and GitHub-canonical sole identity entry point. It loads ID-01 through ID-08 sequentially with duplicate-execution protection.
 - Client policy/scope/query/decision overrides, unknown read models, denied envelopes and operational requests fail closed.
 - All live queries, API calls, record fetching, navigation, session/token creation, role or membership grants, database writes, live Airtable, live Supabase and Auth activation remain blocked.
 - Future SQL specifications are unapplied design artifacts.
@@ -38,4 +38,4 @@ The Hostinger browser validation returned `passed: true`. It proved the controll
 
 ## Continuation
 
-Read `handovers/AAB-IDENTITY-HANDOVER-POST-ID-08.md`. First promote and verify the canonical GitHub loader v1.3.0 after explicit approval. Then formally close ID-08 and proceed with ID-09 only. Do not reopen completed builds unless ID-09 supplies concrete evidence of a genuine upstream defect.
+Read `handovers/AAB-IDENTITY-HANDOVER-POST-ID-08.md`, confirm canonical loader v1.3.0, and proceed with ID-09 only. Do not reopen completed builds unless ID-09 supplies concrete evidence of a genuine upstream defect.
