@@ -1,6 +1,6 @@
 /**
  * AAB Governed Runtime Bootstrap
- * Loader reconciliation release: ID-LOADER-01, identity manifest v1.2.0
+ * Loader reconciliation release: ID-LOADER-01, identity manifest v1.3.0
  *
  * Canonical, deterministic loader for the validated AAB identity chain.
  * Read-only. Fail-closed. No authority, navigation, session, token, database,
@@ -10,7 +10,7 @@
   "use strict";
 
   const BUILD_ID = "ID-LOADER-01";
-  const VERSION = "1.2.0";
+  const VERSION = "1.3.0";
   const PASS = "PASS_READY_READ_ONLY";
   const BASE_PATH = "/aab-local/app/_rebuild/js/";
 
@@ -49,6 +49,11 @@
       buildId: "ID-07",
       file: "AAB-ID-07-PROTECTED-DASHBOARD-READ-REQUEST-ENVELOPE-CONTRACT.js",
       namespace: "AAB_PROTECTED_DASHBOARD_READ_REQUEST_ENVELOPE_07"
+    }),
+    Object.freeze({
+      buildId: "ID-08",
+      file: "AAB-ID-08-PROTECTED-DASHBOARD-READ-POLICY-DECISION-CONTRACT.js",
+      namespace: "AAB_PROTECTED_DASHBOARD_READ_POLICY_DECISION_08"
     })
   ]);
 
@@ -57,9 +62,7 @@
 
   function freezeReport(value) {
     if (value && typeof value === "object" && !Object.isFrozen(value)) {
-      Object.keys(value).forEach(function (key) {
-        freezeReport(value[key]);
-      });
+      Object.keys(value).forEach(function (key) { freezeReport(value[key]); });
       Object.freeze(value);
     }
     return value;
@@ -72,18 +75,14 @@
 
   function validateLoadedContract(item) {
     const api = namespaceApi(item);
-    if (!api) {
-      throw new Error(item.buildId + " namespace missing after script load");
-    }
+    if (!api) throw new Error(item.buildId + " namespace missing after script load");
     if (typeof api.validateContract !== "function") {
       throw new Error(item.buildId + " validateContract() missing");
     }
-
     const validation = api.validateContract();
     if (!validation || validation.result !== PASS || validation.ready !== true) {
       throw new Error(item.buildId + " did not return " + PASS);
     }
-
     return freezeReport({
       buildId: item.buildId,
       namespace: item.namespace,
@@ -102,61 +101,45 @@
   function loadOne(item) {
     const src = BASE_PATH + item.file;
     const existingApi = namespaceApi(item);
-
     if (existingApi) {
       return Promise.resolve({
-        buildId: item.buildId,
-        src: src,
-        reused: true,
+        buildId: item.buildId, src: src, reused: true,
         validation: validateLoadedContract(item)
       });
     }
-
     const existingScript = findManagedScript(src);
     if (existingScript) {
       return new Promise(function (resolve, reject) {
         existingScript.addEventListener("load", function () {
           try {
             resolve({
-              buildId: item.buildId,
-              src: src,
-              reused: true,
+              buildId: item.buildId, src: src, reused: true,
               validation: validateLoadedContract(item)
             });
-          } catch (error) {
-            reject(error);
-          }
+          } catch (error) { reject(error); }
         }, { once: true });
         existingScript.addEventListener("error", function () {
           reject(new Error(item.buildId + " script failed to load"));
         }, { once: true });
       });
     }
-
     return new Promise(function (resolve, reject) {
       const script = document.createElement("script");
       script.src = src + "?v=" + encodeURIComponent(VERSION);
       script.async = false;
       script.dataset.aabGovernedSrc = src;
       script.dataset.aabBuildId = item.buildId;
-
       script.addEventListener("load", function () {
         try {
           resolve({
-            buildId: item.buildId,
-            src: src,
-            reused: false,
+            buildId: item.buildId, src: src, reused: false,
             validation: validateLoadedContract(item)
           });
-        } catch (error) {
-          reject(error);
-        }
+        } catch (error) { reject(error); }
       }, { once: true });
-
       script.addEventListener("error", function () {
         reject(new Error(item.buildId + " script failed to load: " + src));
       }, { once: true });
-
       document.head.appendChild(script);
     });
   }
@@ -164,12 +147,8 @@
   async function run() {
     const startedAt = new Date().toISOString();
     const loaded = [];
-
     try {
-      for (const item of IDENTITY_CHAIN) {
-        loaded.push(await loadOne(item));
-      }
-
+      for (const item of IDENTITY_CHAIN) loaded.push(await loadOne(item));
       latestReport = freezeReport({
         buildId: BUILD_ID,
         version: VERSION,
@@ -186,7 +165,7 @@
         navigationPerformed: false,
         startedAt: startedAt,
         completedAt: new Date().toISOString(),
-        nextAllowedBuild: "ID-08"
+        nextAllowedBuild: "ID-09"
       });
     } catch (error) {
       latestReport = freezeReport({
@@ -207,18 +186,14 @@
         nextAllowedBuild: null
       });
     }
-
     global.dispatchEvent(new CustomEvent("aab:governed-runtime-ready", {
       detail: latestReport
     }));
-
     return latestReport;
   }
 
   function bootstrap() {
-    if (!activePromise) {
-      activePromise = run();
-    }
+    if (!activePromise) activePromise = run();
     return activePromise;
   }
 
@@ -236,16 +211,12 @@
         version: VERSION,
         status: latestReport ? latestReport.result : "LOADING",
         classification: [
-          "DETERMINISTIC_ORDER",
-          "FAIL_CLOSED",
-          "DUPLICATE_EXECUTION_PROTECTION",
-          "NO_AUTHORITY_GRANT",
-          "NO_NAVIGATION",
-          "NO_DATABASE_WRITE",
-          "NO_AUTH_ACTIVATION"
+          "DETERMINISTIC_ORDER", "FAIL_CLOSED",
+          "DUPLICATE_EXECUTION_PROTECTION", "NO_AUTHORITY_GRANT",
+          "NO_NAVIGATION", "NO_DATABASE_WRITE", "NO_AUTH_ACTIVATION"
         ],
         identityChain: IDENTITY_CHAIN.map(function (item) { return item.buildId; }),
-        nextAllowedBuild: "ID-08"
+        nextAllowedBuild: "ID-09"
       });
     }
   });
