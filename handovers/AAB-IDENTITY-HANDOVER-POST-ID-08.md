@@ -2,14 +2,14 @@
 
 **Handover date:** 11 August 2026 (Australia/Perth)  
 **Repository:** `AdvancedAgricultureBiometrix/aab-source-of-truth`  
-**Current gate:** ID-08 deployed, browser-validated and formally closed  
-**Next approved build:** ID-09 only
+**Current gate:** ID-08 deployed and browser-validated; formal closure pending canonical GitHub loader v1.3.0 promotion  
+**Next approved build:** ID-09 only after formal closure
 
 ## Start here — note for the next chat
 
 The permanent source of truth is the private GitHub repository `AdvancedAgricultureBiometrix/aab-source-of-truth`. Begin with `handovers/AAB-IDENTITY-HANDOVER-POST-ID-08.md`, then inspect `governance/validations/IDENTITY-BUILD-STATUS.md`, `runtime/loaders/governed-runtime-bootstrap.js`, and the contract, README, browser validation and future SQL specification for ID-08.
 
-Do not ask what comes next when the validated gate already names it: continue with ID-09 only. Do not reopen ID-01 through ID-08 or ID-LOADER-01 unless ID-09 provides concrete evidence of a genuine upstream defect. Preserve the fixed process: **Build. Wire. Validate. Fix only the current build. Move on.** A passing namespace/self-test is insufficient; every build must be wired through its real upstream providers and downstream boundary, populated with controlled data, and proven end-to-end before closure.
+First confirm the canonical GitHub loader has been explicitly approved, promoted to v1.3.0 and refetched. Then formally close ID-08 and continue with ID-09 only. Do not reopen ID-01 through ID-08 or ID-LOADER-01 unless ID-09 provides concrete evidence of a genuine upstream defect. Preserve the fixed process: **Build. Wire. Validate. Fix only the current build. Move on.** A passing namespace/self-test is insufficient; every build must be wired through its real upstream providers and downstream boundary, populated with controlled data, and proven end-to-end before closure.
 
 ## Completed work
 
@@ -22,8 +22,8 @@ Do not ask what comes next when the validated gate already names it: continue wi
 | ID-05 | Trusted dashboard access decision | `PASS_READY_READ_ONLY` | ID-06 |
 | ID-06 | Immutable render-only dashboard context projection | `PASS_READY_READ_ONLY` | ID-07 |
 | ID-07 | Scope-bound, immutable, non-executable dashboard read-request envelope | `PASS_READY_READ_ONLY` | ID-08 |
-| ID-08 | Server-defined protected read-policy compatibility decision | `PASS_READY_READ_ONLY` | ID-09 |
-| ID-LOADER-01 | Canonical deterministic identity-chain bootstrap v1.3.0 | `PASS_READY_READ_ONLY` | Manages ID-01→ID-08 |
+| ID-08 | Server-defined protected read-policy compatibility decision | Deployed `PASS_READY_READ_ONLY`; closure pending loader promotion | ID-09 after closure |
+| ID-LOADER-01 | Canonical deterministic identity-chain bootstrap | GitHub v1.2.0; deployed v1.3.0 validated | Promote v1.3.0 |
 
 ## Proven ID-08 path
 
@@ -43,17 +43,18 @@ Do not ask what comes next when the validated gate already names it: continue wi
 <script src="/aab-local/app/_rebuild/js/governed-runtime-bootstrap.js?v=1.2.0"></script>
 ```
 
-The deployed replacement bootstrap is internally versioned `1.3.0` and owns ID-01 through ID-08. Future identity builds belong in its ordered manifest, never as direct page tags. It must fail closed on a missing file, namespace or failed contract.
+The deployed replacement bootstrap is internally versioned `1.3.0` and owns ID-01 through ID-08. GitHub's canonical loader remains v1.2.0 until explicit approval permits its production-facing replacement. Future identity builds belong in its ordered manifest, never as direct page tags. It must fail closed on a missing file, namespace or failed contract.
 
 ## Next work
 
-1. Start ID-09 from the validated ID-08 handoff and repository state.
-2. Inspect the canonical roadmap and ID-08 before naming ID-09. Derive the narrowest missing boundary; do not invent operational authority.
-3. Build one objective only, preserving read-only, fail-closed and synthetic-only constraints unless the user explicitly authorises a later phase.
-4. Wire ID-09 to real ID-08 output and add it to the central bootstrap—no direct page tag.
-5. Test positive and fail-closed paths, including overrides, unknown/ambiguous input and operational flags.
-6. Package only changed Hostinger runtime files; deliver backup, extraction, full browser validation and rollback directly in chat.
-7. Wait for deployed validation. Close ID-09 only when its final gate is `true`, then update GitHub records and the next handover.
+1. After explicit approval, replace GitHub's canonical loader on `main` with the deployed and validated v1.3.0 file; refetch and verify it.
+2. Mark ID-08 formally closed and start ID-09 from the validated ID-08 handoff and repository state.
+3. Inspect the canonical roadmap and ID-08 before naming ID-09. Derive the narrowest missing boundary; do not invent operational authority.
+4. Build one objective only, preserving read-only, fail-closed and synthetic-only constraints unless the user explicitly authorises a later phase.
+5. Wire ID-09 to real ID-08 output and add it to the central bootstrap—no direct page tag.
+6. Test positive and fail-closed paths, including overrides, unknown/ambiguous input and operational flags.
+7. Package only changed Hostinger runtime files; deliver backup, extraction, full browser validation and rollback directly in chat.
+8. Wait for deployed validation. Close ID-09 only when its final gate is `true`, then update GitHub records and the next handover.
 
 ID-09's exact name and scope are intentionally not invented here. ID-08 only determines compatibility with a protected read policy; it does not execute a backend read.
 
