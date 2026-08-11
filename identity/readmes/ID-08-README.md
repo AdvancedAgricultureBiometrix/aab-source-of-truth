@@ -2,7 +2,7 @@
 
 ## Status
 
-Deployment candidate. Local controlled-path result: `PASS_READY_READ_ONLY`. Hostinger browser validation is still required before formal closure.
+Deployed Hostinger runtime result: `PASS_READY_READ_ONLY` with final gate `passed: true`. Formal closure is pending promotion of the deployed bootstrap v1.3.0 to GitHub's canonical loader path.
 
 ## Purpose
 
@@ -23,6 +23,5 @@ ID-08 is loaded only by `governed-runtime-bootstrap.js`. No direct ID-08 page ta
 ## Dependency and handoff
 
 - Required dependency: ID-07 `PASS_READY_READ_ONLY`
-- Local candidate result: ID-08 `PASS_READY_READ_ONLY`
-- Formal next build: remains locked until Hostinger validation returns final gate `passed: true`
-
+- Deployed result: ID-08 `PASS_READY_READ_ONLY`, final gate `passed: true`
+- Formal next build: ID-09 after canonical GitHub loader v1.3.0 promotion and ID-08 closure
