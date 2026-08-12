@@ -1,0 +1,20 @@
+(() => {
+  const checks = [];
+  const add = (name, pass, evidence) => checks.push({ name, pass: !!pass, evidence });
+  const text = document.body.innerText;
+  add('Returning user pathway', text.includes('Returning user'), 'Public entry panel');
+  add('Country request pathway', text.includes('Country or jurisdiction request'), 'Public entry panel');
+  add('Invitation panel removed', !document.querySelector('[data-entry-mode="invitation"]'), 'No public invitation tab');
+  add('Password input removed', !document.querySelector('input[type="password"]'), 'OTP-only public gateway');
+  add('Returning-user OTP form', !!document.querySelector('#signin-email-form'), 'Email verification control');
+  add('Participation request form', !!document.querySelector('#country-request-form'), 'Jurisdiction application');
+  add('No browser role selector', !document.querySelector('[name*="role"], #role'), 'Server authority preserved');
+  add('Invitation guidance present', text.includes('secure activation link in your invitation email'), 'Separate invitation route');
+  const pass = checks.every((check) => check.pass);
+  const esc = (value) => String(value).replace(/[&<>"']/g, (character) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
+  const popup = window.open('', 'AAB_ENTRY_04_VALIDATION', 'width=920,height=760');
+  if (!popup) throw new Error('Allow pop-ups and run the validator again.');
+  popup.document.write(`<!doctype html><meta charset="utf-8"><title>AAB Entry Gateway 04 Validation</title><style>body{font:15px system-ui;margin:28px;color:#17372c}h1{font-family:Georgia,serif}.summary{padding:16px;border-radius:12px;background:${pass?'#e9f5e6':'#fbe9e5'};font-weight:800}table{border-collapse:collapse;width:100%;margin-top:20px}th,td{border:1px solid #ccd7d0;padding:11px;text-align:left}.pass{color:#24743c;font-weight:800}.fail{color:#a32f25;font-weight:800}</style><h1>AAB Entry Gateway 04</h1><div class="summary">${pass?'PASS':'FAIL'} — ${checks.filter(c=>c.pass).length}/${checks.length} checks passed</div><table><thead><tr><th>Check</th><th>Evidence</th><th>Result</th></tr></thead><tbody>${checks.map(c=>`<tr><td>${esc(c.name)}</td><td>${esc(c.evidence)}</td><td class="${c.pass?'pass':'fail'}">${c.pass?'PASS':'FAIL'}</td></tr>`).join('')}</tbody></table>`);
+  popup.document.close();
+  return { pass, checks };
+})();
