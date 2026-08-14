@@ -1,0 +1,31 @@
+{
+  "operational_domains": ["AGRICULTURE"],
+  "permitted_foundations": [
+    "COGNITIVE_CORE",
+    "CONTINUITY_CORE",
+    "COUNTRY_CORE",
+    "OBSERVATION_CORE",
+    "PLATFORM",
+    "PRESENTATION_CORE",
+    "REGULATORY_CORE",
+    "SECURITY_CORE"
+  ],
+  "planned_inactive_domains": [
+    "AQUACULTURE",
+    "CLIMATE",
+    "ENVIRONMENT",
+    "FOOD_SYSTEMS",
+    "MANUFACTURING",
+    "MEDICAL",
+    "RESEARCH",
+    "SOIL",
+    "WATER"
+  ],
+  "enabled_domain_adapters": ["AGRICULTURE"],
+  "all_other_adapter_action": "DISABLE",
+  "unknown_domain_action": "FAIL",
+  "country_resource_intelligence_default": false,
+  "resource_recovery_intelligence_default": false,
+  "environmental_intelligence_default": false,
+  "authority": "ADVISORY_ONLY_SCIENTIST_AND_AUTHORISED_HUMAN_DECISION_REQUIRED"
+}

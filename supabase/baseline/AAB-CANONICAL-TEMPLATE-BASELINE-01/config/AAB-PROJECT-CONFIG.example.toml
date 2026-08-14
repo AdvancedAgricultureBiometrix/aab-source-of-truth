@@ -1,0 +1,30 @@
+project_ref = "REQUIRED_AT_DEPLOYMENT"
+region = "EXPLICIT_PLATFORM_OWNER_CHOICE"
+
+[auth]
+site_url = "REQUIRED_AT_DEPLOYMENT"
+redirect_allowlist = []
+unknown_user_creation = false
+otp_digits = 6
+otp_template_source = "PROTECTED_CONFIGURATION"
+
+[smtp]
+sender = "REQUIRED_AT_DEPLOYMENT"
+host_source = "PROTECTED_SECRET_STORE"
+username_source = "PROTECTED_SECRET_STORE"
+password_source = "PROTECTED_SECRET_STORE"
+
+[turnstile]
+provider = "cloudflare_turnstile"
+site_key_source = "PUBLIC_ENVIRONMENT_CONFIGURATION"
+secret_source = "PROTECTED_SECRET_STORE"
+
+[storage]
+public_buckets_permitted = false
+buckets = []
+
+[secrets]
+service_role_key = "NEVER_COMMIT"
+database_password = "NEVER_COMMIT"
+smtp_password = "NEVER_COMMIT"
+turnstile_secret = "NEVER_COMMIT"
