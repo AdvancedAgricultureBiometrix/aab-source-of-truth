@@ -1,13 +1,9 @@
 "use client";
 
+import FogoMaterialDiscovery from "./FogoMaterialDiscovery";
+
 type EvidenceStatus="CONNECTED"|"DOCUMENTED"|"REQUIRED";
 type EvidenceRecord={name:string;status:EvidenceStatus;detail:string;source?:string;sourceUrl?:string};
-
-const fogoFacilityRecords=[
-  {facility:"Landsdale Resource Recovery Park",place:"15 Attwell Street, Landsdale · Lot 79 on Diagram 57260",recordDate:"10 Jan 2025",recordType:"DWER works approval decision",fact:"DWER granted works approval W6947/2024/1. The decision report defines the premises by legal parcel and the premises maps attached to the instrument, and records proposed receival of 30,000 tonnes per annum of FOGO.",qualification:"Regulated premises and approved receival quantity — not a record of tonnes actually received.",sourceUrl:"https://der.wa.gov.au/images/documents/our-work/licences-and-works-approvals/Decisions_/W6947/W6947_20250110_DR.pdf",states:["IDENTITY · DOCUMENTED","PIXEL BOUNDARY · CONNECTED","ACTUAL TONNAGE · REQUIRED"]},
-  {facility:"Veolia Landsdale facility expansion",place:"Landsdale · Perth metropolitan area",recordDate:"29 Apr 2025",recordType:"WA Government funding announcement",fact:"WA Government announced funding for a fully enclosed FOGO transfer facility designed to receive and process up to 50,000 tonnes per year.",qualification:"Published project capacity — not a record of actual annual tonnes received or processed.",sourceUrl:"https://www.wa.gov.au/government/media-statements/Cook%20Labor%20Government/-FOGO-facility-expansions-go-ahead-thanks-to-WasteSorted-funding-20250429",states:["PROJECT · DOCUMENTED","CAPACITY · DOCUMENTED","ACTUAL TONNAGE · REQUIRED"]},
-];
-const fogoAnnouncement="https://www.wa.gov.au/government/media-statements/Cook%20Labor%20Government/-FOGO-facility-expansions-go-ahead-thanks-to-WasteSorted-funding-20250429";
 
 const common:EvidenceRecord[]=[
   {name:"Candidate provenance",status:"DOCUMENTED",detail:"The candidate record retains its named public supporting source."},
@@ -30,14 +26,6 @@ const profiles:Record<string,{domain:string;summary:string;records:EvidenceRecor
     {name:"Landsat surface history",status:"CONNECTED",detail:"Seasonally matched multi-scene imagery and QA-screened pixel measurements are available."},
     {name:"Rainfall, heat, cold and frost-temperature",status:"CONNECTED",detail:"Annual gridded records are available in expandable five-year groups."},
     {name:"Fire, flood and soil records",status:"REQUIRED",detail:"Authoritative dated spatial sources remain to be connected."},
-  ]},
-  "FOGO-derived organics":{domain:"URBAN ORGANICS + MATERIAL FLOW",summary:"Collection, facility, composition and processing facts are required before a physical stream can be measured.",records:[
-    {name:"Municipal FOGO evidence",status:"DOCUMENTED",detail:"The supporting source documents source-separated food and garden organics systems.",source:"Waste Authority WA"},
-    {name:"Named Perth facility project",status:"DOCUMENTED",detail:"A WA Government announcement names Veolia's Landsdale facility and states a planned FOGO receiving and processing capacity of up to 50,000 tonnes per year. This is capacity, not measured throughput.",source:"WA Government · 29 Apr 2025",sourceUrl:fogoAnnouncement},
-    {name:"Regulated premises boundary",status:"CONNECTED",detail:"The machine-readable Landgate parcel for 15 Attwell Street is connected for pixel measurement and cross-checked against DWER works approval W6947/2024/1 and its Lot 79 on Diagram 57260 premises description.",source:"Landgate LGATE-002 + DWER W6947/2024/1",sourceUrl:"https://services.slip.wa.gov.au/public/rest/services/SLIP_Public_Services/Places_and_Addresses_WFS/MapServer/2"},
-    {name:"Actual annual tonnage",status:"REQUIRED",detail:"A dated facility record of tonnes actually received or processed has not been located. Published capacity is not substituted for throughput."},
-    {name:"Composition and contamination",status:"REQUIRED",detail:"Dated audits, sampling method and measured fractions are required."},
-    {name:"Processing, water and energy records",status:"REQUIRED",detail:"Facility-specific operational records are not connected."},
   ]},
   "Managed biosolids":{domain:"WATER + RESIDUAL SAFETY",summary:"Treatment-plant, batch, analytical and destination records must remain separately traceable.",records:[
     {name:"WA management guidance",status:"DOCUMENTED",detail:"The supporting source defines the regulated management context.",source:"DWER WA"},
@@ -87,6 +75,7 @@ const profiles:Record<string,{domain:string;summary:string;records:EvidenceRecor
 };
 
 export default function CandidateEvidencePanel({candidate}:{candidate:string}){
+  if(candidate==="FOGO-derived organics") return <FogoMaterialDiscovery/>;
   const profile=profiles[candidate]??{domain:"CANDIDATE CONTEXT",summary:"Candidate-specific factual records must be connected to the governed investigation.",records:[]};
   const records=[...profile.records,...common];
   const connected=records.filter(record=>record.status==="CONNECTED").length;
@@ -95,18 +84,6 @@ export default function CandidateEvidencePanel({candidate}:{candidate:string}){
   return <section className="candidateEvidencePack" aria-label={`${candidate} context records`}>
     <header><div><small>CANDIDATE EVIDENCE ROUTER · {profile.domain}</small><h4>Facts this investigation requires</h4><p>{profile.summary} AAB displays connected and documented records separately from information that is still required.</p></div><span>{connected} CONNECTED · {documented} DOCUMENTED · {required} REQUIRED</span></header>
     <div className="candidateEvidenceGrid">{records.map(record=><article className={record.status.toLowerCase()} key={`${record.name}-${record.status}`}><div><b>{record.name}</b><em>{record.status}</em></div><p>{record.detail}</p>{record.source&&(record.sourceUrl?<a href={record.sourceUrl} target="_blank" rel="noreferrer">SOURCE · {record.source} ↗</a>:<small>SOURCE · {record.source}</small>)}</article>)}</div>
-    {candidate==="FOGO-derived organics"&&<details className="fogoFacilityLedger">
-      <summary><span><small>AUTHORITATIVE FACILITY RECORDS</small><b>View the Landsdale regulatory and capacity records</b></span><em>1 BOUNDARY CONNECTED · 0 ACTUAL TONNAGE</em></summary>
-      <div className="fogoFacilityLedgerBody">
-        <p>These are source facts only. A published project capacity does not establish actual throughput, composition, availability or suitability.</p>
-        {fogoFacilityRecords.map(record=><article key={record.facility}>
-          <header><div><small>{record.recordType}</small><b>{record.facility}</b><span>{record.place}</span></div><time>{record.recordDate}</time></header>
-          <p>{record.fact}</p><strong>{record.qualification}</strong>
-          <div className="fogoRecordState">{record.states.map(state=><span key={state}>{state}</span>)}</div>
-          <a href={record.sourceUrl} target="_blank" rel="noreferrer">Open authoritative source ↗</a>
-        </article>)}
-      </div>
-    </details>}
     <footer><b>INTERPRETATION BOUNDARY</b><span>Connection confirms that a record can be displayed. It does not establish cause, safety, suitability, recoverability or material identity.</span></footer>
   </section>;
 }
