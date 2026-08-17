@@ -1,0 +1,6 @@
+.regionalEvidenceHead{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;margin:16px 0 8px;padding-top:14px;border-top:1px solid rgba(85,201,149,.16)}
+.regionalEvidenceHead>div{display:flex;flex-direction:column;gap:4px}.regionalEvidenceHead small{color:var(--green);font:700 7px var(--font-geist-mono);letter-spacing:.08em}.regionalEvidenceHead strong{font-size:13px}.regionalEvidenceHead>span{color:#737b75;font-size:7px}
+.regionalLiveScan .scientificMapWorkspace{grid-column:1/-1}.regionalLiveScan .scientificMap{height:460px}
+.forensicPeriods{display:grid;gap:8px;margin:8px 0}.forensicPeriods>section{padding:8px;border:1px solid rgba(216,170,84,.13);border-radius:9px;background:rgba(216,170,84,.018)}
+.forensicPeriods>section>header{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}.forensicPeriods>section>header b{color:var(--gold);font:700 8px var(--font-geist-mono);letter-spacing:.08em}.forensicPeriods>section>header span{color:#69716b;font-size:7px}.forensicPeriods .yearFilmstrip{margin:0}
+@media(max-width:650px){.regionalEvidenceHead{align-items:flex-start;flex-direction:column}.regionalLiveScan .scientificMap{height:340px}}

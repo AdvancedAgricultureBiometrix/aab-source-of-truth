@@ -1,0 +1,5 @@
+import boundary from "../../../data/landsdale-premises-boundary.json";
+
+export async function GET() {
+  return Response.json({candidate_code:"AAB-FOGO-LANDSDALE",boundary_status:"CONNECTED_VERIFIED_FOR_PIXEL_MEASUREMENT",feature:boundary,provenance:{geometry_dataset:"Cadastre Address (LGATE-002)",geometry_publisher:"Western Australian Land Information Authority (Landgate)",geometry_endpoint:"https://services.slip.wa.gov.au/public/rest/services/SLIP_Public_Services/Places_and_Addresses_WFS/MapServer/2",regulatory_instrument:"DWER works approval W6947/2024/1",regulatory_source:"https://der.wa.gov.au/images/documents/our-work/licences-and-works-approvals/Decisions_/W6947/W6947_20250110_DR.pdf",legal_description:"Lot 79 on Diagram 57260",verification_method:"15 Attwell Street parcel match cross-checked against DWER premises identity and legal description",legal_use_warning:"This connected geometry is suitable for AAB pixel measurement, not cadastral or legal boundary determination."}},{headers:{"cache-control":"public, max-age=86400"}});
+}

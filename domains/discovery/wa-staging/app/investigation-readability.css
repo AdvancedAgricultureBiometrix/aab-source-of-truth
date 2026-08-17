@@ -1,0 +1,58 @@
+/* Shared readability baseline for every candidate investigation. */
+.inlinePassport{font-size:12px}
+.inlinePassport .eyebrow,.inlinePassport small{font-size:10px;line-height:1.45}
+.inlinePassport .passportStatus small{font-size:9px}
+.inlinePassport .passportStatus b{font-size:12px;line-height:1.45}
+.inlinePassport .passportTabs button{min-height:42px;padding:10px 12px;font-size:12px}
+.inlinePassport .candidateScanGate small{font-size:10px}
+.inlinePassport .candidateScanGate strong{font-size:15px;line-height:1.35}
+.inlinePassport .candidateScanGate span{font-size:12px;line-height:1.55}
+.inlinePassport .candidateScanGate button{min-height:42px;font-size:12px}
+.inlinePassport .passportFacts small,.inlinePassport .pathwaySection>small{font-size:10px}
+.inlinePassport .passportFacts p{font-size:12px;line-height:1.6}
+.inlinePassport .genomeLanes b{font-size:10px}
+.inlinePassport .genomeLanes span{font-size:11px;line-height:1.45}
+.inlinePassport .spatialPlaceholder strong{font-size:17px}
+.inlinePassport .spatialPlaceholder span{font-size:12px;line-height:1.6}
+.inlinePassport .spatialRunControl button{font-size:12px}
+.inlinePassport .spatialRunControl small{font-size:9px}
+.inlinePassport .spatialRunControl strong{font-size:12px;line-height:1.45}
+.inlinePassport .metricStrip small,.inlinePassport .regionalScanSummary small{font-size:9px}
+.inlinePassport .metricStrip b{font-size:17px}
+.inlinePassport .regionalScanSummary b{font-size:12px}
+.inlinePassport .spatialSteps span{font-size:11px;line-height:1.4}
+.inlinePassport .spatialSteps b{font-size:10px}
+.inlinePassport .scopeDecision small,.inlinePassport .scopeRequirement small{font-size:9px}
+.inlinePassport .scopeDecision p,.inlinePassport .scopeRequirement span{font-size:12px;line-height:1.6}
+.inlinePassport .scopeRequirement strong{font-size:13px}
+.candidateEvidencePack>header small{font-size:10px}
+.candidateEvidencePack>header h4{font-size:21px}
+.candidateEvidencePack>header p{font-size:12px;line-height:1.65}
+.candidateEvidencePack>header>span{font-size:9px;line-height:1.4}
+.candidateEvidenceGrid article b{font-size:13px;line-height:1.35}
+.candidateEvidenceGrid article em{font-size:9px}
+.candidateEvidenceGrid p{font-size:12px;line-height:1.6}
+.candidateEvidenceGrid small{font-size:9px}
+.candidateEvidencePack>footer{font-size:11px;line-height:1.6}
+.candidateEvidencePack>footer b{font-size:9px}
+.scientificMapWorkspace .mapWorkspaceHead small,.scientificMapWorkspace .timeTravel small,.scientificMapWorkspace .askPlace small{font-size:9px}
+.scientificMapWorkspace .mapWorkspaceHead strong,.scientificMapWorkspace .timeTravel strong,.scientificMapWorkspace .askPlace strong{font-size:14px;line-height:1.4}
+.scientificMapWorkspace .mapWorkspaceHead span,.scientificMapWorkspace .mapModeNotice span,.scientificMapWorkspace .timeTravel span,.scientificMapWorkspace .askPlace p,.scientificMapWorkspace .askPlace>span{font-size:11px;line-height:1.55}
+.scientificMapWorkspace button{font-size:11px}
+.scientificMapWorkspace .mapCapabilityRail span{font-size:9px;line-height:1.4}
+.forensicExplorer>header p,.forensicExplorer .timeEvidenceRule span,.forensicExplorer .comparisonPicker span,.forensicExplorer .linkedZoom span{font-size:12px;line-height:1.55}
+.forensicExplorer .forensicStatusRail span,.forensicExplorer .timeControls label,.forensicExplorer .timeControls input,.forensicExplorer .timeControls select,.forensicExplorer .timeControls button{font-size:11px}
+.forensicExplorer .forensicPeriods header span,.forensicExplorer .yearFilmstrip button span,.forensicExplorer .yearFilmstrip button i{font-size:10px}
+.forensicExplorer .viewModeRail button b{font-size:12px}
+.forensicExplorer .viewModeRail button span{font-size:10px;line-height:1.4}
+.forensicExplorer .alignmentProof span{font-size:10px;line-height:1.45}
+.forensicExplorer .reportGrid article b{font-size:13px}
+.forensicExplorer .reportGrid article span{font-size:11px;line-height:1.55}
+.forensicExplorer .confidenceLink{font-size:11px}
+@media(max-width:700px){.inlinePassport{font-size:13px}.candidateEvidenceGrid{grid-template-columns:1fr}.candidateEvidencePack>header>span{white-space:normal}.forensicExplorer>header h3{font-size:34px}}
+
+.candidateEvidenceGrid article>a{display:inline-block;margin-top:8px;color:var(--gold);font:700 9px var(--font-geist-mono);text-decoration:none}.candidateEvidenceGrid article>a:hover{text-decoration:underline}
+.fogoFacilityLedger{margin-top:14px;border:1px solid rgba(216,170,84,.24);border-radius:11px;background:rgba(216,170,84,.025)}
+.fogoFacilityLedger>summary{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:15px;cursor:pointer;list-style:none}.fogoFacilityLedger>summary::-webkit-details-marker{display:none}.fogoFacilityLedger>summary span{display:flex;flex-direction:column;gap:4px}.fogoFacilityLedger>summary small{color:var(--gold);font:700 9px var(--font-geist-mono);letter-spacing:.08em}.fogoFacilityLedger>summary b{font-size:14px}.fogoFacilityLedger>summary em{color:#8f9791;font:700 9px var(--font-geist-mono);font-style:normal}
+.fogoFacilityLedgerBody{padding:0 15px 15px;border-top:1px solid rgba(255,255,255,.06)}.fogoFacilityLedgerBody>p{margin:13px 0;color:#929a94;font-size:12px;line-height:1.55}.fogoFacilityLedgerBody>article{padding:14px;border:1px solid rgba(255,255,255,.08);border-radius:9px;background:#0b0e0d}.fogoFacilityLedgerBody article>header{display:flex;justify-content:space-between;gap:14px}.fogoFacilityLedgerBody header>div{display:flex;flex-direction:column;gap:3px}.fogoFacilityLedgerBody header small{color:var(--green);font:700 9px var(--font-geist-mono)}.fogoFacilityLedgerBody header b{font-size:15px}.fogoFacilityLedgerBody header span,.fogoFacilityLedgerBody time{color:#848c86;font-size:11px}.fogoFacilityLedgerBody article>p{margin:12px 0 6px;color:#b4bab5;font-size:12px;line-height:1.55}.fogoFacilityLedgerBody article>strong{color:var(--gold);font-size:11px}.fogoRecordState{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}.fogoRecordState span{padding:6px 8px;border:1px solid rgba(255,255,255,.08);border-radius:99px;color:#8d958f;font:700 9px var(--font-geist-mono)}.fogoFacilityLedgerBody article>a{color:var(--gold);font-size:11px;text-decoration:none}.fogoFacilityLedgerBody article>a:hover{text-decoration:underline}
+@media(max-width:760px){.fogoFacilityLedger>summary,.fogoFacilityLedgerBody article>header{align-items:flex-start;flex-direction:column}}
