@@ -9,6 +9,7 @@ import "./comparison-fixes.css";
 import "./candidate-site-map.css";
 import "./candidate-context-imagery.css";
 import "./investigation-readability.css";
+import "./fogo-material-discovery.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
