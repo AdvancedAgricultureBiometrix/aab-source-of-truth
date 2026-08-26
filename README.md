@@ -53,3 +53,16 @@ Complete the connected controlled onboarding bridge after Country Discovery:
 > **Discovery reviewed → verified participation request → Platform Owner approval → versioned terms acceptance → country activation → Head Admin setup/dashboard → institution invitation → verified institution-user dashboard.**
 
 Do not provision a real country tenancy while validating this path.
+
+<!-- AAB-SOVEREIGN-CANONICAL-DIRECTION -->
+
+## Canonical AAB direction
+
+Future development and handovers must begin with:
+
+- [Sovereign Scientific Intelligence Principles](docs/canonical/AAB-SOVEREIGN-SCIENTIFIC-INTELLIGENCE-PRINCIPLES.md)
+- [Current Build Boundaries](docs/canonical/AAB-CURRENT-BUILD-BOUNDARIES.md)
+- [Federated Scientific Exchange Roadmap](docs/roadmap/AAB-FEDERATED-SCIENTIFIC-EXCHANGE-ROADMAP.md)
+- [Sovereign Value and Pricing Hypotheses](docs/hypotheses/AAB-SOVEREIGN-VALUE-AND-PRICING-HYPOTHESES.md)
+
+All AAB development must preserve country isolation, scientific uncertainty, negative findings, provenance and human authority. No implementation may introduce cross-country operational queries, silent evidence overwrites, automatic scientific approval, automatic Brain admission or formulation eligibility. Future capabilities must remain labelled as planned until technically built and validated.
