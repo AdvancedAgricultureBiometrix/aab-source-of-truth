@@ -4,19 +4,19 @@ Status: Approved sequence; later phases are not current capabilities
 
 ## Deployment order
 
-### Phase 1 â€” Sovereign isolation
+### Phase 1 — Sovereign isolation
 
 Prove country isolation, identity, roles, provenance, evidence capture, scientific uncertainty, immutable version history and fail-closed capability gates.
 
-### Phase 2 â€” Domestic collaboration
+### Phase 2 — Domestic collaboration
 
 Enable authorised national institutions to contribute and review evidence without collapsing institutional ownership or allowing one institution to read another's restricted data without an explicit domestic sharing rule.
 
-### Phase 3 â€” Controlled external peer review
+### Phase 3 — Controlled external peer review
 
 Generate bounded, purpose-specific review packages containing only the approved question, methodology, evidence snapshots, uncertainty and reviewer scope. Access must be time-bound and auditable. A review returns as signed evidence and cannot modify the source record.
 
-### Phase 4 â€” Federated scientific learning
+### Phase 4 — Federated scientific learning
 
 Create a Governed Scientific Exchange that receives only country-pushed, signed export payloads. It must have no active query path back into a sovereign operational environment.
 
