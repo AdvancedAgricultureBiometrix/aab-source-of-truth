@@ -24,19 +24,19 @@ AAB is not a conventional global software-as-a-service database. Its operational
 
 ## Four information tiers
 
-### Tier 1 â€” Sovereign private
+### Tier 1 — Sovereign private
 
 Raw datasets, researcher identities, exact coordinates, formulations, trial files, unpublished records, proprietary material and security-sensitive information remain within the country-controlled environment. The architecture prohibits external release except through an authorised export operation.
 
-### Tier 2 â€” Domestic collaborative
+### Tier 2 — Domestic collaborative
 
 Authorised domestic institutions may collaborate under country-defined roles, purpose limitations and sharing rules. Domestic access does not create permission for international release.
 
-### Tier 3 â€” Federated scientific learning
+### Tier 3 — Federated scientific learning
 
 A country may deliberately release a minimised scientific learning package after scientific, privacy and national-release review. Such a package may include an approved classification, method, negative result, contradiction, safety warning or reusable reasoning pattern without disclosing protected sources, locations, identities, formulations or commercial ownership.
 
-### Tier 4 â€” Public knowledge
+### Tier 4 — Public knowledge
 
 Officially published or explicitly released knowledge may be made publicly discoverable under its licence, attribution and permitted-use conditions.
 
