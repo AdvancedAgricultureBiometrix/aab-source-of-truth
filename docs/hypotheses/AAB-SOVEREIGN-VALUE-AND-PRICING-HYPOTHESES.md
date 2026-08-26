@@ -1,6 +1,6 @@
 # AAB Sovereign Value and Pricing Hypotheses
 
-Status: Confidential strategic hypotheses â€” not validated claims, commitments or public pricing
+Status: Confidential strategic hypotheses — not validated claims, commitments or public pricing
 
 ## Purpose
 
@@ -18,7 +18,7 @@ This document preserves early commercial reasoning without presenting it as esta
 
 ## Unvalidated working hypotheses
 
-Earlier strategic discussion considered possible annual sovereign licence ranges of USD 5â€“8 million for emerging or mid-sized agricultural nations, USD 12â€“18 million for major agricultural exporters and USD 25 million or more for very large or highly customised deployments. It also considered substantial first-year implementation services.
+Earlier strategic discussion considered possible annual sovereign licence ranges of USD 5–8 million for emerging or mid-sized agricultural nations, USD 12–18 million for major agricultural exporters and USD 25 million or more for very large or highly customised deployments. It also considered substantial first-year implementation services.
 
 These figures are not approved prices. They must not be quoted as what governments will pay, inserted into public material or used as evidence of AAB's value without validation.
 
