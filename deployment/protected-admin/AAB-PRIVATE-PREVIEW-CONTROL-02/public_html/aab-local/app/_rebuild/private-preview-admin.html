@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>AAB — Private Preview Control Centre</title>
+  <link rel="stylesheet" href="../aab-theme.v22.css">
+  <link rel="stylesheet" href="../aab-shell.v22.css?v=22">
+  <link rel="stylesheet" href="./private-preview.css">
+</head>
+<body data-aab-title="Private Preview Control Centre">
+  <main class="pp-wrap pp-admin-wrap">
+    <section class="pp-card pp-admin-hero">
+      <div>
+        <div class="pp-kicker">Owner-only</div>
+        <h1>Private Preview Control Centre</h1>
+        <p class="pp-muted">Invite viewers, monitor genuine presentation activity, receive questions and access requests, and keep private access under direct owner control.</p>
+      </div>
+      <div class="pp-admin-livebox" id="monitoringState">
+        <div class="pp-live-line"><span class="pp-live-dot"></span><b id="monitoringLabel">VERIFYING OWNER</b></div>
+        <div id="lastSync" class="pp-muted">Checking your secure AAB session…</div>
+        <div class="pp-muted small" id="monitoringDetail">Monitoring begins only after owner authority is verified.</div>
+      </div>
+      <div class="pp-row pp-admin-owner-row">
+        <button class="pp-btn primary" id="claim" type="button" hidden>Claim owner control</button>
+        <span id="status" class="pp-status pp-muted" aria-live="polite">Verifying owner authority…</span>
+      </div>
+    </section>
+
+    <section class="pp-card pp-auth-gate" id="authGate" aria-labelledby="authGateTitle" hidden>
+      <div class="pp-auth-icon" aria-hidden="true">AAB</div>
+      <div>
+        <div class="pp-kicker">Secure owner access</div>
+        <h2 id="authGateTitle">Sign in to continue</h2>
+        <p>Your owner session is not currently active. Sign in with your authorised AAB Platform Owner email and six-digit verification code.</p>
+        <p class="pp-muted small">Private viewer information, invitations and monitoring controls remain unavailable until the server verifies your identity and authority.</p>
+        <div class="pp-auth-actions">
+          <a class="pp-btn primary" id="signIn" href="/enter-aab/?return_to=%2Faab-local%2Fapp%2F_rebuild%2Fprivate-preview-admin.html">Sign in securely</a>
+          <a class="pp-btn" href="/">Return to AAB.AG</a>
+        </div>
+        <details class="pp-technical-details">
+          <summary>Technical details</summary>
+          <code id="authErrorCode">owner_session_required</code>
+        </details>
+      </div>
+    </section>
+
+    <div id="appShell" hidden>
+    <section class="pp-admin-summary" aria-label="Private Preview summary">
+      <article class="pp-summary-card"><span>Invited viewers</span><b id="sumViewers">0</b></article>
+      <article class="pp-summary-card"><span>Active viewers</span><b id="sumActive">0</b></article>
+      <article class="pp-summary-card"><span>Views used</span><b id="sumViews">0</b></article>
+      <article class="pp-summary-card" id="questionSummary"><span>New questions</span><b id="sumQuestions">0</b></article>
+      <article class="pp-summary-card" id="requestSummary"><span>Access requests</span><b id="sumRequests">0</b></article>
+      <article class="pp-summary-card"><span>SMTP alerts</span><b>ON</b><small>david@aab.ag</small></article>
+    </section>
+
+    <section class="pp-admin-main">
+      <article class="pp-card pp-admin-invite">
+        <h2>Invite viewer</h2>
+        <p class="pp-muted small">Each invitation is assigned to one email identity. A new presentation login consumes one allocated view.</p>
+
+        <label class="pp-label" for="email">Email</label>
+        <input class="pp-input" id="email" autocomplete="email">
+
+        <label class="pp-label" for="name">Name</label>
+        <input class="pp-input" id="name" autocomplete="name">
+
+        <div class="pp-admin-form-row">
+          <div>
+            <label class="pp-label" for="country">Country</label>
+            <input class="pp-input" id="country" value="TH">
+          </div>
+          <div>
+            <label class="pp-label" for="lang">Language</label>
+            <select class="pp-select" id="lang">
+              <option value="en">English</option>
+              <option value="th">Thai</option>
+            </select>
+          </div>
+        </div>
+
+        <label class="pp-label" for="max">Views</label>
+        <input class="pp-input" id="max" type="number" value="5" min="1" max="20">
+
+        <button class="pp-btn primary pp-admin-send" id="invite" type="button">Create / send private invitation</button>
+        <div id="mailState" class="pp-delivery-state" hidden=""></div>
+
+        <label class="pp-label" for="inviteUrl">Secure invitation link</label>
+        <textarea id="inviteUrl" class="pp-textarea" rows="4" readonly="" placeholder="The generated secure link will appear here."></textarea>
+      </article>
+
+      <article class="pp-card pp-admin-analytics">
+        <div class="pp-admin-card-head">
+          <div>
+            <h2>Viewer analytics</h2>
+            <p class="pp-muted small">Live account, session and presentation-use status.</p>
+          </div>
+          <button class="pp-btn" id="refreshNow" type="button">Refresh now</button>
+        </div>
+        <div class="pp-table-wrap">
+          <table class="analytics-table pp-admin-table">
+            <thead>
+              <tr>
+                <th>Viewer</th><th>Country</th><th>Status</th><th>Views</th><th>Sessions</th><th>Video</th><th>Questions</th><th>Last login</th>
+              </tr>
+            </thead>
+            <tbody id="viewers"></tbody>
+          </table>
+        </div>
+      </article>
+
+      <div class="pp-admin-side">
+        <article class="pp-card pp-admin-feed" id="questionsCard">
+          <div class="pp-admin-card-head">
+            <h2>Questions</h2>
+            <span class="pp-feed-count" id="questionCount">0</span>
+          </div>
+          <div id="questions" class="pp-muted">Loading…</div>
+        </article>
+
+        <article class="pp-card pp-admin-feed" id="requestsCard">
+          <div class="pp-admin-card-head">
+            <h2>Access requests</h2>
+            <span class="pp-feed-count" id="requestCount">0</span>
+          </div>
+          <div id="requests" class="pp-muted">Loading…</div>
+        </article>
+      </div>
+    </section>
+    </div>
+  </main>
+
+<script>
+(() => {
+  const api = './pitch-api.php';
+  const POLL_MS = 20000;
+  const claimBtn = document.getElementById('claim');
+  const inviteBtn = document.getElementById('invite');
+  const refreshNow = document.getElementById('refreshNow');
+  const statusEl = document.getElementById('status');
+  const mailState = document.getElementById('mailState');
+  const inviteUrl = document.getElementById('inviteUrl');
+  const viewersEl = document.getElementById('viewers');
+  const questionsEl = document.getElementById('questions');
+  const requestsEl = document.getElementById('requests');
+  const questionsCard = document.getElementById('questionsCard');
+  const requestsCard = document.getElementById('requestsCard');
+  const questionSummary = document.getElementById('questionSummary');
+  const requestSummary = document.getElementById('requestSummary');
+  const lastSync = document.getElementById('lastSync');
+  const appShell = document.getElementById('appShell');
+  const authGate = document.getElementById('authGate');
+  const authErrorCode = document.getElementById('authErrorCode');
+  const monitoringState = document.getElementById('monitoringState');
+  const monitoringLabel = document.getElementById('monitoringLabel');
+  const monitoringDetail = document.getElementById('monitoringDetail');
+  const fields = ['email','name','country','lang','max'].map(id => document.getElementById(id));
+  let loading = false;
+  let pollTimer = null;
+
+  const isAuthError = error => ['aab_owner_login_required','owner_session_required','unauthorized'].includes(String(error?.message || error || '').toLowerCase());
+
+  function showSignedOut(error) {
+    clearInterval(pollTimer);
+    pollTimer = null;
+    document.body.classList.add('is-owner-signed-out');
+    authGate.hidden = false;
+    appShell.hidden = true;
+    claimBtn.hidden = true;
+    monitoringState.classList.add('is-locked');
+    monitoringLabel.textContent = 'OWNER SIGN-IN REQUIRED';
+    lastSync.textContent = 'Private monitoring is paused.';
+    monitoringDetail.textContent = 'Sign in before any dashboard information is requested.';
+    statusEl.textContent = 'Owner verification is required to open this control centre.';
+    authErrorCode.textContent = String(error?.message || error || 'owner_session_required');
+  }
+
+  function showOwnerDashboard() {
+    document.body.classList.remove('is-owner-signed-out');
+    authGate.hidden = true;
+    appShell.hidden = false;
+    claimBtn.hidden = false;
+    monitoringState.classList.remove('is-locked');
+    monitoringLabel.textContent = 'LIVE MONITORING';
+    monitoringDetail.textContent = 'Automatic sync every 20 seconds while this page is open.';
+  }
+
+  async function call(action, body) {
+    const r = await fetch(api + '?action=' + encodeURIComponent(action), {
+      method: body ? 'POST' : 'GET',
+      credentials: 'include',
+      cache: 'no-store',
+      headers: body ? {'Content-Type':'application/json'} : {},
+      body: body ? JSON.stringify(body) : undefined
+    });
+    const j = await r.json();
+    if (!j.ok) throw new Error(j.error || 'request_failed');
+    return j;
+  }
+
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+  const fmt = raw => {
+    if (!raw) return '—';
+    const d = new Date(raw);
+    return Number.isNaN(d.getTime()) ? String(raw) : d.toLocaleString();
+  };
+
+  function buttonDefault(btn, text) {
+    btn.disabled = false;
+    btn.classList.remove('is-working','is-activated','is-warning');
+    btn.textContent = text;
+  }
+  function buttonWorking(btn, text) {
+    btn.disabled = true;
+    btn.classList.remove('is-activated','is-warning');
+    btn.classList.add('is-working');
+    btn.textContent = text;
+  }
+  function buttonActivated(btn, text, lock = false) {
+    btn.disabled = !!lock;
+    btn.classList.remove('is-working','is-warning');
+    btn.classList.add('is-activated');
+    btn.textContent = text;
+  }
+  function buttonWarning(btn, text) {
+    btn.disabled = false;
+    btn.classList.remove('is-working','is-activated');
+    btn.classList.add('is-warning');
+    btn.textContent = text;
+  }
+  function showDelivery(ok, message, detail = '') {
+    mailState.hidden = false;
+    mailState.className = 'pp-delivery-state ' + (ok ? 'ok' : 'warn');
+    mailState.innerHTML = `<b>${ok ? 'EMAIL ACCEPTED BY AAB SMTP ✓' : 'EMAIL DELIVERY FAILED'}</b><span>${esc(message)}</span>${detail ? `<small>${esc(detail)}</small>` : ''}`;
+  }
+  function resetInviteButton() {
+    if (inviteBtn.classList.contains('is-activated') || inviteBtn.classList.contains('is-warning')) {
+      buttonDefault(inviteBtn, 'Create / send private invitation');
+      mailState.hidden = true;
+    }
+  }
+  function setAttention(el, on) {
+    el?.classList.toggle('has-live-attention', !!on);
+  }
+
+  async function load({manual = false} = {}) {
+    if (loading) return;
+    loading = true;
+    if (manual) refreshNow.textContent = 'Refreshing…';
+    try {
+      const j = await call('owner_dashboard');
+      showOwnerDashboard();
+      buttonActivated(claimBtn, 'OWNER CONTROL ACTIVE ✓', true);
+      statusEl.textContent = 'Owner control verified.';
+
+      const viewerList = j.viewers || [];
+      const questionList = j.questions || [];
+      const requestList = j.access_requests || [];
+      const newQuestions = questionList.filter(q => String(q.question_status || '').toUpperCase() === 'NEW');
+      const pendingRequests = requestList.filter(r => String(r.request_status || '').toUpperCase() === 'PENDING');
+      const activeViewers = viewerList.filter(v => String(v.viewer_status || '').toUpperCase() === 'ACTIVE');
+      const usedViews = viewerList.reduce((n,v) => n + Number(v.views_used || 0), 0);
+
+      document.getElementById('sumViewers').textContent = viewerList.length;
+      document.getElementById('sumActive').textContent = activeViewers.length;
+      document.getElementById('sumViews').textContent = usedViews;
+      document.getElementById('sumQuestions').textContent = newQuestions.length;
+      document.getElementById('sumRequests').textContent = pendingRequests.length;
+      document.getElementById('questionCount').textContent = newQuestions.length;
+      document.getElementById('requestCount').textContent = pendingRequests.length;
+      setAttention(questionsCard, newQuestions.length > 0);
+      setAttention(requestsCard, pendingRequests.length > 0);
+      setAttention(questionSummary, newQuestions.length > 0);
+      setAttention(requestSummary, pendingRequests.length > 0);
+
+      viewersEl.innerHTML = viewerList.map(v => `
+        <tr>
+          <td><b>${esc(v.email)}</b>${v.display_name ? `<small>${esc(v.display_name)}</small>` : ''}</td>
+          <td>${esc(v.country_code || '—')}</td>
+          <td><span class="pp-status-pill ${String(v.viewer_status).toLowerCase()}">${esc(v.viewer_status)}</span></td>
+          <td>${Number(v.views_used || 0)}/${Number(v.max_views || 0)}</td>
+          <td>${Number(v.sessions || 0)}</td>
+          <td>${v.max_progress ? Math.round(Number(v.max_progress)) + '%' : '—'}</td>
+          <td>${Number(v.new_questions || 0)}</td>
+          <td>${esc(fmt(v.last_login_at))}</td>
+        </tr>`).join('') || '<tr><td colspan="8" class="pp-muted">No viewers yet.</td></tr>';
+
+      questionsEl.innerHTML = questionList.map(q => `
+        <div class="pp-feed-item ${String(q.question_status).toUpperCase() === 'NEW' ? 'is-new' : ''}">
+          <div class="pp-feed-meta"><b>${esc(q.email)}</b><span>${esc(q.country_code || '')}</span><time>${esc(fmt(q.created_at))}</time></div>
+          <div class="pp-feed-text">${esc(q.question_text)}</div>
+          <span class="pp-status-pill ${String(q.question_status).toLowerCase()}">${esc(q.question_status)}</span>
+        </div>`).join('') || '<div class="pp-empty-state">No questions yet.</div>';
+
+      requestsEl.innerHTML = requestList.map(r => `
+        <div class="pp-feed-item ${String(r.request_status).toUpperCase() === 'PENDING' ? 'is-new' : ''}">
+          <div class="pp-feed-meta"><b>${esc(r.email)}</b><time>${esc(fmt(r.created_at))}</time></div>
+          <div class="pp-feed-text">Requested <b>${Number(r.requested_views || 0)}</b> additional views${r.request_note ? `<br><span>${esc(r.request_note)}</span>` : ''}</div>
+          <span class="pp-status-pill ${String(r.request_status).toLowerCase()}">${esc(r.request_status)}</span>
+        </div>`).join('') || '<div class="pp-empty-state">No access requests.</div>';
+
+      lastSync.textContent = 'Last sync: ' + new Date().toLocaleTimeString();
+    } catch (e) {
+      if (isAuthError(e)) {
+        showSignedOut(e);
+        return false;
+      }
+      lastSync.textContent = 'Monitoring unavailable.';
+      if (manual) statusEl.textContent = e.message;
+      throw e;
+    } finally {
+      loading = false;
+      refreshNow.textContent = 'Refresh now';
+    }
+    return true;
+  }
+
+  function schedulePolling() {
+    clearInterval(pollTimer);
+    pollTimer = setInterval(() => {
+      if (!document.hidden) load().catch(() => {});
+    }, POLL_MS);
+  }
+
+  claimBtn.addEventListener('click', async () => {
+    buttonWorking(claimBtn, 'CLAIMING OWNER CONTROL…');
+    statusEl.textContent = 'Verifying owner authority…';
+    try {
+      await call('owner_claim', {});
+      buttonActivated(claimBtn, 'OWNER CONTROL ACTIVE ✓', true);
+      statusEl.textContent = 'Owner control claimed and verified.';
+      await load();
+    } catch (e) {
+      buttonWarning(claimBtn, 'OWNER CLAIM FAILED');
+      statusEl.textContent = e.message;
+    }
+  });
+
+  inviteBtn.addEventListener('click', async () => {
+    buttonWorking(inviteBtn, 'CREATING + SENDING…');
+    statusEl.textContent = 'Creating secure invitation and contacting AAB SMTP…';
+    mailState.hidden = true;
+    try {
+      const j = await call('owner_invite', {
+        email: document.getElementById('email').value,
+        display_name: document.getElementById('name').value,
+        country_code: document.getElementById('country').value,
+        language_code: document.getElementById('lang').value,
+        max_views: +document.getElementById('max').value
+      });
+      inviteUrl.value = j.invite_url || '';
+      try { await navigator.clipboard?.writeText(j.invite_url || ''); } catch (_) {}
+      if (j.email_sent === true) {
+        buttonActivated(inviteBtn, 'INVITATION SENT ✓');
+        statusEl.textContent = 'Secure invitation created, copied and accepted by AAB SMTP.';
+        showDelivery(true, `Sent from ${j.email_delivery?.from_email || 'AAB'} to ${j.email || ''}.`);
+      } else {
+        buttonWarning(inviteBtn, 'INVITE CREATED · EMAIL FAILED');
+        statusEl.textContent = 'Invitation exists, but SMTP did not accept the email. The secure link remains valid.';
+        showDelivery(false, 'Secure link created successfully; email was not accepted by SMTP.', j.email_delivery?.detail || 'smtp_send_failed');
+      }
+      await load();
+    } catch (e) {
+      buttonWarning(inviteBtn, 'INVITATION FAILED');
+      statusEl.textContent = e.message;
+      showDelivery(false, 'The invitation request did not complete.', e.message);
+    }
+  });
+
+  refreshNow.addEventListener('click', () => load({manual:true}).catch(() => {}));
+  fields.forEach(el => el.addEventListener('input', resetInviteButton));
+  fields.forEach(el => el.addEventListener('change', resetInviteButton));
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) load().catch(() => {}); });
+
+  load().then(verified => {
+    if (verified) schedulePolling();
+  }).catch(e => {
+    buttonDefault(claimBtn, 'Claim owner control');
+    statusEl.textContent = 'The control centre could not be loaded. Try again shortly.';
+    schedulePolling();
+  });
+})();
+</script>
+
+
+</body></html>
