@@ -2,39 +2,67 @@
 
 Private governed source repository for the Advanced Agriculture Biometrix (AAB) platform.
 
-## Current authoritative continuity
+## Mandatory continuity reading
 
-The current Country Discovery and country-onboarding path is governed by:
+Before changing Country Discovery, Supabase identity, participation approval, provisioning, country activation, legal or rehearsal documents, institution invitations or dashboard routing, read:
 
 - [AAB Country Onboarding Path — Canonical Continuity Record](handovers/AAB-COUNTRY-ONBOARDING-CANONICAL-PATH.md)
 
-Future chats working on Country Discovery, Supabase identity, participation approval, country activation, institution invitations or dashboard routing must read that record before making changes.
+That record is current and authoritative. It defines the testing-versus-live boundary and supersedes older statements that treated the main AAB Supabase and a country Supabase as an architecture mismatch.
 
-The controlling data rule is:
+## Current purpose
 
-> **One controlled onboarding test Supabase now → validate the complete connected journey → one private isolated Supabase for each real onboarded country later.**
+The current programme is **building and testing the missing onboarding machinery so the system works correctly when AAB goes live**.
 
-The existing approved participation request is controlled build-and-test evidence. It is not an operational country approval.
+It is not an operational WA Government onboarding and must never be represented as one.
 
-## Current Country Discovery checkpoint
+The controlling architecture is:
+
+- **Main AAB Supabase:** platform control plane, identity, participation requests and Platform Owner provisioning decisions.
+- **Country Supabase:** private isolated country tenancy for activation, membership, documents, receipts, Discovery and later institution/professional records.
+- **Governed provisioning bridge:** protected server-to-server handoff between the two; no database consolidation and no Platform Owner country membership merely to provision.
+
+The controlling testing rule is:
+
+> **Build and validate the complete onboarding machinery now, while permanently separating rehearsal evidence from future production authority.**
+
+A test may proceed only when its records are isolated or permanently classified so they cannot satisfy future government, production, legal, invitation or scientific gates. Stop before placing ordinary or misleading testing material into operational main-system state.
+
+## Current controlled checkpoint
 
 - Private workspace: https://wa-test.aab.ag
-- Sites checkpoint: version 134
-- Western Australia is the canonical visual and Candidate Investigation template.
-- Every newly added country must use the same shared renderer, stylesheet, scan structure, intelligence panel, environmental framework, result groups and full investigation workspace.
-- Country maps, sources, evidence and findings remain isolated and country-specific.
-- Do not hard-code a new country page or copy evidence from another jurisdiction.
+- Sites checkpoint: version 163
+- Classification: personal WA rehearsal; non-government; non-production; no legal effect
+- External institution invitations: hard-locked
+- Institution and professional onboarding: not begun
+- Operational WA government tenancy: does not exist
+
+The v163 bridge provides a controlled Platform Owner decision, protected WA handoff, hash-verified test PDF, nominated test Head Admin OTP journey, separate `REHEARSAL_ACKNOWLEDGEMENT`, single-use activation and membership-resolved dashboard foundation.
+
+At the checkpoint, the activation remained unclaimed and there were zero rehearsal acknowledgements, production legal acceptances, memberships and external invitations.
+
+## Non-negotiable boundaries
+
+- Preserve ID-09: email → Turnstile → six-digit OTP. No passwords or general Accept Invitation flow.
+- Authentication is not authority. Protected server records determine tenancy, membership, role, scope and routing.
+- Sites owner access is recovery/testing access, not persisted Head Admin authority.
+- A rehearsal acknowledgement can never satisfy a production legal gate.
+- No onboarding stage grants Brain admission, ingredient status, formulation eligibility, trial eligibility or scientific approval.
+- Discovery evidence remains experimental, quarantined and provenance-linked.
+- Do not consolidate the main and country databases.
+- Do not enable external institution invitations during the personal WA rehearsal.
+- Do not represent any demonstration-stage request as government authority.
+- Do not manufacture, bypass or silently mark prerequisites complete.
 
 ## Repository rules
 
 - Preserve every validated version; do not overwrite history.
-- Build and harden in the rebuild/staging workflow before deployment.
+- Build and harden in the controlled workflow before deployment.
 - No change without a recorded WHY and no trial without an OUTCOME.
-- An account is not authority. Authority remains in protected server-side records.
 - Never commit credentials, production environment files, personal data, database files or raw logs.
-- Move SQL from `specifications/` to `migrations/` only after explicit human approval and controlled branch testing.
-- Scientist/admin authority is preserved. No autonomous execution or self-authorised mutation is enabled.
-- A test jurisdiction must never be represented as an operational country tenancy.
+- Move SQL from `specifications/` to `migrations/` only after explicit human approval and controlled testing.
+- Scientist and governance authority remain human-controlled.
+- Report divergence from the canonical continuity record before changing the sequence.
 
 ## Structure
 
@@ -48,8 +76,17 @@ The existing approved participation request is controlled build-and-test evidenc
 
 ## Current next objective
 
-Complete the connected controlled onboarding bridge after Country Discovery:
+After direction is confirmed, exercise only the personal WA rehearsal activation path:
 
-> **Discovery reviewed → verified participation request → Platform Owner approval → versioned terms acceptance → country activation → Head Admin setup/dashboard → institution invitation → verified institution-user dashboard.**
+```text
+verified email and OTP
+→ controlled invitation claim
+→ profile completion
+→ exact test PDF display
+→ REHEARSAL_ACKNOWLEDGEMENT
+→ single-use activation
+→ persisted HEAD_ADMIN membership
+→ permanent dashboard
+```
 
-Do not provision a real country tenancy while validating this path.
+Then verify Dashboard → Country Discovery → Dashboard continuity. Keep institution/professional onboarding and all external invitations locked until separately authorised.
