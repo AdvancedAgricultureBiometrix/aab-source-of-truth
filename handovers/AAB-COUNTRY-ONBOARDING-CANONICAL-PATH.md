@@ -1,162 +1,174 @@
 # AAB Country Onboarding Path — Canonical Continuity Record
 
 **Status:** CURRENT AND AUTHORITATIVE  
-**Recorded:** 23 August 2026  
-**Applies to:** Country Discovery, identity, participation approval, country activation, institution invitations and entry into AAB  
-**Current controlled workspace:** https://wa-test.aab.ag  
-**Current validated Sites checkpoint:** version 134
+**Corrected:** 28 August 2026 (AWST)  
+**Applies to:** Country Discovery, identity, participation approval, governed provisioning, country activation, institution onboarding, professional onboarding and role routing  
+**Private controlled workspace:** https://wa-test.aab.ag  
+**Current Sites checkpoint:** version 163
 
 ## Purpose
 
-The Country Discovery workspace is not a separate promotional demonstration. It is the first operational stage of the AAB country-onboarding path.
+The current programme is a build-and-test programme.
 
-The current work has two inseparable purposes:
+Its purpose is to build every missing part of AAB's real onboarding journey and prove that the connected system behaves correctly before any country goes live. Rehearsal records are not government authority, production approval, legally operative acceptance or scientific authority.
 
-1. show an authorised country representative how AAB discovers, separates and investigates country-specific evidence; and
-2. build and validate the real governed path that future countries and their institutions will use to enter AAB.
+Future chats must not stop all useful testing merely because the eventual path is operational. They must build and test the missing machinery within the controlled boundaries below. They must also stop before a test would contaminate operational main-system state without an expressly classified, isolated and auditable rehearsal mechanism.
 
-Every stage is built with controlled test data, validated, and then retained as part of the canonical onboarding process. A completed test stage must not be discarded or rebuilt as a disconnected demonstration.
+## Authoritative architecture
 
-## Non-negotiable Supabase rule
+The two Supabase projects are intentional layers, not automatically an architecture mismatch:
 
-### Current build-and-test stage
+- **Main AAB Supabase — platform control plane:** identity, participation requests, Platform Owner decisions and governed provisioning decisions.
+- **Country Supabase — isolated country tenancy:** country activation, country membership, country documents and receipts, Discovery state and, later, institution and professional records.
+- **Provisioning bridge:** a protected server-to-server handoff that verifies the control-plane decision, records a correlation reference and provisions the approved artefacts into the country tenancy without making the Platform Owner a local tenancy member.
 
-There must be **one controlled onboarding test Supabase** for the complete end-to-end process.
+Do not consolidate the databases. Do not invent a replacement architecture. One real onboarded country will use one private, isolated country Supabase governed by the main control plane.
 
-It must ultimately contain the connected test journey:
+## The governing testing rule
 
-- Country Discovery jurisdiction and scan;
-- controlled participation request;
-- Platform Owner decision;
-- terms and governance acceptance;
-- country activation;
-- Head Admin membership and dashboard;
-- institution invitation;
-- invited-user verification, membership and dashboard routing.
+> Build and validate the complete onboarding machinery now, while permanently separating rehearsal evidence from future production authority.
 
-The single approved participation request currently present is **controlled test evidence for this build**. It is not an operational country approval.
+The following rules are mandatory:
 
-Do not interpret the current Western Australia, Thailand, Vietnam, Philippines or China demonstration profiles as operational country tenancies.
+1. Every test request, decision, document, acknowledgement, activation and membership must be explicitly classified as rehearsal where applicable.
+2. Personal WA rehearsal records must remain visibly **non-government**, **non-production** and **no legal effect**.
+3. A rehearsal acknowledgement must never satisfy a future operational-country legal gate.
+4. Rehearsal membership must never create government representation, external invitation authority or scientific authority.
+5. External institution invitations remain hard-locked throughout the personal WA rehearsal.
+6. Discovery evidence remains experimental, quarantined and provenance-linked. Onboarding never grants Brain admission, ingredient status, formulation eligibility, trial eligibility or scientific approval.
+7. If a proposed test would require ordinary or misleading test material in the main operational control plane, stop and design an isolated, reversible or permanently classified method before proceeding.
+8. Do not manufacture, bypass or silently mark an earlier stage complete.
+9. Preserve ID-09: email → Turnstile → six-digit OTP. Do not reintroduce passwords or a general Accept Invitation journey.
+10. Sites owner access is recovery/testing access only. It must never masquerade as persisted Head Admin authority.
 
-### Future operational stage
+## Canonical operational journey
 
-After the entire onboarding journey is validated:
+```text
+Country requests access
+→ Platform Owner approves
+→ Country Head Admin signs in
+→ Country Head Admin dashboard
+→ Country Discovery workspace
+→ Run and review the country scan
+→ Return to Country Head Admin dashboard
+→ Invite approved institutions
+→ Institution Admin signs up
+→ Institution dashboard
+→ Configure access within the institution's approved scope
+→ Invite scientists, agronomists and other professionals
+→ Professionals sign up
+→ Role-specific dashboards
+→ Governed scientific work begins
+```
 
-> One real onboarded country = one new, private and isolated Supabase provisioned from the validated canonical template.
+Legal, identity and security controls are gates within this journey. They must not obscure or redefine the operational sequence. Country Discovery is a scientific discovery workspace, not a substitute for the permanent Country Head Admin dashboard.
 
-Do not place multiple operational countries into the controlled test database. Do not clone the entire integration/test database into a country tenancy. Provision only the approved country template and that country's isolated records.
+## Current personal WA rehearsal sequence
 
-## Canonical onboarding sequence
+The authorised narrow rehearsal path is:
 
-1. **Country Discovery**
-   - The authorised representative enters the selected country's governed Country Discovery workspace.
-   - They run the multi-source country scan and review country-specific candidates, classification signals, known types not detected and evidence coverage gaps.
-   - Every card uses the shared Western Australia-quality Candidate Investigation structure while retaining only the selected country's evidence.
+```text
+Approved demonstration request
+→ personal rehearsal-provisioning decision
+→ Platform Owner-controlled rehearsal-document publication
+→ governed WA handoff
+→ nominated test Head Admin invitation
+→ verified identity and claim
+→ profile completion
+→ exact document display
+→ versioned REHEARSAL_ACKNOWLEDGEMENT
+→ single-use activation
+→ HEAD_ADMIN membership
+→ membership-resolved permanent dashboard
+```
 
-2. **Continue with AAB**
-   - The representative chooses to proceed from the completed discovery experience.
-   - The selected jurisdiction and governed discovery-run identity are carried forward automatically.
+This path tests the machinery that a genuine onboarding will later use. It does not claim that Western Australia, the WA Government or any external institution has authorised AAB.
 
-3. **Verified participation request**
-   - The representative supplies their name, official role, authorised organisation, official email and authority declaration.
-   - Email verification proves control of the address; it does not by itself prove authority.
+## Document ownership
 
-4. **Platform Owner review**
-   - The Platform Owner may approve, request more information or decline with a recorded rationale.
-   - The existing approved request is the controlled test of this stage.
+There are two distinct document stages:
 
-5. **Terms and governance acceptance**
-   - After approval, the representative must accept the current version of the AAB terms, privacy notice, country-sovereignty conditions, scientist-authority boundary and experimental/unverified discovery conditions.
-   - Acceptance must be stored with user, country workspace, document version and timestamp.
-   - A newer mandatory version requires fresh acceptance.
+1. **Pre-activation control-plane documents:** If required for activation, the Platform Owner publishes them through the governed server-to-server handoff. The nominated Head Admin cannot publish the terms governing their own activation.
+2. **Post-activation country/institution documents:** These are managed later under the authorised country governance model and must be current before the relevant invitations or role activations proceed.
 
-6. **Country activation**
-   - A single-use governed activation creates the country workspace, country scope, security policy and the first `HEAD_ADMIN` membership.
-   - Activation must not grant Domain Brain access, formulation eligibility, trial eligibility or automatic discovery promotion.
+The present PDF is test-only rehearsal material. It produces a `REHEARSAL_ACKNOWLEDGEMENT`, not a legally operative acceptance.
 
-7. **Head Admin setup and dashboard**
-   - The Head Admin completes country settings, language, timezone, recovery contacts, coordinating organisation and regulatory/security contacts.
-   - The completed Country Discovery results remain available from the country workspace.
+Provisioning must fail closed unless document upload, SHA-256 verification and version publication all succeed.
 
-8. **Institution invitations**
-   - The Head Admin invites approved institution leaders using official email addresses and assigns an initial governed role.
-   - Only authorised `HEAD_ADMIN` or `COUNTRY_ADMIN` memberships may issue invitations.
+## Authority boundaries
 
-9. **Institution-user onboarding**
-   - The invitee opens a country-bound, expiring invitation.
-   - They authenticate with and verify the invited email.
-   - They create their profile, confirm institution and position, accept current terms, receive the approved membership and enter the correct role dashboard.
+Authentication is not authority. Email verification proves control of an address only.
 
-10. **Governed scientific investigation**
-    - Approved scientists may investigate selected discoveries inside AAB.
-    - Discovery evidence remains quarantined until separate scientific and governance gates are satisfied.
-    - No discovery automatically becomes an ingredient, formulation, trial, verified benefit or Domain Brain memory.
+Protected server-side records determine:
+
+- platform authority;
+- country tenancy;
+- country and institution membership;
+- role;
+- capability envelope;
+- dashboard routing;
+- invitation authority;
+- legal or rehearsal receipt eligibility.
+
+The Platform Owner does not become a WA tenancy member merely to provision a document. The Platform Owner controls the main decision; the protected bridge performs the country handoff.
+
+An Institution Admin may eventually assign access only within the institution's Country Head Admin-approved envelope. Institution and professional onboarding are not part of the current narrow bridge and must not begin until the personal Head Admin activation path is proven and separately authorised to continue.
 
 ## Current verified implementation state
 
-| Stage | Current state |
+| Stage | State at Sites v163 |
 |---|---|
-| Shared Country Discovery workspace | Built and validated |
-| Multi-source scan for newly added jurisdictions | Built and under continuing evidence-expansion validation |
-| WA-quality investigation workspace for every generic country card | Built in Sites version 134 |
-| Verified email participation request | Built and previously exercised |
-| Platform Owner review | Built; one controlled request approved |
-| Terms/version acceptance | Not yet built |
-| Country activation function | Exists but has not been exercised for a country workspace |
-| Head Admin role and route foundation | Exists but awaits controlled activation validation |
-| Secure institution invitation and acceptance functions | Exist but have not been validated end to end |
-| Automatic profile creation and terms-gated dashboard entry | Incomplete |
-| Operational country tenancy | Not provisioned and must not be implied |
+| Main approved demonstration request | Present; demonstration-stage only |
+| Personal WA rehearsal-provisioning decision | Present and permanently classified |
+| Governed control-plane → WA handoff | Built and correlated |
+| Test PDF | Uploaded to private WA storage, SHA-256 verified and published as test-only |
+| Test Head Admin activation | Issued, single-use and unclaimed at checkpoint |
+| Rehearsal acknowledgements | Zero before user exercises the journey |
+| Production legal acceptances | Zero |
+| WA memberships | Zero before activation |
+| External institution invitations | Zero and hard-locked |
+| ID-09 OTP experience | Preserved |
+| Minimal activation UI | Deployed privately in Sites v163 |
+| Institution/professional onboarding | Not begun |
+| Operational WA government tenancy | Does not exist and must not be implied |
 
-## Current architecture mismatch to resolve
+## What may be tested next
 
-Inspection on 23 August 2026 found the controlled path split across two Supabase projects:
+Subject to explicit confirmation of direction, the next controlled steps may:
 
-- the main AAB Supabase holds identity, the verified user, the controlled approved participation request, role, invitation and dashboard-routing foundations;
-- the WA clean-room rehearsal Supabase holds Country Discovery demonstration jurisdictions, scans and cards.
+1. exercise the nominated personal WA Head Admin OTP, claim, profile, exact-document acknowledgement and single-use activation;
+2. verify that the permanent dashboard resolves from persisted WA membership rather than Sites ownership;
+3. verify Dashboard → Country Discovery → Dashboard continuity;
+4. validate fail-closed replay, expiry, wrong-email, missing-document and missing-acknowledgement cases without creating production authority;
+5. later build institution and professional onboarding using internal rehearsal identities only, after separate approval.
 
-This split does not represent the approved final build-and-test architecture. The next database-design work must establish one controlled onboarding test Supabase for the connected end-to-end validation path without damaging the live AAB platform or falsely treating a test jurisdiction as operational.
+## Mandatory stop conditions
 
-No consolidation, migration, deletion or tenancy provisioning is authorised merely by this continuity record. Any data movement requires a separate inspected plan, safety review and explicit approval.
+Stop and report before proceeding if:
 
-## Shared interface rule
-
-Western Australia is the canonical visual and investigation template.
-
-All countries must use:
-
-- one shared country workspace renderer;
-- one shared stylesheet contract;
-- one shared six-stage scan journey;
-- one shared AAB Governed Scientific Intelligence panel;
-- one shared environmental framework or truthful unavailable state;
-- the same four evidence-result groups;
-- the full Candidate Investigation workspace;
-- country-specific maps, evidence, sources, findings and governance scope.
-
-Different evidence and card totals are valid. Different UI contracts are not valid.
-
-Never fix a new country by manually hard-coding country-specific cards or creating another country-only page.
-
-## Governance boundaries
-
-- Platform Owner approval is required before controlled country activation.
-- An account is not authority.
-- Email verification is not authority verification.
-- Scientist remains the scientific execution authority.
-- Discovery cards are experimental/unverified investigation objects.
-- No brain access, formulation eligibility, trial eligibility, taxonomy promotion or cross-country evidence sharing is granted by the discovery scan.
-- Unknown or unregistered jurisdictions fail closed.
-- Missing evidence is shown as a coverage gap, never copied from another country and never manufactured.
+- a test would create or imply WA Government authority;
+- a rehearsal receipt could satisfy a production legal gate;
+- external invitations would be enabled;
+- an ordinary test record would enter operational main-system state without permanent rehearsal classification;
+- the Platform Owner would need local country membership solely to provision;
+- ID-09 would need to be replaced or weakened;
+- scientific quarantine or human scientific authority would be weakened;
+- database consolidation or a new architecture appears necessary;
+- persisted state contradicts this record.
 
 ## Instruction to future chats
 
-Before changing Country Discovery, onboarding, Supabase identity, country activation, invitations or dashboard routing:
+Before changing Country Discovery, onboarding, Supabase identity, provisioning, activation, invitations, documents or dashboards:
 
-1. Read this file completely.
-2. Inspect the current Sites source and both current Supabase projects.
-3. Preserve completed and validated stages.
-4. Treat the single approved request as controlled build/test evidence.
-5. Continue the connected onboarding chain from the last validated stage.
-6. Do not create a real country tenancy during testing.
-7. Do not claim the onboarding journey is complete until it has been proven end to end with controlled data.
+1. Read this file completely and read every canonical document linked from the repository README.
+2. Retrieve the existing Sites-managed source; do not reconstruct it.
+3. Inspect both Supabase projects read-only before proposing mutations.
+4. Treat the main project as the control plane and the country project as the isolated tenancy unless existing source proves otherwise.
+5. State whether the proposed action is build, rehearsal testing or production work.
+6. Map the action to its persisted classification and authority boundary.
+7. Preserve all completed stages and do not manufacture missing prerequisites.
+8. Keep external institution invitations locked during the personal WA rehearsal.
+9. Report any divergence before changing the sequence.
+10. Continue building what is missing, but obey the mandatory stop conditions above.
+
+This record supersedes the earlier statement that the main and WA Supabase split was itself an architecture mismatch.
