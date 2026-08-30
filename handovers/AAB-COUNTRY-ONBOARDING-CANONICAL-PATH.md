@@ -4,7 +4,7 @@
 **Corrected:** 28 August 2026 (AWST)  
 **Applies to:** Country Discovery, identity, participation approval, governed provisioning, country activation, institution onboarding, professional onboarding and role routing  
 **Private controlled workspace:** https://wa-test.aab.ag  
-**Current Sites checkpoint:** version 163
+**Current verified checkpoint:** personal WA Head Admin activation completed 30 August 2026 (AWST)
 
 ## Purpose
 
@@ -34,7 +34,7 @@ The following rules are mandatory:
 2. Personal WA rehearsal records must remain visibly **non-government**, **non-production** and **no legal effect**.
 3. A rehearsal acknowledgement must never satisfy a future operational-country legal gate.
 4. Rehearsal membership must never create government representation, external invitation authority or scientific authority.
-5. External institution invitations remain hard-locked throughout the personal WA rehearsal.
+5. External or real-world institution invitations remain hard-locked. After the personal WA rehearsal succeeds, explicitly classified internal institution rehearsals may proceed only within a separately authorised, auditable envelope.
 6. Discovery evidence remains experimental, quarantined and provenance-linked. Onboarding never grants Brain admission, ingredient status, formulation eligibility, trial eligibility or scientific approval.
 7. If a proposed test would require ordinary or misleading test material in the main operational control plane, stop and design an isolated, reversible or permanently classified method before proceeding.
 8. Do not manufacture, bypass or silently mark an earlier stage complete.
@@ -112,35 +112,38 @@ Protected server-side records determine:
 
 The Platform Owner does not become a WA tenancy member merely to provision a document. The Platform Owner controls the main decision; the protected bridge performs the country handoff.
 
-An Institution Admin may eventually assign access only within the institution's Country Head Admin-approved envelope. Institution and professional onboarding are not part of the current narrow bridge and must not begin until the personal Head Admin activation path is proven and separately authorised to continue.
+An Institution Admin may assign access only within the institution's Country Head Admin-approved envelope. The personal Head Admin activation path is now proven. Institution and professional onboarding machinery may proceed through explicitly classified internal rehearsal identities and invitations, but must be described as unproven until its complete persisted journey is validated. Real external participation remains locked.
 
 ## Current verified implementation state
 
-| Stage | State at Sites v163 |
+| Stage | State verified 30 August 2026 |
 |---|---|
 | Main approved demonstration request | Present; demonstration-stage only |
 | Personal WA rehearsal-provisioning decision | Present and permanently classified |
 | Governed control-plane → WA handoff | Built and correlated |
-| Test PDF | Uploaded to private WA storage, SHA-256 verified and published as test-only |
-| Test Head Admin activation | Issued, single-use and unclaimed at checkpoint |
-| Rehearsal acknowledgements | Zero before user exercises the journey |
+| Test PDF | Private, SHA-256 verified, published and acknowledged as test-only |
+| Test Head Admin activation | Claimed and consumed once |
+| Rehearsal acknowledgements | One persisted non-operative acknowledgement |
 | Production legal acceptances | Zero |
-| WA memberships | Zero before activation |
-| External institution invitations | Zero and hard-locked |
-| ID-09 OTP experience | Preserved |
-| Minimal activation UI | Deployed privately in Sites v163 |
-| Institution/professional onboarding | Not begun |
+| WA memberships | One active persisted `HEAD_ADMIN` rehearsal membership |
+| Permanent dashboard | Resolves from persisted WA membership, not Sites ownership |
+| Dashboard → Country Discovery → Dashboard | Available for continuity validation |
+| Institution onboarding machinery | Built for controlled internal rehearsal; complete user journey not yet proven |
+| External institution invitations | Unauthorised and hard-locked |
 | Operational WA government tenancy | Does not exist and must not be implied |
 
 ## What may be tested next
 
-Subject to explicit confirmation of direction, the next controlled steps may:
+The next controlled steps may:
 
-1. exercise the nominated personal WA Head Admin OTP, claim, profile, exact-document acknowledgement and single-use activation;
-2. verify that the permanent dashboard resolves from persisted WA membership rather than Sites ownership;
-3. verify Dashboard → Country Discovery → Dashboard continuity;
-4. validate fail-closed replay, expiry, wrong-email, missing-document and missing-acknowledgement cases without creating production authority;
-5. later build institution and professional onboarding using internal rehearsal identities only, after separate approval.
+1. validate Dashboard → Country Discovery → Dashboard continuity from persisted WA `HEAD_ADMIN` authority;
+2. issue one explicitly classified, single-use invitation to an internal rehearsal institution;
+3. prove Institution Admin OTP, claim, profile, rehearsal acknowledgement, activation, persisted institution membership and institution-dashboard routing;
+4. configure bounded team roles and permissions within the Country Head Admin-approved envelope;
+5. invite internal rehearsal research personnel and prove their role-specific memberships and dashboards;
+6. validate fail-closed replay, expiry, wrong-email, missing-document, missing-acknowledgement and out-of-envelope permission cases.
+
+No internal rehearsal may be represented as external, government, production, legal, scientific or regulatory authority.
 
 ## Mandatory stop conditions
 
@@ -167,7 +170,7 @@ Before changing Country Discovery, onboarding, Supabase identity, provisioning, 
 5. State whether the proposed action is build, rehearsal testing or production work.
 6. Map the action to its persisted classification and authority boundary.
 7. Preserve all completed stages and do not manufacture missing prerequisites.
-8. Keep external institution invitations locked during the personal WA rehearsal.
+8. Keep real external invitations locked; use only explicitly classified internal rehearsal identities until the institution journey is separately validated and authorised.
 9. Report any divergence before changing the sequence.
 10. Continue building what is missing, but obey the mandatory stop conditions above.
 
