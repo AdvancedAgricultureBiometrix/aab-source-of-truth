@@ -8,7 +8,11 @@ Every new chat, agent or contributor must read these records completely before i
 
 1. [AAB Canonical System Definition](handovers/AAB-CANONICAL-SYSTEM-DEFINITION.md) — what AAB is as a complete governed scientific-intelligence and agricultural-development operating system.
 2. [AAB Country Onboarding Path — Canonical Continuity Record](handovers/AAB-COUNTRY-ONBOARDING-CANONICAL-PATH.md) — the authoritative identity, participation, provisioning, activation, institution and role-routing sequence.
-3. [AAB Sovereign Country Runtime and Controlled Cleanup Path](handovers/AAB-SOVEREIGN-COUNTRY-RUNTIME-AND-CLEANUP-PATH.md) — the mandatory central-control-plane/country-runtime separation, sovereign deployment profile, contamination boundary and safe cleanup sequence.\n4. [WA Hostinger Rehearsal Continuation](handovers/AAB-WA-HOSTINGER-REHEARSAL-CONTINUATION-2026-09-02.md) — the current cleanup, upload, isolation and new-chat continuation state.\n5. [Cleanup v20 and WA Hostinger Checkpoint](governance/validations/AAB-CLEANUP-V20-AND-WA-HOSTINGER-CHECKPOINT.md) — source hashes, cleanup evidence, package identity and unproven gates.\n6. [AAB Persistence Migration Boundary](architecture/AAB-PERSISTENCE-MIGRATION-BOUNDARY.md) — the governed replacement path from SQLite/Airtable and browser shortcuts to Supabase Auth and persisted memberships.\n7. [WA Hostinger Rehearsal Manifest v1](deployment/wa-rehearsal/WA-HOSTINGER-REHEARSAL-MANIFEST-v1.md) — the WA-only runtime identity, permitted services and live-validation gate.
+3. [AAB Sovereign Country Runtime and Controlled Cleanup Path](handovers/AAB-SOVEREIGN-COUNTRY-RUNTIME-AND-CLEANUP-PATH.md) — the mandatory central-control-plane/country-runtime separation, sovereign deployment profile, contamination boundary and safe cleanup sequence.
+4. [WA Hostinger Rehearsal Continuation](handovers/AAB-WA-HOSTINGER-REHEARSAL-CONTINUATION-2026-09-02.md) — the current cleanup, upload, isolation and new-chat continuation state.
+5. [Cleanup v20 and WA Hostinger Checkpoint](governance/validations/AAB-CLEANUP-V20-AND-WA-HOSTINGER-CHECKPOINT.md) — source hashes, cleanup evidence, package identity and unproven gates.
+6. [AAB Persistence Migration Boundary](architecture/AAB-PERSISTENCE-MIGRATION-BOUNDARY.md) — the governed replacement path from SQLite/Airtable and browser shortcuts to Supabase Auth and persisted memberships.
+7. [WA Hostinger Rehearsal Manifest v1](deployment/wa-rehearsal/WA-HOSTINGER-REHEARSAL-MANIFEST-v1.md) — the WA-only runtime identity, permitted services and live-validation gate.
 
 Then read any task-specific canonical record linked from this README or the relevant domain directory.
 
@@ -111,7 +115,9 @@ A schema, interface or code path is not proof of successful operation or live au
 
 ## Current next objective
 
-Validate the newly uploaded isolated WA runtime at `wa-rehearsal.nexiuma.ai` before any further feature wiring. Upload completion is recorded, but live PHP execution, WA-only configuration, Turnstile, OTP, protected role routing and denial of unauthorised routes remain unproven on the new host. Stop on any main-project reference, secret exposure, PHP source exposure, legacy persistence access or authority bypass.\n\nThe protected source backup and cleanup v20 checkpoint are recorded. SQLite and Airtable executable dependencies are legacy/transitional and must be replaced through bounded, evidence-backed migration to the applicable country Supabase, Supabase Auth and persisted memberships.
+Validate the newly uploaded isolated WA runtime at `wa-rehearsal.nexiuma.ai` before any further feature wiring. Upload completion is recorded, but live PHP execution, WA-only configuration, Turnstile, OTP, protected role routing and denial of unauthorised routes remain unproven on the new host. Stop on any main-project reference, secret exposure, PHP source exposure, legacy persistence access or authority bypass.
+
+The protected source backup and cleanup v20 checkpoint are recorded. SQLite and Airtable executable dependencies are legacy/transitional and must be replaced through bounded, evidence-backed migration to the applicable country Supabase, Supabase Auth and persisted memberships.
 
 The proven rehearsal sequence is:
 
