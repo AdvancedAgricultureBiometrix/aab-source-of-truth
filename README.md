@@ -8,10 +8,11 @@ Every new chat, agent or contributor must read these records completely before i
 
 1. [AAB Canonical System Definition](handovers/AAB-CANONICAL-SYSTEM-DEFINITION.md) — what AAB is as a complete governed scientific-intelligence and agricultural-development operating system.
 2. [AAB Country Onboarding Path — Canonical Continuity Record](handovers/AAB-COUNTRY-ONBOARDING-CANONICAL-PATH.md) — the authoritative identity, participation, provisioning, activation, institution and role-routing sequence.
+3. [AAB Sovereign Country Runtime and Controlled Cleanup Path](handovers/AAB-SOVEREIGN-COUNTRY-RUNTIME-AND-CLEANUP-PATH.md) — the mandatory central-control-plane/country-runtime separation, sovereign deployment profile, contamination boundary and safe cleanup sequence.
 
 Then read any task-specific canonical record linked from this README or the relevant domain directory.
 
-The system definition prevents AAB from being reduced to one interface such as Discovery, onboarding or a dashboard. The onboarding record defines the testing-versus-live boundary and supersedes older statements that treated the main AAB Supabase and a country Supabase as an architecture mismatch.
+The system definition prevents AAB from being reduced to one interface such as Discovery, onboarding or a dashboard. The onboarding record defines the testing-versus-live boundary. The sovereign-runtime record establishes that every country receives the same governed application and onboarding foundation while operating through isolated country infrastructure and mutable state.
 
 ## What AAB is
 
@@ -36,7 +37,8 @@ Country Discovery is the governed intelligence-acquisition layer near the beginn
 ## Governing architecture
 
 - **Main AAB Supabase:** platform control plane, identity, participation requests and Platform Owner provisioning decisions.
-- **Country Supabase:** a private isolated country tenancy for membership, documents, evidence, Discovery, scientific work and later institution/professional records.
+- **Country runtime:** one isolated operational AAB deployment per country, containing that country's Discovery workspace, onboarding, dashboards and governed scientific workflows.
+- **Country Supabase:** a private isolated country tenancy for membership, documents, evidence, Discovery, scientific work and institution/professional records.
 - **Governed provisioning bridge:** protected server-to-server handoff between the two; no database consolidation and no Platform Owner country membership merely to provision.
 - **Cognitive and domain-brain layers:** advisory, evidence-bound scientific intelligence that cannot replace human scientific or governance authority.
 - **Downstream development layers:** ingredients, formulations, trials, observations, safety, regulatory dossiers and manufacturing transfer, each governed by its own persisted gates.
@@ -109,7 +111,9 @@ A schema, interface or code path is not proof of successful operation or live au
 
 ## Current next objective
 
-Exercise and prove the controlled institution journey using an explicitly internal rehearsal institution:
+Preserve the now-proven internal institution/team onboarding journey, then cleanly separate the historical operational application into the central control plane, reusable sovereign country runtime and WA-only rehearsal deployment. No deletion begins until an independent backup, inventory, dependency audit and quarantine classification exist.
+
+The proven rehearsal sequence is:
 
 ```text
 persisted WA HEAD_ADMIN
@@ -125,3 +129,5 @@ persisted WA HEAD_ADMIN
 ```
 
 The Country Head Admin may govern institutions and invitations within the authorised rehearsal envelope. Institution Admins may configure their team only within that country-approved envelope. Neither administrative role can create scientific approval, regulatory approval, ingredient status, trial eligibility or production authority.
+
+Each future country receives this same governed onboarding structure plus its own Discovery workspace, database, Auth, Storage, secrets, backups and role-resolved operational dashboards. Canonical code and brain definitions may be released across countries; live evidence, cognitive state, decisions and learning never synchronise automatically to the central system or another country.
