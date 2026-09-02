@@ -25,7 +25,7 @@ header('Cache-Control: no-store');
       <div id="error" class="error" role="alert"></div>
       <form id="email-form" hidden>
         <label>Email address<input id="email" type="email" autocomplete="email" required></label>
-        <div id="turnstile" class="turnstile"></div>
+        <div id="turnstile-widget" class="turnstile"></div>
         <button id="send" disabled>Send six-digit verification code</button>
       </form>
       <form id="code-form" hidden>
