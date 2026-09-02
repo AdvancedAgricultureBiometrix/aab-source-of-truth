@@ -24,7 +24,7 @@ The browser accepts a route only when both the returned persisted authority and 
 
 Turnstile readiness now requires `typeof window.turnstile.render === 'function'`. The entry asset version was increased to `v=2` to avoid stale browser caches.
 
-David's working widget-element change is retained: the page and renderer both use the unique `turnstile-widget` identifier. The final patch therefore combines the proven widget/SMTP configuration with the fail-closed authority resolver; neither repair replaces the other.
+David's working widget-element change is retained: the page and renderer both use the unique `turnstile-widget` identifier. The final patch therefore combines the proven widget/SMTP configuration with the fail-closed authority resolver; neither repair replaces the other. After the first replacement continued to serve cached `v=2` JavaScript, both public asset URLs were advanced to `v=3` to force retrieval of the repaired resolver.
 
 An expired or invalid Supabase session is removed. A valid session that lacks persisted WA authority is retained and denied; it is not misclassified as a broken login.
 
