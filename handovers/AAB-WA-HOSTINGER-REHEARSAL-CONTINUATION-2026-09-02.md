@@ -147,3 +147,35 @@ After the entry and isolation gates pass:
 
 Singapore must receive a new isolated hosting/runtime identity and its own Supabase project in an approved region. It must not reuse WA data, WA Auth users, WA secrets or mutable WA scientific state.
 
+## Control-plane entry and authentication findings — 2 September 2026
+
+Subsequent live validation established:
+
+- the main AAB entry gateway delivered and verified a six-digit OTP after the main-project email templates were corrected from confirmation links to `{{ .Token }}`;
+- a fresh verified WA request was persisted for `david@aab.ag` as reference `AAB-REQ-50EFA5E9E4`;
+- the request remains `PENDING_REVIEW`;
+- no country, membership, role or dashboard was created by submission;
+- the Platform Owner remained a central control-plane identity and was correctly routed to the Platform Administration control room; and
+- the malformed request must not be approved or provisioned.
+
+The request deliberately used purpose `Test`, but the public country form forced government-capacity choices. This produced an inconsistent record claiming Head of country/government and Head of government office for a test purpose. The fail-closed stop exposed a missing protected internal-rehearsal pathway.
+
+Do not approve `AAB-REQ-50EFA5E9E4`. Repair the classification and pathway contract first. A user may state an intended pathway, but browser choices must never self-create authority. Internal rehearsal must be available only through protected Platform Owner controls and must permanently record `TEST_ONLY`, `NON_GOVERNMENT`, `NON_PRODUCTION` and `NO_LEGAL_EFFECT`.
+
+The canonical design is now recorded in:
+
+- `architecture/AAB-TRUST-ACCESS-COMPLIANCE-AND-CONVERSATION-INTELLIGENCE.md`; and
+- `identity/contracts/AAB-AUTHENTICATION-ASSURANCE-CONTRACT-v0.1.md`.
+
+Authentication assurance begins from a clean inspected state: neither the main project nor the WA project had an enrolled MFA factor on 2 September 2026. Preserve email OTP for initial identity verification. The first rehearsal milestone is controlled TOTP enrollment plus `aal2` enforcement for governed roles, step-up authentication for sensitive actions, factor management and governed recovery. Do not add UI-only MFA, enforce MFA before recovery exists, or turn Supabase Passkeys beta into a production-critical dependency.
+
+Future compliance and collaboration work must preserve:
+
+- privacy-minimised, role-scoped audit receipts;
+- country-local internal text messaging;
+- controlled screenshot-only media rather than general attachments;
+- no automatic conversion of messages into evidence;
+- deliberately invoked, labelled AI interpretation only;
+- source, purpose, model/version and correlation receipts for every brain access; and
+- no country-message leakage into another country or global training without a separate governed agreement.
+
