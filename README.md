@@ -16,6 +16,7 @@ Every new chat, agent or contributor must read these records completely before i
 8. [WA Authority Routing Repair](governance/validations/AAB-WA-AUTHORITY-ROUTING-REPAIR-2026-09-02.md) — the fail-closed WA-specific resolver repair, observed reset state and next validation sequence.
 9. [AAB Trust, Access, Compliance and Conversation Intelligence](architecture/AAB-TRUST-ACCESS-COMPLIANCE-AND-CONVERSATION-INTELLIGENCE.md) — guided pathways, Trust Gate, privacy-minimised audit, sovereign messaging, screenshot controls and governed conversation intelligence.
 10. [AAB Authentication Assurance Contract v0.1](identity/contracts/AAB-AUTHENTICATION-ASSURANCE-CONTRACT-v0.1.md) — the design-only progression from verified email OTP to role-sensitive MFA, `aal2` enforcement and step-up authentication.
+11. [AAB MFA Trust Gate Rehearsal Validation v0.1](identity/tests/AAB-MFA-TRUST-GATE-REHEARSAL-VALIDATION-v0.1.md) — the mandatory ordered enrollment, routing, step-up, recovery, privacy and isolation tests.
 
 Then read any task-specific canonical record linked from this README or the relevant domain directory.
 
