@@ -14,6 +14,8 @@ Every new chat, agent or contributor must read these records completely before i
 6. [AAB Persistence Migration Boundary](architecture/AAB-PERSISTENCE-MIGRATION-BOUNDARY.md) — the governed replacement path from SQLite/Airtable and browser shortcuts to Supabase Auth and persisted memberships.
 7. [WA Hostinger Rehearsal Manifest v1](deployment/wa-rehearsal/WA-HOSTINGER-REHEARSAL-MANIFEST-v1.md) — the WA-only runtime identity, permitted services and live-validation gate.
 8. [WA Authority Routing Repair](governance/validations/AAB-WA-AUTHORITY-ROUTING-REPAIR-2026-09-02.md) — the fail-closed WA-specific resolver repair, observed reset state and next validation sequence.
+9. [AAB Trust, Access, Compliance and Conversation Intelligence](architecture/AAB-TRUST-ACCESS-COMPLIANCE-AND-CONVERSATION-INTELLIGENCE.md) — guided pathways, Trust Gate, privacy-minimised audit, sovereign messaging, screenshot controls and governed conversation intelligence.
+10. [AAB Authentication Assurance Contract v0.1](identity/contracts/AAB-AUTHENTICATION-ASSURANCE-CONTRACT-v0.1.md) — the design-only progression from verified email OTP to role-sensitive MFA, `aal2` enforcement and step-up authentication.
 
 Then read any task-specific canonical record linked from this README or the relevant domain directory.
 
@@ -82,7 +84,8 @@ A schema, interface or code path is not proof of successful operation or live au
 
 ## Non-negotiable boundaries
 
-- Preserve email → Turnstile/risk control → OTP; do not introduce passwords as the default identity path.
+- Preserve email → Turnstile/risk control → OTP as the initial identity path; do not introduce passwords as the default public entry merely to appear stronger.
+- Governed roles require a separately proven assurance gate: mandatory approved second factor, `aal2` enforcement and step-up authentication for sensitive actions.
 - Provide a secure email-verification route when automatic browser verification cannot complete, without turning a successful email sign-in into membership authority.
 - Authentication is not authority. Persisted protected records determine authority.
 - Sites-owner access is recovery/testing access, not persisted country authority.
@@ -119,6 +122,8 @@ A schema, interface or code path is not proof of successful operation or live au
 The first Hostinger validation proved the WA page, HTTPS and PHP boundary, then stopped at Turnstile initialization. The source repair is now recorded in `governance/validations/AAB-WA-AUTHORITY-ROUTING-REPAIR-2026-09-02.md`: Turnstile waits for the explicit `render()` API and entry routing uses only the three WA-specific persisted rehearsal authority functions. Upload the two-file runtime patch and repeat the entry validation. With zero active WA memberships after the intentional reset, a verified identity must currently be denied; do not manufacture membership to make the test pass.
 
 The protected source backup and cleanup v20 checkpoint are recorded. SQLite and Airtable executable dependencies are legacy/transitional and must be replaced through bounded, evidence-backed migration to the applicable country Supabase, Supabase Auth and persisted memberships.
+
+The next security workstream is governed authentication assurance. The current inspected state contains no enrolled MFA factors in the main or WA Auth projects. Preserve OTP as identity verification, then build and rehearsal-test TOTP enrollment, `aal2` routing, server/API/database enforcement, factor management, step-up actions and governed recovery as one coherent flow. Do not enforce MFA before enrollment and recovery exist, and do not treat beta passkeys as production-critical.
 
 The proven rehearsal sequence is:
 
