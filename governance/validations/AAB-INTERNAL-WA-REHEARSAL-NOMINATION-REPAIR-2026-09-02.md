@@ -88,3 +88,24 @@ Advisor reference: https://supabase.com/docs/guides/database/database-linter?lin
 This repair does not nominate anyone, complete a handoff, publish a new document, issue an activation, grant WA membership or implement MFA.
 
 The next controlled implementation is the protected nomination control in the Platform Owner dashboard, gated by the documented AAB Trust Gate assurance.
+
+## AAB Trust Gate checkpoint
+
+The main control-plane migration `require_aal2_for_internal_rehearsal_nomination` is live.
+
+The protected nomination RPC now additionally requires:
+
+- JWT `aal = aal2`;
+- a non-empty Supabase `session_id`;
+- the existing server-resolved Platform Owner actor check.
+
+The gate is enforced in PostgreSQL. Browser rendering or browser-assigned state cannot satisfy it.
+
+Post-migration verification confirmed that the gate markers are present and the internal nomination count remains zero.
+
+The drop-in browser candidate is recorded under:
+
+- `deployment/main-control-plane/trust-gate/aab-admin-trust-gate.js`;
+- `deployment/main-control-plane/trust-gate/INSTALL.md`.
+
+The candidate supports TOTP enrolment, challenge and verification using the existing protected Supabase client. It does not expose the nomination action. Live browser enrolment and return-login challenge remain unproven until the module is uploaded and rehearsed.
