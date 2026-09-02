@@ -63,7 +63,7 @@
       if(await existingSession())return;
       for(let i=0;i<50&&typeof window.turnstile?.render!=='function';i++)await new Promise(resolve=>setTimeout(resolve,100));
       if(typeof window.turnstile?.render!=='function')throw new Error('Human verification service is unavailable.');
-      state.widget=window.turnstile.render('#turnstile',{sitekey:state.config.turnstileSiteKey,theme:'dark',callback:token=>{state.captcha=token;$('send').disabled=false},'expired-callback':()=>{state.captcha='';$('send').disabled=true},'error-callback':()=>show('','Human verification could not be completed.')});
+      state.widget=window.turnstile.render('#turnstile-widget',{sitekey:state.config.turnstileSiteKey,theme:'dark',callback:token=>{state.captcha=token;$('send').disabled=false},'expired-callback':()=>{state.captcha='';$('send').disabled=true},'error-callback':()=>show('','Human verification could not be completed.')});
       $('email-form').hidden=false;show('Enter an approved WA rehearsal email address.');
     }catch(error){show('',error.message||'Secure entry is unavailable.')}
   }
