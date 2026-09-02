@@ -13,6 +13,7 @@ Every new chat, agent or contributor must read these records completely before i
 5. [Cleanup v20 and WA Hostinger Checkpoint](governance/validations/AAB-CLEANUP-V20-AND-WA-HOSTINGER-CHECKPOINT.md) — source hashes, cleanup evidence, package identity and unproven gates.
 6. [AAB Persistence Migration Boundary](architecture/AAB-PERSISTENCE-MIGRATION-BOUNDARY.md) — the governed replacement path from SQLite/Airtable and browser shortcuts to Supabase Auth and persisted memberships.
 7. [WA Hostinger Rehearsal Manifest v1](deployment/wa-rehearsal/WA-HOSTINGER-REHEARSAL-MANIFEST-v1.md) — the WA-only runtime identity, permitted services and live-validation gate.
+8. [WA Authority Routing Repair](governance/validations/AAB-WA-AUTHORITY-ROUTING-REPAIR-2026-09-02.md) — the fail-closed WA-specific resolver repair, observed reset state and next validation sequence.
 
 Then read any task-specific canonical record linked from this README or the relevant domain directory.
 
@@ -115,7 +116,7 @@ A schema, interface or code path is not proof of successful operation or live au
 
 ## Current next objective
 
-Validate the newly uploaded isolated WA runtime at `wa-rehearsal.nexiuma.ai` before any further feature wiring. Upload completion is recorded, but live PHP execution, WA-only configuration, Turnstile, OTP, protected role routing and denial of unauthorised routes remain unproven on the new host. Stop on any main-project reference, secret exposure, PHP source exposure, legacy persistence access or authority bypass.
+The first Hostinger validation proved the WA page, HTTPS and PHP boundary, then stopped at Turnstile initialization. The source repair is now recorded in `governance/validations/AAB-WA-AUTHORITY-ROUTING-REPAIR-2026-09-02.md`: Turnstile waits for the explicit `render()` API and entry routing uses only the three WA-specific persisted rehearsal authority functions. Upload the two-file runtime patch and repeat the entry validation. With zero active WA memberships after the intentional reset, a verified identity must currently be denied; do not manufacture membership to make the test pass.
 
 The protected source backup and cleanup v20 checkpoint are recorded. SQLite and Airtable executable dependencies are legacy/transitional and must be replaced through bounded, evidence-backed migration to the applicable country Supabase, Supabase Auth and persisted memberships.
 
