@@ -10,9 +10,9 @@ header('Cache-Control: no-store');
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>AAB Western Australia — Rehearsal entry</title>
-  <link rel="stylesheet" href="/entry.css?v=2">
+  <link rel="stylesheet" href="/entry.css?v=3">
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" defer></script>
-  <script src="/entry.js?v=2" defer></script>
+  <script src="/entry.js?v=3" defer></script>
 </head>
 <body>
   <main class="shell">
