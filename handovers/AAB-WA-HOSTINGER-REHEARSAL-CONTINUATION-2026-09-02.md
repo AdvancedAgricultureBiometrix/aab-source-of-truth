@@ -17,6 +17,7 @@ Before changing code, databases, hosting or routing, read:
 6. `governance/validations/AAB-CLEANUP-V20-AND-WA-HOSTINGER-CHECKPOINT.md`
 7. `architecture/AAB-PERSISTENCE-MIGRATION-BOUNDARY.md`
 8. `deployment/wa-rehearsal/WA-HOSTINGER-REHEARSAL-MANIFEST-v1.md`
+9. `governance/validations/AAB-WA-AUTHORITY-ROUTING-REPAIR-2026-09-02.md`
 
 ## Architecture that must not drift
 
@@ -103,6 +104,12 @@ The site-specific package contains:
 
 The package contains no database password and no Supabase secret/service-role key.
 
+## Authority routing repair completed after first live validation
+
+The first live validation exposed two entry faults: Turnstile readiness could be detected before `render()` existed, and the WA package used the historical generic `aab_resolve_entry()` contract. The repaired source now waits for the explicit Turnstile render function and resolves only the three WA-specific persisted rehearsal authorities. Generic personal-dashboard and Platform Owner fallbacks are removed from the WA entry path.
+
+No Supabase records were changed. The observed reset state contains no active WA workspace or organization membership, so denial after OTP is currently the correct result. See `governance/validations/AAB-WA-AUTHORITY-ROUTING-REPAIR-2026-09-02.md`.
+
 ## Immediate next action
 
 Do not begin feature wiring yet. First validate the newly uploaded runtime in an incognito browser.
@@ -118,7 +125,7 @@ Validation order:
 5. request an OTP for an already approved WA rehearsal account;
 6. confirm unknown accounts are not created;
 7. enter the newest numeric code;
-8. confirm `aab_resolve_entry()` routes from persisted WA authority;
+8. confirm the WA-specific protected authority resolver routes from persisted WA authority;
 9. confirm a user cannot manually open a dashboard outside their persisted role;
 10. inspect errors/logs for any reference to the main project, historical server paths, SQLite or Airtable;
 11. record pass/fail evidence without committing personal data or tokens.
