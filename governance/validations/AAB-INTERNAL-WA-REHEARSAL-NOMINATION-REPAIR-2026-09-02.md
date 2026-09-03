@@ -190,3 +190,30 @@ Cross-project non-mutation verification immediately after the decision confirmed
 The malformed public request `AAB-REQ-50EFA5E9E4` remains `PENDING_REVIEW` with purpose `Test`. It was not used as an authority source.
 
 The next gate is a separate, deliberate server-to-server handoff. It must be validated independently and must stop before acknowledgement, activation or membership is claimed.
+
+
+## Repaired handoff sender deployment — 3 September 2026
+
+With explicit user authorization, `wa-rehearsal-provision` version 2 was deployed to the main AAB control-plane project with JWT verification enabled.
+
+Version 2:
+
+- accepts an existing controlled decision ID instead of creating another decision;
+- requires a verified user plus the PostgreSQL Platform Owner, AAL2 and `session_id` authorization gate;
+- accepts the rehearsal PDF only for SHA-256 comparison with the canonical decision;
+- requires the internal-nomination source and rejects a public-request source;
+- transmits the internal nomination ID and exact-one-source payload to the WA receiver;
+- does not log or persist the shared handoff secret or plain activation token;
+- reports separately whether document read-back, activation issuance, activation claim, document acceptance, membership and authority occurred.
+
+Deployment verification confirmed:
+
+- active function version: **2**;
+- `verify_jwt`: **true**;
+- decision remains `DECIDED`;
+- main handoff receipt remains absent;
+- matching WA handoffs: **0**;
+- matching WA activations: **0**;
+- WA workspace memberships: **0**.
+
+Deployment did not execute the handoff. The next gate requires the exact canonical rehearsal PDF and a separate deliberate AAL2 browser action.
