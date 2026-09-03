@@ -154,3 +154,39 @@ Post-migration verification confirmed:
 The Supabase advisor's generic authenticated `SECURITY DEFINER` warning is expected for these intentionally exposed, server-authorized RPC boundaries. Their authority, AAL2 and session checks are implemented inside PostgreSQL; ordinary authenticated reachability is not sufficient to act.
 
 Live validation of the v02 nomination form remains pending deployment. No nomination has been created and no handoff has been executed.
+
+
+## First controlled nomination decision — 3 September 2026
+
+The Trust Gate v02b control completed its first deliberate, AAL2-gated nomination decision:
+
+- decision ID: `1a399c1d-f626-4088-a1d8-acc583814467`;
+- correlation ID: `8d35e0b9-f2e9-4de2-b41e-658c00905108`;
+- internal nomination ID: `692b7723-47d2-451f-a6b9-9f9ac7ba2a06`;
+- decision status: `DECIDED`;
+- source: internal rehearsal nomination only;
+- public participation request source: none;
+- classification: `PERSONAL_WA_REHEARSAL`;
+- environment: `WA_CLEAN_ROOM_TEST`;
+- authority basis: `PLATFORM_OWNER_INTERNAL_TEST_NOMINATION`;
+- target: `AU-WA-STAGING` in project `kdpcfbaeklkffozryjah`;
+- document: `AAB-WA-TEST-TERMS-0001`, version `TEST-0.1`;
+- government authority: false;
+- production authority: false;
+- legal effect: `NONE_TEST_ONLY`;
+- external invitations: locked.
+
+Privacy-minimised evidence intentionally omits the nominated email and all authentication secrets.
+
+Cross-project non-mutation verification immediately after the decision confirmed:
+
+- matching WA handoffs: **0**;
+- matching WA activations: **0**;
+- activations sourced from this decision: **0**;
+- invitations arising from this unexecuted handoff: **0**;
+- main handoff completion timestamp: null;
+- main handoff receipt: null.
+
+The malformed public request `AAB-REQ-50EFA5E9E4` remains `PENDING_REVIEW` with purpose `Test`. It was not used as an authority source.
+
+The next gate is a separate, deliberate server-to-server handoff. It must be validated independently and must stop before acknowledgement, activation or membership is claimed.
