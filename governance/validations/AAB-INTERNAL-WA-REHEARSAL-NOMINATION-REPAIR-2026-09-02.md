@@ -109,3 +109,48 @@ The drop-in browser candidate is recorded under:
 - `deployment/main-control-plane/trust-gate/INSTALL.md`.
 
 The candidate supports TOTP enrolment, challenge and verification using the existing protected Supabase client. It does not expose the nomination action. Live browser enrolment and return-login challenge remain unproven until the module is uploaded and rehearsed.
+
+
+## Live Trust Gate and logout proof — 3 September 2026
+
+The original Trust Gate candidate was uploaded and rehearsed successfully:
+
+- a TOTP factor named `AAB Trust Gate` is verified;
+- the protected dashboard displayed server-confirmed `AAL2`;
+- logout cleared the browser session and redirected to `https://aab.ag/enter-aab/`;
+- return login challenged the registered factor and restored the protected dashboard;
+- no OTP, TOTP code or authenticator secret is recorded here.
+
+The shared-session logout repair is checkpointed as `deployment/main-control-plane/shared-session/aab-session.v31.js`.
+
+## Controlled nomination input hardening — 3 September 2026
+
+Applied main-control-plane migrations:
+
+- `add_aal2_internal_rehearsal_nomination_context`;
+- `server_control_internal_rehearsal_nomination_inputs`.
+
+The AAL2-only context RPC supplies the fixed WA clean-room classification, terms identity and three controlled validation purposes. The new creation RPC accepts only a nominated email and one controlled purpose code. It maps the rationale and resolves the canonical document SHA-256 on the server.
+
+Authenticated execution of the old browser-input RPC is revoked. Anonymous execution of both new RPCs is denied. Both new RPCs independently require a server-resolved Platform Owner, JWT `aal2` and a non-empty Supabase `session_id`.
+
+The Trust Gate v02 deployment candidate:
+
+- displays the nomination control only after server-confirmed AAL2;
+- removes free-form rationale;
+- does not accept a browser-supplied terms hash;
+- repeats the test-only, non-government, non-production, no-legal-effect boundary;
+- requires an explicit checkbox and browser confirmation;
+- creates a nomination decision only;
+- never automatically executes handoff, invitation, activation, membership or authority.
+
+Post-migration verification confirmed:
+
+- internal nominations remain **0**;
+- the old free-form function is not executable by `anon` or `authenticated`;
+- the v2 creation and context functions are not executable by `anon`;
+- direct nomination-table access remains unavailable to browser roles.
+
+The Supabase advisor's generic authenticated `SECURITY DEFINER` warning is expected for these intentionally exposed, server-authorized RPC boundaries. Their authority, AAL2 and session checks are implemented inside PostgreSQL; ordinary authenticated reachability is not sufficient to act.
+
+Live validation of the v02 nomination form remains pending deployment. No nomination has been created and no handoff has been executed.
