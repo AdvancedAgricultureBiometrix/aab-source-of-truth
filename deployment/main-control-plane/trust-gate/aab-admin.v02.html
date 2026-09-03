@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>AAB Platform Administration</title>
+  <link rel="stylesheet" href="../aab-theme.v22.css?v=22">
+  <link rel="stylesheet" href="../aab-shell.v22.css?v=22">
+  <link rel="stylesheet" href="../aab-navigation.v23.css?v=23">
+  <link rel="stylesheet" href="./aab-admin.css?v=01">
+  <script src="../aab-session.js?v=31" defer></script>
+  <script src="../aab-chrome.v22.js?v=2" defer></script>
+  <script src="../aab-navigation.v23.js?v=23" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+  <script src="./aab-admin.js?v=01c" defer></script>
+  <script src="./aab-admin-trust-gate.js?v=02" defer></script>
+  <script src="./aab-admin-security.js?v=01a" defer></script>
+</head>
+<body
+  data-aab-title="AAB Platform Administration"
+  data-aab-sub="Governed platform control room"
+  data-aab-toolbar="nav,home,refresh,diag,logout"
+>
+  <main class="aab-admin">
+    <section class="aa-hero">
+      <div class="aa-kicker">AAB Platform Owner</div>
+      <h1>Administration control room</h1>
+      <p class="aa-muted">Review participation, govern countries and monitor the platform. Approval and country provisioning remain separate controlled decisions.</p>
+      <div id="status" class="aa-status">Loading protected administration context…</div>
+    </section>
+    <section class="aa-grid">
+      <article class="aa-card"><div class="aa-muted">Pending decisions</div><div class="aa-stat" id="pending">—</div></article>
+      <article class="aa-card"><div class="aa-muted">Information required</div><div class="aa-stat" id="moreInfo">—</div></article>
+      <article class="aa-card"><div class="aa-muted">Approved, not provisioned</div><div class="aa-stat" id="approved">—</div></article>
+      <article class="aa-card"><div class="aa-muted">Country workspaces</div><div class="aa-stat" id="countriesCount">—</div></article>
+      <article class="aa-card aa-full"><h2>Action Centre · Participation Requests</h2><div id="requests"></div></article>
+      <article class="aa-card aa-two"><h2>Countries</h2><div id="countries"></div></article>
+      <article class="aa-card aa-two"><h2>Audit Trail</h2><div id="audit"></div></article>
+    </section>
+  </main>
+</body>
+</html>
