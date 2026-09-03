@@ -13,7 +13,7 @@
     const style = document.createElement('style');
     style.id = 'aab-trust-gate-style';
     style.textContent = `
-      .aa-trust-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,.7fr);gap:18px;align-items:start}
+      [hidden]{display:none!important}.aa-trust-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,.7fr);gap:18px;align-items:start}
       .aa-trust-panel{padding:16px;border:1px solid var(--border);border-radius:14px;background:rgba(0,0,0,.025)}
       .aa-trust-panel h3{margin:0 0 8px}.aa-trust-qr{display:block;width:min(260px,100%);height:auto;margin:12px 0;background:#fff;border:10px solid #fff;border-radius:12px}
       .aa-trust-secret{overflow-wrap:anywhere;padding:10px;border:1px solid var(--border);border-radius:10px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
@@ -38,7 +38,7 @@
       <h2>AAB Trust Gate</h2>
       <div class="aa-trust-grid">
         <section class="aa-trust-panel"><h3>Session assurance</h3><p id="trust-summary">Checking the authenticated session…</p><p class="aa-assurance" id="trust-level" data-level="unknown">Assurance: —</p><div class="aa-actions" id="trust-actions"></div><div class="aa-status" id="trust-status" role="status" aria-live="polite">No authority action is available until AAL2 is verified.</div></section>
-        <section class="aa-trust-panel" id="trust-enrolment" hidden><h3>Register an authenticator</h3><p class="aa-trust-note">Scan this QR code with a trusted authenticator app. The secret remains on this screen only and is never written to AAB records or logs.</p><img class="aa-trust-qr" id="trust-qr" alt="Authenticator enrolment QR code"><details><summary>Cannot scan the QR code?</summary><p class="aa-trust-secret" id="trust-secret"></p></details><label class="aa-controlled-field">Six-digit authenticator code<input class="aa-code" id="trust-code" inputmode="numeric" autocomplete="one-time-code" maxlength="8" pattern="[0-9]*"></label><div class="aa-actions"><button type="button" class="aa-btn primary" id="trust-verify">Verify authenticator</button><button type="button" class="aa-btn" id="trust-cancel">Cancel</button></div></section>
+        <section class="aa-trust-panel" id="trust-enrolment" hidden><h3 id="trust-factor-heading">Register an authenticator</h3><p class="aa-trust-note" id="trust-factor-instruction">Scan this QR code with a trusted authenticator app. The secret remains on this screen only and is never written to AAB records or logs.</p><img class="aa-trust-qr" id="trust-qr" alt="Authenticator enrolment QR code"><details id="trust-manual-setup"><summary>Cannot scan the QR code?</summary><p class="aa-trust-secret" id="trust-secret"></p></details><label class="aa-controlled-field">Six-digit authenticator code<input class="aa-code" id="trust-code" inputmode="numeric" autocomplete="one-time-code" maxlength="8" pattern="[0-9]*"></label><div class="aa-actions"><button type="button" class="aa-btn primary" id="trust-verify">Verify authenticator</button><button type="button" class="aa-btn" id="trust-cancel">Cancel</button></div></section>
       </div>
       <section class="aa-trust-panel" id="rehearsal-nomination" hidden><h3>Controlled WA internal rehearsal nomination</h3><p class="aa-trust-note">This creates a test-only nomination and provisioning decision. It cannot approve a public country request and does not execute handoff, invitation, activation, membership or authority.</p><div class="aa-boundary" id="rehearsal-boundary">Loading the server-controlled boundary…</div><label class="aa-controlled-field">Nominated rehearsal account email<input class="aa-controlled-input" id="rehearsal-email" type="email" inputmode="email" autocomplete="off" spellcheck="false"></label><label class="aa-controlled-field">Controlled validation purpose<select class="aa-controlled-select" id="rehearsal-purpose"><option value="">Select one controlled purpose</option></select></label><label class="aa-controlled-check"><input id="rehearsal-confirm" type="checkbox"><span>I confirm this is an isolated WA clean-room test: non-government, non-production, no legal effect, and no external invitations.</span></label><div class="aa-actions"><button type="button" class="aa-btn primary" id="rehearsal-create" disabled>Create nomination decision only</button></div><div class="aa-status aa-result" id="rehearsal-status" role="status" aria-live="polite">A separate deliberate action will still be required before any handoff.</div></section>
     `;
@@ -112,7 +112,7 @@
     for (const factor of existing.data?.all || []) if (factor.factor_type === 'totp' && factor.status === 'unverified') await client.auth.mfa.unenroll({ factorId: factor.id });
     const { data, error } = await client.auth.mfa.enroll({ factorType: 'totp', friendlyName: 'AAB Trust Gate' });
     if (error) throw error;
-    factorId = data.id; challengeId = null; $('trust-qr').hidden = false; $('trust-qr').src = data.totp.qr_code; $('trust-secret').textContent = data.totp.secret; $('trust-enrolment').hidden = false; $('trust-code').value = ''; $('trust-code').focus(); status('Scan the QR code, then enter the newest authenticator code.');
+    factorId = data.id; challengeId = null; $('trust-factor-heading').textContent = 'Register an authenticator'; $('trust-factor-instruction').textContent = 'Scan this QR code with a trusted authenticator app. The secret remains on this screen only and is never written to AAB records or logs.'; $('trust-qr').hidden = false; $('trust-qr').src = data.totp.qr_code; $('trust-manual-setup').hidden = false; $('trust-secret').textContent = data.totp.secret; $('trust-enrolment').hidden = false; $('trust-code').value = ''; $('trust-code').focus(); status('Scan the QR code, then enter the newest authenticator code.');
   }
 
   async function challengeExisting() {
@@ -120,7 +120,7 @@
     if (error) throw error;
     const factor = (data?.totp || []).find((item) => item.status === 'verified') || (data?.totp || [])[0];
     if (!factor) throw new Error('No verified authenticator is available.');
-    factorId = factor.id; challengeId = null; $('trust-qr').removeAttribute('src'); $('trust-qr').hidden = true; $('trust-secret').textContent = 'Existing registered authenticator'; $('trust-enrolment').hidden = false; $('trust-code').value = ''; $('trust-code').focus(); status('Enter the newest code from the registered authenticator.');
+    factorId = factor.id; challengeId = null; $('trust-factor-heading').textContent = 'Verify registered authenticator'; $('trust-factor-instruction').textContent = 'Open the authenticator app already registered to this account and enter its newest six-digit code.'; $('trust-qr').removeAttribute('src'); $('trust-qr').hidden = true; $('trust-manual-setup').hidden = true; $('trust-secret').textContent = ''; $('trust-enrolment').hidden = false; $('trust-code').value = ''; $('trust-code').focus(); status('Enter the newest code from the registered authenticator.');
   }
 
   async function verify() {
