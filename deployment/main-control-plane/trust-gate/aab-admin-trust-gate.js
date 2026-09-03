@@ -17,7 +17,8 @@
       .aa-trust-panel{padding:16px;border:1px solid var(--border);border-radius:14px;background:rgba(0,0,0,.025)}
       .aa-trust-panel h3{margin:0 0 8px}.aa-trust-qr{display:block;width:min(260px,100%);height:auto;margin:12px 0;background:#fff;border:10px solid #fff;border-radius:12px}
       .aa-trust-secret{overflow-wrap:anywhere;padding:10px;border:1px solid var(--border);border-radius:10px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
-      .aa-code,.aa-controlled-input,.aa-controlled-select{width:100%;box-sizing:border-box;padding:11px;border:1px solid var(--border);border-radius:11px;background:var(--panel);color:inherit;font:inherit}
+      .aa-code,.aa-controlled-input,.aa-controlled-select{width:100%;box-sizing:border-box;padding:11px;border:1px solid var(--border);border-radius:11px;background:#101418;color:#f7f4ec;font:inherit}
+      .aa-controlled-select{color-scheme:dark}.aa-controlled-select option{background:#101418;color:#f7f4ec}
       .aa-code{max-width:260px;letter-spacing:.16em}.aa-controlled-field{display:grid;gap:7px;margin:12px 0}.aa-controlled-check{display:flex;gap:10px;align-items:flex-start;margin:14px 0;line-height:1.45}.aa-controlled-check input{margin-top:.25em}
       .aa-boundary{padding:12px;border:1px solid var(--border);border-radius:11px;line-height:1.5}.aa-boundary strong{display:block;margin-bottom:4px}.aa-result{overflow-wrap:anywhere}
       .aa-assurance{font-weight:800}.aa-assurance[data-level=aal2]{color:#1f8f68}.aa-assurance[data-level=aal1]{color:#b7791f}.aa-trust-note{font-size:13px;line-height:1.5;color:var(--muted)}
