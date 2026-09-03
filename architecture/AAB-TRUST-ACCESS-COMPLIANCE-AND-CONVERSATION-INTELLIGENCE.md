@@ -68,6 +68,19 @@ Authentication, membership, authority and action approval remain separate facts.
 - AAB must never build its own cryptographic authenticator protocol.
 - Recovery for privileged accounts must not rely on email alone.
 
+## Versioned legal and policy acknowledgements
+
+Country activation and user onboarding require two separate, version-controlled obligations:
+
+- the Country Head must accept the current AAB platform terms before a country can become operational; and
+- each country may publish its own authorised local terms, privacy notices, acceptable-use rules or institutional conditions for its users.
+
+Local documents remain country-governed and must not silently replace or weaken the AAB platform terms. Each published version requires a document identifier, scope, jurisdiction, language, SHA-256 hash, publisher authority, effective date, superseded-version link and retention status. A user's receipt must bind the exact version and hash to the actor, country, role, timestamp, session assurance and correlation ID.
+
+Materially changed mandatory terms place affected access behind a renewed acknowledgement gate. Declining or failing to acknowledge must fail closed without falsely recording acceptance. The interface may summarize obligations, but the complete authoritative document must be available before commitment. Rehearsal acknowledgements remain explicitly `TEST_ONLY` and `NO_LEGAL_EFFECT`; they can never satisfy production legal gates.
+
+Uploaded country documents require malware/type validation, private country-scoped storage, authorised publication, immutable version history and privacy-minimised audit. Platform Owners may monitor publication health and security signals without automatically gaining access to country content or membership.
+
 ## Privacy-minimised audit contract
 
 Every consequential event should record only the information required to prove the governed sequence:
@@ -195,4 +208,3 @@ Country messages and derived interpretations remain country-local. They do not l
 ## Capability-state warning
 
 This record establishes the approved direction. It does not prove that MFA, messaging, screenshot processing, self-audit or conversation intelligence is implemented, populated, rehearsal-tested or authorised for live operation.
-
