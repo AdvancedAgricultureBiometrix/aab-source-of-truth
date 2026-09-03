@@ -11,7 +11,7 @@ Upload it beside `aab-admin.js` in the protected Platform Administration directo
 Add this deferred script after `aab-admin.js` and before `aab-admin-security.js`:
 
 ```html
-<script src="./aab-admin-trust-gate.js?v=02a" defer></script>
+<script src="./aab-admin-trust-gate.js?v=02b" defer></script>
 ```
 
 ## Boundary
