@@ -10,7 +10,7 @@
 
 Prove that the protected canonical AAB template can be independently exported, restored into a fresh Supabase project, and recovered as a **structurally complete, scientifically clean** AAB environment without inheriting country-specific scientific/test data or personal actor data.
 
-## Backup artifacts used
+## Final private recovery artifacts
 
 ### AAB-only schema
 
@@ -20,9 +20,13 @@ Prove that the protected canonical AAB template can be independently exported, r
 
 ### Dependency-complete baseline/reference data
 
+The final V2 custom-format dump was regenerated directly from canonical after the restore proof so that the permanent private archive contained an untouched PostgreSQL binary dump. It was validated with `pg_restore --list` as PostgreSQL CUSTOM format, gzip compressed, dumped from PostgreSQL 17.6 by pg_dump 17.11.
+
 - File: `AAB-CANONICAL-BASELINE-DATA-V2.dump`
 - Size: `33,100 bytes`
-- SHA-256: `682EDC6F97F820741F6FE2841CCD3D692C8C742934EF412629AB3E4698F8CC16`
+- Final SHA-256: `9E3AC872122E096BBF0EE066D2FF7370C7B728AA71ABFB705E5BEDCBC97F705A`
+
+The earlier V2 dump used during the successful restore proof had SHA-256 `682EDC6F97F820741F6FE2841CCD3D692C8C742934EF412629AB3E4698F8CC16`. It represented the same dependency-complete baseline selection but is superseded as the permanent private archive artifact by the regenerated V2 file above.
 
 ### Required system actor seed
 
@@ -33,6 +37,17 @@ The baseline requires the non-personal system actor:
 - external subject: `aab-system:country-bootstrap-scan`
 
 The personal user actor present in canonical was deliberately excluded from the recovery package.
+
+## Final recovery ZIP and off-machine verification
+
+The permanent recovery package is:
+
+- File: `AAB-CANONICAL-CLEAN-BASELINE-RESTORE-PROVEN-2026-09-12.zip`
+- SHA-256: `58689D36FA6A91542F3A5AA74D65D5DB9C0F63F4DF997C415DEF97AB5724D3C7`
+
+The ZIP was inspected after creation: its archive structure was valid and the hashes recorded in its internal `SHA256SUMS.txt` matched the contained files. The archive was then uploaded to the private AAB Dropbox account, downloaded back to the local computer, and SHA-256 recalculated. The downloaded copy returned the same SHA-256 above, demonstrating that the off-machine Dropbox copy is byte-for-byte identical to the verified final archive.
+
+The private archive contains no passwords, API keys, service-role keys, Supabase JWTs or database credentials.
 
 ## Infrastructure prerequisite discovered during restore
 
@@ -145,7 +160,7 @@ The V2 package corrected this by including only the minimal non-personal system 
 
 ## Final determination
 
-The canonical AAB template has now been independently demonstrated to be recoverable into a fresh Supabase environment as:
+The canonical AAB template has been independently demonstrated to be recoverable into a fresh Supabase environment as:
 
 > **STRUCTURALLY COMPLETE, SCIENTIFICALLY CLEAN**
 
@@ -155,10 +170,11 @@ The recovery proof covers:
 - AAB tables, views and routines;
 - approved baseline/reference content;
 - required non-personal system dependencies;
-- scientific-cleanliness assertions; and
-- the `pg_cron` infrastructure prerequisite.
+- scientific-cleanliness assertions;
+- the `pg_cron` infrastructure prerequisite; and
+- integrity verification of the final off-machine private recovery archive.
 
-Accordingly, the baseline represented by the recorded artifacts may be classified:
+Accordingly, the baseline represented by the recorded artifacts is classified:
 
 > **AAB CANONICAL CLEAN BASELINE — RESTORE PROVEN**
 
