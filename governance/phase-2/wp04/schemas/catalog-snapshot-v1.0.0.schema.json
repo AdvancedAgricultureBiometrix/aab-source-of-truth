@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aab.example/schemas/catalog-snapshot-v1.0.0",
+  "title": "AAB PostgreSQL security catalogue snapshot",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "environment_id",
+    "baseline_reference",
+    "collector_version",
+    "collected_at",
+    "correlation_id",
+    "functions"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "environment_id": {
+      "type": "string"
+    },
+    "baseline_reference": {
+      "type": "string"
+    },
+    "collector_version": {
+      "const": "1.0.0"
+    },
+    "collected_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "correlation_id": {
+      "type": "string"
+    },
+    "functions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "identity",
+          "owner",
+          "security_mode",
+          "definition_md5",
+          "schema_roles_with_usage",
+          "execute_roles"
+        ],
+        "properties": {
+          "identity": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "string"
+          },
+          "security_mode": {
+            "enum": [
+              "DEFINER",
+              "INVOKER"
+            ]
+          },
+          "definition_md5": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{32}$"
+          },
+          "schema_roles_with_usage": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "execute_roles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}
