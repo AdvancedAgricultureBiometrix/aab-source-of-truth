@@ -402,5 +402,11 @@
   "integrity": {
     "algorithm": "SHA-256",
     "payload_sha256": "1011f23ab60d20cbfe220bee0c70fc812a289a8d3bf6d61b0e9d7031e7de3ba3"
+  },
+  "signature": {
+    "algorithm": "Ed25519",
+    "key_id": "PH2-WP04-TEST-EVIDENCE-20260915",
+    "signed_field": "integrity.payload_sha256",
+    "signature_base64": "lq41zd6UQGevoZMeRl9oJRbpNod3QTbhOPxqdO5aK3Aq2a1zDbrrFXtkTo/eX68jXWBhLvTKzcDhsyPbNqQtBA=="
   }
 }
