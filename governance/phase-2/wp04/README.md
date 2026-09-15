@@ -8,6 +8,8 @@ Specifications and executable machinery live under `contracts/`, `schemas/`, `co
 
 Protected country scientific data, secret values, and credentials are prohibited from fixtures and evidence. `PH2-COM-AUTO-02` permits only test definitions, software improvements, and non-protected qualification evidence to return to canonical AAB.
 
+Comparison evidence is integrity-hashed and signed with Ed25519. WP04 uses the published test-evidence public key solely to prove the signing pipeline; a country-qualified deployment must replace it with a country-controlled verification key. The private test key was ephemeral and is not retained in the repository.
+
 ## Preserved states
 
 - `PH2-SEC-CC-RLS-ADVISORY-01`: OPEN / design baseline preserved; no RLS change in WP04.
