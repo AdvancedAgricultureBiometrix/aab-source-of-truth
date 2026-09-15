@@ -1,0 +1,398 @@
+{
+  "schema_version": "1.0.0",
+  "environment_id": "restore-test",
+  "baseline_reference": "main/PH2-WP03-accepted",
+  "collector_version": "1.0.0",
+  "collected_at": "2026-09-15T12:04:51.242446+00:00",
+  "correlation_id": "WP04-POST-20260915",
+  "functions": [
+    {
+      "identity": "public.aab_accept_invitation(p_invitation_token text)",
+      "owner": "postgres",
+      "security_mode": "DEFINER",
+      "definition_md5": "a82de4d0dec81e87a79f0edf7905f277",
+      "schema_roles_with_usage": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "execute_roles": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ]
+    },
+    {
+      "identity": "public.aab_accept_legal_document(p_document_version_id uuid, p_acceptance_statement text)",
+      "owner": "postgres",
+      "security_mode": "DEFINER",
+      "definition_md5": "33627e29af095b0d77340e3d0a2db03b",
+      "schema_roles_with_usage": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "execute_roles": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ]
+    },
+    {
+      "identity": "public.aab_admin_dashboard_snapshot()",
+      "owner": "postgres",
+      "security_mode": "DEFINER",
+      "definition_md5": "9eb4720537dae303dea583f1729c0f67",
+      "schema_roles_with_usage": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "execute_roles": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ]
+    },
+    {
+      "identity": "public.aab_admin_review_participation_request(p_request_id uuid, p_decision text, p_rationale text)",
+      "owner": "postgres",
+      "security_mode": "DEFINER",
+      "definition_md5": "002cf2343c6020fa4d8e34cc4656e257",
+      "schema_roles_with_usage": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "execute_roles": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ]
+    },
+    {
+      "identity": "public.aab_admin_review_security_alert(p_alert_id uuid, p_status text, p_rationale text)",
+      "owner": "postgres",
+      "security_mode": "DEFINER",
+      "definition_md5": "98c7a54786e1485ec8ecfffdf13a7f49",
+      "schema_roles_with_usage": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "execute_roles": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ]
+    },
+    {
+      "identity": "public.aab_admin_run_security_brain()",
+      "owner": "postgres",
+      "security_mode": "DEFINER",
+      "definition_md5": "58d5094abb9119d0c729f15eb0cd9952",
+      "schema_roles_with_usage": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "execute_roles": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ]
+    },
+    {
+      "identity": "public.aab_admin_security_snapshot()",
+      "owner": "postgres",
+      "security_mode": "DEFINER",
+      "definition_md5": "5ddae642eb242aa86b90da730edc4e05",
+      "schema_roles_with_usage": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "execute_roles": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ]
+    },
+    {
+      "identity": "public.aab_authorize_internal_wa_rehearsal_handoff(p_decision_id uuid)",
+      "owner": "postgres",
+      "security_mode": "DEFINER",
+      "definition_md5": "f5242afacf7932a35ec09a7be39e34da",
+      "schema_roles_with_usage": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "execute_roles": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ]
+    },
+    {
+      "identity": "public.aab_claim_country_activation(p_activation_code text, p_workspace_name text, p_default_language text, p_timezone_name text)",
+      "owner": "postgres",
+      "security_mode": "DEFINER",
+      "definition_md5": "cfd61e66dfbdb12fe15abbd3c7d1b052",
+      "schema_roles_with_usage": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "execute_roles": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ]
+    },
+    {
+      "identity": "public.aab_complete_rehearsal_handoff(p_decision_id uuid, p_receipt jsonb)",
+      "owner": "postgres",
+      "security_mode": "DEFINER",
+      "definition_md5": "ce188c08b1f7b9c6b30511fc0c626132",
+      "schema_roles_with_usage": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "execute_roles": [
+        "postgres",
+        "service_role"
+      ]
+    },
+    {
+      "identity": "public.aab_create_internal_wa_rehearsal_nomination(p_nominated_email text, p_document_sha256 text, p_rationale text)",
+      "owner": "postgres",
+      "security_mode": "DEFINER",
+      "definition_md5": "42f665c2cfd4a4f72212b15d226b5e64",
+      "schema_roles_with_usage": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "execute_roles": [
+        "postgres",
+        "service_role"
+      ]
+    },
+    {
+      "identity": "public.aab_create_internal_wa_rehearsal_nomination_v2(p_nominated_email text, p_purpose_code text)",
+      "owner": "postgres",
+      "security_mode": "DEFINER",
+      "definition_md5": "c5f2eddee32653e8ab18e61c46ad0b6a",
+      "schema_roles_with_usage": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "execute_roles": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ]
+    },
+    {
+      "identity": "public.aab_create_personal_wa_rehearsal_decision(p_request_id uuid, p_nominated_email text, p_document_sha256 text, p_rationale text)",
+      "owner": "postgres",
+      "security_mode": "DEFINER",
+      "definition_md5": "8f2a27d143b5507a2008ac76dceabd17",
+      "schema_roles_with_usage": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "execute_roles": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ]
+    },
+    {
+      "identity": "public.aab_finalize_country_activation(p_activation_code text)",
+      "owner": "postgres",
+      "security_mode": "DEFINER",
+      "definition_md5": "2b2598fb68ba3093f8c667d6f9bf0b41",
+      "schema_roles_with_usage": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "execute_roles": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ]
+    },
+    {
+      "identity": "public.aab_finalize_invited_membership()",
+      "owner": "postgres",
+      "security_mode": "DEFINER",
+      "definition_md5": "6b4ebafbe0162d5cffce3778c7628c96",
+      "schema_roles_with_usage": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "execute_roles": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ]
+    },
+    {
+      "identity": "public.aab_get_rehearsal_handoff_payload(p_decision_id uuid)",
+      "owner": "postgres",
+      "security_mode": "DEFINER",
+      "definition_md5": "b8c14512b8c30335cc241f3d4a91edc3",
+      "schema_roles_with_usage": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "execute_roles": [
+        "postgres",
+        "service_role"
+      ]
+    },
+    {
+      "identity": "public.aab_internal_wa_rehearsal_nomination_context()",
+      "owner": "postgres",
+      "security_mode": "DEFINER",
+      "definition_md5": "4c18f448f51a1b3f47ce2976d8002a8f",
+      "schema_roles_with_usage": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "execute_roles": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ]
+    },
+    {
+      "identity": "public.aab_issue_country_invitation(p_country_workspace_id uuid, p_organization_id uuid, p_invitee_name text, p_invite_email text, p_official_position text, p_proposed_role text, p_plain_token text, p_expires_at timestamp with time zone)",
+      "owner": "postgres",
+      "security_mode": "DEFINER",
+      "definition_md5": "f7ee8728e45e5ed28c23466e6a91754f",
+      "schema_roles_with_usage": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "execute_roles": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ]
+    },
+    {
+      "identity": "public.aab_legal_onboarding_state()",
+      "owner": "postgres",
+      "security_mode": "DEFINER",
+      "definition_md5": "0e957012ef880dda59177c632444a8ca",
+      "schema_roles_with_usage": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "execute_roles": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ]
+    },
+    {
+      "identity": "public.aab_publish_country_terms(p_country_workspace_id uuid, p_title text, p_version_label text, p_language_code text, p_storage_bucket text, p_storage_path text, p_document_sha256 text, p_effective_at timestamp with time zone, p_certification_statement text, p_material_change boolean)",
+      "owner": "postgres",
+      "security_mode": "DEFINER",
+      "definition_md5": "8367774625f05c8902dc20212c1a2018",
+      "schema_roles_with_usage": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "execute_roles": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ]
+    },
+    {
+      "identity": "public.aab_resolve_entry()",
+      "owner": "postgres",
+      "security_mode": "DEFINER",
+      "definition_md5": "6c8181607b14a946cced64857207410a",
+      "schema_roles_with_usage": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "execute_roles": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ]
+    },
+    {
+      "identity": "public.aab_save_onboarding_profile(p_full_name text, p_official_position text, p_institution_name text)",
+      "owner": "postgres",
+      "security_mode": "DEFINER",
+      "definition_md5": "740bdd6c51da5b8c3ed3dce0c6eca6a1",
+      "schema_roles_with_usage": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "execute_roles": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ]
+    },
+    {
+      "identity": "public.aab_submit_country_participation_request(p_request jsonb)",
+      "owner": "postgres",
+      "security_mode": "DEFINER",
+      "definition_md5": "a0fdc5c71ee8dd373457f187f80bdda3",
+      "schema_roles_with_usage": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "execute_roles": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ]
+    }
+  ]
+}
