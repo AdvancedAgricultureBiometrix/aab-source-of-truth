@@ -1,0 +1,65 @@
+{
+  "version": "1.0.0",
+  "scope": "catalogue metadata only; no table content or secret values",
+  "before": {
+    "canonical": {
+      "captured_at": "2026-09-15T12:02:18.855414+00:00",
+      "function_catalog_hash": "4f1a168ba353a427b02e434d6849d576",
+      "relation_acl_rls_hash": "749e59102f995d92ef20f22873d3cd3d",
+      "column_shape_hash": "170798252d7c30887ac75b70c5580222",
+      "policy_hash": "d41d8cd98f00b204e9800998ecf8427e",
+      "relation_count": 58
+    },
+    "restore-test": {
+      "captured_at": "2026-09-15T12:02:36.220685+00:00",
+      "function_catalog_hash": "1fcd99bcd1ea5c56e1fde3be81aab801",
+      "relation_acl_rls_hash": "ac29d410d1ac18ed7c1a171e6fe4b849",
+      "column_shape_hash": "170798252d7c30887ac75b70c5580222",
+      "policy_hash": "d41d8cd98f00b204e9800998ecf8427e",
+      "relation_count": 58
+    },
+    "WA": {
+      "captured_at": "2026-09-15T12:02:54.764891+00:00",
+      "function_catalog_hash": "77f5d4afb9bcac6aa7937d94a370149d",
+      "relation_acl_rls_hash": "a0cd4add39dab63e51c2a6b4430352fa",
+      "column_shape_hash": "aa90efb1d2ffe752971c080bc6805054",
+      "policy_hash": "d41d8cd98f00b204e9800998ecf8427e",
+      "relation_count": 84
+    }
+  },
+  "after": {
+    "canonical": {
+      "captured_at": "2026-09-15T12:05:44.887504+00:00",
+      "function_catalog_hash": "4f1a168ba353a427b02e434d6849d576",
+      "function_definition_hash": "7fc2f335a4853bab54503abc17e2d213",
+      "relation_acl_rls_hash": "749e59102f995d92ef20f22873d3cd3d",
+      "column_shape_hash": "170798252d7c30887ac75b70c5580222",
+      "policy_hash": "d41d8cd98f00b204e9800998ecf8427e",
+      "relation_count": 58
+    },
+    "restore-test": {
+      "captured_at": "2026-09-15T12:06:02.140271+00:00",
+      "function_catalog_hash": "cbaa54a99c0a66b068d5e6ad1be97494",
+      "function_definition_hash": "7fc2f335a4853bab54503abc17e2d213",
+      "relation_acl_rls_hash": "ac29d410d1ac18ed7c1a171e6fe4b849",
+      "column_shape_hash": "170798252d7c30887ac75b70c5580222",
+      "policy_hash": "d41d8cd98f00b204e9800998ecf8427e",
+      "relation_count": 58
+    },
+    "WA": {
+      "captured_at": "2026-09-15T12:06:19.925344+00:00",
+      "function_catalog_hash": "77f5d4afb9bcac6aa7937d94a370149d",
+      "function_definition_hash": "076a9d95d5c4c1d36857e4efbe66d3d6",
+      "relation_acl_rls_hash": "a0cd4add39dab63e51c2a6b4430352fa",
+      "column_shape_hash": "aa90efb1d2ffe752971c080bc6805054",
+      "policy_hash": "d41d8cd98f00b204e9800998ecf8427e",
+      "relation_count": 84
+    }
+  },
+  "assertions": [
+    "canonical hashes unchanged for function catalogue, relation ACL/RLS, columns, policies and relation count",
+    "WA hashes unchanged for function catalogue, relation ACL/RLS, columns, policies and relation count",
+    "restore-test relation ACL/RLS, columns, policies and relation count unchanged",
+    "restore-test function definitions for all 23 target RPCs match before, after and canonical; only ACL changed"
+  ]
+}
