@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aab.example/schemas/evidence-package-v1.0.0",
+  "title": "AAB qualification evidence package",
+  "type": "object",
+  "required": [
+    "evidence_schema_version",
+    "contract_version",
+    "environment_id",
+    "baseline_reference",
+    "collector_version",
+    "comparator_version",
+    "generated_at",
+    "correlation_id",
+    "result",
+    "mismatches",
+    "integrity"
+  ],
+  "properties": {
+    "evidence_schema_version": {
+      "const": "1.0.0"
+    },
+    "contract_version": {
+      "const": "1.0.0"
+    },
+    "result": {
+      "enum": [
+        "TECHNICAL VERIFICATION SATISFIED",
+        "TECHNICAL VERIFICATION NOT SATISFIED",
+        "EVIDENCE REQUIRED"
+      ]
+    },
+    "mismatches": {
+      "type": "array"
+    },
+    "integrity": {
+      "type": "object",
+      "required": [
+        "algorithm",
+        "payload_sha256"
+      ],
+      "properties": {
+        "algorithm": {
+          "const": "SHA-256"
+        },
+        "payload_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    }
+  }
+}
