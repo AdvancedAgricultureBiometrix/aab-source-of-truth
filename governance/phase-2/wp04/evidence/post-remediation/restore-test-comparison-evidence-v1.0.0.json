@@ -1,0 +1,23 @@
+{
+  "evidence_schema_version": "1.0.0",
+  "contract_version": "1.0.0",
+  "environment_id": "restore-test",
+  "baseline_reference": "main/PH2-WP03-accepted",
+  "collector_version": "1.0.0",
+  "comparator_version": "1.0.0",
+  "generated_at": "2026-09-15T12:07:22.292307+00:00",
+  "correlation_id": "WP04-POST-20260915",
+  "result": "TECHNICAL VERIFICATION SATISFIED",
+  "mismatch_count": 0,
+  "mismatches": [],
+  "integrity": {
+    "algorithm": "SHA-256",
+    "payload_sha256": "198d7c79bcdb47e1358b3966031c13700f84936dc246be35061b8ebb643804d4"
+  },
+  "signature": {
+    "algorithm": "Ed25519",
+    "key_id": "PH2-WP04-TEST-EVIDENCE-20260915",
+    "signed_field": "integrity.payload_sha256",
+    "signature_base64": "cVkahy40kTHIt/rGyKjs58gZ6azN8iXKezw7Xa9F6tLlQFPx8+n5meMJ/Q5tIapCelCIhFHiRUMYwIYQiqGzDQ=="
+  }
+}

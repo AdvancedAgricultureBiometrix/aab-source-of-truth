@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "contract_id": "AAB-SEC-COM",
+  "version": "1.0.0",
+  "status": "PH2-WP04-controlled-implementation",
+  "principles": [
+    "AAB defines the requirements; infrastructure must qualify against AAB.",
+    "Automate verification, not approval.",
+    "Protected country scientific information and derivatives must not return to canonical AAB."
+  ],
+  "technical_outcomes": [
+    "TECHNICAL VERIFICATION SATISFIED",
+    "TECHNICAL VERIFICATION NOT SATISFIED",
+    "EVIDENCE REQUIRED"
+  ],
+  "prohibited_outcomes": [
+    "PRODUCTION AUTHORISED"
+  ],
+  "mandatory_evaluation": {
+    "aggregation": "non-compensating",
+    "missing_or_corrupt_evidence": "EVIDENCE REQUIRED",
+    "failed_mandatory_control": "TECHNICAL VERIFICATION NOT SATISFIED"
+  },
+  "authority_path": [
+    "caller",
+    "identity/session",
+    "API/schema privilege",
+    "RPC/service boundary",
+    "persisted actor",
+    "country membership",
+    "institution membership where applicable",
+    "capability",
+    "table/domain operation",
+    "audit evidence"
+  ],
+  "controls": [
+    {
+      "id": "PH2-SEC-RESTORE-FUNCTION-GRANT-01",
+      "mandatory": true,
+      "precondition": "catalogues collected from canonical and reconstructed environment",
+      "action": "compare exact RPC identities, properties and execute roles",
+      "expected": "all canonical-invariant RPC grants match",
+      "prohibited": "unexpected PUBLIC, anon, authenticated or service_role execution",
+      "evidence": "signed/versioned catalogue and comparison packages",
+      "failure": "TECHNICAL VERIFICATION NOT SATISFIED",
+      "verification": [
+        "AUTO"
+      ]
+    },
+    {
+      "id": "PH2-SEC-RPC-AUTHORITY-REGRESSION-01",
+      "mandatory": true,
+      "precondition": "isolated synthetic test identities",
+      "action": "exercise positive and negative authority paths",
+      "expected": "persisted actor/country/institution/capability checks fail closed",
+      "prohibited": "caller-supplied authority elevation or revoked/cross-country success",
+      "evidence": "redacted test transcript and hashes",
+      "failure": "TECHNICAL VERIFICATION NOT SATISFIED",
+      "verification": [
+        "AUTO",
+        "AUTO + HUMAN"
+      ]
+    },
+    {
+      "id": "PH2-SEC-CC-RLS-ADVISORY-01",
+      "mandatory": true,
+      "precondition": "RLS class and boundary evidence available",
+      "action": "verify schema, table, view and RPC reachability",
+      "expected": "documented RLS or verified non-RLS server boundary",
+      "prohibited": "unexplained client-reachable non-RLS table",
+      "evidence": "catalogue snapshot and authority trace",
+      "failure": "EVIDENCE REQUIRED or TECHNICAL VERIFICATION NOT SATISFIED",
+      "verification": [
+        "AUTO",
+        "AUTO + HUMAN"
+      ]
+    }
+  ]
+}

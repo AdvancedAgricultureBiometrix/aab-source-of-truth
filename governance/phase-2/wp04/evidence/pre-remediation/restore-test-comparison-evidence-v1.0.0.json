@@ -1,0 +1,412 @@
+{
+  "evidence_schema_version": "1.0.0",
+  "contract_version": "1.0.0",
+  "environment_id": "restore-test",
+  "baseline_reference": "main/PH2-WP03-accepted",
+  "collector_version": "1.0.0",
+  "comparator_version": "1.0.0",
+  "generated_at": "2026-09-15T12:07:22.162158+00:00",
+  "correlation_id": "WP04-PRE-20260915",
+  "result": "TECHNICAL VERIFICATION NOT SATISFIED",
+  "mismatch_count": 23,
+  "mismatches": [
+    {
+      "identity": "public.aab_accept_invitation(p_invitation_token text)",
+      "kind": "FIELD_MISMATCH",
+      "field": "execute_roles",
+      "expected": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "observed": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "classification": "CANONICAL_INVARIANT"
+    },
+    {
+      "identity": "public.aab_accept_legal_document(p_document_version_id uuid, p_acceptance_statement text)",
+      "kind": "FIELD_MISMATCH",
+      "field": "execute_roles",
+      "expected": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "observed": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "classification": "CANONICAL_INVARIANT"
+    },
+    {
+      "identity": "public.aab_admin_dashboard_snapshot()",
+      "kind": "FIELD_MISMATCH",
+      "field": "execute_roles",
+      "expected": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "observed": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "classification": "CANONICAL_INVARIANT"
+    },
+    {
+      "identity": "public.aab_admin_review_participation_request(p_request_id uuid, p_decision text, p_rationale text)",
+      "kind": "FIELD_MISMATCH",
+      "field": "execute_roles",
+      "expected": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "observed": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "classification": "CANONICAL_INVARIANT"
+    },
+    {
+      "identity": "public.aab_admin_review_security_alert(p_alert_id uuid, p_status text, p_rationale text)",
+      "kind": "FIELD_MISMATCH",
+      "field": "execute_roles",
+      "expected": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "observed": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "classification": "CANONICAL_INVARIANT"
+    },
+    {
+      "identity": "public.aab_admin_run_security_brain()",
+      "kind": "FIELD_MISMATCH",
+      "field": "execute_roles",
+      "expected": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "observed": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "classification": "CANONICAL_INVARIANT"
+    },
+    {
+      "identity": "public.aab_admin_security_snapshot()",
+      "kind": "FIELD_MISMATCH",
+      "field": "execute_roles",
+      "expected": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "observed": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "classification": "CANONICAL_INVARIANT"
+    },
+    {
+      "identity": "public.aab_authorize_internal_wa_rehearsal_handoff(p_decision_id uuid)",
+      "kind": "FIELD_MISMATCH",
+      "field": "execute_roles",
+      "expected": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "observed": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "classification": "CANONICAL_INVARIANT"
+    },
+    {
+      "identity": "public.aab_claim_country_activation(p_activation_code text, p_workspace_name text, p_default_language text, p_timezone_name text)",
+      "kind": "FIELD_MISMATCH",
+      "field": "execute_roles",
+      "expected": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "observed": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "classification": "CANONICAL_INVARIANT"
+    },
+    {
+      "identity": "public.aab_complete_rehearsal_handoff(p_decision_id uuid, p_receipt jsonb)",
+      "kind": "FIELD_MISMATCH",
+      "field": "execute_roles",
+      "expected": [
+        "postgres",
+        "service_role"
+      ],
+      "observed": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "classification": "CANONICAL_INVARIANT"
+    },
+    {
+      "identity": "public.aab_create_internal_wa_rehearsal_nomination(p_nominated_email text, p_document_sha256 text, p_rationale text)",
+      "kind": "FIELD_MISMATCH",
+      "field": "execute_roles",
+      "expected": [
+        "postgres",
+        "service_role"
+      ],
+      "observed": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "classification": "CANONICAL_INVARIANT"
+    },
+    {
+      "identity": "public.aab_create_internal_wa_rehearsal_nomination_v2(p_nominated_email text, p_purpose_code text)",
+      "kind": "FIELD_MISMATCH",
+      "field": "execute_roles",
+      "expected": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "observed": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "classification": "CANONICAL_INVARIANT"
+    },
+    {
+      "identity": "public.aab_create_personal_wa_rehearsal_decision(p_request_id uuid, p_nominated_email text, p_document_sha256 text, p_rationale text)",
+      "kind": "FIELD_MISMATCH",
+      "field": "execute_roles",
+      "expected": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "observed": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "classification": "CANONICAL_INVARIANT"
+    },
+    {
+      "identity": "public.aab_finalize_country_activation(p_activation_code text)",
+      "kind": "FIELD_MISMATCH",
+      "field": "execute_roles",
+      "expected": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "observed": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "classification": "CANONICAL_INVARIANT"
+    },
+    {
+      "identity": "public.aab_finalize_invited_membership()",
+      "kind": "FIELD_MISMATCH",
+      "field": "execute_roles",
+      "expected": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "observed": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "classification": "CANONICAL_INVARIANT"
+    },
+    {
+      "identity": "public.aab_get_rehearsal_handoff_payload(p_decision_id uuid)",
+      "kind": "FIELD_MISMATCH",
+      "field": "execute_roles",
+      "expected": [
+        "postgres",
+        "service_role"
+      ],
+      "observed": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "classification": "CANONICAL_INVARIANT"
+    },
+    {
+      "identity": "public.aab_internal_wa_rehearsal_nomination_context()",
+      "kind": "FIELD_MISMATCH",
+      "field": "execute_roles",
+      "expected": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "observed": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "classification": "CANONICAL_INVARIANT"
+    },
+    {
+      "identity": "public.aab_issue_country_invitation(p_country_workspace_id uuid, p_organization_id uuid, p_invitee_name text, p_invite_email text, p_official_position text, p_proposed_role text, p_plain_token text, p_expires_at timestamp with time zone)",
+      "kind": "FIELD_MISMATCH",
+      "field": "execute_roles",
+      "expected": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "observed": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "classification": "CANONICAL_INVARIANT"
+    },
+    {
+      "identity": "public.aab_legal_onboarding_state()",
+      "kind": "FIELD_MISMATCH",
+      "field": "execute_roles",
+      "expected": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "observed": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "classification": "CANONICAL_INVARIANT"
+    },
+    {
+      "identity": "public.aab_publish_country_terms(p_country_workspace_id uuid, p_title text, p_version_label text, p_language_code text, p_storage_bucket text, p_storage_path text, p_document_sha256 text, p_effective_at timestamp with time zone, p_certification_statement text, p_material_change boolean)",
+      "kind": "FIELD_MISMATCH",
+      "field": "execute_roles",
+      "expected": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "observed": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "classification": "CANONICAL_INVARIANT"
+    },
+    {
+      "identity": "public.aab_resolve_entry()",
+      "kind": "FIELD_MISMATCH",
+      "field": "execute_roles",
+      "expected": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "observed": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "classification": "CANONICAL_INVARIANT"
+    },
+    {
+      "identity": "public.aab_save_onboarding_profile(p_full_name text, p_official_position text, p_institution_name text)",
+      "kind": "FIELD_MISMATCH",
+      "field": "execute_roles",
+      "expected": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "observed": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "classification": "CANONICAL_INVARIANT"
+    },
+    {
+      "identity": "public.aab_submit_country_participation_request(p_request jsonb)",
+      "kind": "FIELD_MISMATCH",
+      "field": "execute_roles",
+      "expected": [
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "observed": [
+        "anon",
+        "authenticated",
+        "postgres",
+        "service_role"
+      ],
+      "classification": "CANONICAL_INVARIANT"
+    }
+  ],
+  "integrity": {
+    "algorithm": "SHA-256",
+    "payload_sha256": "1011f23ab60d20cbfe220bee0c70fc812a289a8d3bf6d61b0e9d7031e7de3ba3"
+  },
+  "signature": {
+    "algorithm": "Ed25519",
+    "key_id": "PH2-WP04-TEST-EVIDENCE-20260915",
+    "signed_field": "integrity.payload_sha256",
+    "signature_base64": "lq41zd6UQGevoZMeRl9oJRbpNod3QTbhOPxqdO5aK3Aq2a1zDbrrFXtkTo/eX68jXWBhLvTKzcDhsyPbNqQtBA=="
+  }
+}
