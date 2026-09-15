@@ -13,5 +13,11 @@
   "integrity": {
     "algorithm": "SHA-256",
     "payload_sha256": "198d7c79bcdb47e1358b3966031c13700f84936dc246be35061b8ebb643804d4"
+  },
+  "signature": {
+    "algorithm": "Ed25519",
+    "key_id": "PH2-WP04-TEST-EVIDENCE-20260915",
+    "signed_field": "integrity.payload_sha256",
+    "signature_base64": "cVkahy40kTHIt/rGyKjs58gZ6azN8iXKezw7Xa9F6tLlQFPx8+n5meMJ/Q5tIapCelCIhFHiRUMYwIYQiqGzDQ=="
   }
 }
