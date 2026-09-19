@@ -41,6 +41,63 @@ The banner must not be dismissible for the duration of the simulation session.
 5. Capability-State Simulation
 6. Training & Practice
 7. Clean Baseline Reset
+8. Capability Fidelity Manifest
+9. Roadmap Preview
+
+## Full end-product simulation scope
+
+CAP-34 is intended to represent **every capability in the agreed AAB end-product landscape**, but it must never blur what is implemented with what is only designed.
+
+It therefore has two structurally distinct modes.
+
+### LIVE SIMULATION
+
+For a capability whose real AAB logic is genuinely implemented and approved for simulator use.
+
+- Runs real governed capability logic against approved synthetic/reference data wherever technically feasible.
+- Uses the same material authority, evidence and refusal semantics as the real capability.
+- Carries simulation-only state and zero production authority.
+- Is listed in the Capability Fidelity Manifest as `REAL LOGIC — SYNTHETIC/REFERENCE DATA`.
+
+### ROADMAP PREVIEW
+
+For an agreed end-product capability that is designed but not yet genuinely implemented.
+
+- Exists so a country can understand the intended complete AAB end product.
+- Must be visually and structurally distinct from Live Simulation.
+- Must display `CONCEPT PREVIEW — NOT AN IMPLEMENTED CAPABILITY` persistently.
+- Must not pretend to execute unavailable scientific logic.
+- Should use lower-fidelity explanatory flows, diagrams and clearly scripted illustrative examples rather than polished fake reasoning.
+
+Entering Roadmap Preview requires an explicit acknowledgement that the viewer is leaving live simulation and entering a representation of intended future capability.
+
+### Capability Fidelity Manifest
+
+The simulator must maintain a visible manifest covering the complete agreed capability landscape. For every capability it must state at least:
+
+- Capability ID and name;
+- horizon;
+- simulator mode;
+- implementation fidelity;
+- scenario coverage;
+- last verified date/version where applicable;
+- evidence/reference used to classify fidelity;
+- explicit limitations.
+
+Permitted fidelity values:
+
+- `REAL LOGIC — SYNTHETIC/REFERENCE DATA`
+- `PARTIAL REAL LOGIC — LIMITATIONS SHOWN`
+- `CONCEPT PREVIEW — NOT AN IMPLEMENTED CAPABILITY`
+- `NOT YET REPRESENTED`
+
+Absence of a concept-preview label must never be interpreted as proof of implementation. The manifest is the authoritative simulator disclosure.
+
+### End-product coverage rule
+
+The destination for CAP-34 is complete landscape coverage, including Launch Release, Post-Launch and Future Platform capabilities. Coverage does **not** change the underlying capability's real maturity, release state or commissioning state.
+
+CAP-33 Cross-Domain Scientific Reasoning receives an especially high disclosure burden. A plausible cross-domain hypothesis in Roadmap Preview must never be presented as validated cross-domain scientific reasoning.
 
 ## Required scenario classes
 
@@ -136,7 +193,12 @@ Minimum behavioural proof must show:
 7. simulation state cannot be promoted to production;
 8. reset restores the defined clean baseline;
 9. concept-only capability cannot masquerade as implemented;
-10. simulator telemetry/support paths do not silently export protected information if such information is accidentally presented.
+10. simulator telemetry/support paths do not silently export protected information if such information is accidentally presented;
+11. every agreed end-product capability appears in the Capability Fidelity Manifest;
+12. Live Simulation cannot classify an unimplemented capability as real logic;
+13. Roadmap Preview is structurally and visibly distinct from Live Simulation;
+14. entering Roadmap Preview requires explicit acknowledgement;
+15. every Roadmap Preview capability persistently carries `CONCEPT PREVIEW — NOT AN IMPLEMENTED CAPABILITY`.
 
 ## Non-implications
 
@@ -149,6 +211,9 @@ Minimum behavioural proof must show:
 - Demonstrating a released capability does not entitle a future country to it.
 - A concept preview does not establish implementation.
 - A simulation result against synthetic/reference data does not predict a result against a country's real science.
+- Complete simulator coverage does not mean complete product implementation.
+- Roadmap Preview fidelity does not increase the maturity of the represented capability.
+- A polished preview does not constitute behavioural proof.
 
 ## Pressure-risk rule
 
