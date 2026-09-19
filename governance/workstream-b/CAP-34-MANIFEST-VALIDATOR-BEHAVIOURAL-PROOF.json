@@ -1,11 +1,11 @@
 {
   "proofId": "AAB-CAP34-MANIFEST-VALIDATOR-BEHAVIOURAL-PROOF",
   "proofVersion": "1.0.0",
-  "generatedAtUtc": "2026-09-19T22:41:58.431Z",
+  "generatedAtUtc": "2026-09-19T23:51:17.745Z",
   "result": "PASS_CAP34_MANIFEST_VALIDATOR_BEHAVIOURAL_PROOF",
   "scope": "Proves only whether the validator detects the defined honest and corrupted manifest states. It does not prove AAB completeness, CAP-34 completion, production readiness, WA commissioning, Gate D satisfaction, or WP05 commencement.",
   "validator": {
-    "file": "CAP-34-Capability-Fidelity-Manifest-Validator.js",
+    "file": "capability-fidelity-manifest.js",
     "validatorId": "AAB-CAP34-FIDELITY-MANIFEST-VALIDATOR",
     "declaredValidatorVersion": "1.2.0",
     "sha256": "f5d3505fe82c5c6214f0b2b63ffb68bb67d172a78e9203f4cef516cff5d864eb"
@@ -19,8 +19,8 @@
     "capabilityCount": 34
   },
   "authoritativeRoster": {
-    "file": "CAP-34-Authoritative-Capability-Identity-Roster.json",
-    "registryFile": "CAP-34-Capability-Identity-Roster-Registry.json",
+    "file": "capability-identity-roster.json",
+    "registryFile": "capability-identity-roster-registry.json",
     "rosterId": "AAB-WORKSTREAM-B-CAPABILITY-IDENTITY-ROSTER",
     "rosterVersion": "1.0.0",
     "rosterSnapshotId": "WORKSTREAM-B-LAUNCH-GAP-2026-09-19-ROSTER-001",
