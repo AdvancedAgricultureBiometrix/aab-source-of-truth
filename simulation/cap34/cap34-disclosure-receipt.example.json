@@ -1,0 +1,47 @@
+{
+  "receiptId": "CAP34-RECEIPT-EXAMPLE-001",
+  "receiptContractVersion": "1.0.0",
+  "createdAt": "2026-09-19T00:00:00Z",
+  "correlationId": "CAP34-EXAMPLE-CORRELATION-001",
+  "authority": "DISCLOSURE_ACKNOWLEDGEMENT_ONLY_NO_LEGAL_COMMERCIAL_SCIENTIFIC_REGULATORY_PRODUCTION_OR_COMMISSIONING_AUTHORITY",
+  "manifestSnapshotId": "CAP34-MANIFEST-2026-09-19-SNAPSHOT-001",
+  "manifestVersion": "1.0.0",
+  "manifestSourceReference": "simulation/cap34/capability-fidelity-manifest.json",
+  "evaluator": {
+    "displayName": "Example Evaluator",
+    "evaluatorReferenceId": null,
+    "role": "Government Technical Reviewer",
+    "organisation": "Example Organisation"
+  },
+  "capabilitiesPresented": [
+    {
+      "capabilityId": "CAP-34",
+      "capabilityPart": null,
+      "capabilityName": "Governed AAB Simulation & Demonstration Environment",
+      "representationVersion": "0.1.0",
+      "simulatorMode": "LIVE_SIMULATION",
+      "fidelity": "PARTIAL_REAL_LOGIC_LIMITATIONS_SHOWN",
+      "manifestDisclosureBurden": "STANDARD",
+      "limitationsPresented": [
+        "Initial isolated simulator boundary and synthetic scenario harness only; full end-product capability integration is not implemented."
+      ],
+      "nonImplicationsPresented": [
+        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
+      ]
+    }
+  ],
+  "roadmapPreview": {
+    "entered": false,
+    "previewVersion": null,
+    "enteredAt": null,
+    "capabilitiesEntered": []
+  },
+  "acknowledgement": {
+    "wordingVersion": "CAP34-DISCLOSURE-ACK-1.0.0",
+    "wording": "I understand that this CAP-34 simulation is synthetic/reference-only and does not establish production, scientific, regulatory, sovereignty or commissioning readiness.",
+    "accepted": true,
+    "acceptedAt": "2026-09-19T00:00:00Z"
+  },
+  "receiptDigest": null,
+  "signature": null
+}
