@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>AAB Controlled Simulation</title>
+<style>
+:root{font-family:Inter,system-ui,sans-serif;color:#17211c;background:#f4f6f4}
+body{margin:0}.banner{position:sticky;top:0;z-index:5;background:#fff3cd;border-bottom:2px solid #7a5a00;padding:14px 20px;font-weight:700}
+main{max-width:1080px;margin:auto;padding:28px}.card{background:white;border:1px solid #d9dfdb;border-radius:14px;padding:20px;margin:16px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+button,select{font:inherit;padding:10px 12px}.state{padding:10px;border-left:4px solid #555;background:#f7f7f7;margin:8px 0}
+small{color:#52605a}.danger{font-weight:700}.mono{font-family:ui-monospace,monospace}
+</style>
+</head>
+<body>
+<div class="banner">CONTROLLED AAB SIMULATION — SYNTHETIC/REFERENCE DATA ONLY. This does not represent AAB commissioning status or prove readiness for production use of real scientific data. No production, government, scientific, regulatory or commissioning authority.</div>
+<main>
+<h1>AAB Governed Simulation</h1>
+<p>Experience selected AAB behaviours without supplying sovereign country scientific data. This build deliberately includes contradiction and refusal states, not only a happy path.</p>
+
+<section class="card">
+<h2>1. Simulated role</h2>
+<select id="role"></select>
+<div id="roleState" class="state"></div>
+</section>
+
+<section class="card">
+<h2>2. Synthetic scenario</h2>
+<div class="grid" id="scenarioButtons"></div>
+<div id="scenarioOutput"></div>
+</section>
+
+<section class="card">
+<h2>3. Capability-state explanation</h2>
+<div id="capability"></div>
+</section>
+
+<section class="card">
+<h2>4. Clean reset</h2>
+<p>Reset removes session state. Nothing in this simulation can be promoted into production.</p>
+<button id="reset">Reset simulation</button>
+<div id="resetState" class="state"></div>
+</section>
+
+<section class="card">
+<h2>Validation</h2>
+<pre id="validation" class="mono"></pre>
+</section>
+</main>
+<script src="./cap34-simulation.js"></script>
+<script>
+const sim=window.AAB_CAP34_SIMULATION;
+const role=document.getElementById("role");
+Object.entries(sim.roles).forEach(([k,v])=>{const o=document.createElement("option");o.value=k;o.textContent=v.label;role.appendChild(o)});
+function renderRole(){const s=sim.capabilityState(role.value);document.getElementById("roleState").textContent=s.explanation;document.getElementById("capability").innerHTML=Object.entries(s).filter(([k])=>k!=="explanation").map(([k,v])=>'<div class="state"><strong>'+k+':</strong> '+v+'</div>').join("")}
+role.addEventListener("change",renderRole);renderRole();
+const buttons=document.getElementById("scenarioButtons");
+Object.entries(sim.scenarios).forEach(([k,v])=>{const b=document.createElement("button");b.textContent=v.title;b.onclick=()=>renderScenario(k);buttons.appendChild(b)});
+function renderScenario(k){const r=sim.runScenario(k),s=r.scenario;document.getElementById("scenarioOutput").innerHTML='<div class="card"><h3>'+s.title+'</h3><p><strong>Outcome:</strong> '+s.outcome+'</p>'+s.evidence.map(e=>'<div class="state"><strong>'+e.source+'</strong><br>'+e.finding+'<br><small>'+e.state+' · '+s.dataClass+'</small></div>').join("")+'<p class="danger">'+s.explanation+'</p></div>'}
+document.getElementById("reset").onclick=()=>{document.getElementById("scenarioOutput").innerHTML="";role.value="COUNTRY_HEAD";renderRole();document.getElementById("resetState").textContent=sim.reset().status};
+document.getElementById("validation").textContent=JSON.stringify(sim.runValidation(),null,2);
+</script>
+</body>
+</html>
