@@ -1,8 +1,8 @@
 {
   "manifestId": "AAB-CAP34-FIDELITY-MANIFEST",
-  "manifestVersion": "1.1.0",
-  "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-002",
-  "createdAt": "2026-09-20T00:00:00Z",
+  "manifestVersion": "1.0.0",
+  "manifestSnapshotId": "CAP34-MANIFEST-2026-09-19-SNAPSHOT-001",
+  "createdAt": "2026-09-19T00:00:00Z",
   "sourceLandscapeReference": "governance/workstream-b/AAB-WORKSTREAM-B-CAPABILITY-LANDSCAPE-LAUNCH-GAP-FREEZE-2026-09-19.md",
   "authority": "DISCLOSURE_ONLY_NO_PRODUCTION_SCIENTIFIC_REGULATORY_OR_COMMISSIONING_AUTHORITY",
   "rule": "Complete simulator coverage does not mean complete product implementation.",
@@ -24,118 +24,66 @@
       "scenarioCoverage": [],
       "implementationReferences": [],
       "evidenceReferences": [],
-      "limitations": [
-        "Simulator representation not yet implemented."
-      ],
+      "limitations": ["Simulator representation not yet implemented."],
       "disclosureBurden": "STANDARD",
       "lastVerifiedAt": null,
       "lastVerifiedAgainst": null,
       "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
-      "nonImplications": [
-        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
-      ]
+      "nonImplications": ["Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."]
     },
     {
       "capabilityId": "CAP-02",
       "capabilityName": "Governed Scientific Data Acquisition & Interoperability",
       "capabilityPart": null,
       "horizon": "LAUNCH_RELEASE",
-      "representationVersion": "0.2.0",
-      "simulatorMode": "ROADMAP_PREVIEW",
-      "fidelity": "CONCEPT_PREVIEW_NOT_IMPLEMENTED",
-      "scenarioCoverage": [
-        {
-          "scenarioId": "SIM-ROADMAP-MEMORY-001",
-          "coverage": "CONCEPT_PREVIEW"
-        }
-      ],
+      "representationVersion": "0.1.0",
+      "simulatorMode": "NONE",
+      "fidelity": "NOT_YET_REPRESENTED",
+      "scenarioCoverage": [],
       "implementationReferences": [],
-      "evidenceReferences": [
-        "governance/workstream-b/CAP-34-CAPABILITY-PATHWAY-RECONCILIATION-2026-09-20.md",
-        "simulation/cap34/cap34-simulation.js",
-        "simulation/cap34/index.html"
-      ],
-      "limitations": [
-        "Concept preview only; no complete or behaviourally proven multi-institution historical research recovery workflow exists.",
-        "Existing source, provenance and evidence foundations do not prove legacy-system adapters, document extraction, reconciliation or institutional-scale recovery.",
-        "Imported material cannot automatically become approved learning or scientific fact."
-      ],
+      "evidenceReferences": [],
+      "limitations": ["Simulator representation not yet implemented."],
       "disclosureBurden": "STANDARD",
-      "lastVerifiedAt": "2026-09-20",
-      "lastVerifiedAgainst": "GitHub canonical source review and read-only main Supabase schema inspection",
-      "classificationReason": "Historical Scientific Memory Recovery — governed multi-institution acquisition pathway concept preview.",
-      "nonImplications": [
-        "Concept-preview inclusion does not establish product implementation, scientific proof, regulatory compliance, production readiness or commissioning.",
-        "Roadmap acknowledgement does not grant scientific, regulatory, government, production or commissioning authority."
-      ]
+      "lastVerifiedAt": null,
+      "lastVerifiedAgainst": null,
+      "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
+      "nonImplications": ["Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."]
     },
     {
       "capabilityId": "CAP-03",
       "capabilityName": "Evidence Integrity & Provenance",
       "capabilityPart": null,
       "horizon": "LAUNCH_RELEASE",
-      "representationVersion": "0.2.0",
-      "simulatorMode": "ROADMAP_PREVIEW",
-      "fidelity": "CONCEPT_PREVIEW_NOT_IMPLEMENTED",
-      "scenarioCoverage": [
-        {
-          "scenarioId": "SIM-ROADMAP-EXPORT-001",
-          "coverage": "CONCEPT_PREVIEW"
-        }
-      ],
+      "representationVersion": "0.1.0",
+      "simulatorMode": "NONE",
+      "fidelity": "NOT_YET_REPRESENTED",
+      "scenarioCoverage": [],
       "implementationReferences": [],
-      "evidenceReferences": [
-        "governance/workstream-b/CAP-34-CAPABILITY-PATHWAY-RECONCILIATION-2026-09-20.md",
-        "simulation/cap34/cap34-simulation.js",
-        "simulation/cap34/index.html"
-      ],
-      "limitations": [
-        "Concept preview only; no EUDR-specific or behaviourally proven smallholder export chain-of-custody implementation was found.",
-        "Existing provenance and evidence-packet foundations do not prove farm-to-shipment continuity, geolocation validity or destination-market acceptance.",
-        "Evidence assembly does not establish certification, customs acceptance, regulatory approval or market access."
-      ],
+      "evidenceReferences": [],
+      "limitations": ["Simulator representation not yet implemented."],
       "disclosureBurden": "STANDARD",
-      "lastVerifiedAt": "2026-09-20",
-      "lastVerifiedAgainst": "GitHub canonical source review and read-only main Supabase schema inspection",
-      "classificationReason": "Governed Export-Compliance Evidence — smallholder-to-shipment provenance and chain-of-custody concept preview.",
-      "nonImplications": [
-        "Concept-preview inclusion does not establish product implementation, scientific proof, regulatory compliance, production readiness or commissioning.",
-        "Roadmap acknowledgement does not grant scientific, regulatory, government, production or commissioning authority."
-      ]
+      "lastVerifiedAt": null,
+      "lastVerifiedAgainst": null,
+      "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
+      "nonImplications": ["Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."]
     },
     {
       "capabilityId": "CAP-04",
       "capabilityName": "Governed Scientific Memory",
       "capabilityPart": null,
       "horizon": "LAUNCH_RELEASE",
-      "representationVersion": "0.2.0",
-      "simulatorMode": "ROADMAP_PREVIEW",
-      "fidelity": "CONCEPT_PREVIEW_NOT_IMPLEMENTED",
-      "scenarioCoverage": [
-        {
-          "scenarioId": "SIM-ROADMAP-MEMORY-001",
-          "coverage": "CONCEPT_PREVIEW"
-        }
-      ],
+      "representationVersion": "0.1.0",
+      "simulatorMode": "NONE",
+      "fidelity": "NOT_YET_REPRESENTED",
+      "scenarioCoverage": [],
       "implementationReferences": [],
-      "evidenceReferences": [
-        "governance/workstream-b/CAP-34-CAPABILITY-PATHWAY-RECONCILIATION-2026-09-20.md",
-        "simulation/cap34/cap34-simulation.js",
-        "simulation/cap34/index.html"
-      ],
-      "limitations": [
-        "Concept preview only; no complete or behaviourally proven cross-institution scientific-memory recovery workflow exists.",
-        "Existing scientific-memory and negative-learning records do not prove historical corpus recovery, semantic linking, duplicate resolution or source-complete recall.",
-        "Recovered records require provenance-preserving human review and do not automatically become approved learning."
-      ],
+      "evidenceReferences": [],
+      "limitations": ["Simulator representation not yet implemented."],
       "disclosureBurden": "STANDARD",
-      "lastVerifiedAt": "2026-09-20",
-      "lastVerifiedAgainst": "GitHub canonical source review and read-only main Supabase schema inspection",
-      "classificationReason": "Historical Scientific Memory Recovery — connected memory, negative-result retention and cross-institution discovery concept preview.",
-      "nonImplications": [
-        "Concept-preview inclusion does not establish product implementation, scientific proof, regulatory compliance, production readiness or commissioning.",
-        "Roadmap acknowledgement does not grant scientific, regulatory, government, production or commissioning authority."
-      ]
+      "lastVerifiedAt": null,
+      "lastVerifiedAgainst": null,
+      "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
+      "nonImplications": ["Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."]
     },
     {
       "capabilityId": "CAP-05",
@@ -148,16 +96,12 @@
       "scenarioCoverage": [],
       "implementationReferences": [],
       "evidenceReferences": [],
-      "limitations": [
-        "Simulator representation not yet implemented."
-      ],
+      "limitations": ["Simulator representation not yet implemented."],
       "disclosureBurden": "STANDARD",
       "lastVerifiedAt": null,
       "lastVerifiedAgainst": null,
       "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
-      "nonImplications": [
-        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
-      ]
+      "nonImplications": ["Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."]
     },
     {
       "capabilityId": "CAP-06",
@@ -170,16 +114,12 @@
       "scenarioCoverage": [],
       "implementationReferences": [],
       "evidenceReferences": [],
-      "limitations": [
-        "Simulator representation not yet implemented."
-      ],
+      "limitations": ["Simulator representation not yet implemented."],
       "disclosureBurden": "STANDARD",
       "lastVerifiedAt": null,
       "lastVerifiedAgainst": null,
       "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
-      "nonImplications": [
-        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
-      ]
+      "nonImplications": ["Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."]
     },
     {
       "capabilityId": "CAP-07",
@@ -192,16 +132,12 @@
       "scenarioCoverage": [],
       "implementationReferences": [],
       "evidenceReferences": [],
-      "limitations": [
-        "Simulator representation not yet implemented."
-      ],
+      "limitations": ["Simulator representation not yet implemented."],
       "disclosureBurden": "STANDARD",
       "lastVerifiedAt": null,
       "lastVerifiedAgainst": null,
       "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
-      "nonImplications": [
-        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
-      ]
+      "nonImplications": ["Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."]
     },
     {
       "capabilityId": "CAP-08",
@@ -214,16 +150,12 @@
       "scenarioCoverage": [],
       "implementationReferences": [],
       "evidenceReferences": [],
-      "limitations": [
-        "Simulator representation not yet implemented."
-      ],
+      "limitations": ["Simulator representation not yet implemented."],
       "disclosureBurden": "STANDARD",
       "lastVerifiedAt": null,
       "lastVerifiedAgainst": null,
       "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
-      "nonImplications": [
-        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
-      ]
+      "nonImplications": ["Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."]
     },
     {
       "capabilityId": "CAP-09",
@@ -236,16 +168,12 @@
       "scenarioCoverage": [],
       "implementationReferences": [],
       "evidenceReferences": [],
-      "limitations": [
-        "Simulator representation not yet implemented."
-      ],
+      "limitations": ["Simulator representation not yet implemented."],
       "disclosureBurden": "STANDARD",
       "lastVerifiedAt": null,
       "lastVerifiedAgainst": null,
       "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
-      "nonImplications": [
-        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
-      ]
+      "nonImplications": ["Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."]
     },
     {
       "capabilityId": "CAP-10",
@@ -258,50 +186,30 @@
       "scenarioCoverage": [],
       "implementationReferences": [],
       "evidenceReferences": [],
-      "limitations": [
-        "Simulator representation not yet implemented."
-      ],
+      "limitations": ["Simulator representation not yet implemented."],
       "disclosureBurden": "STANDARD",
       "lastVerifiedAt": null,
       "lastVerifiedAgainst": null,
       "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
-      "nonImplications": [
-        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
-      ]
+      "nonImplications": ["Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."]
     },
     {
       "capabilityId": "CAP-11",
       "capabilityName": "Regulatory Translation & Dossier Support",
       "capabilityPart": null,
       "horizon": "POST_LAUNCH",
-      "representationVersion": "0.2.0",
-      "simulatorMode": "ROADMAP_PREVIEW",
-      "fidelity": "CONCEPT_PREVIEW_NOT_IMPLEMENTED",
-      "scenarioCoverage": [
-        {
-          "scenarioId": "SIM-ROADMAP-EXPORT-001",
-          "coverage": "CONCEPT_PREVIEW"
-        }
-      ],
+      "representationVersion": "0.1.0",
+      "simulatorMode": "NONE",
+      "fidelity": "NOT_YET_REPRESENTED",
+      "scenarioCoverage": [],
       "implementationReferences": [],
-      "evidenceReferences": [
-        "governance/workstream-b/CAP-34-CAPABILITY-PATHWAY-RECONCILIATION-2026-09-20.md",
-        "simulation/cap34/cap34-simulation.js",
-        "simulation/cap34/index.html"
-      ],
-      "limitations": [
-        "Concept preview only; no EUDR-specific or behaviourally proven export-compliance dossier workflow was found.",
-        "Existing regulatory requirement, dossier passport and translation foundations do not prove current legal interpretation, completeness or regulator acceptance.",
-        "Dossier completeness does not equal regulatory approval, certification, customs acceptance or guaranteed market access."
-      ],
+      "evidenceReferences": [],
+      "limitations": ["Simulator representation not yet implemented."],
       "disclosureBurden": "STANDARD",
-      "lastVerifiedAt": "2026-09-20",
-      "lastVerifiedAgainst": "GitHub canonical source review and read-only main Supabase schema inspection",
-      "classificationReason": "Governed Export-Compliance Evidence — destination-market requirement mapping and dossier concept preview.",
-      "nonImplications": [
-        "Concept-preview inclusion does not establish product implementation, scientific proof, regulatory compliance, production readiness or commissioning.",
-        "Roadmap acknowledgement does not grant scientific, regulatory, government, production or commissioning authority."
-      ]
+      "lastVerifiedAt": null,
+      "lastVerifiedAgainst": null,
+      "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
+      "nonImplications": ["Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."]
     },
     {
       "capabilityId": "CAP-12",
@@ -314,16 +222,12 @@
       "scenarioCoverage": [],
       "implementationReferences": [],
       "evidenceReferences": [],
-      "limitations": [
-        "Simulator representation not yet implemented."
-      ],
+      "limitations": ["Simulator representation not yet implemented."],
       "disclosureBurden": "STANDARD",
       "lastVerifiedAt": null,
       "lastVerifiedAgainst": null,
       "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
-      "nonImplications": [
-        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
-      ]
+      "nonImplications": ["Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."]
     },
     {
       "capabilityId": "CAP-13",
@@ -336,16 +240,12 @@
       "scenarioCoverage": [],
       "implementationReferences": [],
       "evidenceReferences": [],
-      "limitations": [
-        "Simulator representation not yet implemented."
-      ],
+      "limitations": ["Simulator representation not yet implemented."],
       "disclosureBurden": "STANDARD",
       "lastVerifiedAt": null,
       "lastVerifiedAgainst": null,
       "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
-      "nonImplications": [
-        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
-      ]
+      "nonImplications": ["Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."]
     },
     {
       "capabilityId": "CAP-14",
@@ -358,16 +258,12 @@
       "scenarioCoverage": [],
       "implementationReferences": [],
       "evidenceReferences": [],
-      "limitations": [
-        "Simulator representation not yet implemented."
-      ],
+      "limitations": ["Simulator representation not yet implemented."],
       "disclosureBurden": "STANDARD",
       "lastVerifiedAt": null,
       "lastVerifiedAgainst": null,
       "classificationReason": "Initial manifest truthfully records no CAP-14 simulator representation yet.",
-      "nonImplications": [
-        "Manifest inclusion does not establish implementation."
-      ]
+      "nonImplications": ["Manifest inclusion does not establish implementation."]
     },
     {
       "capabilityId": "CAP-14",
@@ -380,16 +276,12 @@
       "scenarioCoverage": [],
       "implementationReferences": [],
       "evidenceReferences": [],
-      "limitations": [
-        "Simulator representation not yet implemented."
-      ],
+      "limitations": ["Simulator representation not yet implemented."],
       "disclosureBurden": "STANDARD",
       "lastVerifiedAt": null,
       "lastVerifiedAgainst": null,
       "classificationReason": "Initial manifest truthfully records no CAP-14 simulator representation yet.",
-      "nonImplications": [
-        "Manifest inclusion does not establish implementation."
-      ]
+      "nonImplications": ["Manifest inclusion does not establish implementation."]
     },
     {
       "capabilityId": "CAP-15",
@@ -402,16 +294,12 @@
       "scenarioCoverage": [],
       "implementationReferences": [],
       "evidenceReferences": [],
-      "limitations": [
-        "Simulator representation not yet implemented."
-      ],
+      "limitations": ["Simulator representation not yet implemented."],
       "disclosureBurden": "STANDARD",
       "lastVerifiedAt": null,
       "lastVerifiedAgainst": null,
       "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
-      "nonImplications": [
-        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
-      ]
+      "nonImplications": ["Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."]
     },
     {
       "capabilityId": "CAP-16",
@@ -424,16 +312,12 @@
       "scenarioCoverage": [],
       "implementationReferences": [],
       "evidenceReferences": [],
-      "limitations": [
-        "Simulator representation not yet implemented."
-      ],
+      "limitations": ["Simulator representation not yet implemented."],
       "disclosureBurden": "STANDARD",
       "lastVerifiedAt": null,
       "lastVerifiedAgainst": null,
       "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
-      "nonImplications": [
-        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
-      ]
+      "nonImplications": ["Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."]
     },
     {
       "capabilityId": "CAP-17",
@@ -446,16 +330,12 @@
       "scenarioCoverage": [],
       "implementationReferences": [],
       "evidenceReferences": [],
-      "limitations": [
-        "Simulator representation not yet implemented."
-      ],
+      "limitations": ["Simulator representation not yet implemented."],
       "disclosureBurden": "STANDARD",
       "lastVerifiedAt": null,
       "lastVerifiedAgainst": null,
       "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
-      "nonImplications": [
-        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
-      ]
+      "nonImplications": ["Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."]
     },
     {
       "capabilityId": "CAP-18",
@@ -468,16 +348,12 @@
       "scenarioCoverage": [],
       "implementationReferences": [],
       "evidenceReferences": [],
-      "limitations": [
-        "Simulator representation not yet implemented."
-      ],
+      "limitations": ["Simulator representation not yet implemented."],
       "disclosureBurden": "STANDARD",
       "lastVerifiedAt": null,
       "lastVerifiedAgainst": null,
       "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
-      "nonImplications": [
-        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
-      ]
+      "nonImplications": ["Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."]
     },
     {
       "capabilityId": "CAP-19",
@@ -490,16 +366,12 @@
       "scenarioCoverage": [],
       "implementationReferences": [],
       "evidenceReferences": [],
-      "limitations": [
-        "Simulator representation not yet implemented."
-      ],
+      "limitations": ["Simulator representation not yet implemented."],
       "disclosureBurden": "STANDARD",
       "lastVerifiedAt": null,
       "lastVerifiedAgainst": null,
       "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
-      "nonImplications": [
-        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
-      ]
+      "nonImplications": ["Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."]
     },
     {
       "capabilityId": "CAP-20",
@@ -512,16 +384,12 @@
       "scenarioCoverage": [],
       "implementationReferences": [],
       "evidenceReferences": [],
-      "limitations": [
-        "Simulator representation not yet implemented."
-      ],
+      "limitations": ["Simulator representation not yet implemented."],
       "disclosureBurden": "STANDARD",
       "lastVerifiedAt": null,
       "lastVerifiedAgainst": null,
       "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
-      "nonImplications": [
-        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
-      ]
+      "nonImplications": ["Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."]
     },
     {
       "capabilityId": "CAP-21",
@@ -534,16 +402,12 @@
       "scenarioCoverage": [],
       "implementationReferences": [],
       "evidenceReferences": [],
-      "limitations": [
-        "Simulator representation not yet implemented."
-      ],
+      "limitations": ["Simulator representation not yet implemented."],
       "disclosureBurden": "STANDARD",
       "lastVerifiedAt": null,
       "lastVerifiedAgainst": null,
       "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
-      "nonImplications": [
-        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
-      ]
+      "nonImplications": ["Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."]
     },
     {
       "capabilityId": "CAP-22",
@@ -556,16 +420,12 @@
       "scenarioCoverage": [],
       "implementationReferences": [],
       "evidenceReferences": [],
-      "limitations": [
-        "Simulator representation not yet implemented."
-      ],
+      "limitations": ["Simulator representation not yet implemented."],
       "disclosureBurden": "STANDARD",
       "lastVerifiedAt": null,
       "lastVerifiedAgainst": null,
       "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
-      "nonImplications": [
-        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
-      ]
+      "nonImplications": ["Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."]
     },
     {
       "capabilityId": "CAP-23",
@@ -578,16 +438,12 @@
       "scenarioCoverage": [],
       "implementationReferences": [],
       "evidenceReferences": [],
-      "limitations": [
-        "Simulator representation not yet implemented."
-      ],
+      "limitations": ["Simulator representation not yet implemented."],
       "disclosureBurden": "STANDARD",
       "lastVerifiedAt": null,
       "lastVerifiedAgainst": null,
       "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
-      "nonImplications": [
-        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
-      ]
+      "nonImplications": ["Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."]
     },
     {
       "capabilityId": "CAP-24",
@@ -600,16 +456,12 @@
       "scenarioCoverage": [],
       "implementationReferences": [],
       "evidenceReferences": [],
-      "limitations": [
-        "Simulator representation not yet implemented."
-      ],
+      "limitations": ["Simulator representation not yet implemented."],
       "disclosureBurden": "STANDARD",
       "lastVerifiedAt": null,
       "lastVerifiedAgainst": null,
       "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
-      "nonImplications": [
-        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
-      ]
+      "nonImplications": ["Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."]
     },
     {
       "capabilityId": "CAP-25",
@@ -622,16 +474,12 @@
       "scenarioCoverage": [],
       "implementationReferences": [],
       "evidenceReferences": [],
-      "limitations": [
-        "Simulator representation not yet implemented."
-      ],
+      "limitations": ["Simulator representation not yet implemented."],
       "disclosureBurden": "STANDARD",
       "lastVerifiedAt": null,
       "lastVerifiedAgainst": null,
       "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
-      "nonImplications": [
-        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
-      ]
+      "nonImplications": ["Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."]
     },
     {
       "capabilityId": "CAP-26",
@@ -644,16 +492,12 @@
       "scenarioCoverage": [],
       "implementationReferences": [],
       "evidenceReferences": [],
-      "limitations": [
-        "Simulator representation not yet implemented."
-      ],
+      "limitations": ["Simulator representation not yet implemented."],
       "disclosureBurden": "STANDARD",
       "lastVerifiedAt": null,
       "lastVerifiedAgainst": null,
       "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
-      "nonImplications": [
-        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
-      ]
+      "nonImplications": ["Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."]
     },
     {
       "capabilityId": "CAP-27",
@@ -666,16 +510,12 @@
       "scenarioCoverage": [],
       "implementationReferences": [],
       "evidenceReferences": [],
-      "limitations": [
-        "Simulator representation not yet implemented."
-      ],
+      "limitations": ["Simulator representation not yet implemented."],
       "disclosureBurden": "STANDARD",
       "lastVerifiedAt": null,
       "lastVerifiedAgainst": null,
       "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
-      "nonImplications": [
-        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
-      ]
+      "nonImplications": ["Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."]
     },
     {
       "capabilityId": "CAP-28",
@@ -688,16 +528,12 @@
       "scenarioCoverage": [],
       "implementationReferences": [],
       "evidenceReferences": [],
-      "limitations": [
-        "Simulator representation not yet implemented."
-      ],
+      "limitations": ["Simulator representation not yet implemented."],
       "disclosureBurden": "STANDARD",
       "lastVerifiedAt": null,
       "lastVerifiedAgainst": null,
       "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
-      "nonImplications": [
-        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
-      ]
+      "nonImplications": ["Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."]
     },
     {
       "capabilityId": "CAP-30",
@@ -710,16 +546,12 @@
       "scenarioCoverage": [],
       "implementationReferences": [],
       "evidenceReferences": [],
-      "limitations": [
-        "Simulator representation not yet implemented."
-      ],
+      "limitations": ["Simulator representation not yet implemented."],
       "disclosureBurden": "STANDARD",
       "lastVerifiedAt": null,
       "lastVerifiedAgainst": null,
       "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
-      "nonImplications": [
-        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
-      ]
+      "nonImplications": ["Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."]
     },
     {
       "capabilityId": "CAP-31",
@@ -732,16 +564,12 @@
       "scenarioCoverage": [],
       "implementationReferences": [],
       "evidenceReferences": [],
-      "limitations": [
-        "Simulator representation not yet implemented."
-      ],
+      "limitations": ["Simulator representation not yet implemented."],
       "disclosureBurden": "STANDARD",
       "lastVerifiedAt": null,
       "lastVerifiedAgainst": null,
       "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
-      "nonImplications": [
-        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
-      ]
+      "nonImplications": ["Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."]
     },
     {
       "capabilityId": "CAP-32",
@@ -754,16 +582,12 @@
       "scenarioCoverage": [],
       "implementationReferences": [],
       "evidenceReferences": [],
-      "limitations": [
-        "Simulator representation not yet implemented."
-      ],
+      "limitations": ["Simulator representation not yet implemented."],
       "disclosureBurden": "STANDARD",
       "lastVerifiedAt": null,
       "lastVerifiedAgainst": null,
       "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
-      "nonImplications": [
-        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
-      ]
+      "nonImplications": ["Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."]
     },
     {
       "capabilityId": "CAP-33",
@@ -776,16 +600,12 @@
       "scenarioCoverage": [],
       "implementationReferences": [],
       "evidenceReferences": [],
-      "limitations": [
-        "Simulator representation not yet implemented."
-      ],
+      "limitations": ["Simulator representation not yet implemented."],
       "disclosureBurden": "EXCEPTIONAL",
       "lastVerifiedAt": null,
       "lastVerifiedAgainst": null,
       "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
-      "nonImplications": [
-        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
-      ]
+      "nonImplications": ["Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."]
     },
     {
       "capabilityId": "CAP-34",
@@ -796,18 +616,9 @@
       "simulatorMode": "LIVE_SIMULATION",
       "fidelity": "PARTIAL_REAL_LOGIC_LIMITATIONS_SHOWN",
       "scenarioCoverage": [
-        {
-          "scenarioId": "SIM-AGR-001",
-          "coverage": "PARTIAL"
-        },
-        {
-          "scenarioId": "SIM-AGR-002",
-          "coverage": "PARTIAL"
-        },
-        {
-          "scenarioId": "SIM-AGR-003",
-          "coverage": "PARTIAL"
-        }
+        {"scenarioId":"SIM-AGR-001","coverage":"PARTIAL"},
+        {"scenarioId":"SIM-AGR-002","coverage":"PARTIAL"},
+        {"scenarioId":"SIM-AGR-003","coverage":"PARTIAL"}
       ],
       "implementationReferences": [
         "simulation/cap34/cap34-simulation.js",
@@ -829,5 +640,5 @@
     }
   ],
   "capabilityCount": 34,
-  "snapshotDigest": "sha256:8fc10b3a71135efa88e192a1ee92ef0c510941eb8023069fb7707f27b984e4f4"
+  "snapshotDigest": "sha256:d19bffe23c8d928882582593463109e5f1a3778475f9f1ae410498fc3e32befe"
 }

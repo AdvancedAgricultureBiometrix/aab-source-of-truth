@@ -1,0 +1,188 @@
+{
+  "proofId": "AAB-CAP34-PATHWAY-PREVIEW-BEHAVIOURAL-PROOF",
+  "proofVersion": "1.0.0",
+  "generatedAtUtc": "2026-09-19T22:41:58.617Z",
+  "result": "PASS_CAP34_PATHWAY_PREVIEW_BEHAVIOURAL_PROOF",
+  "scope": "Proves only the defined concept-preview disclosure, acknowledgement, receipt and non-authority behaviours. It does not prove pathway implementation, scientific completeness, regulatory compliance, production readiness or commissioning.",
+  "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-002",
+  "manifestDigest": "sha256:8fc10b3a71135efa88e192a1ee92ef0c510941eb8023069fb7707f27b984e4f4",
+  "fixtureCount": 8,
+  "passedFixtureCount": 8,
+  "fixtures": [
+    {
+      "fixtureId": "PATH-01-MANIFEST",
+      "passed": true,
+      "actual": {
+        "status": "PASS_CAP34_FIDELITY_MANIFEST_VALID",
+        "validatorId": "AAB-CAP34-FIDELITY-MANIFEST-VALIDATOR",
+        "validatorVersion": "1.2.0",
+        "rosterId": "AAB-WORKSTREAM-B-CAPABILITY-IDENTITY-ROSTER",
+        "rosterVersion": "1.0.0",
+        "rosterSnapshotId": "WORKSTREAM-B-LAUNCH-GAP-2026-09-19-ROSTER-001",
+        "rosterDigest": "sha256:72b3469699159d47bd6c882a39378f52ff70de24c6cbe2017ac37434e5d3f41e",
+        "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-002",
+        "manifestVersion": "1.1.0",
+        "snapshotDigest": "sha256:8fc10b3a71135efa88e192a1ee92ef0c510941eb8023069fb7707f27b984e4f4",
+        "capabilityCount": 34,
+        "errors": []
+      }
+    },
+    {
+      "fixtureId": "PATH-02-SIMULATOR",
+      "passed": true,
+      "actual": {
+        "status": "PASS_READY_SIMULATION_ONLY",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "version": "0.2.0",
+        "checks": {
+          "classificationLocked": true,
+          "productionAuthorityImpossible": true,
+          "threeScenarioClassesPresent": true,
+          "twoRoadmapPreviewsPresent": true,
+          "roadmapPreviewsExplicitlyUnimplemented": true,
+          "roadmapAcknowledgementRequired": true,
+          "acknowledgedPreviewCreatesNoAuthority": true,
+          "contradictionDoesNotPromote": true,
+          "missingEvidenceFailsClosed": true,
+          "restrictedRoleDenied": true,
+          "scientistSimulationOnly": true,
+          "resetCreatesNoProductionState": true
+        }
+      }
+    },
+    {
+      "fixtureId": "PATH-03-MEMORY-ACK",
+      "passed": true,
+      "actual": {
+        "status": "PASS_ROADMAP_PREVIEW_DISCLOSED",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "version": "0.2.0",
+        "productionAuthority": false,
+        "implementedCapability": false,
+        "acknowledgement": {
+          "accepted": true,
+          "wordingVersion": "CAP34-ROADMAP-ACK-1.0.0"
+        },
+        "preview": {
+          "id": "SIM-ROADMAP-MEMORY-001",
+          "title": "Historical Scientific Memory Recovery",
+          "capabilityIdentities": [
+            "CAP-02:ROOT",
+            "CAP-04:ROOT"
+          ],
+          "mode": "ROADMAP_PREVIEW",
+          "fidelity": "CONCEPT_PREVIEW_NOT_IMPLEMENTED",
+          "dataClass": "SYNTHETIC_REFERENCE_ONLY",
+          "proposition": "Connect governed copies and references from existing institutional systems into provenance-preserving scientific memory without requiring those institutions to abandon their systems.",
+          "previewSteps": [
+            "Register source institution and legacy system.",
+            "Preserve original record, author, date, method, version and institutional ownership.",
+            "Retain positive, negative, null and contradictory results.",
+            "Link related records while preserving source trace-back and uncertainty.",
+            "Require human review before any record can become approved learning."
+          ],
+          "limitations": [
+            "No complete multi-institution historical recovery workflow has been implemented or behaviourally proven.",
+            "Document extraction, legacy adapters, duplicate resolution and corpus-scale discovery remain build work.",
+            "Imported records do not automatically become approved learning or scientific fact."
+          ],
+          "nonImplications": [
+            "This preview does not prove interoperability, scientific completeness, production readiness or commissioning."
+          ]
+        }
+      }
+    },
+    {
+      "fixtureId": "PATH-04-EXPORT-ACK",
+      "passed": true,
+      "actual": {
+        "status": "PASS_ROADMAP_PREVIEW_DISCLOSED",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "version": "0.2.0",
+        "productionAuthority": false,
+        "implementedCapability": false,
+        "acknowledgement": {
+          "accepted": true,
+          "wordingVersion": "CAP34-ROADMAP-ACK-1.0.0"
+        },
+        "preview": {
+          "id": "SIM-ROADMAP-EXPORT-001",
+          "title": "Governed Export-Compliance Evidence",
+          "capabilityIdentities": [
+            "CAP-03:ROOT",
+            "CAP-11:ROOT"
+          ],
+          "mode": "ROADMAP_PREVIEW",
+          "fidelity": "CONCEPT_PREVIEW_NOT_IMPLEMENTED",
+          "dataClass": "SYNTHETIC_REFERENCE_ONLY",
+          "proposition": "Assemble provenance-backed evidence from synthetic smallholder farms through aggregation and shipment, mapped to a versioned destination-market requirement set such as EUDR.",
+          "previewSteps": [
+            "Preserve farm, plot, producer, lot, aggregation, transformation and shipment lineage.",
+            "Bind every evidence item to source, time, geography, method and responsible authority.",
+            "Map evidence to the destination requirement version and effective date.",
+            "Expose missing, contradictory, expired or unverifiable evidence.",
+            "Generate a governed dossier completeness assessment for authorised human review."
+          ],
+          "limitations": [
+            "No EUDR-specific or behaviourally proven smallholder export-compliance workflow has been implemented.",
+            "Current provenance, evidence and regulatory schema foundations do not prove end-to-end chain-of-custody or legal sufficiency.",
+            "Dossier completeness does not equal regulatory approval, certification, customs acceptance or market access."
+          ],
+          "nonImplications": [
+            "This preview does not provide legal advice, regulatory approval, certification, production authority or commissioning evidence."
+          ]
+        }
+      }
+    },
+    {
+      "fixtureId": "PATH-05-ACK-FAIL-CLOSED",
+      "passed": true,
+      "actual": {
+        "status": "FAIL_CLOSED_ROADMAP_ACKNOWLEDGEMENT_REQUIRED"
+      }
+    },
+    {
+      "fixtureId": "PATH-06-MEMORY-RECEIPT",
+      "passed": true,
+      "actual": {
+        "status": "PASS_CAP34_DISCLOSURE_RECEIPT_VALID",
+        "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
+        "validatorVersion": "2.1.0",
+        "receiptId": "CAP34-PATHWAY-RECEIPT-001",
+        "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-002",
+        "capabilityCountPresented": 2,
+        "errors": []
+      }
+    },
+    {
+      "fixtureId": "PATH-07-EXPORT-RECEIPT",
+      "passed": true,
+      "actual": {
+        "status": "PASS_CAP34_DISCLOSURE_RECEIPT_VALID",
+        "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
+        "validatorVersion": "2.1.0",
+        "receiptId": "CAP34-PATHWAY-RECEIPT-001",
+        "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-002",
+        "capabilityCountPresented": 2,
+        "errors": []
+      }
+    },
+    {
+      "fixtureId": "PATH-08-RECEIPT-ACK-FAIL-CLOSED",
+      "passed": true,
+      "actual": {
+        "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
+        "validatorVersion": "2.1.0",
+        "receiptId": "CAP34-PATHWAY-RECEIPT-001",
+        "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-002",
+        "capabilityCountPresented": 2,
+        "errors": [
+          "ROADMAP_ACKNOWLEDGEMENT_REQUIRED",
+          "ACKNOWLEDGEMENT_DETAILS_REQUIRED",
+          "ACKNOWLEDGEMENT_NOT_ACCEPTED"
+        ]
+      }
+    }
+  ]
+}

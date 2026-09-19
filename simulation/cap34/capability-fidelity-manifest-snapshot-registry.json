@@ -1,6 +1,6 @@
 {
   "registryId": "AAB-CAP34-FIDELITY-MANIFEST-SNAPSHOT-REGISTRY",
-  "registryVersion": "1.0.0",
+  "registryVersion": "1.1.0",
   "appendOnly": true,
   "snapshots": [
     {
@@ -8,6 +8,13 @@
       "manifestVersion": "1.0.0",
       "manifestSnapshotId": "CAP34-MANIFEST-2026-09-19-SNAPSHOT-001",
       "snapshotDigest": "sha256:d19bffe23c8d928882582593463109e5f1a3778475f9f1ae410498fc3e32befe",
+      "archivedManifestReference": "capability-fidelity-manifest.snapshot-001.json"
+    },
+    {
+      "manifestId": "AAB-CAP34-FIDELITY-MANIFEST",
+      "manifestVersion": "1.1.0",
+      "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-002",
+      "snapshotDigest": "sha256:8fc10b3a71135efa88e192a1ee92ef0c510941eb8023069fb7707f27b984e4f4",
       "archivedManifestReference": "capability-fidelity-manifest.json"
     }
   ]

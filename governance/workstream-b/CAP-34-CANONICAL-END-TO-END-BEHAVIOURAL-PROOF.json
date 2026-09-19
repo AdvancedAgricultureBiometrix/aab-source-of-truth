@@ -1,13 +1,14 @@
 {
   "proofId": "AAB-CAP34-CANONICAL-END-TO-END-BEHAVIOURAL-PROOF",
-  "proofVersion": "1.0.0",
-  "generatedAtUtc": "2026-09-19T22:26:50.334Z",
+  "proofVersion": "1.1.0",
+  "generatedAtUtc": "2026-09-19T22:41:58.502Z",
   "result": "PASS_CAP34_CANONICAL_END_TO_END_BEHAVIOURAL_PROOF",
   "scope": "Proves only byte-bound PR #16 contract relevance and the defined manifest/receipt validator behaviors. It does not prove capability implementation, scientific correctness, production readiness, sovereignty, commissioning, Gate D satisfaction or WP05 commencement.",
   "pr16Binding": {
     "repository": "AdvancedAgricultureBiometrix/aab-source-of-truth",
     "pullRequest": 16,
-    "headCommit": "b9be2de868618b9d4d00ded7ea99159a129813af",
+    "contractSourceCommit": "b9be2de868618b9d4d00ded7ea99159a129813af",
+    "testedPackageBaseCommit": "b35c398229ab0344bee2deec681e2233c4100958",
     "allCanonicalBlobShasMatched": true,
     "sources": [
       {
@@ -34,8 +35,8 @@
       {
         "file": "PR16-cap34-disclosure-receipt.js",
         "path": "simulation/cap34/cap34-disclosure-receipt.js",
-        "blobSha": "14b171198363f5797245601530c95488bafac7de",
-        "actualBlobSha": "14b171198363f5797245601530c95488bafac7de",
+        "blobSha": "d599116bb0f489cdf84711b306cab7f85c032af9",
+        "actualBlobSha": "d599116bb0f489cdf84711b306cab7f85c032af9",
         "passed": true
       }
     ]
@@ -52,8 +53,8 @@
     "result": "PASS_CAP34_CANONICAL_DISCLOSURE_RECEIPT_BEHAVIOURAL_PROOF",
     "fixtureCount": 28,
     "passedFixtureCount": 28,
-    "validatorVersion": "2.0.0",
-    "validatorSha256": "3f23a83d0880611b10bbdbbaa8b1dce8e7f55900f452e4ba882da0a450905dd7",
+    "validatorVersion": "2.1.0",
+    "validatorSha256": "75a39f4dd914583304399c356ead6073cbfe36928e06816a8413ac1f0cf21283",
     "fixtures": [
       {
         "fixtureId": "DRV-01",
@@ -367,11 +368,9 @@
           "MANIFEST_SNAPSHOT_MISMATCH"
         ],
         "actualErrors": [
-          "MANIFEST_ARCHIVE_MISMATCH:manifestVersion",
           "MANIFEST_ARCHIVE_MISMATCH:manifestSnapshotId",
           "MANIFEST_ARCHIVE_MISMATCH:snapshotDigest",
-          "MANIFEST_SNAPSHOT_MISMATCH",
-          "MANIFEST_VERSION_MISMATCH"
+          "MANIFEST_SNAPSHOT_MISMATCH"
         ],
         "passed": true
       },
