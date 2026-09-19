@@ -7,34 +7,36 @@ const crypto = require("crypto");
 const childProcess = require("child_process");
 
 const ROOT = __dirname;
+const REPO_ROOT = path.join(ROOT, "..", "..");
 const read = (name) => fs.readFileSync(path.join(ROOT, name));
+const readAtRepoRoot = (relPath) => fs.readFileSync(path.join(REPO_ROOT, relPath));
 const json = (name) => JSON.parse(read(name).toString("utf8"));
 const copy = (value) => JSON.parse(JSON.stringify(value));
-const gitBlobSha = (name) => {
-  const bytes = read(name);
+const gitBlobShaAt = (relPath) => {
+  const bytes = readAtRepoRoot(relPath);
   return crypto.createHash("sha1").update(`blob ${bytes.length}\0`).update(bytes).digest("hex");
 };
 const sha256 = (name) => crypto.createHash("sha256").update(read(name)).digest("hex");
 
 const canonicalSources = [
-  {file:"PR16-CAP-34-DISCLOSURE-RECEIPT-CONTRACT.md",path:"governance/workstream-b/CAP-34-DISCLOSURE-RECEIPT-CONTRACT.md",blobSha:"4d01b86546d0c08cb6507cfc3345e1bf98bad766"},
-  {file:"PR16-CAP-34-DISCLOSURE-RECEIPT-VALIDATOR-TEST-MATRIX.md",path:"governance/workstream-b/CAP-34-DISCLOSURE-RECEIPT-VALIDATOR-TEST-MATRIX.md",blobSha:"65b1311d2b1df463439122bf54e7c94ba84c3266"},
-  {file:"PR16-cap34-disclosure-receipt-v1.0.0.schema.json",path:"simulation/cap34/cap34-disclosure-receipt-v1.0.0.schema.json",blobSha:"e1291b5c6ea0b808c64ff1584485e748a7d74eb6"},
-  {file:"PR16-cap34-disclosure-receipt.js",path:"simulation/cap34/cap34-disclosure-receipt.js",blobSha:"d599116bb0f489cdf84711b306cab7f85c032af9"}
+  {path:"governance/workstream-b/CAP-34-DISCLOSURE-RECEIPT-CONTRACT.md",blobSha:"4d01b86546d0c08cb6507cfc3345e1bf98bad766"},
+  {path:"governance/workstream-b/CAP-34-DISCLOSURE-RECEIPT-VALIDATOR-TEST-MATRIX.md",blobSha:"65b1311d2b1df463439122bf54e7c94ba84c3266"},
+  {path:"simulation/cap34/cap34-disclosure-receipt-v1.0.0.schema.json",blobSha:"e1291b5c6ea0b808c64ff1584485e748a7d74eb6"},
+  {path:"simulation/cap34/cap34-disclosure-receipt.js",blobSha:"d599116bb0f489cdf84711b306cab7f85c032af9"}
 ];
-const contractBinding = canonicalSources.map((source) => ({...source,actualBlobSha:gitBlobSha(source.file),passed:gitBlobSha(source.file)===source.blobSha}));
+const contractBinding = canonicalSources.map((source) => ({...source,actualBlobSha:gitBlobShaAt(source.path),passed:gitBlobShaAt(source.path)===source.blobSha}));
 
 const manifest = json("capability-fidelity-manifest.json");
-const roster = json("CAP-34-Authoritative-Capability-Identity-Roster.json");
-const rosterRegistry = json("CAP-34-Capability-Identity-Roster-Registry.json");
-const snapshotRegistry = json("CAP-34-Fidelity-Manifest-Snapshot-Registry.json");
+const roster = json("capability-identity-roster.json");
+const rosterRegistry = json("capability-identity-roster-registry.json");
+const snapshotRegistry = json("capability-fidelity-manifest-snapshot-registry.json");
 const sandbox = {window:{},TextEncoder};
 vm.createContext(sandbox);
-vm.runInContext(read("CAP-34-Capability-Fidelity-Manifest-Validator.js").toString("utf8"),sandbox);
-vm.runInContext(read("CAP-34-Canonical-Disclosure-Receipt-Validator.js").toString("utf8"),sandbox);
+vm.runInContext(read("capability-fidelity-manifest.js").toString("utf8"),sandbox);
+vm.runInContext(read("cap34-disclosure-receipt.js").toString("utf8"),sandbox);
 const manifestApi=sandbox.window.AAB_CAP34_FIDELITY_MANIFEST;
 const receiptApi=sandbox.window.AAB_CAP34_DISCLOSURE_RECEIPT;
-const manifestRun=childProcess.spawnSync(process.execPath,[path.join(ROOT,"CAP-34-Capability-Fidelity-Manifest-Validator-Behavioural-Test.js")],{cwd:ROOT,encoding:"utf8"});
+const manifestRun=childProcess.spawnSync(process.execPath,[path.join(ROOT,"capability-fidelity-manifest.behavioural-test.js")],{cwd:ROOT,encoding:"utf8"});
 const manifestProof=JSON.parse(manifestRun.stdout);
 
 function entry(id,part="ROOT",source=manifest){return source.entries.find((item)=>item.capabilityId===id&&(item.capabilityPart||"ROOT")===part);}
@@ -75,11 +77,11 @@ const fixtures=[
 ];
 
 const results=fixtures.map((fixture)=>{const c=fixture.prepare();const actual=receiptApi.validateDisclosureReceipt(c.receipt,c.manifest,c.snapshotRegistry,roster,rosterRegistry);return {fixtureId:fixture.id,expectedStatus:fixture.expect,actualStatus:actual.status,expectedErrors:fixture.errors,actualErrors:Array.from(actual.errors),passed:actual.status===fixture.expect&&fixture.errors.every(error=>actual.errors.includes(error))};});
-const contractBound=contractBinding.every(item=>item.passed)&&json("PR16-cap34-disclosure-receipt-v1.0.0.schema.json").properties.receiptContractVersion.const==="1.0.0";
+const contractBound=contractBinding.every(item=>item.passed)&&json("cap34-disclosure-receipt-v1.0.0.schema.json").properties.receiptContractVersion.const==="1.0.0";
 const manifestPassed=manifestRun.status===0&&manifestProof.result==="PASS_CAP34_MANIFEST_VALIDATOR_BEHAVIOURAL_PROOF"&&manifestProof.summary.fixtureCount===14;
 const receiptPassed=results.length===28&&results.every(result=>result.passed);
 const allPassed=contractBound&&manifestPassed&&receiptPassed;
-const proof={proofId:"AAB-CAP34-CANONICAL-END-TO-END-BEHAVIOURAL-PROOF",proofVersion:"1.1.0",generatedAtUtc:new Date().toISOString(),result:allPassed?"PASS_CAP34_CANONICAL_END_TO_END_BEHAVIOURAL_PROOF":"FAIL_CLOSED_CAP34_CANONICAL_END_TO_END_BEHAVIOURAL_PROOF",scope:"Proves only byte-bound PR #16 contract relevance and the defined manifest/receipt validator behaviors. It does not prove capability implementation, scientific correctness, production readiness, sovereignty, commissioning, Gate D satisfaction or WP05 commencement.",pr16Binding:{repository:"AdvancedAgricultureBiometrix/aab-source-of-truth",pullRequest:16,contractSourceCommit:"b9be2de868618b9d4d00ded7ea99159a129813af",testedPackageBaseCommit:"b35c398229ab0344bee2deec681e2233c4100958",allCanonicalBlobShasMatched:contractBound,sources:contractBinding},manifestGate:{result:manifestProof.result,exitCode:manifestRun.status,fixtureCount:14,passedFixtureCount:manifestProof.summary.passedFixtureCount,validatorVersion:manifestApi.validatorVersion,validatorSha256:sha256("CAP-34-Capability-Fidelity-Manifest-Validator.js")},receiptGate:{result:receiptPassed?"PASS_CAP34_CANONICAL_DISCLOSURE_RECEIPT_BEHAVIOURAL_PROOF":"FAIL_CLOSED_CAP34_CANONICAL_DISCLOSURE_RECEIPT_BEHAVIOURAL_PROOF",fixtureCount:28,passedFixtureCount:results.filter(result=>result.passed).length,validatorVersion:receiptApi.validatorVersion,validatorSha256:sha256("CAP-34-Canonical-Disclosure-Receipt-Validator.js"),fixtures:results},summary:{totalFixtureCount:42,passedFixtureCount:manifestProof.summary.passedFixtureCount+results.filter(result=>result.passed).length,contractBindingPassed:contractBound}};
-fs.writeFileSync(path.join(ROOT,"CAP-34-Canonical-End-to-End-Behavioural-Proof.json"),JSON.stringify(proof,null,2)+"\n");
+const proof={proofId:"AAB-CAP34-CANONICAL-END-TO-END-BEHAVIOURAL-PROOF",proofVersion:"1.1.0",generatedAtUtc:new Date().toISOString(),result:allPassed?"PASS_CAP34_CANONICAL_END_TO_END_BEHAVIOURAL_PROOF":"FAIL_CLOSED_CAP34_CANONICAL_END_TO_END_BEHAVIOURAL_PROOF",scope:"Proves only byte-bound PR #16 contract relevance and the defined manifest/receipt validator behaviors. It does not prove capability implementation, scientific correctness, production readiness, sovereignty, commissioning, Gate D satisfaction or WP05 commencement.",pr16Binding:{repository:"AdvancedAgricultureBiometrix/aab-source-of-truth",pullRequest:16,contractSourceCommit:"b9be2de868618b9d4d00ded7ea99159a129813af",testedPackageBaseCommit:"b35c398229ab0344bee2deec681e2233c4100958",allCanonicalBlobShasMatched:contractBound,sources:contractBinding},manifestGate:{result:manifestProof.result,exitCode:manifestRun.status,fixtureCount:14,passedFixtureCount:manifestProof.summary.passedFixtureCount,validatorVersion:manifestApi.validatorVersion,validatorSha256:sha256("capability-fidelity-manifest.js")},receiptGate:{result:receiptPassed?"PASS_CAP34_CANONICAL_DISCLOSURE_RECEIPT_BEHAVIOURAL_PROOF":"FAIL_CLOSED_CAP34_CANONICAL_DISCLOSURE_RECEIPT_BEHAVIOURAL_PROOF",fixtureCount:28,passedFixtureCount:results.filter(result=>result.passed).length,validatorVersion:receiptApi.validatorVersion,validatorSha256:sha256("cap34-disclosure-receipt.js"),fixtures:results},summary:{totalFixtureCount:42,passedFixtureCount:manifestProof.summary.passedFixtureCount+results.filter(result=>result.passed).length,contractBindingPassed:contractBound}};
+fs.writeFileSync(path.join(REPO_ROOT,"governance","workstream-b","CAP-34-CANONICAL-END-TO-END-BEHAVIOURAL-PROOF.json"),JSON.stringify(proof,null,2)+"\n");
 process.stdout.write(JSON.stringify(proof,null,2)+"\n");
 process.exitCode=allPassed?0:1;

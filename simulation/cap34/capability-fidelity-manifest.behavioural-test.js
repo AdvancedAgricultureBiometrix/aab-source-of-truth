@@ -6,11 +6,12 @@ const vm = require("vm");
 const crypto = require("crypto");
 
 const ROOT = __dirname;
+const REPO_ROOT = path.join(ROOT, "..", "..");
 const MANIFEST_PATH = path.join(ROOT, "capability-fidelity-manifest.json");
-const VALIDATOR_PATH = path.join(ROOT, "CAP-34-Capability-Fidelity-Manifest-Validator.js");
-const ROSTER_PATH = path.join(ROOT, "CAP-34-Authoritative-Capability-Identity-Roster.json");
-const ROSTER_REGISTRY_PATH = path.join(ROOT, "CAP-34-Capability-Identity-Roster-Registry.json");
-const EVIDENCE_PATH = path.join(ROOT, "CAP-34-Manifest-Validator-Behavioural-Proof.json");
+const VALIDATOR_PATH = path.join(ROOT, "capability-fidelity-manifest.js");
+const ROSTER_PATH = path.join(ROOT, "capability-identity-roster.json");
+const ROSTER_REGISTRY_PATH = path.join(ROOT, "capability-identity-roster-registry.json");
+const EVIDENCE_PATH = path.join(REPO_ROOT, "governance", "workstream-b", "CAP-34-MANIFEST-VALIDATOR-BEHAVIOURAL-PROOF.json");
 
 const manifest = JSON.parse(fs.readFileSync(MANIFEST_PATH, "utf8"));
 const roster = JSON.parse(fs.readFileSync(ROSTER_PATH, "utf8"));

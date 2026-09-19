@@ -31,19 +31,25 @@ window.AAB_CAP34_SIMULATION.runValidation()
 
 returns `PASS_READY_SIMULATION_ONLY`.
 
-Run the Node behavioural proofs:
+Run the Node behavioural proofs from this directory, against a clean checkout of the repository:
 
 ```text
-node CAP-34-Capability-Fidelity-Manifest-Validator-Behavioural-Test.js
-node CAP-34-Canonical-End-to-End-Behavioural-Test.js
-node CAP-34-Pathway-Preview-Behavioural-Test.js
+node capability-fidelity-manifest.behavioural-test.js
+node cap34-canonical-end-to-end.behavioural-test.js
+node cap34-pathway-preview.behavioural-test.js
 ```
+
+Each proof is written to its frozen record in `governance/workstream-b/`:
+
+- `CAP-34-MANIFEST-VALIDATOR-BEHAVIOURAL-PROOF.json`
+- `CAP-34-CANONICAL-END-TO-END-BEHAVIOURAL-PROOF.json`
+- `CAP-34-PATHWAY-PREVIEW-BEHAVIOURAL-PROOF.json`
 
 Expected results:
 
-- `PASS_CAP34_MANIFEST_VALIDATOR_BEHAVIOURAL_PROOF` — 14/14 fixtures.
-- `PASS_CAP34_CANONICAL_END_TO_END_BEHAVIOURAL_PROOF` — 42/42 fixtures.
-- `PASS_CAP34_PATHWAY_PREVIEW_BEHAVIOURAL_PROOF` — 8/8 fixtures.
+- `PASS_CAP34_MANIFEST_VALIDATOR_BEHAVIOURAL_PROOF` — 14/14 fixtures, exit code 0.
+- `PASS_CAP34_CANONICAL_END_TO_END_BEHAVIOURAL_PROOF` — 42/42 fixtures, exit code 0.
+- `PASS_CAP34_PATHWAY_PREVIEW_BEHAVIOURAL_PROOF` — 8/8 fixtures, exit code 0.
 
 These results prove only the defined simulator-safety, manifest, receipt and preview-disclosure behaviours. They do not prove capability implementation, scientific correctness, regulatory compliance, production readiness, sovereignty, commissioning, Gate D satisfaction or WP05 commencement.
 
