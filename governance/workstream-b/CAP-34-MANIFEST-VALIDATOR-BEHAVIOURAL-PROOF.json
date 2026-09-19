@@ -1,0 +1,217 @@
+{
+  "proofId": "AAB-CAP34-MANIFEST-VALIDATOR-BEHAVIOURAL-PROOF",
+  "proofVersion": "1.0.0",
+  "generatedAtUtc": "2026-09-19T22:26:50.272Z",
+  "result": "PASS_CAP34_MANIFEST_VALIDATOR_BEHAVIOURAL_PROOF",
+  "scope": "Proves only whether the validator detects the defined honest and corrupted manifest states. It does not prove AAB completeness, CAP-34 completion, production readiness, WA commissioning, Gate D satisfaction, or WP05 commencement.",
+  "validator": {
+    "file": "CAP-34-Capability-Fidelity-Manifest-Validator.js",
+    "validatorId": "AAB-CAP34-FIDELITY-MANIFEST-VALIDATOR",
+    "declaredValidatorVersion": "1.2.0",
+    "sha256": "f5d3505fe82c5c6214f0b2b63ffb68bb67d172a78e9203f4cef516cff5d864eb"
+  },
+  "manifest": {
+    "file": "capability-fidelity-manifest.json",
+    "manifestId": "AAB-CAP34-FIDELITY-MANIFEST",
+    "manifestVersion": "1.0.0",
+    "manifestSnapshotId": "CAP34-MANIFEST-2026-09-19-SNAPSHOT-001",
+    "snapshotDigest": "sha256:d19bffe23c8d928882582593463109e5f1a3778475f9f1ae410498fc3e32befe",
+    "capabilityCount": 34
+  },
+  "authoritativeRoster": {
+    "file": "CAP-34-Authoritative-Capability-Identity-Roster.json",
+    "registryFile": "CAP-34-Capability-Identity-Roster-Registry.json",
+    "rosterId": "AAB-WORKSTREAM-B-CAPABILITY-IDENTITY-ROSTER",
+    "rosterVersion": "1.0.0",
+    "rosterSnapshotId": "WORKSTREAM-B-LAUNCH-GAP-2026-09-19-ROSTER-001",
+    "rosterDigest": "sha256:72b3469699159d47bd6c882a39378f52ff70de24c6cbe2017ac37434e5d3f41e",
+    "sourceCommitSha": "b9be2de868618b9d4d00ded7ea99159a129813af",
+    "sourceBlobSha": "ccdf183b89c4fc45d083643d89d4425a156a8230",
+    "activeIdentityCount": 34,
+    "retiredIdentityCount": 1
+  },
+  "summary": {
+    "fixtureCount": 14,
+    "passedFixtureCount": 14,
+    "failedFixtureCount": 0
+  },
+  "fixtures": [
+    {
+      "fixtureId": "HONEST_MANIFEST",
+      "expectedStatus": "PASS_CAP34_FIDELITY_MANIFEST_VALID",
+      "actualStatus": "PASS_CAP34_FIDELITY_MANIFEST_VALID",
+      "expectedErrors": [],
+      "actualErrors": [],
+      "passed": true
+    },
+    {
+      "fixtureId": "MISSING_CAPABILITY_COUNT_UNCHANGED",
+      "expectedStatus": "FAIL_CLOSED_MANIFEST_INVALID",
+      "actualStatus": "FAIL_CLOSED_MANIFEST_INVALID",
+      "expectedErrors": [
+        "CAPABILITY_COUNT_MISMATCH"
+      ],
+      "actualErrors": [
+        "CAPABILITY_COUNT_MISMATCH",
+        "MISSING_CANONICAL_IDENTITY:CAP-12:ROOT"
+      ],
+      "passed": true
+    },
+    {
+      "fixtureId": "MISSING_CAPABILITY_COUNT_ADJUSTED",
+      "expectedStatus": "FAIL_CLOSED_MANIFEST_INVALID",
+      "actualStatus": "FAIL_CLOSED_MANIFEST_INVALID",
+      "expectedErrors": [
+        "MISSING_CANONICAL_IDENTITY:CAP-12:ROOT"
+      ],
+      "actualErrors": [
+        "MISSING_CANONICAL_IDENTITY:CAP-12:ROOT",
+        "AUTHORITATIVE_CAPABILITY_COUNT_MISMATCH"
+      ],
+      "passed": true
+    },
+    {
+      "fixtureId": "DUPLICATE_CAPABILITY_IDENTITY",
+      "expectedStatus": "FAIL_CLOSED_MANIFEST_INVALID",
+      "actualStatus": "FAIL_CLOSED_MANIFEST_INVALID",
+      "expectedErrors": [
+        "DUPLICATE_IDENTITY:CAP-01:ROOT"
+      ],
+      "actualErrors": [
+        "DUPLICATE_IDENTITY:CAP-01:ROOT",
+        "AUTHORITATIVE_CAPABILITY_COUNT_MISMATCH"
+      ],
+      "passed": true
+    },
+    {
+      "fixtureId": "MISSING_REPRESENTATION_VERSION",
+      "expectedStatus": "FAIL_CLOSED_MANIFEST_INVALID",
+      "actualStatus": "FAIL_CLOSED_MANIFEST_INVALID",
+      "expectedErrors": [
+        "REPRESENTATION_VERSION_REQUIRED:CAP-01:ROOT"
+      ],
+      "actualErrors": [
+        "REPRESENTATION_VERSION_REQUIRED:CAP-01:ROOT"
+      ],
+      "passed": true
+    },
+    {
+      "fixtureId": "INVALID_FIDELITY_MODE_PAIRING",
+      "expectedStatus": "FAIL_CLOSED_MANIFEST_INVALID",
+      "actualStatus": "FAIL_CLOSED_MANIFEST_INVALID",
+      "expectedErrors": [
+        "NOT_REPRESENTED_REQUIRES_NONE:CAP-01:ROOT"
+      ],
+      "actualErrors": [
+        "NOT_REPRESENTED_REQUIRES_NONE:CAP-01:ROOT"
+      ],
+      "passed": true
+    },
+    {
+      "fixtureId": "REAL_LOGIC_WITHOUT_IMPLEMENTATION_EVIDENCE",
+      "expectedStatus": "FAIL_CLOSED_MANIFEST_INVALID",
+      "actualStatus": "FAIL_CLOSED_MANIFEST_INVALID",
+      "expectedErrors": [
+        "REAL_REQUIRES_IMPLEMENTATION_REFERENCE:CAP-01:ROOT"
+      ],
+      "actualErrors": [
+        "REAL_REQUIRES_IMPLEMENTATION_REFERENCE:CAP-01:ROOT"
+      ],
+      "passed": true
+    },
+    {
+      "fixtureId": "CAPABILITY_COUNT_MISMATCH",
+      "expectedStatus": "FAIL_CLOSED_MANIFEST_INVALID",
+      "actualStatus": "FAIL_CLOSED_MANIFEST_INVALID",
+      "expectedErrors": [
+        "CAPABILITY_COUNT_MISMATCH"
+      ],
+      "actualErrors": [
+        "CAPABILITY_COUNT_MISMATCH",
+        "AUTHORITATIVE_CAPABILITY_COUNT_MISMATCH"
+      ],
+      "passed": true
+    },
+    {
+      "fixtureId": "CAP33_EXCEPTIONAL_BURDEN_WEAKENED",
+      "expectedStatus": "FAIL_CLOSED_MANIFEST_INVALID",
+      "actualStatus": "FAIL_CLOSED_MANIFEST_INVALID",
+      "expectedErrors": [
+        "CAP33_EXCEPTIONAL_DISCLOSURE_REQUIRED"
+      ],
+      "actualErrors": [
+        "CAP33_EXCEPTIONAL_DISCLOSURE_REQUIRED"
+      ],
+      "passed": true
+    },
+    {
+      "fixtureId": "CAP14A_CAP14B_MERGED_SUBSTITUTION",
+      "expectedStatus": "FAIL_CLOSED_MANIFEST_INVALID",
+      "actualStatus": "FAIL_CLOSED_MANIFEST_INVALID",
+      "expectedErrors": [
+        "CAP14_MERGED_IDENTITY_FORBIDDEN",
+        "MISSING_CANONICAL_IDENTITY:CAP-14:A",
+        "MISSING_CANONICAL_IDENTITY:CAP-14:B"
+      ],
+      "actualErrors": [
+        "MISSING_CANONICAL_IDENTITY:CAP-14:A",
+        "MISSING_CANONICAL_IDENTITY:CAP-14:B",
+        "UNDECLARED_MANIFEST_IDENTITY:CAP-14:ROOT",
+        "CAP14_MERGED_IDENTITY_FORBIDDEN",
+        "AUTHORITATIVE_CAPABILITY_COUNT_MISMATCH"
+      ],
+      "passed": true
+    },
+    {
+      "fixtureId": "RETIRED_CAP29_INSERTED",
+      "expectedStatus": "FAIL_CLOSED_MANIFEST_INVALID",
+      "actualStatus": "FAIL_CLOSED_MANIFEST_INVALID",
+      "expectedErrors": [
+        "RETIRED_IDENTITY_PRESENT:CAP-29:ROOT"
+      ],
+      "actualErrors": [
+        "RETIRED_IDENTITY_PRESENT:CAP-29:ROOT",
+        "AUTHORITATIVE_CAPABILITY_COUNT_MISMATCH"
+      ],
+      "passed": true
+    },
+    {
+      "fixtureId": "AUTHORITATIVE_ROSTER_MISSING",
+      "expectedStatus": "FAIL_CLOSED_MANIFEST_INVALID",
+      "actualStatus": "FAIL_CLOSED_MANIFEST_INVALID",
+      "expectedErrors": [
+        "AUTHORITATIVE_ROSTER_REQUIRED"
+      ],
+      "actualErrors": [
+        "AUTHORITATIVE_ROSTER_REQUIRED"
+      ],
+      "passed": true
+    },
+    {
+      "fixtureId": "ROSTER_CAPABILITY_REMOVED_AND_REPINNED",
+      "expectedStatus": "FAIL_CLOSED_MANIFEST_INVALID",
+      "actualStatus": "FAIL_CLOSED_MANIFEST_INVALID",
+      "expectedErrors": [
+        "TRUSTED_ROSTER_DIGEST_MISMATCH",
+        "ARCHIVED_ROSTER_DIGEST_MISMATCH"
+      ],
+      "actualErrors": [
+        "TRUSTED_ROSTER_DIGEST_MISMATCH",
+        "ARCHIVED_ROSTER_DIGEST_MISMATCH"
+      ],
+      "passed": true
+    },
+    {
+      "fixtureId": "ROSTER_AND_REGISTRY_COLLABORATIVE_SUBSTITUTION",
+      "expectedStatus": "FAIL_CLOSED_MANIFEST_INVALID",
+      "actualStatus": "FAIL_CLOSED_MANIFEST_INVALID",
+      "expectedErrors": [
+        "TRUSTED_ROSTER_DIGEST_MISMATCH"
+      ],
+      "actualErrors": [
+        "TRUSTED_ROSTER_DIGEST_MISMATCH"
+      ],
+      "passed": true
+    }
+  ]
+}

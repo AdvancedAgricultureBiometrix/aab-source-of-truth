@@ -1,0 +1,14 @@
+{
+  "registryId": "AAB-CAP34-FIDELITY-MANIFEST-SNAPSHOT-REGISTRY",
+  "registryVersion": "1.0.0",
+  "appendOnly": true,
+  "snapshots": [
+    {
+      "manifestId": "AAB-CAP34-FIDELITY-MANIFEST",
+      "manifestVersion": "1.0.0",
+      "manifestSnapshotId": "CAP34-MANIFEST-2026-09-19-SNAPSHOT-001",
+      "snapshotDigest": "sha256:d19bffe23c8d928882582593463109e5f1a3778475f9f1ae410498fc3e32befe",
+      "archivedManifestReference": "capability-fidelity-manifest.json"
+    }
+  ]
+}

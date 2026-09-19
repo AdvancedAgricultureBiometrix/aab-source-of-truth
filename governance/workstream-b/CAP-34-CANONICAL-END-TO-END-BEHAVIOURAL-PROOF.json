@@ -1,0 +1,409 @@
+{
+  "proofId": "AAB-CAP34-CANONICAL-END-TO-END-BEHAVIOURAL-PROOF",
+  "proofVersion": "1.0.0",
+  "generatedAtUtc": "2026-09-19T22:26:50.334Z",
+  "result": "PASS_CAP34_CANONICAL_END_TO_END_BEHAVIOURAL_PROOF",
+  "scope": "Proves only byte-bound PR #16 contract relevance and the defined manifest/receipt validator behaviors. It does not prove capability implementation, scientific correctness, production readiness, sovereignty, commissioning, Gate D satisfaction or WP05 commencement.",
+  "pr16Binding": {
+    "repository": "AdvancedAgricultureBiometrix/aab-source-of-truth",
+    "pullRequest": 16,
+    "headCommit": "b9be2de868618b9d4d00ded7ea99159a129813af",
+    "allCanonicalBlobShasMatched": true,
+    "sources": [
+      {
+        "file": "PR16-CAP-34-DISCLOSURE-RECEIPT-CONTRACT.md",
+        "path": "governance/workstream-b/CAP-34-DISCLOSURE-RECEIPT-CONTRACT.md",
+        "blobSha": "4d01b86546d0c08cb6507cfc3345e1bf98bad766",
+        "actualBlobSha": "4d01b86546d0c08cb6507cfc3345e1bf98bad766",
+        "passed": true
+      },
+      {
+        "file": "PR16-CAP-34-DISCLOSURE-RECEIPT-VALIDATOR-TEST-MATRIX.md",
+        "path": "governance/workstream-b/CAP-34-DISCLOSURE-RECEIPT-VALIDATOR-TEST-MATRIX.md",
+        "blobSha": "65b1311d2b1df463439122bf54e7c94ba84c3266",
+        "actualBlobSha": "65b1311d2b1df463439122bf54e7c94ba84c3266",
+        "passed": true
+      },
+      {
+        "file": "PR16-cap34-disclosure-receipt-v1.0.0.schema.json",
+        "path": "simulation/cap34/cap34-disclosure-receipt-v1.0.0.schema.json",
+        "blobSha": "e1291b5c6ea0b808c64ff1584485e748a7d74eb6",
+        "actualBlobSha": "e1291b5c6ea0b808c64ff1584485e748a7d74eb6",
+        "passed": true
+      },
+      {
+        "file": "PR16-cap34-disclosure-receipt.js",
+        "path": "simulation/cap34/cap34-disclosure-receipt.js",
+        "blobSha": "14b171198363f5797245601530c95488bafac7de",
+        "actualBlobSha": "14b171198363f5797245601530c95488bafac7de",
+        "passed": true
+      }
+    ]
+  },
+  "manifestGate": {
+    "result": "PASS_CAP34_MANIFEST_VALIDATOR_BEHAVIOURAL_PROOF",
+    "exitCode": 0,
+    "fixtureCount": 14,
+    "passedFixtureCount": 14,
+    "validatorVersion": "1.2.0",
+    "validatorSha256": "f5d3505fe82c5c6214f0b2b63ffb68bb67d172a78e9203f4cef516cff5d864eb"
+  },
+  "receiptGate": {
+    "result": "PASS_CAP34_CANONICAL_DISCLOSURE_RECEIPT_BEHAVIOURAL_PROOF",
+    "fixtureCount": 28,
+    "passedFixtureCount": 28,
+    "validatorVersion": "2.0.0",
+    "validatorSha256": "3f23a83d0880611b10bbdbbaa8b1dce8e7f55900f452e4ba882da0a450905dd7",
+    "fixtures": [
+      {
+        "fixtureId": "DRV-01",
+        "expectedStatus": "PASS_CAP34_DISCLOSURE_RECEIPT_VALID",
+        "actualStatus": "PASS_CAP34_DISCLOSURE_RECEIPT_VALID",
+        "expectedErrors": [],
+        "actualErrors": [],
+        "passed": true
+      },
+      {
+        "fixtureId": "DRV-02",
+        "expectedStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "actualStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "expectedErrors": [
+          "MANIFEST_SNAPSHOT_MISMATCH"
+        ],
+        "actualErrors": [
+          "SNAPSHOT_NOT_ARCHIVED:CAP34-WRONG",
+          "MANIFEST_SNAPSHOT_MISMATCH"
+        ],
+        "passed": true
+      },
+      {
+        "fixtureId": "DRV-03",
+        "expectedStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "actualStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "expectedErrors": [
+          "MANIFEST_VERSION_MISMATCH"
+        ],
+        "actualErrors": [
+          "RECEIPT_ARCHIVE_MISMATCH:manifestVersion",
+          "MANIFEST_VERSION_MISMATCH"
+        ],
+        "passed": true
+      },
+      {
+        "fixtureId": "DRV-04",
+        "expectedStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "actualStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "expectedErrors": [
+          "REPRESENTATION_VERSION_MISMATCH:CAP-34:ROOT"
+        ],
+        "actualErrors": [
+          "REPRESENTATION_VERSION_MISMATCH:CAP-34:ROOT"
+        ],
+        "passed": true
+      },
+      {
+        "fixtureId": "DRV-05",
+        "expectedStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "actualStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "expectedErrors": [
+          "FIDELITY_MISMATCH:CAP-34:ROOT"
+        ],
+        "actualErrors": [
+          "FIDELITY_MISMATCH:CAP-34:ROOT"
+        ],
+        "passed": true
+      },
+      {
+        "fixtureId": "DRV-06",
+        "expectedStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "actualStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "expectedErrors": [
+          "SIMULATOR_MODE_MISMATCH:CAP-34:ROOT"
+        ],
+        "actualErrors": [
+          "SIMULATOR_MODE_MISMATCH:CAP-34:ROOT"
+        ],
+        "passed": true
+      },
+      {
+        "fixtureId": "DRV-07",
+        "expectedStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "actualStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "expectedErrors": [
+          "DISCLOSURE_BURDEN_MISMATCH:CAP-34:ROOT"
+        ],
+        "actualErrors": [
+          "DISCLOSURE_BURDEN_MISMATCH:CAP-34:ROOT"
+        ],
+        "passed": true
+      },
+      {
+        "fixtureId": "DRV-08",
+        "expectedStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "actualStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "expectedErrors": [
+          "UNREPRESENTED_CAPABILITY_CANNOT_BE_SHOWN:CAP-01:ROOT"
+        ],
+        "actualErrors": [
+          "UNREPRESENTED_CAPABILITY_CANNOT_BE_SHOWN:CAP-01:ROOT"
+        ],
+        "passed": true
+      },
+      {
+        "fixtureId": "DRV-09",
+        "expectedStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "actualStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "expectedErrors": [
+          "CAPABILITY_NOT_IN_MANIFEST:CAP-99:ROOT"
+        ],
+        "actualErrors": [
+          "CAPABILITY_NOT_IN_MANIFEST:CAP-99:ROOT"
+        ],
+        "passed": true
+      },
+      {
+        "fixtureId": "DRV-10",
+        "expectedStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "actualStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "expectedErrors": [
+          "DUPLICATE_PRESENTED_CAPABILITY:CAP-34:ROOT"
+        ],
+        "actualErrors": [
+          "DUPLICATE_PRESENTED_CAPABILITY:CAP-34:ROOT"
+        ],
+        "passed": true
+      },
+      {
+        "fixtureId": "DRV-11",
+        "expectedStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "actualStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "expectedErrors": [
+          "LIMITATIONS_REQUIRED:CAP-34:ROOT"
+        ],
+        "actualErrors": [
+          "LIMITATIONS_REQUIRED:CAP-34:ROOT"
+        ],
+        "passed": true
+      },
+      {
+        "fixtureId": "DRV-12",
+        "expectedStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "actualStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "expectedErrors": [
+          "NON_IMPLICATIONS_REQUIRED:CAP-34:ROOT"
+        ],
+        "actualErrors": [
+          "NON_IMPLICATIONS_REQUIRED:CAP-34:ROOT"
+        ],
+        "passed": true
+      },
+      {
+        "fixtureId": "DRV-13",
+        "expectedStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "actualStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "expectedErrors": [
+          "ROADMAP_ACKNOWLEDGEMENT_REQUIRED",
+          "ACKNOWLEDGEMENT_NOT_ACCEPTED"
+        ],
+        "actualErrors": [
+          "ROADMAP_ACKNOWLEDGEMENT_REQUIRED",
+          "ROADMAP_CAPABILITY_NOT_CLASSIFIED_PREVIEW:CAP-34:ROOT",
+          "ACKNOWLEDGEMENT_NOT_ACCEPTED"
+        ],
+        "passed": true
+      },
+      {
+        "fixtureId": "DRV-14",
+        "expectedStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "actualStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "expectedErrors": [
+          "ROADMAP_PREVIEW_VERSION_REQUIRED",
+          "ROADMAP_PREVIEW_ENTERED_AT_REQUIRED",
+          "ROADMAP_PREVIEW_CAPABILITIES_REQUIRED"
+        ],
+        "actualErrors": [
+          "ROADMAP_PREVIEW_VERSION_REQUIRED",
+          "ROADMAP_PREVIEW_ENTERED_AT_REQUIRED",
+          "ROADMAP_PREVIEW_CAPABILITIES_REQUIRED"
+        ],
+        "passed": true
+      },
+      {
+        "fixtureId": "DRV-15",
+        "expectedStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "actualStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "expectedErrors": [
+          "ROADMAP_CAPABILITY_NOT_CLASSIFIED_PREVIEW:CAP-34:ROOT"
+        ],
+        "actualErrors": [
+          "ROADMAP_CAPABILITY_NOT_CLASSIFIED_PREVIEW:CAP-34:ROOT"
+        ],
+        "passed": true
+      },
+      {
+        "fixtureId": "DRV-16",
+        "expectedStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "actualStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "expectedErrors": [
+          "ROADMAP_CAPABILITY_NOT_RECORDED_AS_PRESENTED:CAP-01:ROOT"
+        ],
+        "actualErrors": [
+          "ROADMAP_CAPABILITY_NOT_CLASSIFIED_PREVIEW:CAP-01:ROOT",
+          "ROADMAP_CAPABILITY_NOT_RECORDED_AS_PRESENTED:CAP-01:ROOT"
+        ],
+        "passed": true
+      },
+      {
+        "fixtureId": "DRV-17",
+        "expectedStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "actualStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "expectedErrors": [
+          "ROADMAP_CAPABILITIES_WITHOUT_ENTRY"
+        ],
+        "actualErrors": [
+          "ROADMAP_CAPABILITIES_WITHOUT_ENTRY"
+        ],
+        "passed": true
+      },
+      {
+        "fixtureId": "DRV-18",
+        "expectedStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "actualStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "expectedErrors": [
+          "EVALUATOR_REFERENCE_REQUIRED"
+        ],
+        "actualErrors": [
+          "EVALUATOR_REFERENCE_REQUIRED"
+        ],
+        "passed": true
+      },
+      {
+        "fixtureId": "DRV-19",
+        "expectedStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "actualStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "expectedErrors": [
+          "EVALUATOR_ROLE_REQUIRED"
+        ],
+        "actualErrors": [
+          "EVALUATOR_ROLE_REQUIRED"
+        ],
+        "passed": true
+      },
+      {
+        "fixtureId": "DRV-20",
+        "expectedStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "actualStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "expectedErrors": [
+          "CORRELATION_ID_REQUIRED"
+        ],
+        "actualErrors": [
+          "CORRELATION_ID_REQUIRED"
+        ],
+        "passed": true
+      },
+      {
+        "fixtureId": "DRV-21",
+        "expectedStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "actualStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "expectedErrors": [
+          "INVALID_RECEIPT_AUTHORITY"
+        ],
+        "actualErrors": [
+          "INVALID_RECEIPT_AUTHORITY"
+        ],
+        "passed": true
+      },
+      {
+        "fixtureId": "DRV-22",
+        "expectedStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "actualStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "expectedErrors": [
+          "UNSUPPORTED_RECEIPT_CONTRACT_VERSION"
+        ],
+        "actualErrors": [
+          "UNSUPPORTED_RECEIPT_CONTRACT_VERSION"
+        ],
+        "passed": true
+      },
+      {
+        "fixtureId": "DRV-23",
+        "expectedStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "actualStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "expectedErrors": [
+          "DISCLOSURE_BURDEN_MISMATCH:CAP-33:ROOT"
+        ],
+        "actualErrors": [
+          "UNREPRESENTED_CAPABILITY_CANNOT_BE_SHOWN:CAP-33:ROOT",
+          "DISCLOSURE_BURDEN_MISMATCH:CAP-33:ROOT"
+        ],
+        "passed": true
+      },
+      {
+        "fixtureId": "DRV-24",
+        "expectedStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "actualStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "expectedErrors": [
+          "FIDELITY_MISMATCH:CAP-33:ROOT"
+        ],
+        "actualErrors": [
+          "UNREPRESENTED_CAPABILITY_CANNOT_BE_SHOWN:CAP-33:ROOT",
+          "FIDELITY_MISMATCH:CAP-33:ROOT"
+        ],
+        "passed": true
+      },
+      {
+        "fixtureId": "DRV-25",
+        "expectedStatus": "PASS_CAP34_DISCLOSURE_RECEIPT_VALID",
+        "actualStatus": "PASS_CAP34_DISCLOSURE_RECEIPT_VALID",
+        "expectedErrors": [],
+        "actualErrors": [],
+        "passed": true
+      },
+      {
+        "fixtureId": "DRV-26",
+        "expectedStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "actualStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "expectedErrors": [
+          "MANIFEST_SNAPSHOT_MISMATCH"
+        ],
+        "actualErrors": [
+          "MANIFEST_ARCHIVE_MISMATCH:manifestVersion",
+          "MANIFEST_ARCHIVE_MISMATCH:manifestSnapshotId",
+          "MANIFEST_ARCHIVE_MISMATCH:snapshotDigest",
+          "MANIFEST_SNAPSHOT_MISMATCH",
+          "MANIFEST_VERSION_MISMATCH"
+        ],
+        "passed": true
+      },
+      {
+        "fixtureId": "DRV-27",
+        "expectedStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "actualStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "expectedErrors": [
+          "RECEIPT_AND_MANIFEST_REQUIRED"
+        ],
+        "actualErrors": [
+          "RECEIPT_AND_MANIFEST_REQUIRED"
+        ],
+        "passed": true
+      },
+      {
+        "fixtureId": "DRV-28",
+        "expectedStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "actualStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "expectedErrors": [
+          "ACKNOWLEDGEMENT_NOT_ACCEPTED"
+        ],
+        "actualErrors": [
+          "ACKNOWLEDGEMENT_NOT_ACCEPTED"
+        ],
+        "passed": true
+      }
+    ]
+  },
+  "summary": {
+    "totalFixtureCount": 42,
+    "passedFixtureCount": 42,
+    "contractBindingPassed": true
+  }
+}
