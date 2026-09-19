@@ -1,0 +1,314 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aab.ag/schemas/cap34-disclosure-receipt-v1.0.0.schema.json",
+  "title": "AAB CAP-34 Disclosure Receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "receiptId",
+    "receiptContractVersion",
+    "createdAt",
+    "correlationId",
+    "authority",
+    "manifestSnapshotId",
+    "manifestVersion",
+    "manifestSourceReference",
+    "evaluator",
+    "capabilitiesPresented",
+    "roadmapPreview",
+    "acknowledgement"
+  ],
+  "properties": {
+    "receiptId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "receiptContractVersion": {
+      "const": "1.0.0"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "correlationId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "authority": {
+      "const": "DISCLOSURE_ACKNOWLEDGEMENT_ONLY_NO_LEGAL_COMMERCIAL_SCIENTIFIC_REGULATORY_PRODUCTION_OR_COMMISSIONING_AUTHORITY"
+    },
+    "manifestSnapshotId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "manifestVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "manifestSourceReference": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evaluator": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role"
+      ],
+      "properties": {
+        "displayName": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "evaluatorReferenceId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "role": {
+          "type": "string",
+          "minLength": 1
+        },
+        "organisation": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "displayName"
+          ],
+          "properties": {
+            "displayName": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "required": [
+            "evaluatorReferenceId"
+          ],
+          "properties": {
+            "evaluatorReferenceId": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "capabilitiesPresented": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "capabilityId",
+          "capabilityName",
+          "representationVersion",
+          "simulatorMode",
+          "fidelity",
+          "manifestDisclosureBurden",
+          "limitationsPresented",
+          "nonImplicationsPresented"
+        ],
+        "properties": {
+          "capabilityId": {
+            "type": "string",
+            "pattern": "^CAP-[0-9]{2}$"
+          },
+          "capabilityPart": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "capabilityName": {
+            "type": "string",
+            "minLength": 1
+          },
+          "representationVersion": {
+            "type": "string",
+            "minLength": 1
+          },
+          "simulatorMode": {
+            "enum": [
+              "LIVE_SIMULATION",
+              "ROADMAP_PREVIEW"
+            ]
+          },
+          "fidelity": {
+            "enum": [
+              "REAL_LOGIC_SYNTHETIC_REFERENCE_DATA",
+              "PARTIAL_REAL_LOGIC_LIMITATIONS_SHOWN",
+              "CONCEPT_PREVIEW_NOT_IMPLEMENTED"
+            ]
+          },
+          "manifestDisclosureBurden": {
+            "enum": [
+              "STANDARD",
+              "HEIGHTENED",
+              "EXCEPTIONAL"
+            ]
+          },
+          "limitationsPresented": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          },
+          "nonImplicationsPresented": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          }
+        }
+      }
+    },
+    "roadmapPreview": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entered"
+      ],
+      "properties": {
+        "entered": {
+          "type": "boolean"
+        },
+        "previewVersion": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "enteredAt": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "capabilitiesEntered": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "capabilityId"
+            ],
+            "properties": {
+              "capabilityId": {
+                "type": "string",
+                "pattern": "^CAP-[0-9]{2}$"
+              },
+              "capabilityPart": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "acknowledgement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "wordingVersion",
+        "wording",
+        "accepted",
+        "acceptedAt"
+      ],
+      "properties": {
+        "wordingVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "wording": {
+          "type": "string",
+          "minLength": 1
+        },
+        "accepted": {
+          "type": "boolean"
+        },
+        "acceptedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "receiptDigest": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "signature": {
+      "type": [
+        "object",
+        "null"
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "roadmapPreview": {
+            "properties": {
+              "entered": {
+                "const": true
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "roadmapPreview": {
+            "required": [
+              "entered",
+              "previewVersion",
+              "enteredAt",
+              "capabilitiesEntered"
+            ],
+            "properties": {
+              "previewVersion": {
+                "type": "string",
+                "minLength": 1
+              },
+              "enteredAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "capabilitiesEntered": {
+                "minItems": 1
+              }
+            }
+          },
+          "acknowledgement": {
+            "properties": {
+              "accepted": {
+                "const": true
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
