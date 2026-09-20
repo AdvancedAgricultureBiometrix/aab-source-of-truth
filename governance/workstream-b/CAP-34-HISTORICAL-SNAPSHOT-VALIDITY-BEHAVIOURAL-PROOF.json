@@ -1,10 +1,10 @@
 {
   "proofId": "AAB-CAP34-HISTORICAL-SNAPSHOT-VALIDITY-BEHAVIOURAL-PROOF",
   "proofVersion": "1.0.0",
-  "generatedAtUtc": "2026-09-20T05:18:01.400Z",
+  "generatedAtUtc": "2026-09-20T05:32:14.346Z",
   "result": "PASS_CAP34_HISTORICAL_SNAPSHOT_VALIDITY_BEHAVIOURAL_PROOF",
   "scope": "Proves that every archived manifest snapshot currently in the registry still validates structurally, that a receipt built against each one still validates against the current multi-generation registry, and that the same receipt is rejected against every other snapshot. Runs generically over whatever is in the registry, so it automatically covers new snapshots added by future capability wiring without modification. It does not prove capability implementation, scientific correctness, production readiness or commissioning.",
-  "generationsChecked": 8,
+  "generationsChecked": 9,
   "snapshotIdsChecked": [
     "CAP34-MANIFEST-2026-09-19-SNAPSHOT-001",
     "CAP34-MANIFEST-2026-09-20-SNAPSHOT-002",
@@ -13,10 +13,11 @@
     "CAP34-MANIFEST-2026-09-20-SNAPSHOT-005",
     "CAP34-MANIFEST-2026-09-20-SNAPSHOT-006",
     "CAP34-MANIFEST-2026-09-20-SNAPSHOT-007",
-    "CAP34-MANIFEST-2026-09-20-SNAPSHOT-008"
+    "CAP34-MANIFEST-2026-09-20-SNAPSHOT-008",
+    "CAP34-MANIFEST-2026-09-20-SNAPSHOT-009"
   ],
-  "fixtureCount": 73,
-  "passedFixtureCount": 73,
+  "fixtureCount": 91,
+  "passedFixtureCount": 91,
   "fixtures": [
     {
       "fixtureId": "HIST-CAP34-MANIFEST-2026-09-19-SNAPSHOT-001-MANIFEST-STILL-VALID",
@@ -39,12 +40,12 @@
     },
     {
       "fixtureId": "HIST-CAP34-MANIFEST-2026-09-19-SNAPSHOT-001-RECEIPT-STILL-VALID",
-      "description": "A receipt built against archived snapshot CAP34-MANIFEST-2026-09-19-SNAPSHOT-001 still validates against the CURRENT (8-generation) registry",
+      "description": "A receipt built against archived snapshot CAP34-MANIFEST-2026-09-19-SNAPSHOT-001 still validates against the CURRENT (9-generation) registry",
       "passed": true,
       "actual": {
         "status": "PASS_CAP34_DISCLOSURE_RECEIPT_VALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-19-SNAPSHOT-001",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-19-SNAPSHOT-001",
         "capabilityCountPresented": 1,
@@ -58,7 +59,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-19-SNAPSHOT-001",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-19-SNAPSHOT-001",
         "capabilityCountPresented": 1,
@@ -78,7 +79,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-19-SNAPSHOT-001",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-19-SNAPSHOT-001",
         "capabilityCountPresented": 1,
@@ -98,7 +99,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-19-SNAPSHOT-001",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-19-SNAPSHOT-001",
         "capabilityCountPresented": 1,
@@ -118,7 +119,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-19-SNAPSHOT-001",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-19-SNAPSHOT-001",
         "capabilityCountPresented": 1,
@@ -138,7 +139,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-19-SNAPSHOT-001",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-19-SNAPSHOT-001",
         "capabilityCountPresented": 1,
@@ -158,7 +159,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-19-SNAPSHOT-001",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-19-SNAPSHOT-001",
         "capabilityCountPresented": 1,
@@ -178,7 +179,27 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
+        "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-19-SNAPSHOT-001",
+        "manifestSnapshotId": "CAP34-MANIFEST-2026-09-19-SNAPSHOT-001",
+        "capabilityCountPresented": 1,
+        "errors": [
+          "MANIFEST_ARCHIVE_MISMATCH:manifestVersion",
+          "MANIFEST_ARCHIVE_MISMATCH:manifestSnapshotId",
+          "MANIFEST_ARCHIVE_MISMATCH:snapshotDigest",
+          "MANIFEST_SNAPSHOT_MISMATCH",
+          "MANIFEST_VERSION_MISMATCH"
+        ]
+      }
+    },
+    {
+      "fixtureId": "HIST-CAP34-MANIFEST-2026-09-19-SNAPSHOT-001-REJECTED-AGAINST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-009",
+      "description": "A receipt built for CAP34-MANIFEST-2026-09-19-SNAPSHOT-001 fails closed when evaluated against CAP34-MANIFEST-2026-09-20-SNAPSHOT-009 instead",
+      "passed": true,
+      "actual": {
+        "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-19-SNAPSHOT-001",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-19-SNAPSHOT-001",
         "capabilityCountPresented": 1,
@@ -212,12 +233,12 @@
     },
     {
       "fixtureId": "HIST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-002-RECEIPT-STILL-VALID",
-      "description": "A receipt built against archived snapshot CAP34-MANIFEST-2026-09-20-SNAPSHOT-002 still validates against the CURRENT (8-generation) registry",
+      "description": "A receipt built against archived snapshot CAP34-MANIFEST-2026-09-20-SNAPSHOT-002 still validates against the CURRENT (9-generation) registry",
       "passed": true,
       "actual": {
         "status": "PASS_CAP34_DISCLOSURE_RECEIPT_VALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-002",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-002",
         "capabilityCountPresented": 1,
@@ -231,7 +252,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-002",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-002",
         "capabilityCountPresented": 1,
@@ -251,7 +272,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-002",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-002",
         "capabilityCountPresented": 1,
@@ -271,7 +292,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-002",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-002",
         "capabilityCountPresented": 1,
@@ -291,7 +312,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-002",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-002",
         "capabilityCountPresented": 1,
@@ -311,7 +332,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-002",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-002",
         "capabilityCountPresented": 1,
@@ -331,7 +352,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-002",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-002",
         "capabilityCountPresented": 1,
@@ -351,7 +372,27 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
+        "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-002",
+        "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-002",
+        "capabilityCountPresented": 1,
+        "errors": [
+          "MANIFEST_ARCHIVE_MISMATCH:manifestVersion",
+          "MANIFEST_ARCHIVE_MISMATCH:manifestSnapshotId",
+          "MANIFEST_ARCHIVE_MISMATCH:snapshotDigest",
+          "MANIFEST_SNAPSHOT_MISMATCH",
+          "MANIFEST_VERSION_MISMATCH"
+        ]
+      }
+    },
+    {
+      "fixtureId": "HIST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-002-REJECTED-AGAINST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-009",
+      "description": "A receipt built for CAP34-MANIFEST-2026-09-20-SNAPSHOT-002 fails closed when evaluated against CAP34-MANIFEST-2026-09-20-SNAPSHOT-009 instead",
+      "passed": true,
+      "actual": {
+        "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-002",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-002",
         "capabilityCountPresented": 1,
@@ -385,12 +426,12 @@
     },
     {
       "fixtureId": "HIST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-003-RECEIPT-STILL-VALID",
-      "description": "A receipt built against archived snapshot CAP34-MANIFEST-2026-09-20-SNAPSHOT-003 still validates against the CURRENT (8-generation) registry",
+      "description": "A receipt built against archived snapshot CAP34-MANIFEST-2026-09-20-SNAPSHOT-003 still validates against the CURRENT (9-generation) registry",
       "passed": true,
       "actual": {
         "status": "PASS_CAP34_DISCLOSURE_RECEIPT_VALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-003",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-003",
         "capabilityCountPresented": 1,
@@ -404,7 +445,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-003",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-003",
         "capabilityCountPresented": 1,
@@ -424,7 +465,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-003",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-003",
         "capabilityCountPresented": 1,
@@ -444,7 +485,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-003",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-003",
         "capabilityCountPresented": 1,
@@ -464,7 +505,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-003",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-003",
         "capabilityCountPresented": 1,
@@ -484,7 +525,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-003",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-003",
         "capabilityCountPresented": 1,
@@ -504,7 +545,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-003",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-003",
         "capabilityCountPresented": 1,
@@ -524,7 +565,27 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
+        "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-003",
+        "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-003",
+        "capabilityCountPresented": 1,
+        "errors": [
+          "MANIFEST_ARCHIVE_MISMATCH:manifestVersion",
+          "MANIFEST_ARCHIVE_MISMATCH:manifestSnapshotId",
+          "MANIFEST_ARCHIVE_MISMATCH:snapshotDigest",
+          "MANIFEST_SNAPSHOT_MISMATCH",
+          "MANIFEST_VERSION_MISMATCH"
+        ]
+      }
+    },
+    {
+      "fixtureId": "HIST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-003-REJECTED-AGAINST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-009",
+      "description": "A receipt built for CAP34-MANIFEST-2026-09-20-SNAPSHOT-003 fails closed when evaluated against CAP34-MANIFEST-2026-09-20-SNAPSHOT-009 instead",
+      "passed": true,
+      "actual": {
+        "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-003",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-003",
         "capabilityCountPresented": 1,
@@ -558,12 +619,12 @@
     },
     {
       "fixtureId": "HIST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-004-RECEIPT-STILL-VALID",
-      "description": "A receipt built against archived snapshot CAP34-MANIFEST-2026-09-20-SNAPSHOT-004 still validates against the CURRENT (8-generation) registry",
+      "description": "A receipt built against archived snapshot CAP34-MANIFEST-2026-09-20-SNAPSHOT-004 still validates against the CURRENT (9-generation) registry",
       "passed": true,
       "actual": {
         "status": "PASS_CAP34_DISCLOSURE_RECEIPT_VALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-004",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-004",
         "capabilityCountPresented": 1,
@@ -577,7 +638,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-004",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-004",
         "capabilityCountPresented": 1,
@@ -597,7 +658,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-004",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-004",
         "capabilityCountPresented": 1,
@@ -617,7 +678,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-004",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-004",
         "capabilityCountPresented": 1,
@@ -637,7 +698,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-004",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-004",
         "capabilityCountPresented": 1,
@@ -657,7 +718,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-004",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-004",
         "capabilityCountPresented": 1,
@@ -677,7 +738,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-004",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-004",
         "capabilityCountPresented": 1,
@@ -697,7 +758,27 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
+        "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-004",
+        "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-004",
+        "capabilityCountPresented": 1,
+        "errors": [
+          "MANIFEST_ARCHIVE_MISMATCH:manifestVersion",
+          "MANIFEST_ARCHIVE_MISMATCH:manifestSnapshotId",
+          "MANIFEST_ARCHIVE_MISMATCH:snapshotDigest",
+          "MANIFEST_SNAPSHOT_MISMATCH",
+          "MANIFEST_VERSION_MISMATCH"
+        ]
+      }
+    },
+    {
+      "fixtureId": "HIST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-004-REJECTED-AGAINST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-009",
+      "description": "A receipt built for CAP34-MANIFEST-2026-09-20-SNAPSHOT-004 fails closed when evaluated against CAP34-MANIFEST-2026-09-20-SNAPSHOT-009 instead",
+      "passed": true,
+      "actual": {
+        "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-004",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-004",
         "capabilityCountPresented": 1,
@@ -731,12 +812,12 @@
     },
     {
       "fixtureId": "HIST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-005-RECEIPT-STILL-VALID",
-      "description": "A receipt built against archived snapshot CAP34-MANIFEST-2026-09-20-SNAPSHOT-005 still validates against the CURRENT (8-generation) registry",
+      "description": "A receipt built against archived snapshot CAP34-MANIFEST-2026-09-20-SNAPSHOT-005 still validates against the CURRENT (9-generation) registry",
       "passed": true,
       "actual": {
         "status": "PASS_CAP34_DISCLOSURE_RECEIPT_VALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-005",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-005",
         "capabilityCountPresented": 1,
@@ -750,7 +831,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-005",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-005",
         "capabilityCountPresented": 1,
@@ -770,7 +851,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-005",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-005",
         "capabilityCountPresented": 1,
@@ -790,7 +871,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-005",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-005",
         "capabilityCountPresented": 1,
@@ -810,7 +891,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-005",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-005",
         "capabilityCountPresented": 1,
@@ -830,7 +911,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-005",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-005",
         "capabilityCountPresented": 1,
@@ -850,7 +931,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-005",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-005",
         "capabilityCountPresented": 1,
@@ -870,7 +951,27 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
+        "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-005",
+        "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-005",
+        "capabilityCountPresented": 1,
+        "errors": [
+          "MANIFEST_ARCHIVE_MISMATCH:manifestVersion",
+          "MANIFEST_ARCHIVE_MISMATCH:manifestSnapshotId",
+          "MANIFEST_ARCHIVE_MISMATCH:snapshotDigest",
+          "MANIFEST_SNAPSHOT_MISMATCH",
+          "MANIFEST_VERSION_MISMATCH"
+        ]
+      }
+    },
+    {
+      "fixtureId": "HIST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-005-REJECTED-AGAINST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-009",
+      "description": "A receipt built for CAP34-MANIFEST-2026-09-20-SNAPSHOT-005 fails closed when evaluated against CAP34-MANIFEST-2026-09-20-SNAPSHOT-009 instead",
+      "passed": true,
+      "actual": {
+        "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-005",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-005",
         "capabilityCountPresented": 1,
@@ -904,12 +1005,12 @@
     },
     {
       "fixtureId": "HIST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-006-RECEIPT-STILL-VALID",
-      "description": "A receipt built against archived snapshot CAP34-MANIFEST-2026-09-20-SNAPSHOT-006 still validates against the CURRENT (8-generation) registry",
+      "description": "A receipt built against archived snapshot CAP34-MANIFEST-2026-09-20-SNAPSHOT-006 still validates against the CURRENT (9-generation) registry",
       "passed": true,
       "actual": {
         "status": "PASS_CAP34_DISCLOSURE_RECEIPT_VALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-006",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-006",
         "capabilityCountPresented": 1,
@@ -923,7 +1024,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-006",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-006",
         "capabilityCountPresented": 1,
@@ -943,7 +1044,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-006",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-006",
         "capabilityCountPresented": 1,
@@ -963,7 +1064,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-006",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-006",
         "capabilityCountPresented": 1,
@@ -983,7 +1084,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-006",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-006",
         "capabilityCountPresented": 1,
@@ -1003,7 +1104,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-006",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-006",
         "capabilityCountPresented": 1,
@@ -1023,7 +1124,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-006",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-006",
         "capabilityCountPresented": 1,
@@ -1043,7 +1144,27 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
+        "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-006",
+        "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-006",
+        "capabilityCountPresented": 1,
+        "errors": [
+          "MANIFEST_ARCHIVE_MISMATCH:manifestVersion",
+          "MANIFEST_ARCHIVE_MISMATCH:manifestSnapshotId",
+          "MANIFEST_ARCHIVE_MISMATCH:snapshotDigest",
+          "MANIFEST_SNAPSHOT_MISMATCH",
+          "MANIFEST_VERSION_MISMATCH"
+        ]
+      }
+    },
+    {
+      "fixtureId": "HIST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-006-REJECTED-AGAINST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-009",
+      "description": "A receipt built for CAP34-MANIFEST-2026-09-20-SNAPSHOT-006 fails closed when evaluated against CAP34-MANIFEST-2026-09-20-SNAPSHOT-009 instead",
+      "passed": true,
+      "actual": {
+        "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-006",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-006",
         "capabilityCountPresented": 1,
@@ -1077,12 +1198,12 @@
     },
     {
       "fixtureId": "HIST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-007-RECEIPT-STILL-VALID",
-      "description": "A receipt built against archived snapshot CAP34-MANIFEST-2026-09-20-SNAPSHOT-007 still validates against the CURRENT (8-generation) registry",
+      "description": "A receipt built against archived snapshot CAP34-MANIFEST-2026-09-20-SNAPSHOT-007 still validates against the CURRENT (9-generation) registry",
       "passed": true,
       "actual": {
         "status": "PASS_CAP34_DISCLOSURE_RECEIPT_VALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-007",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-007",
         "capabilityCountPresented": 1,
@@ -1096,7 +1217,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-007",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-007",
         "capabilityCountPresented": 1,
@@ -1116,7 +1237,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-007",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-007",
         "capabilityCountPresented": 1,
@@ -1136,7 +1257,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-007",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-007",
         "capabilityCountPresented": 1,
@@ -1156,7 +1277,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-007",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-007",
         "capabilityCountPresented": 1,
@@ -1176,7 +1297,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-007",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-007",
         "capabilityCountPresented": 1,
@@ -1196,7 +1317,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-007",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-007",
         "capabilityCountPresented": 1,
@@ -1216,7 +1337,27 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
+        "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-007",
+        "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-007",
+        "capabilityCountPresented": 1,
+        "errors": [
+          "MANIFEST_ARCHIVE_MISMATCH:manifestVersion",
+          "MANIFEST_ARCHIVE_MISMATCH:manifestSnapshotId",
+          "MANIFEST_ARCHIVE_MISMATCH:snapshotDigest",
+          "MANIFEST_SNAPSHOT_MISMATCH",
+          "MANIFEST_VERSION_MISMATCH"
+        ]
+      }
+    },
+    {
+      "fixtureId": "HIST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-007-REJECTED-AGAINST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-009",
+      "description": "A receipt built for CAP34-MANIFEST-2026-09-20-SNAPSHOT-007 fails closed when evaluated against CAP34-MANIFEST-2026-09-20-SNAPSHOT-009 instead",
+      "passed": true,
+      "actual": {
+        "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-007",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-007",
         "capabilityCountPresented": 1,
@@ -1231,7 +1372,7 @@
     },
     {
       "fixtureId": "HIST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-008-MANIFEST-STILL-VALID",
-      "description": "Archived snapshot CAP34-MANIFEST-2026-09-20-SNAPSHOT-008 (capability-fidelity-manifest.json) still validates structurally",
+      "description": "Archived snapshot CAP34-MANIFEST-2026-09-20-SNAPSHOT-008 (capability-fidelity-manifest.snapshot-008.json) still validates structurally",
       "passed": true,
       "actual": {
         "status": "PASS_CAP34_FIDELITY_MANIFEST_VALID",
@@ -1250,12 +1391,12 @@
     },
     {
       "fixtureId": "HIST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-008-RECEIPT-STILL-VALID",
-      "description": "A receipt built against archived snapshot CAP34-MANIFEST-2026-09-20-SNAPSHOT-008 still validates against the CURRENT (8-generation) registry",
+      "description": "A receipt built against archived snapshot CAP34-MANIFEST-2026-09-20-SNAPSHOT-008 still validates against the CURRENT (9-generation) registry",
       "passed": true,
       "actual": {
         "status": "PASS_CAP34_DISCLOSURE_RECEIPT_VALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-008",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-008",
         "capabilityCountPresented": 1,
@@ -1269,7 +1410,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-008",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-008",
         "capabilityCountPresented": 1,
@@ -1289,7 +1430,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-008",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-008",
         "capabilityCountPresented": 1,
@@ -1309,7 +1450,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-008",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-008",
         "capabilityCountPresented": 1,
@@ -1329,7 +1470,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-008",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-008",
         "capabilityCountPresented": 1,
@@ -1349,7 +1490,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-008",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-008",
         "capabilityCountPresented": 1,
@@ -1369,7 +1510,7 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-008",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-008",
         "capabilityCountPresented": 1,
@@ -1389,9 +1530,222 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.7.0",
+        "validatorVersion": "2.8.0",
         "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-008",
         "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-008",
+        "capabilityCountPresented": 1,
+        "errors": [
+          "MANIFEST_ARCHIVE_MISMATCH:manifestVersion",
+          "MANIFEST_ARCHIVE_MISMATCH:manifestSnapshotId",
+          "MANIFEST_ARCHIVE_MISMATCH:snapshotDigest",
+          "MANIFEST_SNAPSHOT_MISMATCH",
+          "MANIFEST_VERSION_MISMATCH"
+        ]
+      }
+    },
+    {
+      "fixtureId": "HIST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-008-REJECTED-AGAINST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-009",
+      "description": "A receipt built for CAP34-MANIFEST-2026-09-20-SNAPSHOT-008 fails closed when evaluated against CAP34-MANIFEST-2026-09-20-SNAPSHOT-009 instead",
+      "passed": true,
+      "actual": {
+        "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
+        "validatorVersion": "2.8.0",
+        "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-008",
+        "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-008",
+        "capabilityCountPresented": 1,
+        "errors": [
+          "MANIFEST_ARCHIVE_MISMATCH:manifestVersion",
+          "MANIFEST_ARCHIVE_MISMATCH:manifestSnapshotId",
+          "MANIFEST_ARCHIVE_MISMATCH:snapshotDigest",
+          "MANIFEST_SNAPSHOT_MISMATCH",
+          "MANIFEST_VERSION_MISMATCH"
+        ]
+      }
+    },
+    {
+      "fixtureId": "HIST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-009-MANIFEST-STILL-VALID",
+      "description": "Archived snapshot CAP34-MANIFEST-2026-09-20-SNAPSHOT-009 (capability-fidelity-manifest.json) still validates structurally",
+      "passed": true,
+      "actual": {
+        "status": "PASS_CAP34_FIDELITY_MANIFEST_VALID",
+        "validatorId": "AAB-CAP34-FIDELITY-MANIFEST-VALIDATOR",
+        "validatorVersion": "1.2.0",
+        "rosterId": "AAB-WORKSTREAM-B-CAPABILITY-IDENTITY-ROSTER",
+        "rosterVersion": "1.0.0",
+        "rosterSnapshotId": "WORKSTREAM-B-LAUNCH-GAP-2026-09-19-ROSTER-001",
+        "rosterDigest": "sha256:72b3469699159d47bd6c882a39378f52ff70de24c6cbe2017ac37434e5d3f41e",
+        "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-009",
+        "manifestVersion": "1.8.0",
+        "snapshotDigest": "sha256:1a32715bc3b76b381cd3d6c217ac1be140fcf4163c9050ff7b1334ddb574e81f",
+        "capabilityCount": 34,
+        "errors": []
+      }
+    },
+    {
+      "fixtureId": "HIST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-009-RECEIPT-STILL-VALID",
+      "description": "A receipt built against archived snapshot CAP34-MANIFEST-2026-09-20-SNAPSHOT-009 still validates against the CURRENT (9-generation) registry",
+      "passed": true,
+      "actual": {
+        "status": "PASS_CAP34_DISCLOSURE_RECEIPT_VALID",
+        "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
+        "validatorVersion": "2.8.0",
+        "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-009",
+        "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-009",
+        "capabilityCountPresented": 1,
+        "errors": []
+      }
+    },
+    {
+      "fixtureId": "HIST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-009-REJECTED-AGAINST-CAP34-MANIFEST-2026-09-19-SNAPSHOT-001",
+      "description": "A receipt built for CAP34-MANIFEST-2026-09-20-SNAPSHOT-009 fails closed when evaluated against CAP34-MANIFEST-2026-09-19-SNAPSHOT-001 instead",
+      "passed": true,
+      "actual": {
+        "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
+        "validatorVersion": "2.8.0",
+        "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-009",
+        "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-009",
+        "capabilityCountPresented": 1,
+        "errors": [
+          "MANIFEST_ARCHIVE_MISMATCH:manifestVersion",
+          "MANIFEST_ARCHIVE_MISMATCH:manifestSnapshotId",
+          "MANIFEST_ARCHIVE_MISMATCH:snapshotDigest",
+          "MANIFEST_SNAPSHOT_MISMATCH",
+          "MANIFEST_VERSION_MISMATCH"
+        ]
+      }
+    },
+    {
+      "fixtureId": "HIST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-009-REJECTED-AGAINST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-002",
+      "description": "A receipt built for CAP34-MANIFEST-2026-09-20-SNAPSHOT-009 fails closed when evaluated against CAP34-MANIFEST-2026-09-20-SNAPSHOT-002 instead",
+      "passed": true,
+      "actual": {
+        "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
+        "validatorVersion": "2.8.0",
+        "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-009",
+        "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-009",
+        "capabilityCountPresented": 1,
+        "errors": [
+          "MANIFEST_ARCHIVE_MISMATCH:manifestVersion",
+          "MANIFEST_ARCHIVE_MISMATCH:manifestSnapshotId",
+          "MANIFEST_ARCHIVE_MISMATCH:snapshotDigest",
+          "MANIFEST_SNAPSHOT_MISMATCH",
+          "MANIFEST_VERSION_MISMATCH"
+        ]
+      }
+    },
+    {
+      "fixtureId": "HIST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-009-REJECTED-AGAINST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-003",
+      "description": "A receipt built for CAP34-MANIFEST-2026-09-20-SNAPSHOT-009 fails closed when evaluated against CAP34-MANIFEST-2026-09-20-SNAPSHOT-003 instead",
+      "passed": true,
+      "actual": {
+        "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
+        "validatorVersion": "2.8.0",
+        "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-009",
+        "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-009",
+        "capabilityCountPresented": 1,
+        "errors": [
+          "MANIFEST_ARCHIVE_MISMATCH:manifestVersion",
+          "MANIFEST_ARCHIVE_MISMATCH:manifestSnapshotId",
+          "MANIFEST_ARCHIVE_MISMATCH:snapshotDigest",
+          "MANIFEST_SNAPSHOT_MISMATCH",
+          "MANIFEST_VERSION_MISMATCH"
+        ]
+      }
+    },
+    {
+      "fixtureId": "HIST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-009-REJECTED-AGAINST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-004",
+      "description": "A receipt built for CAP34-MANIFEST-2026-09-20-SNAPSHOT-009 fails closed when evaluated against CAP34-MANIFEST-2026-09-20-SNAPSHOT-004 instead",
+      "passed": true,
+      "actual": {
+        "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
+        "validatorVersion": "2.8.0",
+        "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-009",
+        "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-009",
+        "capabilityCountPresented": 1,
+        "errors": [
+          "MANIFEST_ARCHIVE_MISMATCH:manifestVersion",
+          "MANIFEST_ARCHIVE_MISMATCH:manifestSnapshotId",
+          "MANIFEST_ARCHIVE_MISMATCH:snapshotDigest",
+          "MANIFEST_SNAPSHOT_MISMATCH",
+          "MANIFEST_VERSION_MISMATCH"
+        ]
+      }
+    },
+    {
+      "fixtureId": "HIST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-009-REJECTED-AGAINST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-005",
+      "description": "A receipt built for CAP34-MANIFEST-2026-09-20-SNAPSHOT-009 fails closed when evaluated against CAP34-MANIFEST-2026-09-20-SNAPSHOT-005 instead",
+      "passed": true,
+      "actual": {
+        "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
+        "validatorVersion": "2.8.0",
+        "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-009",
+        "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-009",
+        "capabilityCountPresented": 1,
+        "errors": [
+          "MANIFEST_ARCHIVE_MISMATCH:manifestVersion",
+          "MANIFEST_ARCHIVE_MISMATCH:manifestSnapshotId",
+          "MANIFEST_ARCHIVE_MISMATCH:snapshotDigest",
+          "MANIFEST_SNAPSHOT_MISMATCH",
+          "MANIFEST_VERSION_MISMATCH"
+        ]
+      }
+    },
+    {
+      "fixtureId": "HIST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-009-REJECTED-AGAINST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-006",
+      "description": "A receipt built for CAP34-MANIFEST-2026-09-20-SNAPSHOT-009 fails closed when evaluated against CAP34-MANIFEST-2026-09-20-SNAPSHOT-006 instead",
+      "passed": true,
+      "actual": {
+        "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
+        "validatorVersion": "2.8.0",
+        "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-009",
+        "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-009",
+        "capabilityCountPresented": 1,
+        "errors": [
+          "MANIFEST_ARCHIVE_MISMATCH:manifestVersion",
+          "MANIFEST_ARCHIVE_MISMATCH:manifestSnapshotId",
+          "MANIFEST_ARCHIVE_MISMATCH:snapshotDigest",
+          "MANIFEST_SNAPSHOT_MISMATCH",
+          "MANIFEST_VERSION_MISMATCH"
+        ]
+      }
+    },
+    {
+      "fixtureId": "HIST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-009-REJECTED-AGAINST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-007",
+      "description": "A receipt built for CAP34-MANIFEST-2026-09-20-SNAPSHOT-009 fails closed when evaluated against CAP34-MANIFEST-2026-09-20-SNAPSHOT-007 instead",
+      "passed": true,
+      "actual": {
+        "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
+        "validatorVersion": "2.8.0",
+        "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-009",
+        "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-009",
+        "capabilityCountPresented": 1,
+        "errors": [
+          "MANIFEST_ARCHIVE_MISMATCH:manifestVersion",
+          "MANIFEST_ARCHIVE_MISMATCH:manifestSnapshotId",
+          "MANIFEST_ARCHIVE_MISMATCH:snapshotDigest",
+          "MANIFEST_SNAPSHOT_MISMATCH",
+          "MANIFEST_VERSION_MISMATCH"
+        ]
+      }
+    },
+    {
+      "fixtureId": "HIST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-009-REJECTED-AGAINST-CAP34-MANIFEST-2026-09-20-SNAPSHOT-008",
+      "description": "A receipt built for CAP34-MANIFEST-2026-09-20-SNAPSHOT-009 fails closed when evaluated against CAP34-MANIFEST-2026-09-20-SNAPSHOT-008 instead",
+      "passed": true,
+      "actual": {
+        "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
+        "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
+        "validatorVersion": "2.8.0",
+        "receiptId": "CAP34-HISTORICAL-VALIDITY-RECEIPT-CAP34-MANIFEST-2026-09-20-SNAPSHOT-009",
+        "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-009",
         "capabilityCountPresented": 1,
         "errors": [
           "MANIFEST_ARCHIVE_MISMATCH:manifestVersion",

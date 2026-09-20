@@ -1,0 +1,261 @@
+{
+  "proofId": "AAB-CAP34-CAP02-INTEROPERABILITY-MAPPING-LIVE-LOGIC-BEHAVIOURAL-PROOF",
+  "proofVersion": "1.0.0",
+  "generatedAtUtc": "2026-09-20T05:32:14.758Z",
+  "result": "PASS_CAP02_INTEROPERABILITY_MAPPING_LIVE_LOGIC_BEHAVIOURAL_PROOF",
+  "scope": "Proves stage 4 (map different formats into common structures) of Historical Scientific Memory Recovery, consuming CAP-04's REAL extraction output: an exact synonym match proposes a correct canonical subject and a correctly converted unit value; an unrecognised term is left unmapped rather than guessed; a genuinely ambiguous vocabulary entry is flagged rather than silently resolved; the raw original fields are preserved byte-identical alongside any proposed normalization; and a proposed mapping never changes governance state or brings a record any closer to scientific-memory eligibility. It does not prove corpus-scale interoperability, real institutional vocabularies, stage 5 detection at scale, stage 7 review, scientific correctness, production readiness or commissioning.",
+  "fixtureCount": 7,
+  "passedFixtureCount": 7,
+  "fixtures": [
+    {
+      "fixtureId": "CAP02M-A0-EXACT-SUBJECT-AND-UNIT-MATCH-PROPOSED",
+      "description": "A raw subject and unit that are known synonyms in the reference vocabulary produce a PROPOSED_MAPPING naming the correct canonical subject and a correctly converted value (42 legacy index scale * 0.1 = 4.2 reference index units)",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-02",
+        "status": "MAPPING_PROPOSED",
+        "mappingRecord": {
+          "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 7-Treatment A",
+          "rawSubjectKey": "Trial Site 7",
+          "rawUnit": "legacy index scale",
+          "rawMeasuredValue": 42,
+          "subjectMappingStatus": "PROPOSED_MAPPING",
+          "normalizedSubjectKey": "Reference Subject C7",
+          "subjectMappingCandidates": [
+            "Reference Subject C7"
+          ],
+          "unitMappingStatus": "PROPOSED_MAPPING",
+          "normalizedUnit": "reference index units",
+          "normalizedValue": 4.2,
+          "unitMappingCandidates": [
+            "reference index units"
+          ],
+          "governanceState": "EXTRACTED_UNREVIEWED",
+          "reviewGate": {
+            "required": true,
+            "passed": false,
+            "reviewerId": null,
+            "decision": null
+          }
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP02M-A1-ORIGINAL-PRESERVED-BYTE-IDENTICAL-ALONGSIDE-MAPPING",
+      "description": "Even on a confident, correct mapping, the raw subject key, unit and measured value are preserved byte-identical to the extraction output -- normalization never overwrites the original",
+      "passed": true,
+      "actual": {
+        "extracted": {
+          "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 7-Treatment A",
+          "sourceId": "SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive",
+          "fileId": "FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv",
+          "subjectKey": "Trial Site 7",
+          "treatmentLabel": "Treatment A",
+          "location": "Region 3",
+          "unit": "legacy index scale",
+          "dateObserved": "2005-06-01",
+          "measuredValue": 42,
+          "outcomePolarity": "POSITIVE",
+          "governanceState": "EXTRACTED_UNREVIEWED",
+          "reviewGate": {
+            "required": true,
+            "passed": false,
+            "reviewerId": null,
+            "decision": null
+          },
+          "recordStatus": "PENDING_REVIEW",
+          "quarantineReasons": [],
+          "conflictingRecordIds": []
+        },
+        "mapped": {
+          "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 7-Treatment A",
+          "rawSubjectKey": "Trial Site 7",
+          "rawUnit": "legacy index scale",
+          "rawMeasuredValue": 42,
+          "subjectMappingStatus": "PROPOSED_MAPPING",
+          "normalizedSubjectKey": "Reference Subject C7",
+          "subjectMappingCandidates": [
+            "Reference Subject C7"
+          ],
+          "unitMappingStatus": "PROPOSED_MAPPING",
+          "normalizedUnit": "reference index units",
+          "normalizedValue": 4.2,
+          "unitMappingCandidates": [
+            "reference index units"
+          ],
+          "governanceState": "EXTRACTED_UNREVIEWED",
+          "reviewGate": {
+            "required": true,
+            "passed": false,
+            "reviewerId": null,
+            "decision": null
+          }
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP02M-A2-MAPPING-NEVER-CHANGES-MEMORY-ELIGIBILITY",
+      "description": "Proposing a mapping does not change governanceState or reviewGate, and the mapped record is STILL not eligible for scientific memory -- a confident mapping is not a substitute for stage-7 review",
+      "passed": true,
+      "actual": {
+        "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 7-Treatment A",
+        "rawSubjectKey": "Trial Site 7",
+        "rawUnit": "legacy index scale",
+        "rawMeasuredValue": 42,
+        "subjectMappingStatus": "PROPOSED_MAPPING",
+        "normalizedSubjectKey": "Reference Subject C7",
+        "subjectMappingCandidates": [
+          "Reference Subject C7"
+        ],
+        "unitMappingStatus": "PROPOSED_MAPPING",
+        "normalizedUnit": "reference index units",
+        "normalizedValue": 4.2,
+        "unitMappingCandidates": [
+          "reference index units"
+        ],
+        "governanceState": "EXTRACTED_UNREVIEWED",
+        "reviewGate": {
+          "required": true,
+          "passed": false,
+          "reviewerId": null,
+          "decision": null
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP02M-B0-UNRECOGNISED-TERMS-LEFT-UNMAPPED-NOT-GUESSED",
+      "description": "A subject and unit that are not in the reference vocabulary at all are left UNMAPPED_NO_REFERENCE_MATCH / UNMAPPED_UNIT_NO_REFERENCE_MATCH, with null normalized values -- AAB does not invent a canonical guess",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-02",
+        "status": "MAPPING_PROPOSED",
+        "mappingRecord": {
+          "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 999-Treatment A",
+          "rawSubjectKey": "Trial Site 999",
+          "rawUnit": "unrecognised gauge",
+          "rawMeasuredValue": 1,
+          "subjectMappingStatus": "UNMAPPED_NO_REFERENCE_MATCH",
+          "normalizedSubjectKey": null,
+          "subjectMappingCandidates": [],
+          "unitMappingStatus": "UNMAPPED_UNIT_NO_REFERENCE_MATCH",
+          "normalizedUnit": null,
+          "normalizedValue": null,
+          "unitMappingCandidates": [],
+          "governanceState": "EXTRACTED_UNREVIEWED",
+          "reviewGate": {
+            "required": true,
+            "passed": false,
+            "reviewerId": null,
+            "decision": null
+          }
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP02M-C0-AMBIGUOUS-VOCABULARY-FLAGGED-NOT-RESOLVED",
+      "description": "When the reference vocabulary itself maps the same raw term to two different canonical entries, mapping is flagged AMBIGUOUS_MULTIPLE_REFERENCE_MATCHES / AMBIGUOUS_MULTIPLE_UNIT_MATCHES, naming both candidates, rather than silently picking one",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-02",
+        "status": "MAPPING_PROPOSED",
+        "mappingRecord": {
+          "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 7-Treatment A",
+          "rawSubjectKey": "Trial Site 7",
+          "rawUnit": "legacy index scale",
+          "rawMeasuredValue": 42,
+          "subjectMappingStatus": "AMBIGUOUS_MULTIPLE_REFERENCE_MATCHES",
+          "normalizedSubjectKey": null,
+          "subjectMappingCandidates": [
+            "Reference Subject C7",
+            "Reference Subject C7-ALT"
+          ],
+          "unitMappingStatus": "UNMAPPED_UNIT_NO_REFERENCE_MATCH",
+          "normalizedUnit": null,
+          "normalizedValue": null,
+          "unitMappingCandidates": [],
+          "governanceState": "EXTRACTED_UNREVIEWED",
+          "reviewGate": {
+            "required": true,
+            "passed": false,
+            "reviewerId": null,
+            "decision": null
+          }
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP02M-D0-QUARANTINED-MISSING-SUBJECT-REFUSED-CLEANLY",
+      "description": "Feeding CAP-04's REAL quarantined output (missing subjectKey) into mapping does not crash and does not guess: it reports SUBJECT_KEY_REQUIRED_FOR_MAPPING while still attempting the unit side independently",
+      "passed": true,
+      "actual": {
+        "noSubjectResult": {
+          "capabilityId": "CAP-04",
+          "status": "EXTRACTION_COMPLETE",
+          "extractedRecord": {
+            "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-UNKNOWN-Treatment D",
+            "sourceId": "SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive",
+            "fileId": "FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv",
+            "subjectKey": null,
+            "treatmentLabel": "Treatment D",
+            "location": "Region 9",
+            "unit": "index units",
+            "dateObserved": "2009-01-01",
+            "measuredValue": 1,
+            "outcomePolarity": "POSITIVE",
+            "governanceState": "EXTRACTED_UNREVIEWED",
+            "reviewGate": {
+              "required": true,
+              "passed": false,
+              "reviewerId": null,
+              "decision": null
+            },
+            "recordStatus": "QUARANTINED",
+            "quarantineReasons": [
+              "MISSING_SUBJECT"
+            ],
+            "conflictingRecordIds": []
+          }
+        },
+        "mappingNoSubject": {
+          "capabilityId": "CAP-02",
+          "status": "MAPPING_PROPOSED",
+          "mappingRecord": {
+            "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-UNKNOWN-Treatment D",
+            "rawSubjectKey": null,
+            "rawUnit": "index units",
+            "rawMeasuredValue": 1,
+            "subjectMappingStatus": "SUBJECT_KEY_REQUIRED_FOR_MAPPING",
+            "normalizedSubjectKey": null,
+            "subjectMappingCandidates": [],
+            "unitMappingStatus": "PROPOSED_MAPPING",
+            "normalizedUnit": "reference index units",
+            "normalizedValue": 1,
+            "unitMappingCandidates": [
+              "reference index units"
+            ],
+            "governanceState": "EXTRACTED_UNREVIEWED",
+            "reviewGate": {
+              "required": true,
+              "passed": false,
+              "reviewerId": null,
+              "decision": null
+            }
+          }
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP02M-D1-NULL-EXTRACTED-RECORD-REFUSED",
+      "description": "Calling proposeInteroperabilityMapping with no extracted record at all is refused, naming EXTRACTED_RECORD_REQUIRED, not a crash",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-02",
+        "status": "MAPPING_REFUSED",
+        "refusalReasons": [
+          "EXTRACTED_RECORD_REQUIRED"
+        ],
+        "mappingRecord": null
+      }
+    }
+  ]
+}

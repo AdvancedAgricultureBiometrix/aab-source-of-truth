@@ -170,15 +170,113 @@
     });
   }
 
+  // Stage 4 (the "Interoperability" half of this capability's name): propose
+  // a mapping from an institution's own wording/units to a governed
+  // reference vocabulary. The load-bearing rule, straight from the design
+  // document: "The original wording and value would remain preserved
+  // alongside any normalized representation." A mapping is a PROPOSAL, not
+  // a silent overwrite -- it never invents a canonical term for something
+  // the vocabulary does not recognise, and it never guesses between two
+  // candidates when a raw term is genuinely ambiguous in the vocabulary.
+  // It also never changes governanceState or reviewGate: proposing a
+  // mapping does not move a record any closer to scientific-memory
+  // eligibility (see CAP-04's isEligibleForScientificMemory).
+  const DEFAULT_REFERENCE_VOCABULARY = Object.freeze({
+    subjects: Object.freeze([
+      Object.freeze({ canonicalTerm: "Reference Subject C7", synonyms: Object.freeze(["Trial Site 7", "Site Seven", "TS-7"]) }),
+      Object.freeze({ canonicalTerm: "Reference Subject C12", synonyms: Object.freeze(["Trial Site 12"]) })
+    ]),
+    units: Object.freeze([
+      Object.freeze({ canonicalUnit: "reference index units", synonyms: Object.freeze([
+        Object.freeze({ unit: "index units", factor: 1 }),
+        Object.freeze({ unit: "legacy index scale", factor: 0.1 })
+      ]) })
+    ])
+  });
+
+  function lookupSynonym(entries, rawValue, entryKey, synonymKey) {
+    if (!rawValue) return { matches: [] };
+    const matches = entries.filter((entry) => entry[synonymKey].some((candidate) => (candidate.unit || candidate) === rawValue || String(candidate.unit || candidate).toLowerCase() === String(rawValue).toLowerCase()));
+    return { matches };
+  }
+
+  function proposeSubjectMapping(rawSubjectKey, vocabulary) {
+    if (!rawSubjectKey) {
+      return { mappingStatus: "SUBJECT_KEY_REQUIRED_FOR_MAPPING", normalizedSubjectKey: null, candidates: [] };
+    }
+    const { matches } = lookupSynonym(vocabulary.subjects, rawSubjectKey, "canonicalTerm", "synonyms");
+    if (matches.length === 0) {
+      return { mappingStatus: "UNMAPPED_NO_REFERENCE_MATCH", normalizedSubjectKey: null, candidates: [] };
+    }
+    if (matches.length > 1) {
+      return { mappingStatus: "AMBIGUOUS_MULTIPLE_REFERENCE_MATCHES", normalizedSubjectKey: null, candidates: matches.map((m) => m.canonicalTerm) };
+    }
+    return { mappingStatus: "PROPOSED_MAPPING", normalizedSubjectKey: matches[0].canonicalTerm, candidates: Object.freeze([matches[0].canonicalTerm]) };
+  }
+
+  function proposeUnitMapping(rawUnit, rawMeasuredValue, vocabulary) {
+    if (!rawUnit) {
+      return { mappingStatus: "UNIT_REQUIRED_FOR_MAPPING", normalizedUnit: null, normalizedValue: null, candidates: [] };
+    }
+    const matchingGroups = vocabulary.units
+      .map((group) => ({ group, synonym: group.synonyms.find((s) => s.unit.toLowerCase() === String(rawUnit).toLowerCase()) }))
+      .filter((entry) => entry.synonym);
+    if (matchingGroups.length === 0) {
+      return { mappingStatus: "UNMAPPED_UNIT_NO_REFERENCE_MATCH", normalizedUnit: null, normalizedValue: null, candidates: [] };
+    }
+    if (matchingGroups.length > 1) {
+      return { mappingStatus: "AMBIGUOUS_MULTIPLE_UNIT_MATCHES", normalizedUnit: null, normalizedValue: null, candidates: matchingGroups.map((m) => m.group.canonicalUnit) };
+    }
+    const { group, synonym } = matchingGroups[0];
+    const normalizedValue = typeof rawMeasuredValue === "number" ? rawMeasuredValue * synonym.factor : null;
+    return { mappingStatus: "PROPOSED_MAPPING", normalizedUnit: group.canonicalUnit, normalizedValue, candidates: Object.freeze([group.canonicalUnit]) };
+  }
+
+  function proposeInteroperabilityMapping(extractedRecord, referenceVocabulary) {
+    const vocabulary = referenceVocabulary || DEFAULT_REFERENCE_VOCABULARY;
+    if (!extractedRecord) {
+      return Object.freeze({ capabilityId: CAPABILITY_ID, status: "MAPPING_REFUSED", refusalReasons: Object.freeze(["EXTRACTED_RECORD_REQUIRED"]), mappingRecord: null });
+    }
+
+    const subjectMapping = proposeSubjectMapping(extractedRecord.subjectKey, vocabulary);
+    const unitMapping = proposeUnitMapping(extractedRecord.unit, extractedRecord.measuredValue, vocabulary);
+
+    return Object.freeze({
+      capabilityId: CAPABILITY_ID,
+      status: "MAPPING_PROPOSED",
+      mappingRecord: Object.freeze({
+        recordId: extractedRecord.recordId,
+        // The original wording and value are preserved unchanged alongside
+        // the proposed normalization -- never overwritten, never dropped.
+        rawSubjectKey: extractedRecord.subjectKey,
+        rawUnit: extractedRecord.unit,
+        rawMeasuredValue: extractedRecord.measuredValue,
+        subjectMappingStatus: subjectMapping.mappingStatus,
+        normalizedSubjectKey: subjectMapping.normalizedSubjectKey,
+        subjectMappingCandidates: Object.freeze(subjectMapping.candidates),
+        unitMappingStatus: unitMapping.mappingStatus,
+        normalizedUnit: unitMapping.normalizedUnit,
+        normalizedValue: unitMapping.normalizedValue,
+        unitMappingCandidates: Object.freeze(unitMapping.candidates),
+        // Mapping never touches review/governance state: a proposed
+        // normalization is not scientific memory admission.
+        governanceState: extractedRecord.governanceState,
+        reviewGate: extractedRecord.reviewGate
+      })
+    });
+  }
+
   window.AAB_CAP34_LIVE_CAP02_SOURCE_ACQUISITION = Object.freeze({
     capabilityId: CAPABILITY_ID,
     capabilityName: CAPABILITY_NAME,
     classification: CLASSIFICATION,
     requiredSourceFields: REQUIRED_SOURCE_FIELDS,
+    defaultReferenceVocabulary: DEFAULT_REFERENCE_VOCABULARY,
     sha256Hex,
     registerSource,
     preserveOriginal,
-    evaluateAcquisition
+    evaluateAcquisition,
+    proposeInteroperabilityMapping
   });
 
   if (window.AAB_CAP34_SIMULATION && typeof window.AAB_CAP34_SIMULATION.registerLiveCapability === "function") {

@@ -1,8 +1,8 @@
 {
   "manifestId": "AAB-CAP34-FIDELITY-MANIFEST",
-  "manifestVersion": "1.8.0",
-  "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-009",
-  "createdAt": "2026-09-20T06:00:00Z",
+  "manifestVersion": "1.7.0",
+  "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-008",
+  "createdAt": "2026-09-20T05:00:00Z",
   "sourceLandscapeReference": "governance/workstream-b/AAB-WORKSTREAM-B-CAPABILITY-LANDSCAPE-LAUNCH-GAP-FREEZE-2026-09-19.md",
   "authority": "DISCLOSURE_ONLY_NO_PRODUCTION_SCIENTIFIC_REGULATORY_OR_COMMISSIONING_AUTHORITY",
   "rule": "Complete simulator coverage does not mean complete product implementation.",
@@ -62,16 +62,20 @@
       "capabilityName": "Governed Scientific Data Acquisition & Interoperability",
       "capabilityPart": null,
       "horizon": "LAUNCH_RELEASE",
-      "representationVersion": "0.4.0",
+      "representationVersion": "0.3.0",
       "simulatorMode": "LIVE_SIMULATION",
       "fidelity": "PARTIAL_REAL_LOGIC_LIMITATIONS_SHOWN",
       "scenarioCoverage": [
         {
-          "scenarioId": "SIM-MEMORY-SOURCE-REGISTRATION-001",
+          "scenarioId": "SIM-MEMORY-CLEAN-001",
           "coverage": "FULL_FOR_REPRESENTED_SCOPE"
         },
         {
-          "scenarioId": "SIM-MEMORY-MAPPING-001",
+          "scenarioId": "SIM-MEMORY-CONFLICT-001",
+          "coverage": "FULL_FOR_REPRESENTED_SCOPE"
+        },
+        {
+          "scenarioId": "SIM-MEMORY-DEGRADED-001",
           "coverage": "FULL_FOR_REPRESENTED_SCOPE"
         }
       ],
@@ -80,29 +84,24 @@
       ],
       "evidenceReferences": [
         "simulation/cap34/live-capabilities/cap02-source-acquisition.behavioural-test.js",
-        "simulation/cap34/live-capabilities/cap02-interoperability-mapping.behavioural-test.js",
         "governance/workstream-b/CAP-02-SOURCE-ACQUISITION-LIVE-LOGIC-BEHAVIOURAL-PROOF.json",
-        "governance/workstream-b/CAP-02-INTEROPERABILITY-MAPPING-LIVE-LOGIC-BEHAVIOURAL-PROOF.json",
         "governance/workstream-b/CAP-02-04-STAGE-1-3-GRADUATION-2026-09-20.md",
-        "governance/workstream-b/CAP-02-STAGE-4-INTEROPERABILITY-MAPPING-2026-09-20.md",
         "governance/workstream-b/CAP-34-CAPABILITY-PATHWAY-RECONCILIATION-2026-09-20.md"
       ],
       "limitations": [
-        "Stages 1, 2 and 4 of the seven-stage Historical Scientific Memory Recovery pathway (register source, preserve original, map formats/units) are implemented; stage 3 (cautious extraction/classification) is a separate capability, see CAP-04.",
-        "Interoperability mapping matches raw terms against a small, hand-authored synthetic reference vocabulary by exact case-insensitive string match; it performs no semantic, linguistic or scientific interpretation of terms it does not already know.",
-        "Legacy-system adapters, real document/OCR extraction, and corpus-scale multi-institution acquisition and vocabulary management remain unbuilt and unproven.",
-        "Source registration, original preservation and mapping operate over synthetic in-memory content strings and a synthetic vocabulary; no real file upload, storage backend, legacy-system integration or governed vocabulary authority exists.",
-        "Only purpose-built synthetic perturbation fixtures have been exercised; real-world institutional source formats, vocabularies, systems or scales are not covered.",
+        "Only stages 1-2 of the seven-stage Historical Scientific Memory Recovery pathway (register source, preserve original) are implemented; stage 3 (cautious extraction/classification) is a separate capability, see CAP-04.",
+        "Format and unit interoperability mapping across institutions (stage 4), legacy-system adapters, real document/OCR extraction, and corpus-scale multi-institution acquisition remain unbuilt and unproven.",
+        "Source registration and original preservation operate over synthetic in-memory content strings; no real file upload, storage backend or legacy-system integration exists.",
+        "Only purpose-built synthetic perturbation fixtures have been exercised; real-world institutional source formats, systems or scales are not covered.",
         "Does not integrate with any real data source, institution, country deployment or production system."
       ],
       "disclosureBurden": "STANDARD",
       "lastVerifiedAt": "2026-09-20",
-      "lastVerifiedAgainst": "CAP-02 live-logic behavioural proofs: source-acquisition (7/7 fixtures: dispatcher wiring, named-field registration refusal, registration-gated preservation refusal, trusted-SHA-256-matched content hash) and interoperability-mapping (7/7 fixtures: exact synonym match with correct unit conversion, unmapped terms never guessed, a genuinely ambiguous vocabulary flagged rather than resolved, raw fields preserved byte-identical alongside any mapping, mapping never changing memory eligibility, and clean refusal on CAP-04's real quarantined/missing-subject output).",
-      "classificationReason": "A source-registration, original-preservation and interoperability-mapping evaluator set is implemented and registered into CAP-34's live-simulation dispatcher. A source cannot be registered without complete, named attribution, original material cannot be preserved without a registered source, and a proposed format/unit mapping always preserves the raw original alongside the proposal, never overwriting it, and never invents a canonical match the reference vocabulary does not support -- proven by dedicated behavioural tests, not by declaration. This is a real but narrow slice of a still largely unbuilt pathway; see limitations.",
+      "lastVerifiedAgainst": "CAP-02 live-logic behavioural proof (7/7 fixtures): dispatcher wiring, named-field registration refusal, registration-gated preservation refusal, and a content hash proven genuinely content-derived and matched against an independent trusted SHA-256 implementation.",
+      "classificationReason": "A source-registration and original-preservation evaluator is implemented and registered into CAP-34's live-simulation dispatcher, covering stages 1-2 only of Historical Scientific Memory Recovery. A source cannot be registered without complete, named attribution, and original material cannot be preserved without a registered source -- proven by a dedicated behavioural test, not by declaration. This is a narrow real slice of a still largely unbuilt pathway; see limitations.",
       "nonImplications": [
         "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning.",
-        "Registering a source, preserving its original content, and proposing a string-matched format/unit mapping do not constitute extraction, classification, scientific memory admission, or genuine semantic interoperability or legacy-system integration and must not be presented as such.",
-        "A proposed mapping is not a governed vocabulary decision and does not change a record's review or eligibility state."
+        "Registering a source and preserving its original content does not constitute extraction, classification, scientific memory admission, interoperability mapping or genuine legacy-system integration and must not be presented as such."
       ]
     },
     {
@@ -968,5 +967,5 @@
     }
   ],
   "capabilityCount": 34,
-  "snapshotDigest": "sha256:1a32715bc3b76b381cd3d6c217ac1be140fcf4163c9050ff7b1334ddb574e81f"
+  "snapshotDigest": "sha256:ee929e7df04671d8d2c843fbba73e0a2c61aa0b854919e93fdd57bd23d3d4934"
 }

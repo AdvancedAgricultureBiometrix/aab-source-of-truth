@@ -1,7 +1,7 @@
 {
   "proofId": "AAB-CAP34-CAP04-SCIENTIFIC-MEMORY-LIVE-LOGIC-BEHAVIOURAL-PROOF",
   "proofVersion": "1.0.0",
-  "generatedAtUtc": "2026-09-20T05:18:01.882Z",
+  "generatedAtUtc": "2026-09-20T05:32:14.879Z",
   "result": "PASS_CAP04_SCIENTIFIC_MEMORY_LIVE_LOGIC_BEHAVIOURAL_PROOF",
   "scope": "Proves stage 3 (extract and classify cautiously) of Historical Scientific Memory Recovery, consuming CAP-02's REAL preserved-source output: three synthetic file sets (clean, conflicting, degraded) against the same preserved source produce three different, content-driven outcomes; a negative/null-result record is retained and classified with identical rigor to a positive one; and -- the load-bearing property -- no stage-3 outcome is ever structurally eligible for scientific memory or downstream reasoning, proven with a positive control, five adversarial near-miss variants, and a direct downstream-exclusion proof. It does not prove stage 4 (format/unit interoperability mapping), stage 5 detection at corpus scale, stage 7's real human-review workflow, scientific correctness, production readiness or commissioning.",
   "fixtureCount": 14,
