@@ -1,7 +1,7 @@
 {
   "proofId": "AAB-CAP34-CAP05-REASONING-LIVE-LOGIC-BEHAVIOURAL-PROOF",
   "proofVersion": "1.0.0",
-  "generatedAtUtc": "2026-09-20T03:33:23.371Z",
+  "generatedAtUtc": "2026-09-20T03:35:49.513Z",
   "result": "PASS_CAP05_REASONING_LIVE_LOGIC_BEHAVIOURAL_PROOF",
   "scope": "Proves that CAP-05's live-simulation evaluator detects contradiction by comparing pairs of evidence sharing a derived subject (not per-record tallying), and identifies knowledge gaps by naming the specific missing required category (not a bare count), in both directions of perturbation. It does not prove scientific correctness, production readiness, sovereignty or commissioning.",
   "fixtureCount": 10,

@@ -1,8 +1,8 @@
 {
   "manifestId": "AAB-CAP34-FIDELITY-MANIFEST",
-  "manifestVersion": "1.6.0",
-  "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-007",
-  "createdAt": "2026-09-20T03:35:11Z",
+  "manifestVersion": "1.5.0",
+  "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-006",
+  "createdAt": "2026-09-20T03:32:49Z",
   "sourceLandscapeReference": "governance/workstream-b/AAB-WORKSTREAM-B-CAPABILITY-LANDSCAPE-LAUNCH-GAP-FREEZE-2026-09-19.md",
   "authority": "DISCLOSURE_ONLY_NO_PRODUCTION_SCIENTIFIC_REGULATORY_OR_COMMISSIONING_AUTHORITY",
   "rule": "Complete simulator coverage does not mean complete product implementation.",
@@ -317,44 +317,21 @@
       "capabilityName": "Governed Scientific Learning",
       "capabilityPart": null,
       "horizon": "LAUNCH_RELEASE",
-      "representationVersion": "1.0.0",
-      "simulatorMode": "LIVE_SIMULATION",
-      "fidelity": "REAL_LOGIC_SYNTHETIC_REFERENCE_DATA",
-      "scenarioCoverage": [
-        {
-          "scenarioId": "SIM-AGR-001",
-          "coverage": "FULL_FOR_REPRESENTED_SCOPE"
-        },
-        {
-          "scenarioId": "SIM-AGR-002",
-          "coverage": "FULL_FOR_REPRESENTED_SCOPE"
-        },
-        {
-          "scenarioId": "SIM-AGR-003",
-          "coverage": "FULL_FOR_REPRESENTED_SCOPE"
-        }
-      ],
-      "implementationReferences": [
-        "simulation/cap34/live-capabilities/cap09-governed-learning.js"
-      ],
-      "evidenceReferences": [
-        "simulation/cap34/live-capabilities/cap09-governed-learning.behavioural-test.js",
-        "governance/workstream-b/CAP-09-GOVERNED-LEARNING-LIVE-LOGIC-BEHAVIOURAL-PROOF.json"
-      ],
+      "representationVersion": "0.1.0",
+      "simulatorMode": "NONE",
+      "fidelity": "NOT_YET_REPRESENTED",
+      "scenarioCoverage": [],
+      "implementationReferences": [],
+      "evidenceReferences": [],
       "limitations": [
-        "Refusal logic checks two illustrative synthetic conditions (replication count, keyword-detected contradiction/insufficiency); it is not a validated scientific replication, peer-review or regulatory promotion standard.",
-        "Replication is counted, not adjudicated: independence between trials is assumed from record identity, not verified by any real methodology, protocol or source-independence check.",
-        "Only the three canonical synthetic scenario evidence sets and purpose-built synthetic perturbation fixtures have been exercised; real-world trial data, formats or domains are not covered.",
-        "Does not integrate with any real data source, institution, country deployment or production system."
+        "Simulator representation not yet implemented."
       ],
-      "disclosureBurden": "HEIGHTENED",
-      "lastVerifiedAt": "2026-09-20",
-      "lastVerifiedAgainst": "CAP-09 live-logic perturbation behavioural proof (8/8 fixtures): 3 canonical scenarios; a single unreplicated trial refused and named; the same finding promoted once genuinely replicated; a contradicting trial refusing promotion EVEN WHEN the replication requirement is already satisfied, proving contradiction is independently sufficient to refuse; and bidirectional recovery once resolved.",
-      "classificationReason": "A promotion-refusal evaluator is implemented and registered into CAP-34's live-simulation dispatcher, directly enforcing that a candidate finding is not promoted to approved learning merely because a trial occurred. It is proven capable of refusing under named, independently-sufficient conditions -- unreplicated evidence, or contradicting evidence even with replication otherwise satisfied -- and of promoting once the missing condition is genuinely met, by a dedicated perturbation test rather than by declaration.",
+      "disclosureBurden": "STANDARD",
+      "lastVerifiedAt": null,
+      "lastVerifiedAgainst": null,
+      "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
       "nonImplications": [
-        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning.",
-        "Passing this evaluator's checks does not constitute genuine scientific replication, peer review, or approval of any real finding, and must not be presented as such.",
-        "The refusal conditions checked here are illustrative and synthetic; they do not represent AAB's full or final approved-learning governance standard."
+        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
       ]
     },
     {
@@ -939,5 +916,5 @@
     }
   ],
   "capabilityCount": 34,
-  "snapshotDigest": "sha256:94eb64ca7ba19e8c5e61e03f29fc3d7f20cc467ed8aed5ae22fe68a250bd252e"
+  "snapshotDigest": "sha256:8edeafee3826f89a4feea4a4713037ac27e8bdc623ae41fead57a7f9945e1ca1"
 }
