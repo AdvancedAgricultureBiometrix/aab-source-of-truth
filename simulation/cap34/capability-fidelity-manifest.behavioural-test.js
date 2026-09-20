@@ -89,10 +89,10 @@ const fixtures = [
   {
     fixtureId: "INVALID_FIDELITY_MODE_PAIRING",
     expectedStatus: "FAIL_CLOSED_MANIFEST_INVALID",
-    expectedErrors: ["NOT_REPRESENTED_REQUIRES_NONE:CAP-01:ROOT"],
+    expectedErrors: ["NOT_REPRESENTED_REQUIRES_NONE:CAP-33:ROOT"],
     build: () => {
       const candidate = copy(manifest);
-      find(candidate, "CAP-01").simulatorMode = "LIVE_SIMULATION";
+      find(candidate, "CAP-33").simulatorMode = "LIVE_SIMULATION";
       return repin(candidate);
     }
   },

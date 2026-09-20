@@ -1,8 +1,8 @@
 {
   "manifestId": "AAB-CAP34-FIDELITY-MANIFEST",
-  "manifestVersion": "1.2.0",
-  "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-003",
-  "createdAt": "2026-09-20T03:09:26Z",
+  "manifestVersion": "1.1.0",
+  "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-002",
+  "createdAt": "2026-09-20T00:00:00Z",
   "sourceLandscapeReference": "governance/workstream-b/AAB-WORKSTREAM-B-CAPABILITY-LANDSCAPE-LAUNCH-GAP-FREEZE-2026-09-19.md",
   "authority": "DISCLOSURE_ONLY_NO_PRODUCTION_SCIENTIFIC_REGULATORY_OR_COMMISSIONING_AUTHORITY",
   "rule": "Complete simulator coverage does not mean complete product implementation.",
@@ -18,43 +18,21 @@
       "capabilityName": "Country Intelligence & Discovery",
       "capabilityPart": null,
       "horizon": "LAUNCH_RELEASE",
-      "representationVersion": "1.0.0",
-      "simulatorMode": "LIVE_SIMULATION",
-      "fidelity": "REAL_LOGIC_SYNTHETIC_REFERENCE_DATA",
-      "scenarioCoverage": [
-        {
-          "scenarioId": "SIM-AGR-001",
-          "coverage": "FULL_FOR_REPRESENTED_SCOPE"
-        },
-        {
-          "scenarioId": "SIM-AGR-002",
-          "coverage": "FULL_FOR_REPRESENTED_SCOPE"
-        },
-        {
-          "scenarioId": "SIM-AGR-003",
-          "coverage": "FULL_FOR_REPRESENTED_SCOPE"
-        }
-      ],
-      "implementationReferences": [
-        "simulation/cap34/live-capabilities/cap01-discovery.js"
-      ],
-      "evidenceReferences": [
-        "simulation/cap34/live-capabilities/cap01-discovery.behavioural-test.js",
-        "governance/workstream-b/CAP-01-DISCOVERY-LIVE-LOGIC-BEHAVIOURAL-PROOF.json"
-      ],
+      "representationVersion": "0.1.0",
+      "simulatorMode": "NONE",
+      "fidelity": "NOT_YET_REPRESENTED",
+      "scenarioCoverage": [],
+      "implementationReferences": [],
+      "evidenceReferences": [],
       "limitations": [
-        "Evidence classification uses keyword-pattern matching over synthetic finding text; it does not perform semantic, statistical or scientific interpretation of evidence content.",
-        "Only the three canonical synthetic scenario evidence sets and purpose-built synthetic perturbation fixtures have been exercised; real-world evidence formats, languages, instruments or domains are not covered.",
-        "Minimum-evidence and conflict/insufficiency thresholds are illustrative synthetic parameters, not validated scientific, regulatory or commercial thresholds.",
-        "Does not integrate with any real data source, institution, country deployment or production system."
+        "Simulator representation not yet implemented."
       ],
       "disclosureBurden": "STANDARD",
-      "lastVerifiedAt": "2026-09-20",
-      "lastVerifiedAgainst": "CAP-01 live-logic perturbation behavioural proof (11/11 fixtures): 3 canonical scenarios plus 5 purpose-built perturbations proving bidirectional data-sensitivity, plus dispatcher-wiring checks.",
-      "classificationReason": "An evidence-driven discovery evaluator is implemented and registered into CAP-34's live-simulation dispatcher. It computes its outcome from the eligibility state and finding content of the evidence it is given -- not from which scenario was selected -- and this data-sensitivity is proven in both directions by a dedicated perturbation test separate from the three canonical scenario checks.",
+      "lastVerifiedAt": null,
+      "lastVerifiedAgainst": null,
+      "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
       "nonImplications": [
-        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning.",
-        "Keyword-pattern evidence classification does not constitute genuine scientific, medical or regulatory judgment and must not be presented as such."
+        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
       ]
     },
     {
@@ -851,5 +829,5 @@
     }
   ],
   "capabilityCount": 34,
-  "snapshotDigest": "sha256:55cf137bcd3f38c2d1675e90f77d31a74e712ca6af873360b5e40388e438e19e"
+  "snapshotDigest": "sha256:8fc10b3a71135efa88e192a1ee92ef0c510941eb8023069fb7707f27b984e4f4"
 }

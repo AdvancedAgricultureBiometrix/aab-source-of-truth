@@ -82,6 +82,18 @@
     })
   });
 
+  const liveCapabilities = {};
+  function registerLiveCapability(capabilityId, evaluator) {
+    if (typeof evaluator !== "function") return Object.freeze({ status: "FAIL_CLOSED_INVALID_LIVE_CAPABILITY_EVALUATOR" });
+    liveCapabilities[capabilityId] = evaluator;
+    return Object.freeze({ status: "PASS_LIVE_CAPABILITY_REGISTERED", capabilityId });
+  }
+  function runLiveCapability(capabilityId, evidenceRecords) {
+    const evaluator = liveCapabilities[capabilityId];
+    if (typeof evaluator !== "function") return Object.freeze({ status: "FAIL_CLOSED_UNKNOWN_LIVE_CAPABILITY", capabilityId });
+    return evaluator(evidenceRecords);
+  }
+
   const roles = Object.freeze({
     COUNTRY_HEAD: Object.freeze({ label: "Country Head", formulation: false, audit: true, administration: true }),
     INSTITUTION_ADMIN: Object.freeze({ label: "Institution Admin", formulation: false, audit: false, administration: true }),
@@ -109,5 +121,5 @@
     const allPassed=Object.values(checks).every(Boolean);
     return Object.freeze({status:allPassed?"PASS_READY_SIMULATION_ONLY":"FAIL_CLOSED",classification:CLASSIFICATION,version:VERSION,checks});
   }
-  window.AAB_CAP34_SIMULATION=Object.freeze({CLASSIFICATION,VERSION,ROADMAP_ACKNOWLEDGEMENT_VERSION,scenarios,roadmapPreviews,roles,capabilityState,runScenario,enterRoadmapPreview,reset,runValidation});
+  window.AAB_CAP34_SIMULATION=Object.freeze({CLASSIFICATION,VERSION,ROADMAP_ACKNOWLEDGEMENT_VERSION,scenarios,roadmapPreviews,roles,liveCapabilities,capabilityState,runScenario,enterRoadmapPreview,reset,runValidation,registerLiveCapability,runLiveCapability});
 }());

@@ -22,7 +22,7 @@ const canonicalSources = [
   {path:"governance/workstream-b/CAP-34-DISCLOSURE-RECEIPT-CONTRACT.md",blobSha:"4d01b86546d0c08cb6507cfc3345e1bf98bad766"},
   {path:"governance/workstream-b/CAP-34-DISCLOSURE-RECEIPT-VALIDATOR-TEST-MATRIX.md",blobSha:"65b1311d2b1df463439122bf54e7c94ba84c3266"},
   {path:"simulation/cap34/cap34-disclosure-receipt-v1.0.0.schema.json",blobSha:"e1291b5c6ea0b808c64ff1584485e748a7d74eb6"},
-  {path:"simulation/cap34/cap34-disclosure-receipt.js",blobSha:"d599116bb0f489cdf84711b306cab7f85c032af9"}
+  {path:"simulation/cap34/cap34-disclosure-receipt.js",blobSha:"7b9dc8122dbe68f5dcaaa4f2bc1e152164ba19a0"}
 ];
 const contractBinding = canonicalSources.map((source) => ({...source,actualBlobSha:gitBlobShaAt(source.path),passed:gitBlobShaAt(source.path)===source.blobSha}));
 
@@ -53,7 +53,7 @@ const fixtures=[
   {id:"DRV-05",expect:fail,errors:["FIDELITY_MISMATCH:CAP-34:ROOT"],prepare:mutate(r=>r.capabilitiesPresented[0].fidelity="REAL_LOGIC_SYNTHETIC_REFERENCE_DATA")},
   {id:"DRV-06",expect:fail,errors:["SIMULATOR_MODE_MISMATCH:CAP-34:ROOT"],prepare:mutate(r=>r.capabilitiesPresented[0].simulatorMode="ROADMAP_PREVIEW")},
   {id:"DRV-07",expect:fail,errors:["DISCLOSURE_BURDEN_MISMATCH:CAP-34:ROOT"],prepare:mutate(r=>r.capabilitiesPresented[0].manifestDisclosureBurden="HEIGHTENED")},
-  {id:"DRV-08",expect:fail,errors:["UNREPRESENTED_CAPABILITY_CANNOT_BE_SHOWN:CAP-01:ROOT"],prepare:mutate(r=>r.capabilitiesPresented=[presented(entry("CAP-01"))])},
+  {id:"DRV-08",expect:fail,errors:["UNREPRESENTED_CAPABILITY_CANNOT_BE_SHOWN:CAP-33:ROOT"],prepare:mutate(r=>r.capabilitiesPresented=[presented(entry("CAP-33"))])},
   {id:"DRV-09",expect:fail,errors:["CAPABILITY_NOT_IN_MANIFEST:CAP-99:ROOT"],prepare:mutate(r=>{const p=copy(r.capabilitiesPresented[0]);p.capabilityId="CAP-99";r.capabilitiesPresented=[p];})},
   {id:"DRV-10",expect:fail,errors:["DUPLICATE_PRESENTED_CAPABILITY:CAP-34:ROOT"],prepare:mutate(r=>r.capabilitiesPresented.push(copy(r.capabilitiesPresented[0])))},
   {id:"DRV-11",expect:fail,errors:["LIMITATIONS_REQUIRED:CAP-34:ROOT"],prepare:mutate(r=>r.capabilitiesPresented[0].limitationsPresented=[])},

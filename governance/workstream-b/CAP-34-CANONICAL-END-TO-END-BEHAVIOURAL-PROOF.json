@@ -1,7 +1,7 @@
 {
   "proofId": "AAB-CAP34-CANONICAL-END-TO-END-BEHAVIOURAL-PROOF",
   "proofVersion": "1.1.0",
-  "generatedAtUtc": "2026-09-19T23:51:17.851Z",
+  "generatedAtUtc": "2026-09-20T03:11:19.763Z",
   "result": "PASS_CAP34_CANONICAL_END_TO_END_BEHAVIOURAL_PROOF",
   "scope": "Proves only byte-bound PR #16 contract relevance and the defined manifest/receipt validator behaviors. It does not prove capability implementation, scientific correctness, production readiness, sovereignty, commissioning, Gate D satisfaction or WP05 commencement.",
   "pr16Binding": {
@@ -31,8 +31,8 @@
       },
       {
         "path": "simulation/cap34/cap34-disclosure-receipt.js",
-        "blobSha": "d599116bb0f489cdf84711b306cab7f85c032af9",
-        "actualBlobSha": "d599116bb0f489cdf84711b306cab7f85c032af9",
+        "blobSha": "7b9dc8122dbe68f5dcaaa4f2bc1e152164ba19a0",
+        "actualBlobSha": "7b9dc8122dbe68f5dcaaa4f2bc1e152164ba19a0",
         "passed": true
       }
     ]
@@ -49,8 +49,8 @@
     "result": "PASS_CAP34_CANONICAL_DISCLOSURE_RECEIPT_BEHAVIOURAL_PROOF",
     "fixtureCount": 28,
     "passedFixtureCount": 28,
-    "validatorVersion": "2.1.0",
-    "validatorSha256": "75a39f4dd914583304399c356ead6073cbfe36928e06816a8413ac1f0cf21283",
+    "validatorVersion": "2.2.0",
+    "validatorSha256": "9592565bd60c82ddb1e66e3fd480465b3ffaf4be8608e2325cae847c4fbd3b0d",
     "fixtures": [
       {
         "fixtureId": "DRV-01",
@@ -139,10 +139,10 @@
         "expectedStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "actualStatus": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "expectedErrors": [
-          "UNREPRESENTED_CAPABILITY_CANNOT_BE_SHOWN:CAP-01:ROOT"
+          "UNREPRESENTED_CAPABILITY_CANNOT_BE_SHOWN:CAP-33:ROOT"
         ],
         "actualErrors": [
-          "UNREPRESENTED_CAPABILITY_CANNOT_BE_SHOWN:CAP-01:ROOT"
+          "UNREPRESENTED_CAPABILITY_CANNOT_BE_SHOWN:CAP-33:ROOT"
         ],
         "passed": true
       },
@@ -364,9 +364,11 @@
           "MANIFEST_SNAPSHOT_MISMATCH"
         ],
         "actualErrors": [
+          "MANIFEST_ARCHIVE_MISMATCH:manifestVersion",
           "MANIFEST_ARCHIVE_MISMATCH:manifestSnapshotId",
           "MANIFEST_ARCHIVE_MISMATCH:snapshotDigest",
-          "MANIFEST_SNAPSHOT_MISMATCH"
+          "MANIFEST_SNAPSHOT_MISMATCH",
+          "MANIFEST_VERSION_MISMATCH"
         ],
         "passed": true
       },

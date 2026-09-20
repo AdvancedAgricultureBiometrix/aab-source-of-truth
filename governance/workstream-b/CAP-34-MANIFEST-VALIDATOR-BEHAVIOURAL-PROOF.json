@@ -1,7 +1,7 @@
 {
   "proofId": "AAB-CAP34-MANIFEST-VALIDATOR-BEHAVIOURAL-PROOF",
   "proofVersion": "1.0.0",
-  "generatedAtUtc": "2026-09-19T23:51:17.745Z",
+  "generatedAtUtc": "2026-09-20T03:11:19.668Z",
   "result": "PASS_CAP34_MANIFEST_VALIDATOR_BEHAVIOURAL_PROOF",
   "scope": "Proves only whether the validator detects the defined honest and corrupted manifest states. It does not prove AAB completeness, CAP-34 completion, production readiness, WA commissioning, Gate D satisfaction, or WP05 commencement.",
   "validator": {
@@ -13,9 +13,9 @@
   "manifest": {
     "file": "capability-fidelity-manifest.json",
     "manifestId": "AAB-CAP34-FIDELITY-MANIFEST",
-    "manifestVersion": "1.1.0",
-    "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-002",
-    "snapshotDigest": "sha256:8fc10b3a71135efa88e192a1ee92ef0c510941eb8023069fb7707f27b984e4f4",
+    "manifestVersion": "1.2.0",
+    "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-003",
+    "snapshotDigest": "sha256:55cf137bcd3f38c2d1675e90f77d31a74e712ca6af873360b5e40388e438e19e",
     "capabilityCount": 34
   },
   "authoritativeRoster": {
@@ -100,10 +100,10 @@
       "expectedStatus": "FAIL_CLOSED_MANIFEST_INVALID",
       "actualStatus": "FAIL_CLOSED_MANIFEST_INVALID",
       "expectedErrors": [
-        "NOT_REPRESENTED_REQUIRES_NONE:CAP-01:ROOT"
+        "NOT_REPRESENTED_REQUIRES_NONE:CAP-33:ROOT"
       ],
       "actualErrors": [
-        "NOT_REPRESENTED_REQUIRES_NONE:CAP-01:ROOT"
+        "NOT_REPRESENTED_REQUIRES_NONE:CAP-33:ROOT"
       ],
       "passed": true
     },
