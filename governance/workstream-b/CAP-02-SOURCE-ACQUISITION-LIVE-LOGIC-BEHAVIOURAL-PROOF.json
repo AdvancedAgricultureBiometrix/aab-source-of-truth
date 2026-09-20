@@ -1,7 +1,7 @@
 {
   "proofId": "AAB-CAP34-CAP02-SOURCE-ACQUISITION-LIVE-LOGIC-BEHAVIOURAL-PROOF",
   "proofVersion": "1.0.0",
-  "generatedAtUtc": "2026-09-20T12:02:31.320Z",
+  "generatedAtUtc": "2026-09-20T12:28:47.806Z",
   "result": "PASS_CAP02_SOURCE_ACQUISITION_LIVE_LOGIC_BEHAVIOURAL_PROOF",
   "scope": "Proves stages 1-2 only of Historical Scientific Memory Recovery: a source cannot be registered without complete, named attribution, and original material cannot be preserved without a registered source, and its content hash is genuinely content-derived and matches a trusted independent SHA-256 implementation. It does not prove stage 3 extraction/classification (see CAP-04), format/unit interoperability mapping, legacy-system adapters, corpus-scale acquisition, scientific correctness, production readiness or commissioning.",
   "fixtureCount": 7,
