@@ -1,7 +1,7 @@
 {
   "proofId": "AAB-CAP34-CAP01-DISCOVERY-LIVE-LOGIC-BEHAVIOURAL-PROOF",
   "proofVersion": "1.0.0",
-  "generatedAtUtc": "2026-09-20T05:39:44.034Z",
+  "generatedAtUtc": "2026-09-20T05:45:01.152Z",
   "result": "PASS_CAP01_DISCOVERY_LIVE_LOGIC_BEHAVIOURAL_PROOF",
   "scope": "Proves only that CAP-01's live-simulation evaluator computes its outcome from the actual evidence content and state passed to it, in both directions (evidence removed/added, findings flipped), and reaches every defined outcome from real scenario data. It does not prove scientific correctness, production readiness, sovereignty or commissioning.",
   "fixtureCount": 11,

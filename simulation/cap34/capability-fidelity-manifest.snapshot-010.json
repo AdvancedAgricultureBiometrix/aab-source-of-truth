@@ -1,8 +1,8 @@
 {
   "manifestId": "AAB-CAP34-FIDELITY-MANIFEST",
-  "manifestVersion": "1.10.0",
-  "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-011",
-  "createdAt": "2026-09-20T08:00:00Z",
+  "manifestVersion": "1.9.0",
+  "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-010",
+  "createdAt": "2026-09-20T07:00:00Z",
   "sourceLandscapeReference": "governance/workstream-b/AAB-WORKSTREAM-B-CAPABILITY-LANDSCAPE-LAUNCH-GAP-FREEZE-2026-09-19.md",
   "authority": "DISCLOSURE_ONLY_NO_PRODUCTION_SCIENTIFIC_REGULATORY_OR_COMMISSIONING_AUTHORITY",
   "rule": "Complete simulator coverage does not mean complete product implementation.",
@@ -144,7 +144,7 @@
       "capabilityName": "Governed Scientific Memory",
       "capabilityPart": null,
       "horizon": "LAUNCH_RELEASE",
-      "representationVersion": "0.5.0",
+      "representationVersion": "0.4.0",
       "simulatorMode": "LIVE_SIMULATION",
       "fidelity": "PARTIAL_REAL_LOGIC_LIMITATIONS_SHOWN",
       "scenarioCoverage": [
@@ -163,10 +163,6 @@
         {
           "scenarioId": "SIM-MEMORY-ADMISSION-001",
           "coverage": "FULL_FOR_REPRESENTED_SCOPE"
-        },
-        {
-          "scenarioId": "SIM-MEMORY-CORPUS-SCALE-001",
-          "coverage": "FULL_FOR_REPRESENTED_SCOPE"
         }
       ],
       "implementationReferences": [
@@ -175,33 +171,29 @@
       "evidenceReferences": [
         "simulation/cap34/live-capabilities/cap04-scientific-memory.behavioural-test.js",
         "simulation/cap34/live-capabilities/cap04-scientific-memory-admission.behavioural-test.js",
-        "simulation/cap34/live-capabilities/cap04-corpus-scale.behavioural-test.js",
         "governance/workstream-b/CAP-04-SCIENTIFIC-MEMORY-LIVE-LOGIC-BEHAVIOURAL-PROOF.json",
         "governance/workstream-b/CAP-04-SCIENTIFIC-MEMORY-ADMISSION-LIVE-LOGIC-BEHAVIOURAL-PROOF.json",
-        "governance/workstream-b/CAP-04-CORPUS-SCALE-LIVE-LOGIC-BEHAVIOURAL-PROOF.json",
         "governance/workstream-b/CAP-02-04-STAGE-1-3-GRADUATION-2026-09-20.md",
         "governance/workstream-b/CAP-04-STAGE-7-GOVERNED-ADMISSION-2026-09-20.md",
-        "governance/workstream-b/CAP-04-STAGE-5-6-CORPUS-SCALE-2026-09-20.md",
         "governance/workstream-b/CAP-34-CAPABILITY-PATHWAY-RECONCILIATION-2026-09-20.md"
       ],
       "limitations": [
-        "All seven pathway stages now have some real logic, but split across two capabilities and each still narrow: CAP-02 covers stages 1, 2 and 4; this capability covers stages 3, 5, 6 and 7.",
+        "Stages 3 (extract and classify cautiously) and 7 (human review and governed admission) of the seven-stage pathway are implemented; stages 1-2 are CAP-02's, and stage 4 (interoperability mapping) is also CAP-02's, not this capability's.",
         "Extraction uses simple rule-based field-presence checks and categorical outcome-polarity comparison, not real document parsing, OCR, semantic extraction or scientific interpretation.",
-        "Corpus-scale detection groups records by an exact (subjectKey, treatmentLabel, location) key match only; it performs no fuzzy, semantic or near-duplicate matching, and does not scale-test beyond small synthetic corpora.",
+        "Conflict and quarantine detection operate per-record only; corpus-scale duplicate/near-duplicate detection (stage 5) remains unbuilt.",
         "Admission authority is a hardcoded synthetic role list (SCIENTIST, INSTITUTION_ADMIN, COUNTRY_HEAD), not a real identity, authentication or institutional-authority system; reviewer identity and role are asserted by the caller, not independently verified.",
-        "There is no persistence, audit trail, UI, or real cross-institution/cross-country search; discovery and corpus scanning operate on whatever in-memory array of records is passed in, not a real connected memory store.",
-        "Only purpose-built synthetic abstract scenario data has been exercised; real-world institutional records, reviewers, corpus sizes or domains are not covered.",
+        "There is no persistence, audit trail, UI or corpus-scale review queue for admission decisions -- each call is a single, isolated, in-memory decision.",
+        "Only purpose-built synthetic abstract scenario data (clean, conflicting, degraded and admission-decision sets) has been exercised; real-world institutional records, reviewers or domains are not covered.",
         "Does not integrate with any real data source, institution, country deployment or production system."
       ],
       "disclosureBurden": "HEIGHTENED",
       "lastVerifiedAt": "2026-09-20",
-      "lastVerifiedAgainst": "CAP-04 live-logic perturbation behavioural proofs: extraction/classification (14/14), governed admission (11/11), and corpus-scale detection/discovery (9/9): exact-duplicate and possible-duplicate-variant groups detected; a genuine contradiction that stage 3's own per-record check missed (two records extracted with no knowledge of each other) correctly caught by corpus-scale scanning without mutating either record; and negative/failed and quarantined results discoverable by subject with identical prominence and ordering as positive ones.",
-      "classificationReason": "A cautious extraction-and-classification evaluator, a governed admission evaluator, and corpus-scale detection/discovery functions are implemented and registered into CAP-34's live-simulation dispatcher (extraction only; admission, scanning and discovery are called directly, matching the pattern of other multi-function capabilities in this manifest). Extraction genuinely consumes CAP-02's real preserved-source output and never marks its own output eligible for scientific memory. Admission enforces that a reviewer's decision is necessary but never sufficient on its own. Corpus-scale scanning is proven to catch a real, constructed gap in stage 3's own incremental conflict check -- not a hypothetical one -- while never mutating the records it reports on, and discovery is proven to surface negative and quarantined records with the same rigor as clean positive ones. This closes out real logic for all seven originally designed pathway stages, narrowly scoped in each case; see limitations.",
+      "lastVerifiedAgainst": "CAP-04 live-logic perturbation behavioural proofs: extraction/classification (14/14 fixtures) and governed admission (11/11 fixtures): an authorised, well-formed ADMIT decision still refused for a quarantined record or an unresolved conflict, admitted once a conflict is genuinely documented as resolved, unauthorised roles and missing reviewer identity refused, rejection requiring a documented reason and producing a governanceState distinct from unreviewed, re-review of an already-reviewed record refused, and the structural eligibility boundary re-proven using a GENUINE admission decision rather than the earlier hand-authored positive control.",
+      "classificationReason": "A cautious extraction-and-classification evaluator, together with a governed admission evaluator, is implemented and registered into CAP-34's live-simulation dispatcher. Extraction genuinely consumes CAP-02's real preserved-source output and never marks its own output eligible for scientific memory. Admission enforces that a reviewer's decision is necessary but never sufficient on its own: an authorised ADMIT is still refused for a quarantined record or an undocumented conflict, mirroring CAP-09's proof that replication alone does not override contradiction. This is proven directly, including adversarial near-miss cases and a genuine (not hand-authored) positive control, not assumed.",
       "nonImplications": [
         "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning.",
         "Rule-based field-presence and categorical-polarity comparison does not constitute genuine scientific extraction, translation or interoperability mapping and must not be presented as such.",
-        "Reviewer role and identity are asserted, not authenticated; this does not constitute a real identity, authority or institutional-governance system, and a passing admission call does not establish that any real reviewer authorised anything.",
-        "Corpus-scale detection over a small in-memory array does not establish real institutional-scale duplicate detection, cross-institution search, or connected scientific memory."
+        "Reviewer role and identity are asserted, not authenticated; this does not constitute a real identity, authority or institutional-governance system, and a passing admission call does not establish that any real reviewer authorised anything."
       ]
     },
     {
@@ -984,5 +976,5 @@
     }
   ],
   "capabilityCount": 34,
-  "snapshotDigest": "sha256:890b91a82d10a33e6548fc58815fe25c68fe3043fd6c87878a42f643543857e5"
+  "snapshotDigest": "sha256:0f91448e7c83cb5b5059fdb8a7cca34e5155b0fd7a0faec91278e90c2ebe2a68"
 }

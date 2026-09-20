@@ -1,0 +1,263 @@
+{
+  "proofId": "AAB-CAP34-CAP04-CORPUS-SCALE-LIVE-LOGIC-BEHAVIOURAL-PROOF",
+  "proofVersion": "1.0.0",
+  "generatedAtUtc": "2026-09-20T05:45:01.333Z",
+  "result": "PASS_CAP04_CORPUS_SCALE_LIVE_LOGIC_BEHAVIOURAL_PROOF",
+  "scope": "Proves stages 5 and 6 of Historical Scientific Memory Recovery: corpus-scale scanning detects exact-duplicate and possible-duplicate-variant groups, and -- the standout property -- catches a genuine contradiction that stage 3's own per-record check missed because neither extraction call knew about the other, all without ever mutating the underlying records (detection, not silent fixing); and negative/failed and quarantined results are discoverable by subject with identical prominence, ordering and detail as positive ones, never filtered or demoted by default. It does not prove real duplicate/near-duplicate detection at true institutional scale, semantic similarity, cross-institution search, scientific correctness, production readiness or commissioning.",
+  "fixtureCount": 9,
+  "passedFixtureCount": 9,
+  "fixtures": [
+    {
+      "fixtureId": "CAP04CS-A0-EXACT-DUPLICATE-GROUP-DETECTED",
+      "description": "Two records sharing the same subject, treatment, location, polarity and measured value are grouped as an EXACT_DUPLICATE candidate, naming both record ids, without being told about each other at extraction time",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-04",
+        "totalRecords": 2,
+        "quarantinedCount": 0,
+        "contradictionGroups": [],
+        "exactDuplicateGroups": [
+          {
+            "groupKey": "Trial Site 50\u0000Treatment H\u0000Region 15",
+            "recordIds": [
+              "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 50-Treatment H",
+              "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 50-Treatment H"
+            ]
+          }
+        ],
+        "possibleDuplicateVariantGroups": [],
+        "explanation": "A read-only corpus-scale report. It names groups of records sharing the same subject, treatment and location that disagree (contradictionGroups), appear to repeat the same observation identically (exactDuplicateGroups), or report the same conclusion with different values (possibleDuplicateVariantGroups). It never merges, removes or changes the status of any record -- resolving what it finds remains a stage-7 human decision."
+      }
+    },
+    {
+      "fixtureId": "CAP04CS-A1-POSSIBLE-DUPLICATE-VARIANT-DETECTED",
+      "description": "Two records agreeing on outcome polarity but reporting different measured values are grouped as a POSSIBLE_DUPLICATE_VARIANT, naming the distinct values -- never silently averaged or picked",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-04",
+        "totalRecords": 2,
+        "quarantinedCount": 0,
+        "contradictionGroups": [],
+        "exactDuplicateGroups": [],
+        "possibleDuplicateVariantGroups": [
+          {
+            "groupKey": "Trial Site 51\u0000Treatment I\u0000Region 16",
+            "recordIds": [
+              "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 51-Treatment I",
+              "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 51-Treatment I"
+            ],
+            "distinctMeasuredValues": [
+              3,
+              3.4
+            ]
+          }
+        ],
+        "explanation": "A read-only corpus-scale report. It names groups of records sharing the same subject, treatment and location that disagree (contradictionGroups), appear to repeat the same observation identically (exactDuplicateGroups), or report the same conclusion with different values (possibleDuplicateVariantGroups). It never merges, removes or changes the status of any record -- resolving what it finds remains a stage-7 human decision."
+      }
+    },
+    {
+      "fixtureId": "CAP04CS-B0-STAGE-3-GENUINELY-MISSED-THE-CONTRADICTION",
+      "description": "Sanity check: recordY's own stage-3 extraction, given no knowledge of recordX, reaches PENDING_REVIEW rather than FLAGGED_CONFLICT -- the gap is real, not assumed",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-04",
+        "status": "EXTRACTION_COMPLETE",
+        "extractedRecord": {
+          "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 52-Treatment J",
+          "sourceId": "SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive",
+          "fileId": "FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv",
+          "subjectKey": "Trial Site 52",
+          "treatmentLabel": "Treatment J",
+          "location": "Region 17",
+          "unit": "index units",
+          "dateObserved": "2013-06-01",
+          "measuredValue": 0,
+          "outcomePolarity": "NEGATIVE",
+          "governanceState": "EXTRACTED_UNREVIEWED",
+          "reviewGate": {
+            "required": true,
+            "passed": false,
+            "reviewerId": null,
+            "decision": null
+          },
+          "recordStatus": "PENDING_REVIEW",
+          "quarantineReasons": [],
+          "conflictingRecordIds": []
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP04CS-B1-CORPUS-SCALE-SCAN-CATCHES-THE-MISSED-CONTRADICTION",
+      "description": "Scanning both records together as a corpus DOES surface a CONTRADICTION_GROUP naming both record ids and both distinct outcome polarities, even though stage 3 itself missed it",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-04",
+        "totalRecords": 2,
+        "quarantinedCount": 0,
+        "contradictionGroups": [
+          {
+            "groupKey": "Trial Site 52\u0000Treatment J\u0000Region 17",
+            "recordIds": [
+              "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 52-Treatment J",
+              "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 52-Treatment J"
+            ],
+            "distinctOutcomePolarities": [
+              "POSITIVE",
+              "NEGATIVE"
+            ]
+          }
+        ],
+        "exactDuplicateGroups": [],
+        "possibleDuplicateVariantGroups": [],
+        "explanation": "A read-only corpus-scale report. It names groups of records sharing the same subject, treatment and location that disagree (contradictionGroups), appear to repeat the same observation identically (exactDuplicateGroups), or report the same conclusion with different values (possibleDuplicateVariantGroups). It never merges, removes or changes the status of any record -- resolving what it finds remains a stage-7 human decision."
+      }
+    },
+    {
+      "fixtureId": "CAP04CS-B2-SCAN-NEVER-MUTATES-THE-UNDERLYING-RECORDS",
+      "description": "After the corpus scan surfaces the contradiction, both underlying records are UNCHANGED -- still PENDING_REVIEW, still EXTRACTED_UNREVIEWED -- detection never silently fixes, resolves or reclassifies anything; that remains a stage-7 human decision",
+      "passed": true,
+      "actual": {
+        "recordX": {
+          "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 52-Treatment J",
+          "sourceId": "SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive",
+          "fileId": "FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv",
+          "subjectKey": "Trial Site 52",
+          "treatmentLabel": "Treatment J",
+          "location": "Region 17",
+          "unit": "index units",
+          "dateObserved": "2013-01-01",
+          "measuredValue": 4,
+          "outcomePolarity": "POSITIVE",
+          "governanceState": "EXTRACTED_UNREVIEWED",
+          "reviewGate": {
+            "required": true,
+            "passed": false,
+            "reviewerId": null,
+            "decision": null
+          },
+          "recordStatus": "PENDING_REVIEW",
+          "quarantineReasons": [],
+          "conflictingRecordIds": []
+        },
+        "recordY": {
+          "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 52-Treatment J",
+          "sourceId": "SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive",
+          "fileId": "FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv",
+          "subjectKey": "Trial Site 52",
+          "treatmentLabel": "Treatment J",
+          "location": "Region 17",
+          "unit": "index units",
+          "dateObserved": "2013-06-01",
+          "measuredValue": 0,
+          "outcomePolarity": "NEGATIVE",
+          "governanceState": "EXTRACTED_UNREVIEWED",
+          "reviewGate": {
+            "required": true,
+            "passed": false,
+            "reviewerId": null,
+            "decision": null
+          },
+          "recordStatus": "PENDING_REVIEW",
+          "quarantineReasons": [],
+          "conflictingRecordIds": []
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP04CS-C0-QUARANTINED-RECORDS-EXCLUDED-FROM-GROUPING-BUT-COUNTED",
+      "description": "A quarantined record (missing key fields) is never grouped for duplicate/contradiction analysis, since it has nothing reliable to compare, but is still counted in quarantinedCount for corpus-level visibility",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-04",
+        "totalRecords": 3,
+        "quarantinedCount": 1,
+        "contradictionGroups": [
+          {
+            "groupKey": "Trial Site 52\u0000Treatment J\u0000Region 17",
+            "recordIds": [
+              "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 52-Treatment J",
+              "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 52-Treatment J"
+            ],
+            "distinctOutcomePolarities": [
+              "POSITIVE",
+              "NEGATIVE"
+            ]
+          }
+        ],
+        "exactDuplicateGroups": [],
+        "possibleDuplicateVariantGroups": [],
+        "explanation": "A read-only corpus-scale report. It names groups of records sharing the same subject, treatment and location that disagree (contradictionGroups), appear to repeat the same observation identically (exactDuplicateGroups), or report the same conclusion with different values (possibleDuplicateVariantGroups). It never merges, removes or changes the status of any record -- resolving what it finds remains a stage-7 human decision."
+      }
+    },
+    {
+      "fixtureId": "CAP04CS-D0-NEGATIVE-RESULT-DISCOVERABLE-SAME-PROMINENCE-AS-POSITIVE",
+      "description": "Querying by subject returns BOTH the positive and negative record, each correctly tagged with its own outcomePolarity, ordered only by date -- the negative result is not filtered out, demoted or reordered to appear less prominent",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-04",
+        "subjectKey": "Trial Site 60",
+        "matchCount": 2,
+        "matches": [
+          {
+            "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 60-Treatment M",
+            "recordStatus": "PENDING_REVIEW",
+            "outcomePolarity": "NEGATIVE",
+            "dateObserved": "2013-01-01",
+            "governanceState": "EXTRACTED_UNREVIEWED"
+          },
+          {
+            "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 60-Treatment L",
+            "recordStatus": "PENDING_REVIEW",
+            "outcomePolarity": "POSITIVE",
+            "dateObserved": "2014-01-01",
+            "governanceState": "EXTRACTED_UNREVIEWED"
+          }
+        ]
+      }
+    },
+    {
+      "fixtureId": "CAP04CS-D1-QUARANTINED-RECORD-FOR-SAME-SUBJECT-ALSO-DISCOVERABLE",
+      "description": "A quarantined record for the same subject is ALSO returned by discovery, not hidden -- full transparency about everything on file for a subject, even material stage 3 could not confidently classify",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-04",
+        "subjectKey": "Trial Site 60",
+        "matchCount": 3,
+        "matches": [
+          {
+            "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 60-Treatment N",
+            "recordStatus": "QUARANTINED",
+            "outcomePolarity": "INCONCLUSIVE",
+            "dateObserved": null,
+            "governanceState": "EXTRACTED_UNREVIEWED"
+          },
+          {
+            "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 60-Treatment M",
+            "recordStatus": "PENDING_REVIEW",
+            "outcomePolarity": "NEGATIVE",
+            "dateObserved": "2013-01-01",
+            "governanceState": "EXTRACTED_UNREVIEWED"
+          },
+          {
+            "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 60-Treatment L",
+            "recordStatus": "PENDING_REVIEW",
+            "outcomePolarity": "POSITIVE",
+            "dateObserved": "2014-01-01",
+            "governanceState": "EXTRACTED_UNREVIEWED"
+          }
+        ]
+      }
+    },
+    {
+      "fixtureId": "CAP04CS-D2-NO-MATCHES-RETURNS-HONEST-EMPTY-RESULT",
+      "description": "Querying a subject with no records returns an honest empty result (matchCount 0), not an error and not an invented match",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-04",
+        "subjectKey": "Trial Site Nonexistent",
+        "matchCount": 0,
+        "matches": []
+      }
+    }
+  ]
+}

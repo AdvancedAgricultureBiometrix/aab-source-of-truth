@@ -2,7 +2,7 @@
   "use strict";
 
   const VALIDATOR_ID = "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR";
-  const VALIDATOR_VERSION = "2.9.0";
+  const VALIDATOR_VERSION = "2.10.0";
   const RECEIPT_CONTRACT_VERSION = "1.0.0";
   const PASS = "PASS_CAP34_DISCLOSURE_RECEIPT_VALID";
   const FAIL = "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID";
@@ -58,6 +58,11 @@
       manifestId: "AAB-CAP34-FIDELITY-MANIFEST",
       manifestVersion: "1.9.0",
       snapshotDigest: "sha256:0f91448e7c83cb5b5059fdb8a7cca34e5155b0fd7a0faec91278e90c2ebe2a68"
+    }),
+    "CAP34-MANIFEST-2026-09-20-SNAPSHOT-011": Object.freeze({
+      manifestId: "AAB-CAP34-FIDELITY-MANIFEST",
+      manifestVersion: "1.10.0",
+      snapshotDigest: "sha256:890b91a82d10a33e6548fc58815fe25c68fe3043fd6c87878a42f643543857e5"
     })
   });
 

@@ -215,6 +215,94 @@
     });
   }
 
+  function corpusGroupKey(record) {
+    return String(record.subjectKey) + "\u0000" + String(record.treatmentLabel) + "\u0000" + String(record.location);
+  }
+
+  // Stage 5: detect problems without silently fixing them, AT SCALE. This
+  // is deliberately distinct from stage 3's per-record conflict check,
+  // which only ever compares a new record against whatever
+  // priorExtractedRecords its caller happened to pass at extraction time --
+  // in a real multi-institution pathway, records can arrive incrementally
+  // and out of order, so an institution's own upload may never be told
+  // about a genuinely conflicting record another institution filed at the
+  // same time. Corpus-scale scanning re-examines the WHOLE set together
+  // and can surface a contradiction stage 3 itself missed. This function
+  // only ever produces a REPORT: it never mutates a record's recordStatus
+  // or governanceState, and never merges or removes anything -- that
+  // remains a human decision under stage 7.
+  function scanCorpusForProblems(extractedRecords) {
+    const records = Array.isArray(extractedRecords) ? extractedRecords : [];
+    const quarantined = records.filter((r) => r && r.recordStatus === "QUARANTINED");
+    const groupable = records.filter((r) => r && r.recordStatus !== "QUARANTINED" && r.subjectKey && r.treatmentLabel && r.location);
+
+    const groups = new Map();
+    for (const record of groupable) {
+      const key = corpusGroupKey(record);
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(record);
+    }
+
+    const contradictionGroups = [];
+    const exactDuplicateGroups = [];
+    const possibleDuplicateVariantGroups = [];
+
+    for (const [key, members] of groups) {
+      if (members.length < 2) continue;
+      const distinctPolarities = Array.from(new Set(members.map((m) => m.outcomePolarity)));
+      if (distinctPolarities.length > 1) {
+        contradictionGroups.push(Object.freeze({
+          groupKey: key,
+          recordIds: Object.freeze(members.map((m) => m.recordId)),
+          distinctOutcomePolarities: Object.freeze(distinctPolarities)
+        }));
+        continue;
+      }
+      const distinctValues = Array.from(new Set(members.map((m) => m.measuredValue)));
+      if (distinctValues.length === 1) {
+        exactDuplicateGroups.push(Object.freeze({ groupKey: key, recordIds: Object.freeze(members.map((m) => m.recordId)) }));
+      } else {
+        possibleDuplicateVariantGroups.push(Object.freeze({ groupKey: key, recordIds: Object.freeze(members.map((m) => m.recordId)), distinctMeasuredValues: Object.freeze(distinctValues) }));
+      }
+    }
+
+    return Object.freeze({
+      capabilityId: CAPABILITY_ID,
+      totalRecords: records.length,
+      quarantinedCount: quarantined.length,
+      contradictionGroups: Object.freeze(contradictionGroups),
+      exactDuplicateGroups: Object.freeze(exactDuplicateGroups),
+      possibleDuplicateVariantGroups: Object.freeze(possibleDuplicateVariantGroups),
+      explanation: "A read-only corpus-scale report. It names groups of records sharing the same subject, treatment and location that disagree (contradictionGroups), appear to repeat the same observation identically (exactDuplicateGroups), or report the same conclusion with different values (possibleDuplicateVariantGroups). It never merges, removes or changes the status of any record -- resolving what it finds remains a stage-7 human decision."
+    });
+  }
+
+  // Stage 6: negative and failed results must be discoverable with the
+  // same rigor as positive ones, not merely retained. This deliberately
+  // returns every matching record regardless of recordStatus or
+  // outcomePolarity, sorted only by dateObserved (never "successes
+  // first"), and tags each with its outcomePolarity so a negative or
+  // null result cannot be buried or filtered out by default.
+  function queryCorpusBySubject(extractedRecords, subjectKey) {
+    const records = Array.isArray(extractedRecords) ? extractedRecords : [];
+    const matches = records
+      .filter((r) => r && r.subjectKey === subjectKey)
+      .slice()
+      .sort((a, b) => String(a.dateObserved || "").localeCompare(String(b.dateObserved || "")));
+    return Object.freeze({
+      capabilityId: CAPABILITY_ID,
+      subjectKey,
+      matchCount: matches.length,
+      matches: Object.freeze(matches.map((r) => Object.freeze({
+        recordId: r.recordId,
+        recordStatus: r.recordStatus,
+        outcomePolarity: r.outcomePolarity,
+        dateObserved: r.dateObserved,
+        governanceState: r.governanceState
+      })))
+    });
+  }
+
   // Dispatcher entry point.
   function evaluateMemoryClassification(request) {
     const req = request || {};
@@ -240,6 +328,8 @@
     admitToScientificMemory,
     isEligibleForScientificMemory,
     assembleEligibleEvidenceForReasoning,
+    scanCorpusForProblems,
+    queryCorpusBySubject,
     evaluateMemoryClassification
   });
 

@@ -1,7 +1,7 @@
 {
   "proofId": "AAB-CAP34-CAP09-GOVERNED-LEARNING-LIVE-LOGIC-BEHAVIOURAL-PROOF",
   "proofVersion": "1.0.0",
-  "generatedAtUtc": "2026-09-20T05:39:44.503Z",
+  "generatedAtUtc": "2026-09-20T05:45:01.667Z",
   "result": "PASS_CAP09_GOVERNED_LEARNING_LIVE_LOGIC_BEHAVIOURAL_PROOF",
   "scope": "Proves that CAP-09 can and does explicitly refuse to promote a candidate finding to approved learning under named conditions (unreplicated single trial; contradicting evidence, including when replication alone is already satisfied), correctly names which condition(s) triggered the refusal, and correctly promotes once the missing condition is genuinely satisfied. It does not prove scientific correctness, production readiness, sovereignty or commissioning.",
   "fixtureCount": 8,
