@@ -1,7 +1,7 @@
 {
   "proofId": "AAB-CAP34-CAP07-FORMULATION-INTELLIGENCE-LIVE-LOGIC-BEHAVIOURAL-PROOF",
   "proofVersion": "1.0.0",
-  "generatedAtUtc": "2026-09-20T05:45:01.612Z",
+  "generatedAtUtc": "2026-09-20T12:02:31.560Z",
   "result": "PASS_CAP07_FORMULATION_INTELLIGENCE_LIVE_LOGIC_BEHAVIOURAL_PROOF",
   "scope": "Proves that CAP-07 genuinely combines/scores candidates against an objective's constraints (changing either changes the output), and -- specifically -- that CAP-07's output responds to CAP-06's REAL, independently re-evaluated output across the capability boundary, in both directions, including upstream contradiction propagating to a review flag rather than being averaged away. It does not prove scientific correctness, production readiness, sovereignty or commissioning.",
   "fixtureCount": 9,

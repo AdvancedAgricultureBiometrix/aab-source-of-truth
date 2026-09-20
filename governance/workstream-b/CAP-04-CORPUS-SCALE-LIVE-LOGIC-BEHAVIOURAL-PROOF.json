@@ -1,7 +1,7 @@
 {
   "proofId": "AAB-CAP34-CAP04-CORPUS-SCALE-LIVE-LOGIC-BEHAVIOURAL-PROOF",
   "proofVersion": "1.0.0",
-  "generatedAtUtc": "2026-09-20T05:47:56.254Z",
+  "generatedAtUtc": "2026-09-20T12:02:31.366Z",
   "result": "PASS_CAP04_CORPUS_SCALE_LIVE_LOGIC_BEHAVIOURAL_PROOF",
   "scope": "Proves stages 5 and 6 of Historical Scientific Memory Recovery: corpus-scale scanning detects exact-duplicate and possible-duplicate-variant groups, and -- the standout property -- catches a genuine contradiction that stage 3's own per-record check missed because neither extraction call knew about the other, all without ever mutating the underlying records (detection, not silent fixing); and negative/failed and quarantined results are discoverable by subject with identical prominence, ordering and detail as positive ones, never filtered or demoted by default. It does not prove real duplicate/near-duplicate detection at true institutional scale, semantic similarity, cross-institution search, scientific correctness, production readiness or commissioning.",
   "fixtureCount": 9,

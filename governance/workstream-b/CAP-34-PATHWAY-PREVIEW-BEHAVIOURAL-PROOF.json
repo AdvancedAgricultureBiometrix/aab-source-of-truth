@@ -1,7 +1,7 @@
 {
   "proofId": "AAB-CAP34-PATHWAY-PREVIEW-BEHAVIOURAL-PROOF",
   "proofVersion": "1.0.0",
-  "generatedAtUtc": "2026-09-20T05:45:00.917Z",
+  "generatedAtUtc": "2026-09-20T12:02:31.054Z",
   "result": "PASS_CAP34_PATHWAY_PREVIEW_BEHAVIOURAL_PROOF",
   "scope": "Proves only the defined concept-preview disclosure, acknowledgement, receipt and non-authority behaviours. It does not prove pathway implementation, scientific completeness, regulatory compliance, production readiness or commissioning.",
   "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-011",
