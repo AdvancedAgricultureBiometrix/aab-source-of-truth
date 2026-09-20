@@ -1,8 +1,8 @@
 {
   "manifestId": "AAB-CAP34-FIDELITY-MANIFEST",
-  "manifestVersion": "1.5.0",
-  "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-006",
-  "createdAt": "2026-09-20T03:32:49Z",
+  "manifestVersion": "1.4.0",
+  "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-005",
+  "createdAt": "2026-09-20T03:30:24Z",
   "sourceLandscapeReference": "governance/workstream-b/AAB-WORKSTREAM-B-CAPABILITY-LANDSCAPE-LAUNCH-GAP-FREEZE-2026-09-19.md",
   "authority": "DISCLOSURE_ONLY_NO_PRODUCTION_SCIENTIFIC_REGULATORY_OR_COMMISSIONING_AUTHORITY",
   "rule": "Complete simulator coverage does not mean complete product implementation.",
@@ -251,43 +251,21 @@
       "capabilityName": "Formulation Intelligence",
       "capabilityPart": null,
       "horizon": "LAUNCH_RELEASE",
-      "representationVersion": "1.0.0",
-      "simulatorMode": "LIVE_SIMULATION",
-      "fidelity": "REAL_LOGIC_SYNTHETIC_REFERENCE_DATA",
-      "scenarioCoverage": [
-        {
-          "scenarioId": "SIM-AGR-001",
-          "coverage": "FULL_FOR_REPRESENTED_SCOPE"
-        },
-        {
-          "scenarioId": "SIM-AGR-002",
-          "coverage": "FULL_FOR_REPRESENTED_SCOPE"
-        },
-        {
-          "scenarioId": "SIM-AGR-003",
-          "coverage": "PARTIAL"
-        }
-      ],
-      "implementationReferences": [
-        "simulation/cap34/live-capabilities/cap07-formulation-intelligence.js"
-      ],
-      "evidenceReferences": [
-        "simulation/cap34/live-capabilities/cap07-formulation-intelligence.behavioural-test.js",
-        "governance/workstream-b/CAP-07-FORMULATION-INTELLIGENCE-LIVE-LOGIC-BEHAVIOURAL-PROOF.json"
-      ],
+      "representationVersion": "0.1.0",
+      "simulatorMode": "NONE",
+      "fidelity": "NOT_YET_REPRESENTED",
+      "scenarioCoverage": [],
+      "implementationReferences": [],
+      "evidenceReferences": [],
       "limitations": [
-        "Consumes CAP-06 evaluation results, not raw scientific data; formulation quality is only as meaningful as CAP-06's synthetic scoring beneath it.",
-        "Combination is a simple average of selected candidates' readinessScore with a hard threshold and count gate; it is not a validated formulation-science, safety or regulatory scoring method.",
-        "The MISSING_EVIDENCE canonical scenario was exercised only through CAP-06's blocked-ingredient output (an ingredient that cannot qualify), not as a full dedicated formulation-level insufficiency scenario; coverage for SIM-AGR-003 is recorded as PARTIAL, not full.",
-        "Does not integrate with any real data source, institution, country deployment or production system."
+        "Simulator representation not yet implemented."
       ],
       "disclosureBurden": "STANDARD",
-      "lastVerifiedAt": "2026-09-20",
-      "lastVerifiedAgainst": "CAP-07 live-logic perturbation behavioural proof (9/9 fixtures): objective-constraint sensitivity, ingredient-list sensitivity, and -- specifically -- a cross-capability dependency proof running CAP-06's real evaluator, feeding its real output into CAP-07, perturbing upstream evidence, and confirming CAP-07's output changes in both directions, including contradiction propagation.",
-      "classificationReason": "A combine/score formulation evaluator is implemented and registered into CAP-34's live-simulation dispatcher, consuming CAP-06's real evaluation output rather than raw evidence. Its dependency on CAP-06 is proven, not assumed: a dedicated cross-capability test perturbs a candidate material's evidence, re-runs CAP-06's real evaluator, and confirms CAP-07 responds correctly to the new upstream result under an unchanged objective.",
+      "lastVerifiedAt": null,
+      "lastVerifiedAgainst": null,
+      "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
       "nonImplications": [
-        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning.",
-        "The formulationScore is a synthetic illustrative metric derived from CAP-06's synthetic readinessScore and does not constitute genuine formulation science, safety or regulatory scoring."
+        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
       ]
     },
     {
@@ -916,5 +894,5 @@
     }
   ],
   "capabilityCount": 34,
-  "snapshotDigest": "sha256:8edeafee3826f89a4feea4a4713037ac27e8bdc623ae41fead57a7f9945e1ca1"
+  "snapshotDigest": "sha256:e6b3f86112ead6a4ed1d7ab4df9dc620f55527330c4374f02d317b1ad32486eb"
 }
