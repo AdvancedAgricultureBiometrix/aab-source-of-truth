@@ -1,8 +1,8 @@
 {
   "manifestId": "AAB-CAP34-FIDELITY-MANIFEST",
-  "manifestVersion": "1.3.0",
-  "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-004",
-  "createdAt": "2026-09-20T03:19:45Z",
+  "manifestVersion": "1.2.0",
+  "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-003",
+  "createdAt": "2026-09-20T03:09:26Z",
   "sourceLandscapeReference": "governance/workstream-b/AAB-WORKSTREAM-B-CAPABILITY-LANDSCAPE-LAUNCH-GAP-FREEZE-2026-09-19.md",
   "authority": "DISCLOSURE_ONLY_NO_PRODUCTION_SCIENTIFIC_REGULATORY_OR_COMMISSIONING_AUTHORITY",
   "rule": "Complete simulator coverage does not mean complete product implementation.",
@@ -164,43 +164,21 @@
       "capabilityName": "Governed Scientific Reasoning",
       "capabilityPart": null,
       "horizon": "LAUNCH_RELEASE",
-      "representationVersion": "1.0.0",
-      "simulatorMode": "LIVE_SIMULATION",
-      "fidelity": "REAL_LOGIC_SYNTHETIC_REFERENCE_DATA",
-      "scenarioCoverage": [
-        {
-          "scenarioId": "SIM-AGR-001",
-          "coverage": "FULL_FOR_REPRESENTED_SCOPE"
-        },
-        {
-          "scenarioId": "SIM-AGR-002",
-          "coverage": "FULL_FOR_REPRESENTED_SCOPE"
-        },
-        {
-          "scenarioId": "SIM-AGR-003",
-          "coverage": "FULL_FOR_REPRESENTED_SCOPE"
-        }
-      ],
-      "implementationReferences": [
-        "simulation/cap34/live-capabilities/cap05-reasoning.js"
-      ],
-      "evidenceReferences": [
-        "simulation/cap34/live-capabilities/cap05-reasoning.behavioural-test.js",
-        "governance/workstream-b/CAP-05-REASONING-LIVE-LOGIC-BEHAVIOURAL-PROOF.json"
-      ],
+      "representationVersion": "0.1.0",
+      "simulatorMode": "NONE",
+      "fidelity": "NOT_YET_REPRESENTED",
+      "scenarioCoverage": [],
+      "implementationReferences": [],
+      "evidenceReferences": [],
       "limitations": [
-        "Contradiction detection groups evidence by a keyword-derived subject key and compares stance only within that group; it does not perform semantic, statistical or scientific reasoning about the evidence's substance.",
-        "Knowledge-gap identification checks a small, illustrative set of required categories (evidence volume, absence of self-declared gaps); it is not a validated scientific, regulatory or commercial completeness standard.",
-        "Only the three canonical synthetic scenario evidence sets and purpose-built synthetic perturbation fixtures have been exercised; real-world evidence formats, languages or domains are not covered.",
-        "Does not integrate with any real data source, institution, country deployment or production system."
+        "Simulator representation not yet implemented."
       ],
       "disclosureBurden": "STANDARD",
-      "lastVerifiedAt": "2026-09-20",
-      "lastVerifiedAgainst": "CAP-05 live-logic perturbation behavioural proof (10/10 fixtures): 3 canonical scenarios plus pairwise same-subject contradiction detection, named-category gap identification, and bidirectional sensitivity, plus dispatcher-wiring check.",
-      "classificationReason": "A pairwise-comparison reasoning evaluator is implemented and registered into CAP-34's live-simulation dispatcher. It detects contradiction only between evidence sharing a derived subject with opposing stances (not a per-record tally), and names the specific missing required category on knowledge gaps rather than reporting a bare count. This is proven by a dedicated perturbation test separate from the three canonical scenario checks.",
+      "lastVerifiedAt": null,
+      "lastVerifiedAgainst": null,
+      "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
       "nonImplications": [
-        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning.",
-        "Keyword-based subject grouping and stance comparison does not constitute genuine scientific, medical or regulatory reasoning and must not be presented as such."
+        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
       ]
     },
     {
@@ -873,5 +851,5 @@
     }
   ],
   "capabilityCount": 34,
-  "snapshotDigest": "sha256:6e97c0e9a3de649234bd003d48cae50ccfe91b6620ea64c94c1d784a87e38064"
+  "snapshotDigest": "sha256:55cf137bcd3f38c2d1675e90f77d31a74e712ca6af873360b5e40388e438e19e"
 }
