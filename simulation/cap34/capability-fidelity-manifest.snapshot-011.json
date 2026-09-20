@@ -1,8 +1,8 @@
 {
   "manifestId": "AAB-CAP34-FIDELITY-MANIFEST",
-  "manifestVersion": "1.11.0",
-  "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-012",
-  "createdAt": "2026-09-20T09:00:00Z",
+  "manifestVersion": "1.10.0",
+  "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-011",
+  "createdAt": "2026-09-20T08:00:00Z",
   "sourceLandscapeReference": "governance/workstream-b/AAB-WORKSTREAM-B-CAPABILITY-LANDSCAPE-LAUNCH-GAP-FREEZE-2026-09-19.md",
   "authority": "DISCLOSURE_ONLY_NO_PRODUCTION_SCIENTIFIC_REGULATORY_OR_COMMISSIONING_AUTHORITY",
   "rule": "Complete simulator coverage does not mean complete product implementation.",
@@ -144,7 +144,7 @@
       "capabilityName": "Governed Scientific Memory",
       "capabilityPart": null,
       "horizon": "LAUNCH_RELEASE",
-      "representationVersion": "0.6.0",
+      "representationVersion": "0.5.0",
       "simulatorMode": "LIVE_SIMULATION",
       "fidelity": "PARTIAL_REAL_LOGIC_LIMITATIONS_SHOWN",
       "scenarioCoverage": [
@@ -178,7 +178,6 @@
         "simulation/cap34/live-capabilities/cap04-corpus-scale.behavioural-test.js",
         "governance/workstream-b/CAP-04-SCIENTIFIC-MEMORY-LIVE-LOGIC-BEHAVIOURAL-PROOF.json",
         "governance/workstream-b/CAP-04-SCIENTIFIC-MEMORY-ADMISSION-LIVE-LOGIC-BEHAVIOURAL-PROOF.json",
-        "governance/workstream-b/CAP-04-DOMAIN-PORTABLE-AUTHORITY-PARAMETER-2026-09-20.md",
         "governance/workstream-b/CAP-04-CORPUS-SCALE-LIVE-LOGIC-BEHAVIOURAL-PROOF.json",
         "governance/workstream-b/CAP-02-04-STAGE-1-3-GRADUATION-2026-09-20.md",
         "governance/workstream-b/CAP-04-STAGE-7-GOVERNED-ADMISSION-2026-09-20.md",
@@ -189,15 +188,15 @@
         "All seven pathway stages now have some real logic, but split across two capabilities and each still narrow: CAP-02 covers stages 1, 2 and 4; this capability covers stages 3, 5, 6 and 7.",
         "Extraction uses simple rule-based field-presence checks and categorical outcome-polarity comparison, not real document parsing, OCR, semantic extraction or scientific interpretation.",
         "Corpus-scale detection groups records by an exact (subjectKey, treatmentLabel, location) key match only; it performs no fuzzy, semantic or near-duplicate matching, and does not scale-test beyond small synthetic corpora.",
-        "Admission authority defaults to a synthetic role list (SCIENTIST, INSTITUTION_ADMIN, COUNTRY_HEAD) but is a genuine optional parameter, not hardcoded; regardless of which list is used, it is not a real identity, authentication or institutional-authority system, and reviewer identity and role are asserted by the caller, not independently verified.",
+        "Admission authority is a hardcoded synthetic role list (SCIENTIST, INSTITUTION_ADMIN, COUNTRY_HEAD), not a real identity, authentication or institutional-authority system; reviewer identity and role are asserted by the caller, not independently verified.",
         "There is no persistence, audit trail, UI, or real cross-institution/cross-country search; discovery and corpus scanning operate on whatever in-memory array of records is passed in, not a real connected memory store.",
         "Only purpose-built synthetic abstract scenario data has been exercised; real-world institutional records, reviewers, corpus sizes or domains are not covered.",
         "Does not integrate with any real data source, institution, country deployment or production system."
       ],
       "disclosureBurden": "HEIGHTENED",
       "lastVerifiedAt": "2026-09-20",
-      "lastVerifiedAgainst": "CAP-04 live-logic perturbation behavioural proofs: extraction/classification (14/14), governed admission (14/14), and corpus-scale detection/discovery (9/9): exact-duplicate and possible-duplicate-variant groups detected; a genuine contradiction that stage 3's own per-record check missed (two records extracted with no knowledge of each other) correctly caught by corpus-scale scanning without mutating either record; negative/failed and quarantined results discoverable by subject with identical prominence and ordering as positive ones; and the optional authorisedReviewerRoles parameter proven genuinely consulted -- a custom list both revokes a default-authorised role and grants a role the default list refuses, with a sanity check confirming the grant was not already authorised.",
-      "classificationReason": "A cautious extraction-and-classification evaluator, a governed admission evaluator, and corpus-scale detection/discovery functions are implemented and registered into CAP-34's live-simulation dispatcher (extraction only; admission, scanning and discovery are called directly, matching the pattern of other multi-function capabilities in this manifest). Extraction genuinely consumes CAP-02's real preserved-source output and never marks its own output eligible for scientific memory. Admission enforces that a reviewer's decision is necessary but never sufficient on its own. Corpus-scale scanning is proven to catch a real, constructed gap in stage 3's own incremental conflict check -- not a hypothetical one -- while never mutating the records it reports on, and discovery is proven to surface negative and quarantined records with the same rigor as clean positive ones. Admission's reviewer-authority list is a genuine optional parameter, proven consulted (not accepted and ignored) by a custom list that both revokes a default-authorised role and grants a role the default list refuses -- this, together with the absence of any agriculture-specific field name or string in stages 1-3, is the concrete evidence that a different scientific domain (e.g. Water Science or Aquaculture) could reuse this logic unmodified. This closes out real logic for all seven originally designed pathway stages, narrowly scoped in each case; see limitations.",
+      "lastVerifiedAgainst": "CAP-04 live-logic perturbation behavioural proofs: extraction/classification (14/14), governed admission (11/11), and corpus-scale detection/discovery (9/9): exact-duplicate and possible-duplicate-variant groups detected; a genuine contradiction that stage 3's own per-record check missed (two records extracted with no knowledge of each other) correctly caught by corpus-scale scanning without mutating either record; and negative/failed and quarantined results discoverable by subject with identical prominence and ordering as positive ones.",
+      "classificationReason": "A cautious extraction-and-classification evaluator, a governed admission evaluator, and corpus-scale detection/discovery functions are implemented and registered into CAP-34's live-simulation dispatcher (extraction only; admission, scanning and discovery are called directly, matching the pattern of other multi-function capabilities in this manifest). Extraction genuinely consumes CAP-02's real preserved-source output and never marks its own output eligible for scientific memory. Admission enforces that a reviewer's decision is necessary but never sufficient on its own. Corpus-scale scanning is proven to catch a real, constructed gap in stage 3's own incremental conflict check -- not a hypothetical one -- while never mutating the records it reports on, and discovery is proven to surface negative and quarantined records with the same rigor as clean positive ones. This closes out real logic for all seven originally designed pathway stages, narrowly scoped in each case; see limitations.",
       "nonImplications": [
         "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning.",
         "Rule-based field-presence and categorical-polarity comparison does not constitute genuine scientific extraction, translation or interoperability mapping and must not be presented as such.",
@@ -985,5 +984,5 @@
     }
   ],
   "capabilityCount": 34,
-  "snapshotDigest": "sha256:bdf66b0f37815dd65190184232b31d78ad54fab2a462ce8e532365329af6c710"
+  "snapshotDigest": "sha256:890b91a82d10a33e6548fc58815fe25c68fe3043fd6c87878a42f643543857e5"
 }

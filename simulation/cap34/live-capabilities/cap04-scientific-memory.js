@@ -135,8 +135,18 @@
   // equivalent of CAP-09's "replication alone does not override
   // contradiction": an authorised reviewer explicitly attempting to ADMIT
   // is still refused for a quarantined record or an unresolved conflict.
-  function admitToScientificMemory(extractedRecord, reviewDecision) {
+  //
+  // authorisedReviewerRoles is optional and defaults to AUTHORISED_REVIEWER_ROLES,
+  // matching the same override pattern as CAP-02's proposeInteroperabilityMapping
+  // reference vocabulary: a domain with different organisational role names
+  // (e.g. a Water Science or Aquaculture deployment) can supply its own list
+  // with zero changes to this function's logic. See
+  // cap04-scientific-memory-admission.behavioural-test.js CAP04ADM-H0/H1 for
+  // the same "genuinely used, not just accepted and ignored" proof CAP-02's
+  // vocabulary parameter is held to.
+  function admitToScientificMemory(extractedRecord, reviewDecision, authorisedReviewerRoles) {
     const decision = reviewDecision || {};
+    const roles = authorisedReviewerRoles || AUTHORISED_REVIEWER_ROLES;
     const refusalReasons = [];
 
     if (!extractedRecord) {
@@ -144,7 +154,7 @@
     }
     if (extractedRecord.governanceState !== "EXTRACTED_UNREVIEWED") refusalReasons.push("RECORD_ALREADY_REVIEWED");
     if (typeof decision.reviewerId !== "string" || decision.reviewerId.length === 0) refusalReasons.push("REVIEWER_ID_REQUIRED");
-    if (!AUTHORISED_REVIEWER_ROLES.includes(decision.reviewerRole)) refusalReasons.push("AUTHORISED_REVIEWER_ROLE_REQUIRED");
+    if (!roles.includes(decision.reviewerRole)) refusalReasons.push("AUTHORISED_REVIEWER_ROLE_REQUIRED");
     if (!["ADMIT", "REJECT"].includes(decision.decision)) refusalReasons.push("VALID_REVIEW_DECISION_REQUIRED");
 
     if (refusalReasons.length > 0) {

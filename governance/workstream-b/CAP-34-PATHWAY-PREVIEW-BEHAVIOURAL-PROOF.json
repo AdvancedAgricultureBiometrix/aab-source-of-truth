@@ -1,11 +1,11 @@
 {
   "proofId": "AAB-CAP34-PATHWAY-PREVIEW-BEHAVIOURAL-PROOF",
   "proofVersion": "1.0.0",
-  "generatedAtUtc": "2026-09-20T12:28:47.543Z",
+  "generatedAtUtc": "2026-09-20T22:09:19.012Z",
   "result": "PASS_CAP34_PATHWAY_PREVIEW_BEHAVIOURAL_PROOF",
   "scope": "Proves only the defined concept-preview disclosure, acknowledgement, receipt and non-authority behaviours. It does not prove pathway implementation, scientific completeness, regulatory compliance, production readiness or commissioning.",
-  "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-011",
-  "manifestDigest": "sha256:890b91a82d10a33e6548fc58815fe25c68fe3043fd6c87878a42f643543857e5",
+  "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-012",
+  "manifestDigest": "sha256:bdf66b0f37815dd65190184232b31d78ad54fab2a462ce8e532365329af6c710",
   "fixtureCount": 9,
   "passedFixtureCount": 9,
   "fixtures": [
@@ -20,9 +20,9 @@
         "rosterVersion": "1.0.0",
         "rosterSnapshotId": "WORKSTREAM-B-LAUNCH-GAP-2026-09-19-ROSTER-001",
         "rosterDigest": "sha256:72b3469699159d47bd6c882a39378f52ff70de24c6cbe2017ac37434e5d3f41e",
-        "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-011",
-        "manifestVersion": "1.10.0",
-        "snapshotDigest": "sha256:890b91a82d10a33e6548fc58815fe25c68fe3043fd6c87878a42f643543857e5",
+        "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-012",
+        "manifestVersion": "1.11.0",
+        "snapshotDigest": "sha256:bdf66b0f37815dd65190184232b31d78ad54fab2a462ce8e532365329af6c710",
         "capabilityCount": 34,
         "errors": []
       }
@@ -147,9 +147,9 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.10.0",
+        "validatorVersion": "2.11.0",
         "receiptId": "CAP34-PATHWAY-RECEIPT-001",
-        "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-011",
+        "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-012",
         "capabilityCountPresented": 2,
         "errors": [
           "ROADMAP_CAPABILITY_NOT_CLASSIFIED_PREVIEW:CAP-02:ROOT",
@@ -163,9 +163,9 @@
       "actual": {
         "status": "PASS_CAP34_DISCLOSURE_RECEIPT_VALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.10.0",
+        "validatorVersion": "2.11.0",
         "receiptId": "CAP34-PATHWAY-RECEIPT-001",
-        "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-011",
+        "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-012",
         "capabilityCountPresented": 2,
         "errors": []
       }
@@ -176,9 +176,9 @@
       "actual": {
         "status": "PASS_CAP34_DISCLOSURE_RECEIPT_VALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.10.0",
+        "validatorVersion": "2.11.0",
         "receiptId": "CAP34-PATHWAY-RECEIPT-001",
-        "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-011",
+        "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-012",
         "capabilityCountPresented": 2,
         "errors": []
       }
@@ -189,9 +189,9 @@
       "actual": {
         "status": "FAIL_CLOSED_DISCLOSURE_RECEIPT_INVALID",
         "validatorId": "AAB-CAP34-CANONICAL-DISCLOSURE-RECEIPT-VALIDATOR",
-        "validatorVersion": "2.10.0",
+        "validatorVersion": "2.11.0",
         "receiptId": "CAP34-PATHWAY-RECEIPT-001",
-        "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-011",
+        "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-012",
         "capabilityCountPresented": 2,
         "errors": [
           "ROADMAP_ACKNOWLEDGEMENT_REQUIRED",

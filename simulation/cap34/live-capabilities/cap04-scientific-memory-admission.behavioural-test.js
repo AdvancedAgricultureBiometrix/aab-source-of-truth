@@ -193,13 +193,53 @@ check(
   secondReviewAttempt
 );
 
+// --- Part H: authorisedReviewerRoles is a genuine override, not just
+// accepted and ignored -- the same "prove it, don't just add the
+// parameter" standard CAP-02's reference-vocabulary injection was held to
+// (see CAP02M-C0 in cap02-interoperability-mapping.behavioural-test.js).
+// This is also the domain-portability boundary: a Water Science or
+// Aquaculture deployment with different organisational role names must be
+// able to supply its own list with zero changes to this function. ---
+const customRolesExtraction = { subjectKey: "Trial Site 70", treatmentLabel: "Treatment P", location: "Region 30", unit: "index units", dateObserved: "2015-01-01", measuredValue: 6, outcomePolarity: "POSITIVE" };
+const customRolesResult = extractionOf(customRolesExtraction);
+const customRoles = ["WATER_SCIENCE_LEAD"]; // deliberately excludes SCIENTIST, which is authorised by default
+
+const defaultRoleUnderCustomList = cap04.admitToScientificMemory(customRolesResult.extractedRecord, validDecisionBase, customRoles);
+check(
+  "CAP04ADM-H0-CUSTOM-ROLE-LIST-REVOKES-A-DEFAULT-AUTHORITY",
+  "A SCIENTIST reviewer -- authorised under the DEFAULT role list -- is refused when a custom role list excluding SCIENTIST is supplied, naming AUTHORISED_REVIEWER_ROLE_REQUIRED: the custom list is genuinely consulted, not merely OR'd on top of the default",
+  defaultRoleUnderCustomList.status === "ADMISSION_REFUSED"
+    && defaultRoleUnderCustomList.refusalReasons.includes("AUTHORISED_REVIEWER_ROLE_REQUIRED"),
+  defaultRoleUnderCustomList
+);
+
+const customRoleDecision = Object.assign({}, validDecisionBase, { reviewerRole: "WATER_SCIENCE_LEAD" });
+const defaultListRefusesCustomRole = cap04.admitToScientificMemory(customRolesResult.extractedRecord, customRoleDecision);
+check(
+  "CAP04ADM-H1-SANITY-DEFAULT-LIST-REFUSES-THE-CUSTOM-ROLE",
+  "Sanity check: WATER_SCIENCE_LEAD is genuinely NOT authorised under the default role list (no custom list supplied) -- proves the grant in H2 is a real change of authority, not a role that would have been admitted anyway",
+  defaultListRefusesCustomRole.status === "ADMISSION_REFUSED"
+    && defaultListRefusesCustomRole.refusalReasons.includes("AUTHORISED_REVIEWER_ROLE_REQUIRED"),
+  defaultListRefusesCustomRole
+);
+
+const customRoleUnderCustomList = cap04.admitToScientificMemory(customRolesResult.extractedRecord, customRoleDecision, customRoles);
+check(
+  "CAP04ADM-H2-CUSTOM-ROLE-LIST-GRANTS-A-ROLE-THE-DEFAULT-LIST-REFUSES",
+  "The SAME WATER_SCIENCE_LEAD reviewer, refused by the default list in H1, is genuinely ADMITTED once a custom role list naming WATER_SCIENCE_LEAD is supplied -- proving authorisedReviewerRoles is a real authority source consulted by the logic, not accepted and silently ignored, and that no domain-specific role assumption is hardwired into admission",
+  customRoleUnderCustomList.status === "RECORD_ADMITTED"
+    && customRoleUnderCustomList.memoryRecord.reviewGate.reviewerRole === "WATER_SCIENCE_LEAD"
+    && cap04.isEligibleForScientificMemory(customRoleUnderCustomList.memoryRecord) === true,
+  customRoleUnderCustomList
+);
+
 const allPassed = cases.every((c) => c.passed);
 const proof = {
   proofId: "AAB-CAP34-CAP04-SCIENTIFIC-MEMORY-ADMISSION-LIVE-LOGIC-BEHAVIOURAL-PROOF",
-  proofVersion: "1.0.0",
+  proofVersion: "1.1.0",
   generatedAtUtc: new Date().toISOString(),
   result: allPassed ? "PASS_CAP04_SCIENTIFIC_MEMORY_ADMISSION_LIVE_LOGIC_BEHAVIOURAL_PROOF" : "FAIL_CLOSED_CAP04_SCIENTIFIC_MEMORY_ADMISSION_LIVE_LOGIC_BEHAVIOURAL_PROOF",
-  scope: "Proves stage 7 (human review and governed admission) of Historical Scientific Memory Recovery: a reviewer's decision is necessary but never sufficient on its own -- an authorised, well-formed ADMIT is still refused for a quarantined record or an unresolved conflict, admits once a conflict is genuinely documented as resolved, requires real reviewer authority and identity, requires a documented reason even for rejection, distinguishes REJECTED_NOT_ADMITTED from EXTRACTED_UNREVIEWED, and forbids re-reviewing an already-reviewed record. It also re-proves CAP-04's structural eligibility boundary using a GENUINE admission decision, not the hand-authored positive control used before stage 7 existed. It does not prove stage 5 detection at scale, real institutional review workflows, scientific correctness, production readiness or commissioning.",
+  scope: "Proves stage 7 (human review and governed admission) of Historical Scientific Memory Recovery: a reviewer's decision is necessary but never sufficient on its own -- an authorised, well-formed ADMIT is still refused for a quarantined record or an unresolved conflict, admits once a conflict is genuinely documented as resolved, requires real reviewer authority and identity, requires a documented reason even for rejection, distinguishes REJECTED_NOT_ADMITTED from EXTRACTED_UNREVIEWED, and forbids re-reviewing an already-reviewed record. It also re-proves CAP-04's structural eligibility boundary using a GENUINE admission decision, not the hand-authored positive control used before stage 7 existed. Finally, it proves the optional authorisedReviewerRoles parameter is genuinely consulted rather than accepted and ignored: a custom role list can both revoke a default-authorised role and grant a role the default list refuses, with a sanity check confirming the granted role was not already authorised -- the same standard CAP-02's reference-vocabulary parameter was held to, and the concrete evidence for cross-domain portability (e.g. Water Science or Aquaculture) of stage 7. It does not prove stage 5 detection at scale, real institutional review workflows, scientific correctness, production readiness or commissioning.",
   fixtureCount: cases.length,
   passedFixtureCount: cases.filter((c) => c.passed).length,
   fixtures: cases

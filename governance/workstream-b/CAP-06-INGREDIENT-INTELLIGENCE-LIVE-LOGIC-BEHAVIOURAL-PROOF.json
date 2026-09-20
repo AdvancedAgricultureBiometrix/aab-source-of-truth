@@ -1,7 +1,7 @@
 {
   "proofId": "AAB-CAP34-CAP06-INGREDIENT-INTELLIGENCE-LIVE-LOGIC-BEHAVIOURAL-PROOF",
   "proofVersion": "1.0.0",
-  "generatedAtUtc": "2026-09-20T12:28:48.017Z",
+  "generatedAtUtc": "2026-09-20T22:09:19.743Z",
   "result": "PASS_CAP06_INGREDIENT_INTELLIGENCE_LIVE_LOGIC_BEHAVIOURAL_PROOF",
   "scope": "Proves that CAP-06's live-simulation evaluator computes a continuous readinessScore that genuinely tracks evidence sufficiency and corroboration in both directions, distinguishing zero-evidence, disputed and fully-corroborated states with different score values, not just different labels. It does not prove scientific correctness, production readiness, sovereignty or commissioning.",
   "fixtureCount": 9,
