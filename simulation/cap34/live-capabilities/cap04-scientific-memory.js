@@ -121,6 +121,69 @@
     });
   }
 
+  // Stage 7: human review and governed admission. Reviewer role names match
+  // the vocabulary already used by cap34-simulation.js's roles object
+  // (SCIENTIST, INSTITUTION_ADMIN, COUNTRY_HEAD hold genuine operational
+  // authority there; RESTRICTED_USER and AUDITOR do not) without a runtime
+  // dependency on that file.
+  const AUTHORISED_REVIEWER_ROLES = Object.freeze(["SCIENTIST", "INSTITUTION_ADMIN", "COUNTRY_HEAD"]);
+
+  // The permanent rule from the design document, enforced structurally:
+  // "Uploading information does not make it approved scientific knowledge."
+  // A reviewer's decision is necessary but never sufficient on its own --
+  // the record's OWN state must also permit admission. This is the stage-7
+  // equivalent of CAP-09's "replication alone does not override
+  // contradiction": an authorised reviewer explicitly attempting to ADMIT
+  // is still refused for a quarantined record or an unresolved conflict.
+  function admitToScientificMemory(extractedRecord, reviewDecision) {
+    const decision = reviewDecision || {};
+    const refusalReasons = [];
+
+    if (!extractedRecord) {
+      return Object.freeze({ capabilityId: CAPABILITY_ID, status: "ADMISSION_REFUSED", refusalReasons: Object.freeze(["EXTRACTED_RECORD_REQUIRED"]), memoryRecord: null });
+    }
+    if (extractedRecord.governanceState !== "EXTRACTED_UNREVIEWED") refusalReasons.push("RECORD_ALREADY_REVIEWED");
+    if (typeof decision.reviewerId !== "string" || decision.reviewerId.length === 0) refusalReasons.push("REVIEWER_ID_REQUIRED");
+    if (!AUTHORISED_REVIEWER_ROLES.includes(decision.reviewerRole)) refusalReasons.push("AUTHORISED_REVIEWER_ROLE_REQUIRED");
+    if (!["ADMIT", "REJECT"].includes(decision.decision)) refusalReasons.push("VALID_REVIEW_DECISION_REQUIRED");
+
+    if (refusalReasons.length > 0) {
+      return Object.freeze({ capabilityId: CAPABILITY_ID, status: "ADMISSION_REFUSED", refusalReasons: Object.freeze(refusalReasons), memoryRecord: null });
+    }
+
+    if (decision.decision === "REJECT") {
+      if (!decision.rejectionReason) {
+        return Object.freeze({ capabilityId: CAPABILITY_ID, status: "ADMISSION_REFUSED", refusalReasons: Object.freeze(["REJECTION_REASON_REQUIRED"]), memoryRecord: null });
+      }
+      return Object.freeze({
+        capabilityId: CAPABILITY_ID,
+        status: "RECORD_REJECTED",
+        memoryRecord: Object.freeze(Object.assign({}, extractedRecord, {
+          governanceState: "REJECTED_NOT_ADMITTED",
+          reviewGate: Object.freeze({ required: true, passed: false, decision: "REJECT", reviewerId: decision.reviewerId, reviewerRole: decision.reviewerRole, reviewedAt: decision.reviewedAt || null, rejectionReason: decision.rejectionReason })
+        }))
+      });
+    }
+
+    // decision.decision === "ADMIT" from here. The record's own state must
+    // also permit it.
+    if (extractedRecord.recordStatus === "QUARANTINED") {
+      return Object.freeze({ capabilityId: CAPABILITY_ID, status: "ADMISSION_REFUSED", refusalReasons: Object.freeze(["QUARANTINED_RECORD_CANNOT_BE_ADMITTED"]), memoryRecord: null });
+    }
+    if (extractedRecord.recordStatus === "FLAGGED_CONFLICT" && !decision.conflictResolutionNotes) {
+      return Object.freeze({ capabilityId: CAPABILITY_ID, status: "ADMISSION_REFUSED", refusalReasons: Object.freeze(["UNRESOLVED_CONFLICT_REQUIRES_DOCUMENTED_RESOLUTION"]), memoryRecord: null });
+    }
+
+    return Object.freeze({
+      capabilityId: CAPABILITY_ID,
+      status: "RECORD_ADMITTED",
+      memoryRecord: Object.freeze(Object.assign({}, extractedRecord, {
+        governanceState: "ADMITTED_SCIENTIFIC_MEMORY",
+        reviewGate: Object.freeze({ required: true, passed: true, decision: "ADMIT", reviewerId: decision.reviewerId, reviewerRole: decision.reviewerRole, reviewedAt: decision.reviewedAt || null, conflictResolutionNotes: decision.conflictResolutionNotes || null })
+      }))
+    });
+  }
+
   // The structural boundary. Deliberately checks the full admission shape,
   // not a single label, so a record cannot be waved through by setting one
   // string field: it must carry a passed review gate with an explicit
@@ -172,7 +235,9 @@
     capabilityId: CAPABILITY_ID,
     capabilityName: CAPABILITY_NAME,
     classification: CLASSIFICATION,
+    authorisedReviewerRoles: AUTHORISED_REVIEWER_ROLES,
     extractAndClassify,
+    admitToScientificMemory,
     isEligibleForScientificMemory,
     assembleEligibleEvidenceForReasoning,
     evaluateMemoryClassification

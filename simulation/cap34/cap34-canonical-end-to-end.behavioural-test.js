@@ -22,7 +22,7 @@ const canonicalSources = [
   {path:"governance/workstream-b/CAP-34-DISCLOSURE-RECEIPT-CONTRACT.md",blobSha:"4d01b86546d0c08cb6507cfc3345e1bf98bad766"},
   {path:"governance/workstream-b/CAP-34-DISCLOSURE-RECEIPT-VALIDATOR-TEST-MATRIX.md",blobSha:"65b1311d2b1df463439122bf54e7c94ba84c3266"},
   {path:"simulation/cap34/cap34-disclosure-receipt-v1.0.0.schema.json",blobSha:"e1291b5c6ea0b808c64ff1584485e748a7d74eb6"},
-  {path:"simulation/cap34/cap34-disclosure-receipt.js",blobSha:"143882a73ed0caf14976d3ce511d1679bbb7faf7"}
+  {path:"simulation/cap34/cap34-disclosure-receipt.js",blobSha:"c9a7069ec4c027292a9a0a474b8f8b7cde413d01"}
 ];
 const contractBinding = canonicalSources.map((source) => ({...source,actualBlobSha:gitBlobShaAt(source.path),passed:gitBlobShaAt(source.path)===source.blobSha}));
 

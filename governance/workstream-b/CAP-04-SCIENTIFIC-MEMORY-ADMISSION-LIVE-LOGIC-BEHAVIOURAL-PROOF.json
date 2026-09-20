@@ -1,0 +1,262 @@
+{
+  "proofId": "AAB-CAP34-CAP04-SCIENTIFIC-MEMORY-ADMISSION-LIVE-LOGIC-BEHAVIOURAL-PROOF",
+  "proofVersion": "1.0.0",
+  "generatedAtUtc": "2026-09-20T05:39:44.212Z",
+  "result": "PASS_CAP04_SCIENTIFIC_MEMORY_ADMISSION_LIVE_LOGIC_BEHAVIOURAL_PROOF",
+  "scope": "Proves stage 7 (human review and governed admission) of Historical Scientific Memory Recovery: a reviewer's decision is necessary but never sufficient on its own -- an authorised, well-formed ADMIT is still refused for a quarantined record or an unresolved conflict, admits once a conflict is genuinely documented as resolved, requires real reviewer authority and identity, requires a documented reason even for rejection, distinguishes REJECTED_NOT_ADMITTED from EXTRACTED_UNREVIEWED, and forbids re-reviewing an already-reviewed record. It also re-proves CAP-04's structural eligibility boundary using a GENUINE admission decision, not the hand-authored positive control used before stage 7 existed. It does not prove stage 5 detection at scale, real institutional review workflows, scientific correctness, production readiness or commissioning.",
+  "fixtureCount": 11,
+  "passedFixtureCount": 11,
+  "fixtures": [
+    {
+      "fixtureId": "CAP04ADM-A0-CLEAN-RECORD-AUTHORISED-ADMIT-SUCCEEDS",
+      "description": "A PENDING_REVIEW record reviewed by an authorised SCIENTIST with a well-formed ADMIT decision is genuinely admitted to scientific memory",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-04",
+        "status": "RECORD_ADMITTED",
+        "memoryRecord": {
+          "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 40-Treatment E",
+          "sourceId": "SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive",
+          "fileId": "FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv",
+          "subjectKey": "Trial Site 40",
+          "treatmentLabel": "Treatment E",
+          "location": "Region 11",
+          "unit": "index units",
+          "dateObserved": "2012-04-01",
+          "measuredValue": 2.5,
+          "outcomePolarity": "POSITIVE",
+          "governanceState": "ADMITTED_SCIENTIFIC_MEMORY",
+          "reviewGate": {
+            "required": true,
+            "passed": true,
+            "decision": "ADMIT",
+            "reviewerId": "Synthetic Reviewer 1",
+            "reviewerRole": "SCIENTIST",
+            "reviewedAt": "2026-09-20T00:00:00Z",
+            "conflictResolutionNotes": null
+          },
+          "recordStatus": "PENDING_REVIEW",
+          "quarantineReasons": [],
+          "conflictingRecordIds": []
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP04ADM-B0-GENUINE-ADMISSION-IS-ELIGIBLE-STRONGER-THAN-HAND-AUTHORED-CONTROL",
+      "description": "The record produced by a REAL admitToScientificMemory() call -- not a hand-authored fixture -- genuinely satisfies isEligibleForScientificMemory",
+      "passed": true,
+      "actual": {
+        "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 40-Treatment E",
+        "sourceId": "SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive",
+        "fileId": "FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv",
+        "subjectKey": "Trial Site 40",
+        "treatmentLabel": "Treatment E",
+        "location": "Region 11",
+        "unit": "index units",
+        "dateObserved": "2012-04-01",
+        "measuredValue": 2.5,
+        "outcomePolarity": "POSITIVE",
+        "governanceState": "ADMITTED_SCIENTIFIC_MEMORY",
+        "reviewGate": {
+          "required": true,
+          "passed": true,
+          "decision": "ADMIT",
+          "reviewerId": "Synthetic Reviewer 1",
+          "reviewerRole": "SCIENTIST",
+          "reviewedAt": "2026-09-20T00:00:00Z",
+          "conflictResolutionNotes": null
+        },
+        "recordStatus": "PENDING_REVIEW",
+        "quarantineReasons": [],
+        "conflictingRecordIds": []
+      }
+    },
+    {
+      "fixtureId": "CAP04ADM-B1-DOWNSTREAM-ASSEMBLY-INCLUDES-ONLY-THE-GENUINELY-ADMITTED-RECORD",
+      "description": "Feeding a batch of unreviewed extraction outcomes plus the ONE genuinely admitted record into the downstream assembler includes only that real admission: eligibleCount 1, excludedCount 3",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-04",
+        "consideredCount": 4,
+        "eligibleCount": 1,
+        "excludedCount": 3,
+        "eligibleRecords": [
+          {
+            "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 40-Treatment E",
+            "sourceId": "SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive",
+            "fileId": "FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv",
+            "subjectKey": "Trial Site 40",
+            "treatmentLabel": "Treatment E",
+            "location": "Region 11",
+            "unit": "index units",
+            "dateObserved": "2012-04-01",
+            "measuredValue": 2.5,
+            "outcomePolarity": "POSITIVE",
+            "governanceState": "ADMITTED_SCIENTIFIC_MEMORY",
+            "reviewGate": {
+              "required": true,
+              "passed": true,
+              "decision": "ADMIT",
+              "reviewerId": "Synthetic Reviewer 1",
+              "reviewerRole": "SCIENTIST",
+              "reviewedAt": "2026-09-20T00:00:00Z",
+              "conflictResolutionNotes": null
+            },
+            "recordStatus": "PENDING_REVIEW",
+            "quarantineReasons": [],
+            "conflictingRecordIds": []
+          }
+        ],
+        "explanation": "Only records bearing a genuine stage-7 admission decision (governanceState ADMITTED_SCIENTIFIC_MEMORY, a passed reviewGate with decision ADMIT and a named reviewer) are eligible for scientific-memory-backed reasoning. Extracted-but-unreviewed records -- pending review, flagged conflict, or quarantined alike -- are excluded, regardless of how clean stage 3's classification looked."
+      }
+    },
+    {
+      "fixtureId": "CAP04ADM-C0-AUTHORISED-ADMIT-STILL-REFUSED-FOR-QUARANTINED-RECORD",
+      "description": "An authorised reviewer's well-formed ADMIT decision is STILL refused, naming QUARANTINED_RECORD_CANNOT_BE_ADMITTED, when the underlying extraction was quarantined -- reviewer authority does not override missing/malformed data",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-04",
+        "status": "ADMISSION_REFUSED",
+        "refusalReasons": [
+          "QUARANTINED_RECORD_CANNOT_BE_ADMITTED"
+        ],
+        "memoryRecord": null
+      }
+    },
+    {
+      "fixtureId": "CAP04ADM-D0-UNRESOLVED-CONFLICT-BLOCKS-ADMISSION",
+      "description": "An authorised ADMIT decision on a FLAGGED_CONFLICT record without documented conflict resolution is refused, naming UNRESOLVED_CONFLICT_REQUIRES_DOCUMENTED_RESOLUTION",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-04",
+        "status": "ADMISSION_REFUSED",
+        "refusalReasons": [
+          "UNRESOLVED_CONFLICT_REQUIRES_DOCUMENTED_RESOLUTION"
+        ],
+        "memoryRecord": null
+      }
+    },
+    {
+      "fixtureId": "CAP04ADM-D1-DOCUMENTED-RESOLUTION-ALLOWS-ADMISSION",
+      "description": "The SAME conflicted record, with a documented conflict resolution added to the decision, is genuinely admitted -- proving the requirement is real and satisfiable, not a permanent block",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-04",
+        "status": "RECORD_ADMITTED",
+        "memoryRecord": {
+          "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 41-Treatment F",
+          "sourceId": "SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive",
+          "fileId": "FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv",
+          "subjectKey": "Trial Site 41",
+          "treatmentLabel": "Treatment F",
+          "location": "Region 12",
+          "unit": "index units",
+          "dateObserved": "2013-06-01",
+          "measuredValue": 0,
+          "outcomePolarity": "NEGATIVE",
+          "governanceState": "ADMITTED_SCIENTIFIC_MEMORY",
+          "reviewGate": {
+            "required": true,
+            "passed": true,
+            "decision": "ADMIT",
+            "reviewerId": "Synthetic Reviewer 1",
+            "reviewerRole": "SCIENTIST",
+            "reviewedAt": "2026-09-20T00:00:00Z",
+            "conflictResolutionNotes": "Synthetic methodological review reconciled the disagreement between trials."
+          },
+          "recordStatus": "FLAGGED_CONFLICT",
+          "quarantineReasons": [],
+          "conflictingRecordIds": [
+            "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 41-Treatment F"
+          ]
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP04ADM-E0-UNAUTHORISED-ROLE-CANNOT-ADMIT-EVEN-CLEAN-RECORD",
+      "description": "A RESTRICTED_USER role cannot admit even the cleanest possible record, naming AUTHORISED_REVIEWER_ROLE_REQUIRED",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-04",
+        "status": "ADMISSION_REFUSED",
+        "refusalReasons": [
+          "AUTHORISED_REVIEWER_ROLE_REQUIRED"
+        ],
+        "memoryRecord": null
+      }
+    },
+    {
+      "fixtureId": "CAP04ADM-E1-MISSING-REVIEWER-ID-REFUSED",
+      "description": "An empty reviewerId is refused, naming REVIEWER_ID_REQUIRED, even with an otherwise authorised role and valid decision",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-04",
+        "status": "ADMISSION_REFUSED",
+        "refusalReasons": [
+          "REVIEWER_ID_REQUIRED"
+        ],
+        "memoryRecord": null
+      }
+    },
+    {
+      "fixtureId": "CAP04ADM-F0-REJECTION-WITHOUT-REASON-REFUSED",
+      "description": "A REJECT decision with no rejectionReason is itself refused, naming REJECTION_REASON_REQUIRED -- even a human reviewer's rejection must be documented, not a bare no",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-04",
+        "status": "ADMISSION_REFUSED",
+        "refusalReasons": [
+          "REJECTION_REASON_REQUIRED"
+        ],
+        "memoryRecord": null
+      }
+    },
+    {
+      "fixtureId": "CAP04ADM-F1-DOCUMENTED-REJECTION-IS-STRUCTURALLY-DISTINCT-FROM-UNREVIEWED",
+      "description": "A documented REJECT decision succeeds, produces governanceState REJECTED_NOT_ADMITTED (distinct from EXTRACTED_UNREVIEWED -- 'reviewed and refused' is not the same fact as 'nobody has looked yet'), and remains permanently ineligible for scientific memory",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-04",
+        "status": "RECORD_REJECTED",
+        "memoryRecord": {
+          "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 40-Treatment E",
+          "sourceId": "SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive",
+          "fileId": "FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv",
+          "subjectKey": "Trial Site 40",
+          "treatmentLabel": "Treatment E",
+          "location": "Region 11",
+          "unit": "index units",
+          "dateObserved": "2012-04-01",
+          "measuredValue": 2.5,
+          "outcomePolarity": "POSITIVE",
+          "governanceState": "REJECTED_NOT_ADMITTED",
+          "reviewGate": {
+            "required": true,
+            "passed": false,
+            "decision": "REJECT",
+            "reviewerId": "Synthetic Reviewer 1",
+            "reviewerRole": "SCIENTIST",
+            "reviewedAt": "2026-09-20T00:00:00Z",
+            "rejectionReason": "Synthetic duplicate of a previously admitted record."
+          },
+          "recordStatus": "PENDING_REVIEW",
+          "quarantineReasons": [],
+          "conflictingRecordIds": []
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP04ADM-G0-ALREADY-REVIEWED-RECORD-CANNOT-BE-RE-REVIEWED",
+      "description": "Attempting to admit a record that has already been admitted is refused, naming RECORD_ALREADY_REVIEWED -- a decision cannot be silently overridden by a second one",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-04",
+        "status": "ADMISSION_REFUSED",
+        "refusalReasons": [
+          "RECORD_ALREADY_REVIEWED"
+        ],
+        "memoryRecord": null
+      }
+    }
+  ]
+}

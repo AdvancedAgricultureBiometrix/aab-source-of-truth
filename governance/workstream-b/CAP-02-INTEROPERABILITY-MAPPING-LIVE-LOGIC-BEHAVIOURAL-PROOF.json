@@ -1,7 +1,7 @@
 {
   "proofId": "AAB-CAP34-CAP02-INTEROPERABILITY-MAPPING-LIVE-LOGIC-BEHAVIOURAL-PROOF",
   "proofVersion": "1.0.0",
-  "generatedAtUtc": "2026-09-20T05:32:14.758Z",
+  "generatedAtUtc": "2026-09-20T05:39:44.090Z",
   "result": "PASS_CAP02_INTEROPERABILITY_MAPPING_LIVE_LOGIC_BEHAVIOURAL_PROOF",
   "scope": "Proves stage 4 (map different formats into common structures) of Historical Scientific Memory Recovery, consuming CAP-04's REAL extraction output: an exact synonym match proposes a correct canonical subject and a correctly converted unit value; an unrecognised term is left unmapped rather than guessed; a genuinely ambiguous vocabulary entry is flagged rather than silently resolved; the raw original fields are preserved byte-identical alongside any proposed normalization; and a proposed mapping never changes governance state or brings a record any closer to scientific-memory eligibility. It does not prove corpus-scale interoperability, real institutional vocabularies, stage 5 detection at scale, stage 7 review, scientific correctness, production readiness or commissioning.",
   "fixtureCount": 7,

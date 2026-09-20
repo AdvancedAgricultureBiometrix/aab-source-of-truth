@@ -1,8 +1,8 @@
 {
   "manifestId": "AAB-CAP34-FIDELITY-MANIFEST",
-  "manifestVersion": "1.9.0",
-  "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-010",
-  "createdAt": "2026-09-20T07:00:00Z",
+  "manifestVersion": "1.8.0",
+  "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-009",
+  "createdAt": "2026-09-20T06:00:00Z",
   "sourceLandscapeReference": "governance/workstream-b/AAB-WORKSTREAM-B-CAPABILITY-LANDSCAPE-LAUNCH-GAP-FREEZE-2026-09-19.md",
   "authority": "DISCLOSURE_ONLY_NO_PRODUCTION_SCIENTIFIC_REGULATORY_OR_COMMISSIONING_AUTHORITY",
   "rule": "Complete simulator coverage does not mean complete product implementation.",
@@ -144,7 +144,7 @@
       "capabilityName": "Governed Scientific Memory",
       "capabilityPart": null,
       "horizon": "LAUNCH_RELEASE",
-      "representationVersion": "0.4.0",
+      "representationVersion": "0.3.0",
       "simulatorMode": "LIVE_SIMULATION",
       "fidelity": "PARTIAL_REAL_LOGIC_LIMITATIONS_SHOWN",
       "scenarioCoverage": [
@@ -159,10 +159,6 @@
         {
           "scenarioId": "SIM-MEMORY-DEGRADED-001",
           "coverage": "FULL_FOR_REPRESENTED_SCOPE"
-        },
-        {
-          "scenarioId": "SIM-MEMORY-ADMISSION-001",
-          "coverage": "FULL_FOR_REPRESENTED_SCOPE"
         }
       ],
       "implementationReferences": [
@@ -170,30 +166,26 @@
       ],
       "evidenceReferences": [
         "simulation/cap34/live-capabilities/cap04-scientific-memory.behavioural-test.js",
-        "simulation/cap34/live-capabilities/cap04-scientific-memory-admission.behavioural-test.js",
         "governance/workstream-b/CAP-04-SCIENTIFIC-MEMORY-LIVE-LOGIC-BEHAVIOURAL-PROOF.json",
-        "governance/workstream-b/CAP-04-SCIENTIFIC-MEMORY-ADMISSION-LIVE-LOGIC-BEHAVIOURAL-PROOF.json",
         "governance/workstream-b/CAP-02-04-STAGE-1-3-GRADUATION-2026-09-20.md",
-        "governance/workstream-b/CAP-04-STAGE-7-GOVERNED-ADMISSION-2026-09-20.md",
         "governance/workstream-b/CAP-34-CAPABILITY-PATHWAY-RECONCILIATION-2026-09-20.md"
       ],
       "limitations": [
-        "Stages 3 (extract and classify cautiously) and 7 (human review and governed admission) of the seven-stage pathway are implemented; stages 1-2 are CAP-02's, and stage 4 (interoperability mapping) is also CAP-02's, not this capability's.",
+        "Only stage 3 (extract and classify cautiously) of the seven-stage pathway is implemented, consuming CAP-02's real preserved-source output; stages 1-2 are CAP-02's, not this capability's.",
         "Extraction uses simple rule-based field-presence checks and categorical outcome-polarity comparison, not real document parsing, OCR, semantic extraction or scientific interpretation.",
-        "Conflict and quarantine detection operate per-record only; corpus-scale duplicate/near-duplicate detection (stage 5) remains unbuilt.",
-        "Admission authority is a hardcoded synthetic role list (SCIENTIST, INSTITUTION_ADMIN, COUNTRY_HEAD), not a real identity, authentication or institutional-authority system; reviewer identity and role are asserted by the caller, not independently verified.",
-        "There is no persistence, audit trail, UI or corpus-scale review queue for admission decisions -- each call is a single, isolated, in-memory decision.",
-        "Only purpose-built synthetic abstract scenario data (clean, conflicting, degraded and admission-decision sets) has been exercised; real-world institutional records, reviewers or domains are not covered.",
+        "Conflict and quarantine detection operate per-record only; corpus-scale duplicate/near-duplicate detection and format/unit interoperability mapping (stages 4-5 at scale) remain unbuilt.",
+        "Stage 7's human-review admission workflow, UI and persistence are not implemented; the eligibility boundary below is proven structurally in-memory only, with a hand-authored admission shape standing in for a real reviewer decision.",
+        "Only purpose-built synthetic abstract scenario data (clean, conflicting and degraded sets) has been exercised; real-world institutional records, languages or domains are not covered.",
         "Does not integrate with any real data source, institution, country deployment or production system."
       ],
       "disclosureBurden": "HEIGHTENED",
       "lastVerifiedAt": "2026-09-20",
-      "lastVerifiedAgainst": "CAP-04 live-logic perturbation behavioural proofs: extraction/classification (14/14 fixtures) and governed admission (11/11 fixtures): an authorised, well-formed ADMIT decision still refused for a quarantined record or an unresolved conflict, admitted once a conflict is genuinely documented as resolved, unauthorised roles and missing reviewer identity refused, rejection requiring a documented reason and producing a governanceState distinct from unreviewed, re-review of an already-reviewed record refused, and the structural eligibility boundary re-proven using a GENUINE admission decision rather than the earlier hand-authored positive control.",
-      "classificationReason": "A cautious extraction-and-classification evaluator, together with a governed admission evaluator, is implemented and registered into CAP-34's live-simulation dispatcher. Extraction genuinely consumes CAP-02's real preserved-source output and never marks its own output eligible for scientific memory. Admission enforces that a reviewer's decision is necessary but never sufficient on its own: an authorised ADMIT is still refused for a quarantined record or an undocumented conflict, mirroring CAP-09's proof that replication alone does not override contradiction. This is proven directly, including adversarial near-miss cases and a genuine (not hand-authored) positive control, not assumed.",
+      "lastVerifiedAgainst": "CAP-04 live-logic perturbation behavioural proof (14/14 fixtures): three synthetic file sets (clean, conflicting, degraded) against the same real CAP-02-preserved source producing three different content-driven outcomes; a negative/null-result record retained and classified with identical rigor to a positive one; and the eligibility boundary proven with a satisfiable positive control, five adversarial near-miss variants, and a direct downstream-exclusion proof over a mixed batch.",
+      "classificationReason": "A cautious extraction-and-classification evaluator is implemented and registered into CAP-34's live-simulation dispatcher, genuinely consuming CAP-02's real preserved-source output (extraction is refused if CAP-02's preservation was refused). It classifies each extraction into PENDING_REVIEW, FLAGGED_CONFLICT or QUARANTINED from the content supplied, never from a scenario label, and -- critically -- never marks any stage-3 output as eligible for scientific memory: eligibility requires a structurally distinct admission shape (a passed reviewGate naming a decision and reviewer) that stage 3 cannot itself produce. This is proven directly, including adversarial near-miss cases, not assumed.",
       "nonImplications": [
         "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning.",
         "Rule-based field-presence and categorical-polarity comparison does not constitute genuine scientific extraction, translation or interoperability mapping and must not be presented as such.",
-        "Reviewer role and identity are asserted, not authenticated; this does not constitute a real identity, authority or institutional-governance system, and a passing admission call does not establish that any real reviewer authorised anything."
+        "This capability does not implement stage 7 human review; extracted records can never independently become approved scientific memory, and the admission shape used to prove the eligibility boundary is a synthetic stand-in, not a real reviewer decision."
       ]
     },
     {
@@ -976,5 +968,5 @@
     }
   ],
   "capabilityCount": 34,
-  "snapshotDigest": "sha256:0f91448e7c83cb5b5059fdb8a7cca34e5155b0fd7a0faec91278e90c2ebe2a68"
+  "snapshotDigest": "sha256:1a32715bc3b76b381cd3d6c217ac1be140fcf4163c9050ff7b1334ddb574e81f"
 }
