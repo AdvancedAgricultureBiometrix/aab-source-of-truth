@@ -1,8 +1,8 @@
 {
   "manifestId": "AAB-CAP34-FIDELITY-MANIFEST",
-  "manifestVersion": "1.7.0",
-  "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-008",
-  "createdAt": "2026-09-20T05:00:00Z",
+  "manifestVersion": "1.6.0",
+  "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-007",
+  "createdAt": "2026-09-20T03:35:11Z",
   "sourceLandscapeReference": "governance/workstream-b/AAB-WORKSTREAM-B-CAPABILITY-LANDSCAPE-LAUNCH-GAP-FREEZE-2026-09-19.md",
   "authority": "DISCLOSURE_ONLY_NO_PRODUCTION_SCIENTIFIC_REGULATORY_OR_COMMISSIONING_AUTHORITY",
   "rule": "Complete simulator coverage does not mean complete product implementation.",
@@ -62,46 +62,33 @@
       "capabilityName": "Governed Scientific Data Acquisition & Interoperability",
       "capabilityPart": null,
       "horizon": "LAUNCH_RELEASE",
-      "representationVersion": "0.3.0",
-      "simulatorMode": "LIVE_SIMULATION",
-      "fidelity": "PARTIAL_REAL_LOGIC_LIMITATIONS_SHOWN",
+      "representationVersion": "0.2.0",
+      "simulatorMode": "ROADMAP_PREVIEW",
+      "fidelity": "CONCEPT_PREVIEW_NOT_IMPLEMENTED",
       "scenarioCoverage": [
         {
-          "scenarioId": "SIM-MEMORY-CLEAN-001",
-          "coverage": "FULL_FOR_REPRESENTED_SCOPE"
-        },
-        {
-          "scenarioId": "SIM-MEMORY-CONFLICT-001",
-          "coverage": "FULL_FOR_REPRESENTED_SCOPE"
-        },
-        {
-          "scenarioId": "SIM-MEMORY-DEGRADED-001",
-          "coverage": "FULL_FOR_REPRESENTED_SCOPE"
+          "scenarioId": "SIM-ROADMAP-MEMORY-001",
+          "coverage": "CONCEPT_PREVIEW"
         }
       ],
-      "implementationReferences": [
-        "simulation/cap34/live-capabilities/cap02-source-acquisition.js"
-      ],
+      "implementationReferences": [],
       "evidenceReferences": [
-        "simulation/cap34/live-capabilities/cap02-source-acquisition.behavioural-test.js",
-        "governance/workstream-b/CAP-02-SOURCE-ACQUISITION-LIVE-LOGIC-BEHAVIOURAL-PROOF.json",
-        "governance/workstream-b/CAP-02-04-STAGE-1-3-GRADUATION-2026-09-20.md",
-        "governance/workstream-b/CAP-34-CAPABILITY-PATHWAY-RECONCILIATION-2026-09-20.md"
+        "governance/workstream-b/CAP-34-CAPABILITY-PATHWAY-RECONCILIATION-2026-09-20.md",
+        "simulation/cap34/cap34-simulation.js",
+        "simulation/cap34/index.html"
       ],
       "limitations": [
-        "Only stages 1-2 of the seven-stage Historical Scientific Memory Recovery pathway (register source, preserve original) are implemented; stage 3 (cautious extraction/classification) is a separate capability, see CAP-04.",
-        "Format and unit interoperability mapping across institutions (stage 4), legacy-system adapters, real document/OCR extraction, and corpus-scale multi-institution acquisition remain unbuilt and unproven.",
-        "Source registration and original preservation operate over synthetic in-memory content strings; no real file upload, storage backend or legacy-system integration exists.",
-        "Only purpose-built synthetic perturbation fixtures have been exercised; real-world institutional source formats, systems or scales are not covered.",
-        "Does not integrate with any real data source, institution, country deployment or production system."
+        "Concept preview only; no complete or behaviourally proven multi-institution historical research recovery workflow exists.",
+        "Existing source, provenance and evidence foundations do not prove legacy-system adapters, document extraction, reconciliation or institutional-scale recovery.",
+        "Imported material cannot automatically become approved learning or scientific fact."
       ],
       "disclosureBurden": "STANDARD",
       "lastVerifiedAt": "2026-09-20",
-      "lastVerifiedAgainst": "CAP-02 live-logic behavioural proof (7/7 fixtures): dispatcher wiring, named-field registration refusal, registration-gated preservation refusal, and a content hash proven genuinely content-derived and matched against an independent trusted SHA-256 implementation.",
-      "classificationReason": "A source-registration and original-preservation evaluator is implemented and registered into CAP-34's live-simulation dispatcher, covering stages 1-2 only of Historical Scientific Memory Recovery. A source cannot be registered without complete, named attribution, and original material cannot be preserved without a registered source -- proven by a dedicated behavioural test, not by declaration. This is a narrow real slice of a still largely unbuilt pathway; see limitations.",
+      "lastVerifiedAgainst": "GitHub canonical source review and read-only main Supabase schema inspection",
+      "classificationReason": "Historical Scientific Memory Recovery — governed multi-institution acquisition pathway concept preview.",
       "nonImplications": [
-        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning.",
-        "Registering a source and preserving its original content does not constitute extraction, classification, scientific memory admission, interoperability mapping or genuine legacy-system integration and must not be presented as such."
+        "Concept-preview inclusion does not establish product implementation, scientific proof, regulatory compliance, production readiness or commissioning.",
+        "Roadmap acknowledgement does not grant scientific, regulatory, government, production or commissioning authority."
       ]
     },
     {
@@ -143,48 +130,33 @@
       "capabilityName": "Governed Scientific Memory",
       "capabilityPart": null,
       "horizon": "LAUNCH_RELEASE",
-      "representationVersion": "0.3.0",
-      "simulatorMode": "LIVE_SIMULATION",
-      "fidelity": "PARTIAL_REAL_LOGIC_LIMITATIONS_SHOWN",
+      "representationVersion": "0.2.0",
+      "simulatorMode": "ROADMAP_PREVIEW",
+      "fidelity": "CONCEPT_PREVIEW_NOT_IMPLEMENTED",
       "scenarioCoverage": [
         {
-          "scenarioId": "SIM-MEMORY-CLEAN-001",
-          "coverage": "FULL_FOR_REPRESENTED_SCOPE"
-        },
-        {
-          "scenarioId": "SIM-MEMORY-CONFLICT-001",
-          "coverage": "FULL_FOR_REPRESENTED_SCOPE"
-        },
-        {
-          "scenarioId": "SIM-MEMORY-DEGRADED-001",
-          "coverage": "FULL_FOR_REPRESENTED_SCOPE"
+          "scenarioId": "SIM-ROADMAP-MEMORY-001",
+          "coverage": "CONCEPT_PREVIEW"
         }
       ],
-      "implementationReferences": [
-        "simulation/cap34/live-capabilities/cap04-scientific-memory.js"
-      ],
+      "implementationReferences": [],
       "evidenceReferences": [
-        "simulation/cap34/live-capabilities/cap04-scientific-memory.behavioural-test.js",
-        "governance/workstream-b/CAP-04-SCIENTIFIC-MEMORY-LIVE-LOGIC-BEHAVIOURAL-PROOF.json",
-        "governance/workstream-b/CAP-02-04-STAGE-1-3-GRADUATION-2026-09-20.md",
-        "governance/workstream-b/CAP-34-CAPABILITY-PATHWAY-RECONCILIATION-2026-09-20.md"
+        "governance/workstream-b/CAP-34-CAPABILITY-PATHWAY-RECONCILIATION-2026-09-20.md",
+        "simulation/cap34/cap34-simulation.js",
+        "simulation/cap34/index.html"
       ],
       "limitations": [
-        "Only stage 3 (extract and classify cautiously) of the seven-stage pathway is implemented, consuming CAP-02's real preserved-source output; stages 1-2 are CAP-02's, not this capability's.",
-        "Extraction uses simple rule-based field-presence checks and categorical outcome-polarity comparison, not real document parsing, OCR, semantic extraction or scientific interpretation.",
-        "Conflict and quarantine detection operate per-record only; corpus-scale duplicate/near-duplicate detection and format/unit interoperability mapping (stages 4-5 at scale) remain unbuilt.",
-        "Stage 7's human-review admission workflow, UI and persistence are not implemented; the eligibility boundary below is proven structurally in-memory only, with a hand-authored admission shape standing in for a real reviewer decision.",
-        "Only purpose-built synthetic abstract scenario data (clean, conflicting and degraded sets) has been exercised; real-world institutional records, languages or domains are not covered.",
-        "Does not integrate with any real data source, institution, country deployment or production system."
+        "Concept preview only; no complete or behaviourally proven cross-institution scientific-memory recovery workflow exists.",
+        "Existing scientific-memory and negative-learning records do not prove historical corpus recovery, semantic linking, duplicate resolution or source-complete recall.",
+        "Recovered records require provenance-preserving human review and do not automatically become approved learning."
       ],
-      "disclosureBurden": "HEIGHTENED",
+      "disclosureBurden": "STANDARD",
       "lastVerifiedAt": "2026-09-20",
-      "lastVerifiedAgainst": "CAP-04 live-logic perturbation behavioural proof (14/14 fixtures): three synthetic file sets (clean, conflicting, degraded) against the same real CAP-02-preserved source producing three different content-driven outcomes; a negative/null-result record retained and classified with identical rigor to a positive one; and the eligibility boundary proven with a satisfiable positive control, five adversarial near-miss variants, and a direct downstream-exclusion proof over a mixed batch.",
-      "classificationReason": "A cautious extraction-and-classification evaluator is implemented and registered into CAP-34's live-simulation dispatcher, genuinely consuming CAP-02's real preserved-source output (extraction is refused if CAP-02's preservation was refused). It classifies each extraction into PENDING_REVIEW, FLAGGED_CONFLICT or QUARANTINED from the content supplied, never from a scenario label, and -- critically -- never marks any stage-3 output as eligible for scientific memory: eligibility requires a structurally distinct admission shape (a passed reviewGate naming a decision and reviewer) that stage 3 cannot itself produce. This is proven directly, including adversarial near-miss cases, not assumed.",
+      "lastVerifiedAgainst": "GitHub canonical source review and read-only main Supabase schema inspection",
+      "classificationReason": "Historical Scientific Memory Recovery — connected memory, negative-result retention and cross-institution discovery concept preview.",
       "nonImplications": [
-        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning.",
-        "Rule-based field-presence and categorical-polarity comparison does not constitute genuine scientific extraction, translation or interoperability mapping and must not be presented as such.",
-        "This capability does not implement stage 7 human review; extracted records can never independently become approved scientific memory, and the admission shape used to prove the eligibility boundary is a synthetic stand-in, not a real reviewer decision."
+        "Concept-preview inclusion does not establish product implementation, scientific proof, regulatory compliance, production readiness or commissioning.",
+        "Roadmap acknowledgement does not grant scientific, regulatory, government, production or commissioning authority."
       ]
     },
     {
@@ -967,5 +939,5 @@
     }
   ],
   "capabilityCount": 34,
-  "snapshotDigest": "sha256:ee929e7df04671d8d2c843fbba73e0a2c61aa0b854919e93fdd57bd23d3d4934"
+  "snapshotDigest": "sha256:94eb64ca7ba19e8c5e61e03f29fc3d7f20cc467ed8aed5ae22fe68a250bd252e"
 }

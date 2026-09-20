@@ -1,0 +1,529 @@
+{
+  "proofId": "AAB-CAP34-CAP04-SCIENTIFIC-MEMORY-LIVE-LOGIC-BEHAVIOURAL-PROOF",
+  "proofVersion": "1.0.0",
+  "generatedAtUtc": "2026-09-20T05:18:01.882Z",
+  "result": "PASS_CAP04_SCIENTIFIC_MEMORY_LIVE_LOGIC_BEHAVIOURAL_PROOF",
+  "scope": "Proves stage 3 (extract and classify cautiously) of Historical Scientific Memory Recovery, consuming CAP-02's REAL preserved-source output: three synthetic file sets (clean, conflicting, degraded) against the same preserved source produce three different, content-driven outcomes; a negative/null-result record is retained and classified with identical rigor to a positive one; and -- the load-bearing property -- no stage-3 outcome is ever structurally eligible for scientific memory or downstream reasoning, proven with a positive control, five adversarial near-miss variants, and a direct downstream-exclusion proof. It does not prove stage 4 (format/unit interoperability mapping), stage 5 detection at corpus scale, stage 7's real human-review workflow, scientific correctness, production readiness or commissioning.",
+  "fixtureCount": 14,
+  "passedFixtureCount": 14,
+  "fixtures": [
+    {
+      "fixtureId": "CAP04-D0-DISPATCHER-WIRED",
+      "description": "sim.runLiveCapability('CAP-04', ...) reaches the same evaluator as calling it directly",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-04",
+        "capabilityName": "Governed Scientific Memory",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "outcome": "PENDING_REVIEW",
+        "extraction": {
+          "capabilityId": "CAP-04",
+          "status": "EXTRACTION_COMPLETE",
+          "extractedRecord": {
+            "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 7-Treatment A",
+            "sourceId": "SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive",
+            "fileId": "FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv",
+            "subjectKey": "Trial Site 7",
+            "treatmentLabel": "Treatment A",
+            "location": "Region 3",
+            "unit": "index units",
+            "dateObserved": "2005-06-01",
+            "measuredValue": 4.2,
+            "outcomePolarity": "POSITIVE",
+            "governanceState": "EXTRACTED_UNREVIEWED",
+            "reviewGate": {
+              "required": true,
+              "passed": false,
+              "reviewerId": null,
+              "decision": null
+            },
+            "recordStatus": "PENDING_REVIEW",
+            "quarantineReasons": [],
+            "conflictingRecordIds": []
+          }
+        },
+        "eligibleForScientificMemory": false
+      }
+    },
+    {
+      "fixtureId": "CAP04-A0-EXTRACTION-REFUSED-WITHOUT-REAL-PRESERVATION",
+      "description": "Extraction is refused, naming ORIGINAL_NOT_PRESERVED, when CAP-02's REAL preservation call was itself refused (no original content supplied)",
+      "passed": true,
+      "actual": {
+        "unpreservedSource": {
+          "capabilityId": "CAP-02",
+          "status": "PRESERVATION_REFUSED",
+          "refusalReasons": [
+            "ORIGINAL_MATERIAL_REQUIRED"
+          ],
+          "explanation": "Original material cannot be preserved: no original content was supplied to hash and reference.",
+          "preservedRecord": null
+        },
+        "refusedExtraction": {
+          "capabilityId": "CAP-04",
+          "status": "EXTRACTION_REFUSED",
+          "refusalReasons": [
+            "ORIGINAL_NOT_PRESERVED"
+          ],
+          "explanation": "Extraction refused: material cannot be extracted or classified before the original has been preserved with an immutable hash.",
+          "extractedRecord": null
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP04-A1-EXTRACTION-LINKS-BACK-TO-REAL-PRESERVED-SOURCE",
+      "description": "A successful extraction's fileId/sourceId trace back to CAP-02's REAL preservedRecord, not a disconnected fixture",
+      "passed": true,
+      "actual": {
+        "preservedSource": {
+          "capabilityId": "CAP-02",
+          "status": "ORIGINAL_PRESERVED",
+          "refusalReasons": [],
+          "explanation": "Original material preserved with an immutable content hash. Any later extraction must trace back to this exact reference; it does not itself become scientific memory.",
+          "preservedRecord": {
+            "fileId": "FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv",
+            "sourceId": "SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive",
+            "originalFileName": "archive-bundle.csv",
+            "originalReference": "FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv",
+            "contentHash": "sha256:dfabf4a6768331fe075f64870e8e039ccdd87e8d410c5f8f70f4d77393477dc5",
+            "preservedAt": null
+          }
+        },
+        "cleanPositiveResult": {
+          "capabilityId": "CAP-04",
+          "status": "EXTRACTION_COMPLETE",
+          "extractedRecord": {
+            "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 7-Treatment A",
+            "sourceId": "SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive",
+            "fileId": "FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv",
+            "subjectKey": "Trial Site 7",
+            "treatmentLabel": "Treatment A",
+            "location": "Region 3",
+            "unit": "index units",
+            "dateObserved": "2005-06-01",
+            "measuredValue": 4.2,
+            "outcomePolarity": "POSITIVE",
+            "governanceState": "EXTRACTED_UNREVIEWED",
+            "reviewGate": {
+              "required": true,
+              "passed": false,
+              "reviewerId": null,
+              "decision": null
+            },
+            "recordStatus": "PENDING_REVIEW",
+            "quarantineReasons": [],
+            "conflictingRecordIds": []
+          }
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP04-B0-CLEAN-SET-POSITIVE-PENDING-REVIEW",
+      "description": "The clean set's positive record extracts to PENDING_REVIEW with zero quarantine or conflict reasons",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-04",
+        "status": "EXTRACTION_COMPLETE",
+        "extractedRecord": {
+          "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 7-Treatment A",
+          "sourceId": "SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive",
+          "fileId": "FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv",
+          "subjectKey": "Trial Site 7",
+          "treatmentLabel": "Treatment A",
+          "location": "Region 3",
+          "unit": "index units",
+          "dateObserved": "2005-06-01",
+          "measuredValue": 4.2,
+          "outcomePolarity": "POSITIVE",
+          "governanceState": "EXTRACTED_UNREVIEWED",
+          "reviewGate": {
+            "required": true,
+            "passed": false,
+            "reviewerId": null,
+            "decision": null
+          },
+          "recordStatus": "PENDING_REVIEW",
+          "quarantineReasons": [],
+          "conflictingRecordIds": []
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP04-B1-CLEAN-SET-NEGATIVE-SAME-RIGOR-AS-POSITIVE",
+      "description": "The clean set's NEGATIVE (null-result) record is retained and reaches the SAME PENDING_REVIEW status with zero quarantine reasons -- not silently deprioritised, suppressed or given a different status vocabulary than the positive record",
+      "passed": true,
+      "actual": {
+        "cleanPositiveResult": {
+          "capabilityId": "CAP-04",
+          "status": "EXTRACTION_COMPLETE",
+          "extractedRecord": {
+            "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 7-Treatment A",
+            "sourceId": "SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive",
+            "fileId": "FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv",
+            "subjectKey": "Trial Site 7",
+            "treatmentLabel": "Treatment A",
+            "location": "Region 3",
+            "unit": "index units",
+            "dateObserved": "2005-06-01",
+            "measuredValue": 4.2,
+            "outcomePolarity": "POSITIVE",
+            "governanceState": "EXTRACTED_UNREVIEWED",
+            "reviewGate": {
+              "required": true,
+              "passed": false,
+              "reviewerId": null,
+              "decision": null
+            },
+            "recordStatus": "PENDING_REVIEW",
+            "quarantineReasons": [],
+            "conflictingRecordIds": []
+          }
+        },
+        "cleanNegativeResult": {
+          "capabilityId": "CAP-04",
+          "status": "EXTRACTION_COMPLETE",
+          "extractedRecord": {
+            "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 12-Treatment B",
+            "sourceId": "SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive",
+            "fileId": "FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv",
+            "subjectKey": "Trial Site 12",
+            "treatmentLabel": "Treatment B",
+            "location": "Region 5",
+            "unit": "index units",
+            "dateObserved": "2007-03-15",
+            "measuredValue": 0.1,
+            "outcomePolarity": "NEGATIVE",
+            "governanceState": "EXTRACTED_UNREVIEWED",
+            "reviewGate": {
+              "required": true,
+              "passed": false,
+              "reviewerId": null,
+              "decision": null
+            },
+            "recordStatus": "PENDING_REVIEW",
+            "quarantineReasons": [],
+            "conflictingRecordIds": []
+          }
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP04-B2-CONFLICTING-SET-FLAGS-NAMED-CONFLICT",
+      "description": "The conflicting set's second record -- same subject, treatment and location as the first, but contradicting outcome polarity -- is FLAGGED_CONFLICT and names the first record's id explicitly, never silently overwritten or averaged",
+      "passed": true,
+      "actual": {
+        "conflictFirstResult": {
+          "capabilityId": "CAP-04",
+          "status": "EXTRACTION_COMPLETE",
+          "extractedRecord": {
+            "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 20-Treatment C",
+            "sourceId": "SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive",
+            "fileId": "FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv",
+            "subjectKey": "Trial Site 20",
+            "treatmentLabel": "Treatment C",
+            "location": "Region 8",
+            "unit": "index units",
+            "dateObserved": "2010-01-01",
+            "measuredValue": 5,
+            "outcomePolarity": "POSITIVE",
+            "governanceState": "EXTRACTED_UNREVIEWED",
+            "reviewGate": {
+              "required": true,
+              "passed": false,
+              "reviewerId": null,
+              "decision": null
+            },
+            "recordStatus": "PENDING_REVIEW",
+            "quarantineReasons": [],
+            "conflictingRecordIds": []
+          }
+        },
+        "conflictSecondResult": {
+          "capabilityId": "CAP-04",
+          "status": "EXTRACTION_COMPLETE",
+          "extractedRecord": {
+            "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 20-Treatment C",
+            "sourceId": "SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive",
+            "fileId": "FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv",
+            "subjectKey": "Trial Site 20",
+            "treatmentLabel": "Treatment C",
+            "location": "Region 8",
+            "unit": "index units",
+            "dateObserved": "2011-01-01",
+            "measuredValue": 0.2,
+            "outcomePolarity": "NEGATIVE",
+            "governanceState": "EXTRACTED_UNREVIEWED",
+            "reviewGate": {
+              "required": true,
+              "passed": false,
+              "reviewerId": null,
+              "decision": null
+            },
+            "recordStatus": "FLAGGED_CONFLICT",
+            "quarantineReasons": [],
+            "conflictingRecordIds": [
+              "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 20-Treatment C"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP04-B3-DEGRADED-SET-QUARANTINED-NAMED-REASONS",
+      "description": "The degraded set's malformed record (missing dateObserved and unit) is QUARANTINED, naming exactly those two missing fields, never guessed or invented",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-04",
+        "status": "EXTRACTION_COMPLETE",
+        "extractedRecord": {
+          "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 30-Treatment D",
+          "sourceId": "SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive",
+          "fileId": "FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv",
+          "subjectKey": "Trial Site 30",
+          "treatmentLabel": "Treatment D",
+          "location": "Region 9",
+          "unit": null,
+          "dateObserved": null,
+          "measuredValue": 3,
+          "outcomePolarity": "POSITIVE",
+          "governanceState": "EXTRACTED_UNREVIEWED",
+          "reviewGate": {
+            "required": true,
+            "passed": false,
+            "reviewerId": null,
+            "decision": null
+          },
+          "recordStatus": "QUARANTINED",
+          "quarantineReasons": [
+            "MISSING_DATE_OBSERVED",
+            "UNKNOWN_UNIT"
+          ],
+          "conflictingRecordIds": []
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP04-B4-THREE-SETS-SAME-SOURCE-THREE-DIFFERENT-OUTCOMES",
+      "description": "Uploading the clean, conflicting-second and degraded synthetic extraction payloads against the SAME preserved source correctly produces three DIFFERENT recordStatus outcomes (PENDING_REVIEW, FLAGGED_CONFLICT, QUARANTINED), driven purely by what was extracted -- there is no scenario/file-set label anywhere in extractAndClassify for this to be keying off instead",
+      "passed": true,
+      "actual": {
+        "clean": "PENDING_REVIEW",
+        "conflict": "FLAGGED_CONFLICT",
+        "degraded": "QUARANTINED"
+      }
+    },
+    {
+      "fixtureId": "CAP04-C0-NEGATIVE-RESULT-RETAINED-AND-DISCOVERABLE",
+      "description": "Both the positive and the negative clean-set records are present in a combined listing and independently retrievable by recordId -- the negative result is not dropped, merged away or hidden behind the positive one",
+      "passed": true,
+      "actual": [
+        {
+          "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 7-Treatment A",
+          "sourceId": "SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive",
+          "fileId": "FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv",
+          "subjectKey": "Trial Site 7",
+          "treatmentLabel": "Treatment A",
+          "location": "Region 3",
+          "unit": "index units",
+          "dateObserved": "2005-06-01",
+          "measuredValue": 4.2,
+          "outcomePolarity": "POSITIVE",
+          "governanceState": "EXTRACTED_UNREVIEWED",
+          "reviewGate": {
+            "required": true,
+            "passed": false,
+            "reviewerId": null,
+            "decision": null
+          },
+          "recordStatus": "PENDING_REVIEW",
+          "quarantineReasons": [],
+          "conflictingRecordIds": []
+        },
+        {
+          "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 12-Treatment B",
+          "sourceId": "SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive",
+          "fileId": "FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv",
+          "subjectKey": "Trial Site 12",
+          "treatmentLabel": "Treatment B",
+          "location": "Region 5",
+          "unit": "index units",
+          "dateObserved": "2007-03-15",
+          "measuredValue": 0.1,
+          "outcomePolarity": "NEGATIVE",
+          "governanceState": "EXTRACTED_UNREVIEWED",
+          "reviewGate": {
+            "required": true,
+            "passed": false,
+            "reviewerId": null,
+            "decision": null
+          },
+          "recordStatus": "PENDING_REVIEW",
+          "quarantineReasons": [],
+          "conflictingRecordIds": []
+        }
+      ]
+    },
+    {
+      "fixtureId": "CAP04-G0-NO-EXTRACTION-OUTCOME-EVER-ELIGIBLE-FOR-MEMORY",
+      "description": "None of the four real stage-3 outcomes above -- clean positive, clean negative, flagged conflict, or quarantined -- is ever eligible for scientific memory, enumerated individually",
+      "passed": true,
+      "actual": [
+        {
+          "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 7-Treatment A",
+          "recordStatus": "PENDING_REVIEW",
+          "eligible": false
+        },
+        {
+          "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 12-Treatment B",
+          "recordStatus": "PENDING_REVIEW",
+          "eligible": false
+        },
+        {
+          "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 20-Treatment C",
+          "recordStatus": "FLAGGED_CONFLICT",
+          "eligible": false
+        },
+        {
+          "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 30-Treatment D",
+          "recordStatus": "QUARANTINED",
+          "eligible": false
+        }
+      ]
+    },
+    {
+      "fixtureId": "CAP04-G1-WELL-FORMED-ADMISSION-IS-A-SATISFIABLE-POSITIVE-CONTROL",
+      "description": "A hand-authored, well-formed stage-7-shaped admission record (ADMITTED_SCIENTIFIC_MEMORY, passed reviewGate, decision ADMIT, named reviewer) IS accepted -- proving the eligibility check is a real gate, not a stub that is vacuously always false",
+      "passed": true,
+      "actual": {
+        "recordId": "EXT-CONTROL-ADMITTED",
+        "governanceState": "ADMITTED_SCIENTIFIC_MEMORY",
+        "reviewGate": {
+          "required": true,
+          "passed": true,
+          "decision": "ADMIT",
+          "reviewerId": "Synthetic Reviewer 1"
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP04-G2-LABEL-ALONE-IS-NOT-ELIGIBILITY",
+      "description": "Setting governanceState to ADMITTED_SCIENTIFIC_MEMORY as a bare label -- with a failed, incomplete or missing reviewGate, or by relabelling a real stage-3 output -- is NOT sufficient for eligibility in any of five near-miss variants; the check is structural, not a single string flag",
+      "passed": true,
+      "actual": [
+        {
+          "recordId": "EXT-CONTROL-ADMITTED",
+          "governanceState": "ADMITTED_SCIENTIFIC_MEMORY",
+          "reviewGate": {
+            "required": true,
+            "passed": false,
+            "decision": "ADMIT",
+            "reviewerId": "Synthetic Reviewer 1"
+          }
+        },
+        {
+          "recordId": "EXT-CONTROL-ADMITTED",
+          "governanceState": "ADMITTED_SCIENTIFIC_MEMORY",
+          "reviewGate": {
+            "required": true,
+            "passed": true,
+            "decision": null,
+            "reviewerId": "Synthetic Reviewer 1"
+          }
+        },
+        {
+          "recordId": "EXT-CONTROL-ADMITTED",
+          "governanceState": "ADMITTED_SCIENTIFIC_MEMORY",
+          "reviewGate": {
+            "required": true,
+            "passed": true,
+            "decision": "ADMIT",
+            "reviewerId": ""
+          }
+        },
+        {
+          "recordId": "EXT-CONTROL-ADMITTED",
+          "governanceState": "ADMITTED_SCIENTIFIC_MEMORY",
+          "reviewGate": {
+            "required": true,
+            "passed": true,
+            "decision": "ADMIT"
+          }
+        },
+        {
+          "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 7-Treatment A",
+          "sourceId": "SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive",
+          "fileId": "FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv",
+          "subjectKey": "Trial Site 7",
+          "treatmentLabel": "Treatment A",
+          "location": "Region 3",
+          "unit": "index units",
+          "dateObserved": "2005-06-01",
+          "measuredValue": 4.2,
+          "outcomePolarity": "POSITIVE",
+          "governanceState": "ADMITTED_SCIENTIFIC_MEMORY",
+          "reviewGate": {
+            "required": true,
+            "passed": false,
+            "reviewerId": null,
+            "decision": null
+          },
+          "recordStatus": "PENDING_REVIEW",
+          "quarantineReasons": [],
+          "conflictingRecordIds": []
+        }
+      ]
+    },
+    {
+      "fixtureId": "CAP04-G3-CLEANEST-EXTRACTION-OUTCOME-STILL-BLOCKED",
+      "description": "Even the single cleanest, most trustworthy-looking stage-3 outcome (PENDING_REVIEW, zero quarantine or conflict reasons) is STILL not eligible for scientific memory -- being clean does not itself grant eligibility, only a genuine stage-7 admission does",
+      "passed": true,
+      "actual": {
+        "recordId": "EXT-FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv-Trial Site 7-Treatment A",
+        "sourceId": "SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive",
+        "fileId": "FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-archive-bundle.csv",
+        "subjectKey": "Trial Site 7",
+        "treatmentLabel": "Treatment A",
+        "location": "Region 3",
+        "unit": "index units",
+        "dateObserved": "2005-06-01",
+        "measuredValue": 4.2,
+        "outcomePolarity": "POSITIVE",
+        "governanceState": "EXTRACTED_UNREVIEWED",
+        "reviewGate": {
+          "required": true,
+          "passed": false,
+          "reviewerId": null,
+          "decision": null
+        },
+        "recordStatus": "PENDING_REVIEW",
+        "quarantineReasons": [],
+        "conflictingRecordIds": []
+      }
+    },
+    {
+      "fixtureId": "CAP04-G4-DOWNSTREAM-ASSEMBLY-EXCLUDES-ALL-UNREVIEWED-RECORDS",
+      "description": "Feeding a mixed batch of all four real extracted-unreviewed outcomes plus one genuinely admitted control record into the illustrative CAP-05/CAP-06-style downstream assembler includes ONLY the admitted record: eligibleCount 1, excludedCount 4 -- this is the direct proof that extracted-but-unreviewed data cannot feed downstream reasoning",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-04",
+        "consideredCount": 5,
+        "eligibleCount": 1,
+        "excludedCount": 4,
+        "eligibleRecords": [
+          {
+            "recordId": "EXT-CONTROL-ADMITTED",
+            "governanceState": "ADMITTED_SCIENTIFIC_MEMORY",
+            "reviewGate": {
+              "required": true,
+              "passed": true,
+              "decision": "ADMIT",
+              "reviewerId": "Synthetic Reviewer 1"
+            }
+          }
+        ],
+        "explanation": "Only records bearing a genuine stage-7 admission decision (governanceState ADMITTED_SCIENTIFIC_MEMORY, a passed reviewGate with decision ADMIT and a named reviewer) are eligible for scientific-memory-backed reasoning. Extracted-but-unreviewed records -- pending review, flagged conflict, or quarantined alike -- are excluded, regardless of how clean stage 3's classification looked."
+      }
+    }
+  ]
+}

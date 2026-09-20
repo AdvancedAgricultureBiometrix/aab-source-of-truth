@@ -1,0 +1,181 @@
+{
+  "proofId": "AAB-CAP34-CAP02-SOURCE-ACQUISITION-LIVE-LOGIC-BEHAVIOURAL-PROOF",
+  "proofVersion": "1.0.0",
+  "generatedAtUtc": "2026-09-20T05:18:01.823Z",
+  "result": "PASS_CAP02_SOURCE_ACQUISITION_LIVE_LOGIC_BEHAVIOURAL_PROOF",
+  "scope": "Proves stages 1-2 only of Historical Scientific Memory Recovery: a source cannot be registered without complete, named attribution, and original material cannot be preserved without a registered source, and its content hash is genuinely content-derived and matches a trusted independent SHA-256 implementation. It does not prove stage 3 extraction/classification (see CAP-04), format/unit interoperability mapping, legacy-system adapters, corpus-scale acquisition, scientific correctness, production readiness or commissioning.",
+  "fixtureCount": 7,
+  "passedFixtureCount": 7,
+  "fixtures": [
+    {
+      "fixtureId": "CAP02-D0-DISPATCHER-WIRED",
+      "description": "sim.runLiveCapability('CAP-02', ...) reaches the same evaluator as calling it directly",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-02",
+        "capabilityName": "Governed Scientific Data Acquisition & Interoperability",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "outcome": "SOURCE_ACQUIRED_AND_PRESERVED",
+        "registration": {
+          "capabilityId": "CAP-02",
+          "status": "SOURCE_REGISTERED",
+          "refusalReasons": [],
+          "explanation": "Source registered with complete attribution. No material has been imported, extracted or admitted yet.",
+          "sourceRecord": {
+            "sourceId": "SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive",
+            "country": "Synthetic Country",
+            "institution": "Synthetic Institute",
+            "department": "Synthetic Research Unit",
+            "originalSystem": "Synthetic Legacy System",
+            "datasetName": "Synthetic Trial Archive",
+            "responsibleOwner": "Synthetic Owner",
+            "dateRangeStart": "1998-01-01",
+            "dateRangeEnd": "2015-12-31",
+            "authorityToProvide": "Synthetic Institutional Authorisation",
+            "accessRestrictions": "Institution-only"
+          }
+        },
+        "preservation": {
+          "capabilityId": "CAP-02",
+          "status": "ORIGINAL_PRESERVED",
+          "refusalReasons": [],
+          "explanation": "Original material preserved with an immutable content hash. Any later extraction must trace back to this exact reference; it does not itself become scientific memory.",
+          "preservedRecord": {
+            "fileId": "FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-trial-archive.csv",
+            "sourceId": "SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive",
+            "originalFileName": "trial-archive.csv",
+            "originalReference": "FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-trial-archive.csv",
+            "contentHash": "sha256:8e4b0734c8a8a1223ba0c3e0b8c6564bff706e82f30d01c6272a17f5276b45e2",
+            "preservedAt": null
+          }
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP02-A0-COMPLETE-ATTRIBUTION-REGISTERS",
+      "description": "A source with every required attribution field registers successfully",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-02",
+        "status": "SOURCE_REGISTERED",
+        "refusalReasons": [],
+        "explanation": "Source registered with complete attribution. No material has been imported, extracted or admitted yet.",
+        "sourceRecord": {
+          "sourceId": "SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive",
+          "country": "Synthetic Country",
+          "institution": "Synthetic Institute",
+          "department": "Synthetic Research Unit",
+          "originalSystem": "Synthetic Legacy System",
+          "datasetName": "Synthetic Trial Archive",
+          "responsibleOwner": "Synthetic Owner",
+          "dateRangeStart": "1998-01-01",
+          "dateRangeEnd": "2015-12-31",
+          "authorityToProvide": "Synthetic Institutional Authorisation",
+          "accessRestrictions": "Institution-only"
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP02-A1-MISSING-ATTRIBUTION-REFUSED-NAMED",
+      "description": "Omitting institution and authorityToProvide refuses registration and names exactly those two fields, never a bare refusal",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-02",
+        "status": "SOURCE_REGISTRATION_REFUSED",
+        "refusalReasons": [
+          "MISSING_FIELD:institution",
+          "MISSING_FIELD:authorityToProvide"
+        ],
+        "explanation": "Source registration refused: an uploaded record must never become unattributed AAB data. Missing required attribution field(s): institution, authorityToProvide.",
+        "sourceRecord": null
+      }
+    },
+    {
+      "fixtureId": "CAP02-B0-PRESERVATION_REQUIRES_REGISTRATION",
+      "description": "Preservation is refused, naming SOURCE_NOT_REGISTERED, when the registration it would attach to was refused",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-02",
+        "status": "PRESERVATION_REFUSED",
+        "refusalReasons": [
+          "SOURCE_NOT_REGISTERED"
+        ],
+        "explanation": "Original material cannot be preserved against a source that has not been registered with complete attribution.",
+        "preservedRecord": null
+      }
+    },
+    {
+      "fixtureId": "CAP02-B1-PRESERVATION_REQUIRES_ORIGINAL_MATERIAL",
+      "description": "Preservation is refused, naming ORIGINAL_MATERIAL_REQUIRED, when no original content is supplied even for a registered source",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-02",
+        "status": "PRESERVATION_REFUSED",
+        "refusalReasons": [
+          "ORIGINAL_MATERIAL_REQUIRED"
+        ],
+        "explanation": "Original material cannot be preserved: no original content was supplied to hash and reference.",
+        "preservedRecord": null
+      }
+    },
+    {
+      "fixtureId": "CAP02-C0-HASH-IS-GENUINELY-CONTENT-DERIVED",
+      "description": "Identical original content preserved twice yields the identical content hash, and different content yields a different one -- proving the hash tracks content, not a counter",
+      "passed": true,
+      "actual": {
+        "preservedA1": {
+          "capabilityId": "CAP-02",
+          "status": "ORIGINAL_PRESERVED",
+          "refusalReasons": [],
+          "explanation": "Original material preserved with an immutable content hash. Any later extraction must trace back to this exact reference; it does not itself become scientific memory.",
+          "preservedRecord": {
+            "fileId": "FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-record.csv",
+            "sourceId": "SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive",
+            "originalFileName": "record.csv",
+            "originalReference": "FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-record.csv",
+            "contentHash": "sha256:bec2a6f9eb58f634c501ba2b5855986abd1f3c471adf68d67d3dc6d431da8d3a",
+            "preservedAt": null
+          }
+        },
+        "preservedA2": {
+          "capabilityId": "CAP-02",
+          "status": "ORIGINAL_PRESERVED",
+          "refusalReasons": [],
+          "explanation": "Original material preserved with an immutable content hash. Any later extraction must trace back to this exact reference; it does not itself become scientific memory.",
+          "preservedRecord": {
+            "fileId": "FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-record.csv",
+            "sourceId": "SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive",
+            "originalFileName": "record.csv",
+            "originalReference": "FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-record.csv",
+            "contentHash": "sha256:bec2a6f9eb58f634c501ba2b5855986abd1f3c471adf68d67d3dc6d431da8d3a",
+            "preservedAt": null
+          }
+        },
+        "preservedB": {
+          "capabilityId": "CAP-02",
+          "status": "ORIGINAL_PRESERVED",
+          "refusalReasons": [],
+          "explanation": "Original material preserved with an immutable content hash. Any later extraction must trace back to this exact reference; it does not itself become scientific memory.",
+          "preservedRecord": {
+            "fileId": "FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-record.csv",
+            "sourceId": "SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive",
+            "originalFileName": "record.csv",
+            "originalReference": "FILE-SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive-record.csv",
+            "contentHash": "sha256:703c4945b3077c04ee36b26acb401e5479eaad7ebd15ad9e73723c029054b36d",
+            "preservedAt": null
+          }
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP02-C1-HASH-MATCHES-TRUSTED-SHA256-REFERENCE",
+      "description": "The embedded pure-JS SHA-256 used to preserve the original matches Node's own crypto SHA-256 over the identical content, byte for byte",
+      "passed": true,
+      "actual": {
+        "computed": "sha256:bec2a6f9eb58f634c501ba2b5855986abd1f3c471adf68d67d3dc6d431da8d3a",
+        "expected": "sha256:bec2a6f9eb58f634c501ba2b5855986abd1f3c471adf68d67d3dc6d431da8d3a"
+      }
+    }
+  ]
+}
