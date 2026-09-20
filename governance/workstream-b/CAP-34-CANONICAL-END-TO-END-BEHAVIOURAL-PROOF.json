@@ -1,7 +1,7 @@
 {
   "proofId": "AAB-CAP34-CANONICAL-END-TO-END-BEHAVIOURAL-PROOF",
   "proofVersion": "1.1.0",
-  "generatedAtUtc": "2026-09-20T03:20:33.335Z",
+  "generatedAtUtc": "2026-09-20T03:30:59.746Z",
   "result": "PASS_CAP34_CANONICAL_END_TO_END_BEHAVIOURAL_PROOF",
   "scope": "Proves only byte-bound PR #16 contract relevance and the defined manifest/receipt validator behaviors. It does not prove capability implementation, scientific correctness, production readiness, sovereignty, commissioning, Gate D satisfaction or WP05 commencement.",
   "pr16Binding": {
@@ -31,8 +31,8 @@
       },
       {
         "path": "simulation/cap34/cap34-disclosure-receipt.js",
-        "blobSha": "f767bdd08844d48b32eb035b9b08bdfe1e647b8f",
-        "actualBlobSha": "f767bdd08844d48b32eb035b9b08bdfe1e647b8f",
+        "blobSha": "63f94e5e5a0cb49c72e0d7fb20daf8725573dc34",
+        "actualBlobSha": "63f94e5e5a0cb49c72e0d7fb20daf8725573dc34",
         "passed": true
       }
     ]
@@ -49,8 +49,8 @@
     "result": "PASS_CAP34_CANONICAL_DISCLOSURE_RECEIPT_BEHAVIOURAL_PROOF",
     "fixtureCount": 28,
     "passedFixtureCount": 28,
-    "validatorVersion": "2.3.0",
-    "validatorSha256": "bd906a6fda498881e63e8c499f75c4092465e92210aa851d890c192290e4dd4f",
+    "validatorVersion": "2.4.0",
+    "validatorSha256": "79ffd82476cad21ab24c0980aff6aaa0e35d8239c5c5c7a6e6184b3b6fb3c12f",
     "fixtures": [
       {
         "fixtureId": "DRV-01",

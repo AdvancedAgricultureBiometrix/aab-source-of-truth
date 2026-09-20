@@ -1,7 +1,7 @@
 {
   "proofId": "AAB-CAP34-MANIFEST-VALIDATOR-BEHAVIOURAL-PROOF",
   "proofVersion": "1.0.0",
-  "generatedAtUtc": "2026-09-20T03:20:33.243Z",
+  "generatedAtUtc": "2026-09-20T03:30:59.650Z",
   "result": "PASS_CAP34_MANIFEST_VALIDATOR_BEHAVIOURAL_PROOF",
   "scope": "Proves only whether the validator detects the defined honest and corrupted manifest states. It does not prove AAB completeness, CAP-34 completion, production readiness, WA commissioning, Gate D satisfaction, or WP05 commencement.",
   "validator": {
@@ -13,9 +13,9 @@
   "manifest": {
     "file": "capability-fidelity-manifest.json",
     "manifestId": "AAB-CAP34-FIDELITY-MANIFEST",
-    "manifestVersion": "1.3.0",
-    "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-004",
-    "snapshotDigest": "sha256:6e97c0e9a3de649234bd003d48cae50ccfe91b6620ea64c94c1d784a87e38064",
+    "manifestVersion": "1.4.0",
+    "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-005",
+    "snapshotDigest": "sha256:e6b3f86112ead6a4ed1d7ab4df9dc620f55527330c4374f02d317b1ad32486eb",
     "capabilityCount": 34
   },
   "authoritativeRoster": {
