@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AAB — Formulation Workbench</title>
+  <link rel="stylesheet" href="../aab-theme.v22.css">
+  <link rel="stylesheet" href="../aab-shell.v22.css?v=22">
+  <script src="../country-runtime-public-config.php"></script>
+  <script src="../aab-session.js?v=27" defer></script>
+  <script src="../aab-chrome.v22.js" defer></script>
+  <script src="../aab-features.v22.js" defer></script>
+  <script src="../aab-shell.v22.js?v=22" defer></script>
+  <style>
+    :root{--wb-line:rgba(255,255,255,.09);--wb-soft:rgba(255,255,255,.035);--wb-glow:rgba(94,234,212,.12);--wb-shadow:0 20px 55px rgba(0,0,0,.28)}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    .wb-wrap{max-width:1480px;margin:0 auto;padding:22px 20px 60px}.wb-hero{position:relative;overflow:hidden;border:1px solid var(--wb-line);border-radius:24px;padding:26px;background:linear-gradient(135deg,var(--panel),rgba(19,41,47,.58));box-shadow:var(--wb-shadow)}
+    .wb-hero:after{content:"";position:absolute;width:420px;height:420px;right:-170px;top:-250px;border-radius:50%;background:radial-gradient(circle,var(--wb-glow),transparent 68%);pointer-events:none}
+    .wb-eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:800}.wb-hero h1{margin:7px 0 8px;font-size:clamp(28px,4vw,44px);line-height:1.05}.wb-hero p{margin:0;max-width:800px;color:var(--muted);line-height:1.55}.wb-hero-row{display:flex;align-items:flex-end;gap:18px;justify-content:space-between;flex-wrap:wrap}.wb-actions{display:flex;gap:10px;flex-wrap:wrap}
+    .wb-btn{appearance:none;border:1px solid var(--wb-line);background:var(--panel);color:var(--text);border-radius:12px;padding:10px 14px;font-weight:750;font-size:13px;cursor:pointer}.wb-btn:hover{transform:translateY(-1px);filter:brightness(1.06)}.wb-btn:disabled{opacity:.42;cursor:not-allowed;transform:none}.wb-btn.primary{background:linear-gradient(135deg,rgba(36,153,119,.26),rgba(30,64,76,.58));border-color:rgba(94,234,212,.34)}.wb-btn.good{border-color:rgba(74,222,128,.35)}.wb-btn.warn{border-color:rgba(251,191,36,.38)}.wb-btn.danger{border-color:rgba(248,113,113,.38)}
+    .wb-statusline{display:flex;gap:8px;flex-wrap:wrap;margin-top:17px}.wb-pill{display:inline-flex;align-items:center;gap:7px;padding:6px 9px;border:1px solid var(--wb-line);border-radius:999px;background:rgba(255,255,255,.025);font-size:11px;color:var(--muted)}.wb-dot{width:7px;height:7px;border-radius:50%;background:var(--ok)}.wb-dot.warn{background:var(--attn)}.wb-dot.bad{background:var(--halt)}
+    .wb-flow{display:grid;grid-template-columns:repeat(7,minmax(120px,1fr));gap:8px;margin:16px 0 18px}.wb-step{border:1px solid var(--wb-line);border-radius:14px;padding:10px;background:var(--wb-soft);min-height:70px}.wb-step b{display:block;font-size:12px}.wb-step span{font-size:10px;color:var(--muted)}.wb-step.active{border-color:rgba(94,234,212,.32);box-shadow:inset 0 0 0 1px rgba(94,234,212,.06)}
+    .wb-layout{display:grid;grid-template-columns:330px minmax(0,1fr) 360px;gap:14px}.wb-card{border:1px solid var(--wb-line);border-radius:19px;background:var(--panel);box-shadow:0 12px 35px rgba(0,0,0,.16);overflow:hidden}.wb-card-h{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--wb-line)}.wb-card-h h2{font-size:14px;margin:0}.wb-card-b{padding:15px}.wb-muted{color:var(--muted);font-size:12px;line-height:1.45}.wb-right{margin-left:auto}
+    .wb-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}.wb-tab{border:1px solid var(--wb-line);background:transparent;color:var(--muted);border-radius:999px;padding:6px 9px;font-size:11px;cursor:pointer}.wb-tab.active{color:var(--text);background:var(--wb-soft);border-color:rgba(94,234,212,.28)}
+    .wb-list{display:flex;flex-direction:column;gap:8px;max-height:720px;overflow:auto;padding-right:2px}.wb-list-item{border:1px solid var(--wb-line);border-radius:13px;padding:11px;cursor:pointer;background:rgba(255,255,255,.018)}.wb-list-item:hover,.wb-list-item.active{border-color:rgba(94,234,212,.30);background:rgba(94,234,212,.04)}.wb-list-title{font-weight:800;font-size:13px}.wb-list-meta{color:var(--muted);font-size:10px;margin-top:5px;display:flex;gap:6px;flex-wrap:wrap}
+    .wb-empty{border:1px dashed var(--wb-line);border-radius:15px;padding:18px;color:var(--muted);font-size:12px;text-align:center}.wb-section{border-top:1px solid var(--wb-line);padding-top:15px;margin-top:15px}.wb-section:first-child{border-top:0;padding-top:0;margin-top:0}.wb-section-title{display:flex;align-items:center;gap:8px;margin-bottom:10px}.wb-section-title h3{font-size:12px;margin:0;text-transform:uppercase;letter-spacing:.08em}.wb-kv{display:grid;grid-template-columns:145px minmax(0,1fr);gap:10px;padding:8px 0;border-bottom:1px dashed rgba(255,255,255,.07)}.wb-kv:last-child{border-bottom:0}.wb-k{font-size:11px;color:var(--muted)}.wb-v{font-size:12px;word-break:break-word;white-space:pre-wrap}
+    .wb-table{width:100%;border-collapse:separate;border-spacing:0 7px}.wb-table th{font-size:10px;color:var(--muted);text-align:left;font-weight:700;padding:0 8px}.wb-table td{padding:9px 8px;background:rgba(255,255,255,.025);border-top:1px solid var(--wb-line);border-bottom:1px solid var(--wb-line);font-size:12px}.wb-table td:first-child{border-left:1px solid var(--wb-line);border-radius:10px 0 0 10px}.wb-table td:last-child{border-right:1px solid var(--wb-line);border-radius:0 10px 10px 0}.wb-link{color:var(--text);text-decoration:none;border-bottom:1px dotted rgba(255,255,255,.35);cursor:pointer}.wb-num{font-variant-numeric:tabular-nums}.wb-total{font-weight:850}.wb-good{color:var(--ok)}.wb-warn{color:var(--attn)}.wb-bad{color:var(--halt)}
+    .wb-callout{border:1px solid var(--wb-line);border-radius:14px;padding:11px;background:var(--wb-soft);font-size:12px;line-height:1.45}.wb-callout + .wb-callout{margin-top:8px}.wb-callout.good{border-color:rgba(74,222,128,.28)}.wb-callout.warn{border-color:rgba(251,191,36,.28)}.wb-callout.bad{border-color:rgba(248,113,113,.28)}
+    .wb-decision-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.wb-decision-grid .wb-btn{width:100%}.wb-input,.wb-select,.wb-textarea{width:100%;border:1px solid var(--wb-line);background:rgba(0,0,0,.12);color:var(--text);border-radius:11px;padding:10px 11px;font:inherit;font-size:12px}.wb-textarea{min-height:90px;resize:vertical}.wb-label{display:block;font-size:10px;color:var(--muted);font-weight:800;letter-spacing:.05em;text-transform:uppercase;margin:10px 0 5px}
+    .wb-modal-backdrop,.wb-drawer-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:120;display:none}.wb-modal-backdrop.open,.wb-drawer-backdrop.open{display:block}.wb-modal{position:fixed;z-index:130;left:50%;top:50%;transform:translate(-50%,-50%);width:min(920px,94vw);max-height:90vh;overflow:auto;background:var(--panel);border:1px solid var(--wb-line);border-radius:20px;box-shadow:0 30px 90px rgba(0,0,0,.55);display:none}.wb-modal.open{display:block}.wb-modal-h{display:flex;align-items:center;padding:15px 17px;border-bottom:1px solid var(--wb-line);position:sticky;top:0;background:var(--panel);z-index:2}.wb-modal-h h2{margin:0;font-size:15px}.wb-modal-b{padding:17px}.wb-modal-f{padding:14px 17px;border-top:1px solid var(--wb-line);display:flex;justify-content:flex-end;gap:8px}
+    .wb-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.wb-lines{display:flex;flex-direction:column;gap:8px}.wb-line-row{display:grid;grid-template-columns:minmax(180px,1fr) 110px 160px 38px;gap:8px;align-items:center}.wb-line-row .wb-btn{padding:8px 0}.wb-form-note{font-size:11px;color:var(--muted);margin-top:6px}
+    .wb-drawer{position:fixed;z-index:130;right:0;top:0;height:100%;width:min(620px,94vw);background:var(--panel);border-left:1px solid var(--wb-line);box-shadow:-25px 0 70px rgba(0,0,0,.45);transform:translateX(100%);transition:.18s ease;overflow:auto}.wb-drawer.open{transform:translateX(0)}.wb-drawer-h{display:flex;align-items:center;padding:15px 17px;border-bottom:1px solid var(--wb-line);position:sticky;top:0;background:var(--panel);z-index:2}.wb-drawer-b{padding:16px}.wb-mini-list{display:flex;flex-direction:column;gap:7px}.wb-mini{padding:9px 10px;border:1px solid var(--wb-line);border-radius:11px;background:var(--wb-soft);font-size:11px}
+    .wb-toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:200;display:none;max-width:min(620px,90vw);padding:11px 14px;border:1px solid var(--wb-line);border-radius:13px;background:var(--panel);box-shadow:var(--wb-shadow);font-size:12px}.wb-toast.show{display:block}.wb-toast.bad{border-color:rgba(248,113,113,.4)}
+    @media(max-width:1160px){.wb-layout{grid-template-columns:290px minmax(0,1fr)}.wb-side-right{grid-column:1/-1}.wb-flow{grid-template-columns:repeat(4,1fr)}}
+    @media(max-width:760px){.wb-wrap{padding:14px 10px 50px}.wb-layout{grid-template-columns:1fr}.wb-flow{grid-template-columns:repeat(2,1fr)}.wb-form-grid{grid-template-columns:1fr}.wb-line-row{grid-template-columns:1fr 90px}.wb-line-row .role{grid-column:1/-1}.wb-line-row .remove{grid-column:2}.wb-kv{grid-template-columns:1fr}.wb-decision-grid{grid-template-columns:1fr}}
+  </style>
+<link rel="stylesheet" href="./aab-live-intelligence.v1.css?v=1"><script src="./aab-live-intelligence.v1.js?v=1" defer></script></head>
+<body data-aab-live-intelligence="AGRICULTURE" data-aab-nav='[{"label":"Dashboard","href":"indexDASH.html"},{"label":"Field Ops","href":"field_ops.html"},{"label":"Workbench","href":"workbench.html"},{"label":"Trials","href":"trials.html"},{"label":"Observations","href":"observations.html"},{"label":"Plots","href":"plots.html"},{"label":"Templates","href":"templates.html"},{"label":"Matrix Explorer","href":"matrix_explorer.html"},{"label":"Hypotheses","href":"hypotheses.html"},{"label":"Audit","href":"audit.html"}]' data-aab-title="Workbench" data-aab-sub="Formulation intelligence + scientist judgement" data-aab-toolbar="home,refresh,diag,sync,logout" data-aab-nav-label="Navigation">
+<div class="wb-wrap">
+  <section class="wb-hero">
+    <div class="wb-hero-row">
+      <div>
+        <div class="wb-eyebrow">AAB Agriculture · Scientist workspace</div>
+        <h1>Formulation Workbench</h1>
+        <p>Create, inspect, derive, compare and govern formulations in one calm workspace. AAB can bring proposals; the scientist remains the decision authority.</p>
+        <div class="wb-statusline">
+          <span class="wb-pill"><span class="wb-dot"></span>PostgreSQL governed</span>
+          <span class="wb-pill" id="actorPill"><span class="wb-dot warn"></span>Resolving authority…</span>
+          <span class="wb-pill" id="ingredientPill"><span class="wb-dot warn"></span>Loading ingredients…</span>
+        </div>
+      </div>
+      <div class="wb-actions">
+        <button class="wb-btn" id="refreshBtn">Refresh</button>
+        <button class="wb-btn primary" id="newBtn" disabled>Create formulation</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="wb-flow" aria-label="Workbench journey">
+    <div class="wb-step active"><b>1 · Create / Receive</b><span>Scientist draft or AAB proposal</span></div>
+    <div class="wb-step"><b>2 · Inspect</b><span>Ingredients + intelligence</span></div>
+    <div class="wb-step"><b>3 · Derive</b><span>New immutable version + WHY</span></div>
+    <div class="wb-step"><b>4 · Compare</b><span>Version deltas</span></div>
+    <div class="wb-step"><b>5 · Validate</b><span>Readiness, not approval</span></div>
+    <div class="wb-step"><b>6 · Decide</b><span>Accept · Revise · Hold · Reject</span></div>
+    <div class="wb-step"><b>7 · Trial</b><span>Governed downstream handoff</span></div>
+  </section>
+
+  <div class="wb-layout">
+    <section class="wb-card">
+      <div class="wb-card-h"><h2>Formulation queue</h2><span class="wb-pill wb-right" id="countPill">0</span></div>
+      <div class="wb-card-b">
+        <div class="wb-tabs">
+          <button class="wb-tab active" data-filter="ALL">All</button>
+          <button class="wb-tab" data-filter="DRAFT">Drafts</button>
+          <button class="wb-tab" data-filter="AI">AAB proposals</button>
+          <button class="wb-tab" data-filter="READY">Ready</button>
+        </div>
+        <div class="wb-list" id="formulationList"><div class="wb-empty">Loading formulations…</div></div>
+      </div>
+    </section>
+
+    <main class="wb-card">
+      <div class="wb-card-h"><h2 id="workspaceTitle">Scientist workspace</h2><span class="wb-pill wb-right" id="workspaceState">Quiet</span></div>
+      <div class="wb-card-b" id="workspaceBody">
+        <div class="wb-empty">Select a formulation to begin. When AAB-generated formulations exist, they appear in the queue as clearly marked advisory proposals.</div>
+      </div>
+    </main>
+
+    <aside class="wb-card wb-side-right">
+      <div class="wb-card-h"><h2>Readiness & decision</h2><span class="wb-pill wb-right" id="readinessPill">—</span></div>
+      <div class="wb-card-b">
+        <div id="readinessBox"><div class="wb-empty">No formulation selected.</div></div>
+        <div class="wb-section">
+          <div class="wb-section-title"><h3>Scientist decision</h3></div>
+          <label class="wb-label" for="decisionWhy">WHY / rationale</label>
+          <textarea class="wb-textarea" id="decisionWhy" placeholder="Why should this formulation be accepted, revised, held or rejected?"></textarea>
+          <label class="wb-label" for="decisionEvidence">Evidence reviewed</label>
+          <textarea class="wb-textarea" id="decisionEvidence" placeholder="Evidence, contradictions, uncertainties or prior learning considered."></textarea>
+          <div class="wb-decision-grid" style="margin-top:10px">
+            <button class="wb-btn good decisionBtn" data-decision="ACCEPT" disabled>Accept</button>
+            <button class="wb-btn decisionBtn" data-decision="REVISE" disabled>Revise</button>
+            <button class="wb-btn warn decisionBtn" data-decision="HOLD" disabled>Hold</button>
+            <button class="wb-btn danger decisionBtn" data-decision="REJECT" disabled>Reject</button>
+          </div>
+        </div>
+        <div class="wb-section">
+          <div class="wb-section-title"><h3>Trial handoff</h3></div>
+          <div class="wb-muted">Only an approved, readiness-passed formulation can create a Trial draft.</div>
+          <button class="wb-btn primary" id="trialBtn" style="width:100%;margin-top:10px" disabled>Send to Trial</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<div class="wb-modal-backdrop" id="modalBackdrop"></div>
+<div class="wb-modal" id="formModal" role="dialog" aria-modal="true">
+  <div class="wb-modal-h"><h2 id="formModalTitle">Create formulation</h2><button class="wb-btn wb-right" id="formClose">Close</button></div>
+  <div class="wb-modal-b">
+    <div class="wb-form-grid">
+      <div><label class="wb-label">Version code</label><input class="wb-input" id="fCode" placeholder="e.g. TH-A1-V1"></div>
+      <div><label class="wb-label">Formulation name</label><input class="wb-input" id="fName" placeholder="Meaningful formulation name"></div>
+      <div><label class="wb-label">Formulation type</label><select class="wb-select" id="fType"><option>DRY_GEL</option><option>WET_GEL</option><option>CONTROL</option><option>OTHER</option></select></div>
+      <div id="changeTypeWrap" style="display:none"><label class="wb-label">Change type</label><select class="wb-select" id="fChangeType"><option>OTHER</option><option>GO_HARD</option><option>GO_HARDER</option><option>CONTROL_VARIANT</option><option>DRY_GEL_VARIANT</option><option>WET_GEL_VARIANT</option><option>STRESS_RESPONSE_VARIANT</option><option>NUTRIENT_UPTAKE_VARIANT</option><option>COST_OPTIMISED_VARIANT</option><option>CORRECTION</option></select></div>
+    </div>
+    <label class="wb-label">WHY · mandatory</label><textarea class="wb-textarea" id="fWhy" placeholder="Why does this formulation/version exist? What changed and why?"></textarea>
+    <label class="wb-label">Expected outcomes</label><textarea class="wb-textarea" id="fExpected" placeholder="What should be observed if the hypothesis is correct?"></textarea>
+    <div class="wb-section-title" style="margin-top:16px"><h3>Ingredient lines</h3><button class="wb-btn wb-right" id="addLineBtn">Add ingredient</button></div>
+    <div id="lineBox" class="wb-lines"></div>
+    <div class="wb-form-note" id="lineTotal">Total inclusion: 0%</div>
+  </div>
+  <div class="wb-modal-f"><button class="wb-btn" id="formCancel">Cancel</button><button class="wb-btn primary" id="formSave">Save governed draft</button></div>
+</div>
+
+<div class="wb-modal" id="trialModal" role="dialog" aria-modal="true">
+  <div class="wb-modal-h"><h2>Send formulation to Trial</h2><button class="wb-btn wb-right" id="trialClose">Close</button></div>
+  <div class="wb-modal-b">
+    <div class="wb-form-grid">
+      <div><label class="wb-label">Trial code</label><input class="wb-input" id="tCode" placeholder="e.g. TRIAL-001"></div>
+      <div><label class="wb-label">Trial name</label><input class="wb-input" id="tName" placeholder="Trial name"></div>
+    </div>
+    <label class="wb-label">Trial objective</label><textarea class="wb-textarea" id="tObjective"></textarea>
+    <label class="wb-label">Protocol summary</label><textarea class="wb-textarea" id="tProtocol"></textarea>
+  </div>
+  <div class="wb-modal-f"><button class="wb-btn" id="trialCancel">Cancel</button><button class="wb-btn primary" id="trialSave">Create Trial draft</button></div>
+</div>
+
+<div class="wb-drawer-backdrop" id="drawerBackdrop"></div>
+<aside class="wb-drawer" id="intelDrawer"><div class="wb-drawer-h"><b id="drawerTitle">Ingredient intelligence</b><button class="wb-btn wb-right" id="drawerClose">Close</button></div><div class="wb-drawer-b" id="drawerBody"></div></aside>
+<div class="wb-toast" id="toast"></div>
+
+<script>
+const API='./api.php';
+const state={context:null,forms:[],ingredients:[],current:null,compare:null,filter:'ALL',mode:'create'};
+const $=id=>document.getElementById(id); const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function toast(msg,bad=false){const t=$('toast');t.textContent=msg;t.className='wb-toast show'+(bad?' bad':'');clearTimeout(toast._t);toast._t=setTimeout(()=>t.className='wb-toast',4200)}
+async function get(action,params={}){const r=await fetch(API+'?'+new URLSearchParams({action,...params}),{credentials:'include',cache:'no-store'});const j=await r.json();if(!r.ok||!j.ok)throw new Error(j.detail||j.error||('HTTP '+r.status));return j}
+async function post(action,payload){const r=await fetch(API+'?action='+encodeURIComponent(action),{method:'POST',credentials:'include',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const j=await r.json();if(!r.ok||!j.ok)throw new Error(j.detail||j.error||('HTTP '+r.status));return j}
+function fmt(v){if(v===null||v===undefined||v==='')return '—';return String(v).replaceAll('_',' ')}
+function kv(k,v){return `<div class="wb-kv"><div class="wb-k">${esc(k)}</div><div class="wb-v">${esc(fmt(v))}</div></div>`}
+function badge(text,cls=''){return `<span class="wb-pill ${cls}">${esc(fmt(text))}</span>`}
+function setModal(open,id){$('modalBackdrop').classList.toggle('open',open);$(id).classList.toggle('open',open)}
+function setDrawer(open){$('drawerBackdrop').classList.toggle('open',open);$('intelDrawer').classList.toggle('open',open)}
+async function boot(){try{const [ctx,forms,ings]=await Promise.all([get('workbench_context'),get('list_workbench_formulations'),get('list_workbench_ingredients')]);state.context=ctx;state.forms=forms.records||[];state.ingredients=ings.records||[];renderContext();renderList();renderEmptyWorkspace()}catch(e){toast('Workbench failed closed: '+e.message,true);$('formulationList').innerHTML='<div class="wb-empty wb-bad">Unable to load governed Workbench.</div>'}}
+function renderContext(){const c=state.context?.capabilities||{};const actor=state.context?.actor||{};$('actorPill').innerHTML=`<span class="wb-dot ${c.approve?'':'warn'}"></span>${esc(fmt(actor.actor_type||'USER'))} · ${c.approve?'scientist decision enabled':'draft authority'}`;$('ingredientPill').innerHTML=`<span class="wb-dot ${state.ingredients.length?'':'warn'}"></span>${state.ingredients.length} ACTIVE ingredient${state.ingredients.length===1?'':'s'}`;$('newBtn').disabled=!(c.create_draft&&state.ingredients.length);}
+function filtered(){return state.forms.filter(f=>state.filter==='ALL'||(state.filter==='DRAFT'&&f.lifecycle_status==='DRAFT')||(state.filter==='AI'&&(f.data_class==='AI_GENERATED'||f.formulation_candidate_id))||(state.filter==='READY'&&f.trial_readiness==='READY_FOR_TRIAL'))}
+function renderList(){const rows=filtered();$('countPill').textContent=rows.length;$('formulationList').innerHTML=rows.length?rows.map(f=>`<div class="wb-list-item ${state.current?.version?.formulation_version_id===f.formulation_version_id?'active':''}" data-id="${esc(f.formulation_version_id)}"><div class="wb-list-title">${esc(f.formulation_name)} · v${esc(f.version_number)}</div><div class="wb-list-meta">${badge(f.version_code)} ${badge(f.data_class,f.data_class==='AI_GENERATED'?'wb-warn':'')} ${badge(f.lifecycle_status)} ${badge(f.trial_readiness)}</div></div>`).join(''):'<div class="wb-empty">No formulations in this view. Quiet is valid.</div>';$('formulationList').querySelectorAll('[data-id]').forEach(el=>el.onclick=()=>loadForm(el.dataset.id));}
+function renderEmptyWorkspace(){$('workspaceTitle').textContent='Scientist workspace';$('workspaceState').textContent='Quiet';$('workspaceBody').innerHTML=`<div class="wb-empty">No formulation selected. ${state.ingredients.length?'Create a governed draft or open an existing version.':'There are no ACTIVE ingredients yet, so formulation creation correctly remains unavailable.'}</div>`;renderReadiness(null)}
+async function loadForm(id){try{const j=await get('get_workbench_formulation',{id});state.current=j.workspace;state.compare=null;renderList();renderWorkspace();renderReadiness(state.current?.readiness)}catch(e){toast(e.message,true)}}
+function renderWorkspace(){const w=state.current;if(!w)return renderEmptyWorkspace();const v=w.version||{},ings=w.ingredients||[],rf=w.reasoning_findings||[],cr=w.contradictions||[],kg=w.knowledge_gaps||[],tr=w.trials||[];$('workspaceTitle').textContent=`${v.formulation_name} · v${v.version_number}`;$('workspaceState').textContent=fmt(v.lifecycle_status);let html=`<div class="wb-actions"><button class="wb-btn primary" id="deriveBtn" ${v.lifecycle_status==='DRAFT'||v.lifecycle_status==='APPROVED'?'':'disabled'}>Derive new version</button><select class="wb-select" id="compareSelect" style="max-width:260px"><option value="">Compare with…</option>${state.forms.filter(x=>x.formulation_version_id!==v.formulation_version_id).map(x=>`<option value="${esc(x.formulation_version_id)}">${esc(x.formulation_name)} · v${esc(x.version_number)}</option>`).join('')}</select></div>`;
+html+=`<div class="wb-section"><div class="wb-section-title"><h3>Identity & lineage</h3>${v.data_class==='AI_GENERATED'?badge('AAB proposal','wb-warn'):''}</div>${kv('Version code',v.version_code)}${kv('Formulation type',v.formulation_type)}${kv('Data class',v.data_class)}${kv('Derived from',w.parent?.version_code)}${kv('Change type',v.change_type)}${kv('WHY / rationale',v.change_rationale)}${kv('Expected outcomes',v.expected_outcomes)}</div>`;
+html+=`<div class="wb-section"><div class="wb-section-title"><h3>Ingredients</h3><span class="wb-pill wb-right">${ings.length} lines</span></div><div style="overflow:auto"><table class="wb-table"><thead><tr><th>Ingredient</th><th>%</th><th>Role</th><th>Status</th></tr></thead><tbody>${ings.map(i=>`<tr><td><span class="wb-link ingredientLink" data-id="${esc(i.ingredient_id)}">${esc(i.ingredient_name)}</span><div class="wb-muted">${esc(i.ingredient_code)}</div></td><td class="wb-num">${esc(i.inclusion_rate_percent)}</td><td>${esc(i.ingredient_role)}</td><td>${esc(i.ingredient_lifecycle_status)}</td></tr>`).join('')}</tbody></table></div></div>`;
+html+=`<div class="wb-section"><div class="wb-section-title"><h3>AAB reasoning & uncertainty</h3><span class="wb-pill wb-right">Advisory</span></div>${rf.length?rf.map(x=>`<div class="wb-callout"><b>${esc(fmt(x.finding_type))}</b><div>${esc(x.finding_summary)}</div><div class="wb-muted">Confidence: ${esc(fmt(x.confidence_status))}</div></div>`).join(''):'<div class="wb-empty">No stored AAB reasoning findings for this formulation. Workbench will not invent them.</div>'}${cr.length?`<div class="wb-callout bad"><b>${cr.length} contradiction(s)</b><div class="wb-muted">Open the readiness panel before decision.</div></div>`:''}${kg.length?`<div class="wb-callout warn"><b>${kg.length} knowledge gap(s)</b></div>`:''}</div>`;
+html+=`<div class="wb-section"><div class="wb-section-title"><h3>Field / trial reality</h3><span class="wb-pill wb-right">${tr.length}</span></div>${tr.length?tr.map(t=>`<div class="wb-mini"><b>${esc(t.trial_name)}</b> · ${esc(fmt(t.lifecycle_status))}<div class="wb-muted">Outcome: ${esc(fmt(t.outcome_status))}</div></div>`).join(''):'<div class="wb-empty">No trial is linked to this version yet.</div>'}</div><div id="compareBox"></div>`;
+$('workspaceBody').innerHTML=html;$('deriveBtn').onclick=()=>openFormModal('derive');$('compareSelect').onchange=e=>compareWith(e.target.value);$('workspaceBody').querySelectorAll('.ingredientLink').forEach(el=>el.onclick=()=>openIngredientIntel(el.dataset.id));renderReadiness(w.readiness);updateDecisionButtons();}
+function renderReadiness(rd){if(!rd){$('readinessPill').textContent='—';$('readinessBox').innerHTML='<div class="wb-empty">No formulation selected.</div>';updateDecisionButtons();return}const ok=!!rd.ready;$('readinessPill').textContent=ok?'PASS':'BLOCKED';$('readinessPill').className='wb-pill wb-right '+(ok?'wb-good':'wb-bad');let h=`<div class="wb-callout ${ok?'good':'bad'}"><b>${ok?'Structurally ready':'Readiness blocked'}</b><div class="wb-muted">Readiness is not scientific approval.</div></div>${kv('Total inclusion',rd.total_inclusion_percent+'%')}${kv('Ingredient count',rd.ingredient_count)}`;(rd.blockers||[]).forEach(x=>h+=`<div class="wb-callout bad">${esc(x)}</div>`);(rd.warnings||[]).forEach(x=>h+=`<div class="wb-callout warn">${esc(x)}</div>`);$('readinessBox').innerHTML=h;updateDecisionButtons()}
+function updateDecisionButtons(){const w=state.current,v=w?.version||{},c=state.context?.capabilities||{};document.querySelectorAll('.decisionBtn').forEach(b=>{const d=b.dataset.decision;b.disabled=!w||v.lifecycle_status!=='DRAFT'||((d==='ACCEPT')?!c.approve:!c.review)});$('trialBtn').disabled=!(w&&v.lifecycle_status==='APPROVED'&&v.trial_readiness==='READY_FOR_TRIAL'&&c.create_draft)}
+async function compareWith(id){if(!id){$('compareBox').innerHTML='';return}try{const j=await get('get_workbench_formulation',{id});state.compare=j.workspace;renderCompare()}catch(e){toast(e.message,true)}}
+function renderCompare(){const a=state.current,b=state.compare;if(!a||!b)return;const map=x=>Object.fromEntries((x.ingredients||[]).map(i=>[i.ingredient_id,i]));const am=map(a),bm=map(b),ids=[...new Set([...Object.keys(am),...Object.keys(bm)])];let rows=ids.map(id=>{const x=am[id],y=bm[id],av=Number(x?.inclusion_rate_percent||0),bv=Number(y?.inclusion_rate_percent||0),d=av-bv;return `<tr><td>${esc(x?.ingredient_name||y?.ingredient_name||id)}</td><td>${bv}%</td><td>${av}%</td><td class="${d>0?'wb-good':d<0?'wb-warn':''}">${d>0?'+':''}${d.toFixed(2)}%</td></tr>`}).join('');$('compareBox').innerHTML=`<div class="wb-section"><div class="wb-section-title"><h3>Version comparison</h3></div><div class="wb-callout"><b>${esc(b.version.formulation_name)} v${esc(b.version.version_number)}</b> → <b>${esc(a.version.formulation_name)} v${esc(a.version.version_number)}</b></div><div style="overflow:auto"><table class="wb-table"><thead><tr><th>Ingredient</th><th>Compare</th><th>Current</th><th>Δ</th></tr></thead><tbody>${rows}</tbody></table></div></div>`}
+function lineRow(line={}){const d=document.createElement('div');d.className='wb-line-row';d.innerHTML=`<select class="wb-select ing">${state.ingredients.map(i=>`<option value="${esc(i.ingredient_id)}" ${i.ingredient_id===line.ingredient_id?'selected':''}>${esc(i.ingredient_name)} · ${esc(i.ingredient_code)}</option>`).join('')}</select><input class="wb-input rate" type="number" min="0" max="100" step="0.01" value="${esc(line.inclusion_rate_percent??'') }" placeholder="%"><input class="wb-input role" value="${esc(line.ingredient_role||'FORMULATION_COMPONENT')}" placeholder="Role"><button class="wb-btn remove" type="button">×</button>`;d.querySelector('.remove').onclick=()=>{d.remove();updateLineTotal()};d.querySelector('.rate').oninput=updateLineTotal;return d}
+function updateLineTotal(){let t=0;document.querySelectorAll('#lineBox .rate').forEach(x=>t+=Number(x.value||0));$('lineTotal').innerHTML=`Total inclusion: <b class="${Math.abs(t-100)<.0001?'wb-good':'wb-warn'}">${t.toFixed(2)}%</b>`}
+function openFormModal(mode){state.mode=mode;const w=state.current,v=w?.version||{};$('formModalTitle').textContent=mode==='derive'?'Derive new formulation version':'Create formulation';$('changeTypeWrap').style.display=mode==='derive'?'block':'none';$('fCode').value='';$('fName').value=mode==='derive'?(v.formulation_name||''):'';$('fType').value=mode==='derive'?(v.formulation_type||'OTHER'):'DRY_GEL';$('fWhy').value='';$('fExpected').value=mode==='derive'?(v.expected_outcomes||''):'';$('lineBox').innerHTML='';const lines=mode==='derive'?(w.ingredients||[]):[];lines.forEach(x=>$('lineBox').appendChild(lineRow(x)));if(!lines.length&&state.ingredients.length)$('lineBox').appendChild(lineRow());updateLineTotal();setModal(true,'formModal')}
+function collectLines(){return [...document.querySelectorAll('#lineBox .wb-line-row')].map((r,n)=>({ingredient_id:r.querySelector('.ing').value,inclusion_rate_percent:Number(r.querySelector('.rate').value||0),ingredient_role:r.querySelector('.role').value.trim()||'FORMULATION_COMPONENT',sequence_order:n+1}))}
+async function saveForm(){const lines=collectLines();const payload={version_code:$('fCode').value.trim(),formulation_name:$('fName').value.trim(),formulation_type:$('fType').value,why:$('fWhy').value.trim(),expected_outcomes:$('fExpected').value.trim(),ingredient_lines:lines,data_class:state.mode==='derive'?'TEST':'TEST'};if(!payload.version_code||!payload.formulation_name||!payload.why||!payload.expected_outcomes)return toast('Version code, name, WHY and expected outcomes are required.',true);if(Math.abs(lines.reduce((s,x)=>s+x.inclusion_rate_percent,0)-100)>.0001)return toast('Ingredient inclusion must total exactly 100%.',true);try{let j;if(state.mode==='derive'){payload.parent_version_id=state.current.version.formulation_version_id;payload.change_type=$('fChangeType').value;j=await post('derive_workbench_formulation',payload)}else j=await post('create_workbench_formulation',payload);setModal(false,'formModal');toast('Governed formulation draft saved.');await refreshAll();if(j.workspace?.version?.formulation_version_id)await loadForm(j.workspace.version.formulation_version_id)}catch(e){toast(e.message,true)}}
+async function decide(decision){if(!state.current)return;const why=$('decisionWhy').value.trim(),evidence=$('decisionEvidence').value.trim();if(!why)return toast('Scientist decision requires WHY.',true);try{const j=await post('workbench_decide_formulation',{formulation_version_id:state.current.version.formulation_version_id,decision,why,evidence_summary:evidence});state.current=j.workspace;$('decisionWhy').value='';$('decisionEvidence').value='';toast('Scientist decision recorded: '+decision);await refreshAll(false);renderWorkspace()}catch(e){toast(e.message,true)}}
+function openTrial(){if(!state.current)return;$('tCode').value='';$('tName').value=state.current.version.formulation_name+' trial';$('tObjective').value=state.current.version.expected_outcomes||'';$('tProtocol').value='';setModal(true,'trialModal')}
+async function saveTrial(){try{const j=await post('workbench_send_to_trial',{formulation_version_id:state.current.version.formulation_version_id,trial_code:$('tCode').value.trim(),trial_name:$('tName').value.trim(),trial_objective:$('tObjective').value.trim(),protocol_summary:$('tProtocol').value.trim()});setModal(false,'trialModal');toast('Trial draft created: '+(j.trial?.trial_code||'created'));await loadForm(state.current.version.formulation_version_id)}catch(e){toast(e.message,true)}}
+async function openIngredientIntel(id){setDrawer(true);$('drawerTitle').textContent='Ingredient intelligence';$('drawerBody').innerHTML='<div class="wb-empty">Loading governed intelligence…</div>';try{const j=await get('get_workbench_ingredient_intelligence',{id});const x=j.intelligence||{},i=x.ingredient||{};$('drawerTitle').textContent=i.ingredient_name||'Ingredient intelligence';let h=`${kv('Code',i.ingredient_code)}${kv('Status',i.lifecycle_status)}${kv('Data class',i.data_class)}${kv('Material class',i.material_class)}${kv('Preparation',i.preparation_class)}`;const groups=[['Evidence',x.evidence],['Mechanisms',x.mechanisms],['Contradictions',x.contradictions],['Knowledge gaps',x.knowledge_gaps],['Negative learning',x.negative_learning],['Formulation use',x.formulation_use],['Trial history',x.trial_history]];groups.forEach(([name,arr])=>{h+=`<div class="wb-section"><div class="wb-section-title"><h3>${esc(name)}</h3><span class="wb-pill wb-right">${(arr||[]).length}</span></div>${(arr||[]).length?(arr||[]).map(o=>`<div class="wb-mini">${esc(JSON.stringify(o,null,2))}</div>`).join(''):'<div class="wb-empty">No governed records.</div>'}</div>`});$('drawerBody').innerHTML=h}catch(e){$('drawerBody').innerHTML=`<div class="wb-callout bad">${esc(e.message)}</div>`}}
+async function refreshAll(reloadCurrent=true){const [forms,ings]=await Promise.all([get('list_workbench_formulations'),get('list_workbench_ingredients')]);state.forms=forms.records||[];state.ingredients=ings.records||[];renderContext();renderList();if(reloadCurrent&&state.current?.version?.formulation_version_id)await loadForm(state.current.version.formulation_version_id)}
+document.querySelectorAll('.wb-tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.wb-tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');state.filter=b.dataset.filter;renderList()});$('refreshBtn').onclick=()=>refreshAll().catch(e=>toast(e.message,true));$('newBtn').onclick=()=>openFormModal('create');$('formClose').onclick=$('formCancel').onclick=()=>setModal(false,'formModal');$('trialClose').onclick=$('trialCancel').onclick=()=>setModal(false,'trialModal');$('modalBackdrop').onclick=()=>{setModal(false,'formModal');setModal(false,'trialModal')};$('addLineBtn').onclick=()=>{$('lineBox').appendChild(lineRow());updateLineTotal()};$('formSave').onclick=saveForm;document.querySelectorAll('.decisionBtn').forEach(b=>b.onclick=()=>decide(b.dataset.decision));$('trialBtn').onclick=openTrial;$('trialSave').onclick=saveTrial;$('drawerClose').onclick=$('drawerBackdrop').onclick=()=>setDrawer(false);boot();
+</script>
+</body></html>

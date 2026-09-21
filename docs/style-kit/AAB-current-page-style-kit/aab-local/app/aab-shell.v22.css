@@ -1,0 +1,55 @@
+/* aab-shell.v22.css — shared Workbench feel across all pages */
+
+/* --- AAB Mini Console (Heart + Network + Health) --- */
+#aabMiniConsole{
+  position:fixed; top:10px; right:10px; z-index:9999;
+  display:flex; align-items:center; gap:10px;
+  padding:8px 10px;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:999px;
+  background: rgba(17,24,32,.70);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 18px 40px rgba(0,0,0,.38), 0 1px 0 rgba(255,255,255,.04);
+}
+.aab-mini-btn{
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.03);
+  color: rgba(255,255,255,.90);
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:650;
+  cursor:pointer;
+}
+.aab-mini-btn:hover{ background: rgba(255,255,255,.06); }
+.aab-net{
+  width:10px;height:10px;border-radius:999px;
+  border:1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.08);
+  display:inline-block;
+}
+.aab-net.is-loading{ background: var(--attn, rgba(255,193,92,.95)); }
+.aab-net.is-online{ background: var(--ok, rgba(98,215,140,.95)); }
+.aab-net.is-offline{ background: rgba(255,255,255,.10); border-style:dashed; }
+.aab-heart{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:26px; height:26px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.02);
+  cursor:pointer;
+}
+.aab-heart svg{ width:18px; height:18px; display:block; }
+.aab-heart .lobe{ fill: currentColor; opacity:.92; }
+.aab-heart.is-quiet{ color: rgba(255,255,255,.55); }
+.aab-heart.is-ok{ color: var(--ok, rgba(98,215,140,.95)); }
+.aab-heart.is-active{ color: var(--active, rgba(123,207,151,.95)); }
+.aab-heart.is-attn{ color: var(--attn, rgba(255,193,92,.95)); }
+.aab-heart.is-halt{ color: var(--halt, rgba(255,105,120,.95)); }
+@media (max-width: 520px){
+  #aabMiniConsole{ top:auto; bottom:12px; right:12px; }
+}
+
+/* Small alignment helpers */
+.aab-muted{ color: var(--muted); }
+.aab-mono{ font-family: var(--mono); }
