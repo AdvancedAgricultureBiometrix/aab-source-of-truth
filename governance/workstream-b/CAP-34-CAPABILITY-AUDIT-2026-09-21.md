@@ -148,3 +148,64 @@ All 98 currently pass. None were modified, added, or removed by this audit.
 2. **Cross-cutting Q5(d):** requires an actual decision among the three options above (self-declared version constant, content-hash-derived version, or drop the sub-check) before any fixture or manifest-validator change is made.
 
 Everything else marked **GAP** above (CAP-01 Q3, CAP-02 Q1, CAP-06 Q4, CAP-09 Q2) has a fully-specified, one-fixture minimal fix with no open ambiguity about expected behaviour — ready to implement once you say go, per the boundary set for this pass.
+
+---
+
+## Closing update — 2026-09-21 follow-up: all five gaps closed, version decision implemented
+
+This section is appended, not a rewrite of the findings above — the original audit stands as the record of what was found; this records what was done about it, on the same branch, in commit `a6926f8`.
+
+### Gaps closed, in the requested order
+
+1. **CAP-05 Q3/Q4** — `cap05-reasoning.behavioural-test.js`: added `CAP05-B2B-DIFFERENT-SUBJECTS-OPPOSING-STANCES-NOT-A-CONTRADICTION`. Two records on genuinely different derived subjects ("trial" positive, "result" negative) assert `contradictingSubjects.length === 0` despite an opposing stance being present in the set — the discriminating counterpart `B1` was missing, since `B1`'s two records never actually disagreed with each other.
+2. **CAP-02 Q1** — `cap02-source-acquisition.behavioural-test.js`: added `CAP02-A1B-SINGLE-FIELD-BROKEN-REFUSED` and `CAP02-A1C-SAME-FIELD-RESTORED-ON-SAME-OBJECT-REGISTERS`. Breaks exactly one required field (`authorityToProvide`), confirms refusal names only that field, then restores that exact field on the **same** metadata object (mutated in place, nothing else touched) and confirms it now registers.
+3. **CAP-09 Q2** — `cap09-governed-learning.behavioural-test.js`: added `CAP09-B1B-CONTENT-DRIVEN-AT-CONSTANT-COUNT`. Trial count held constant at 2 (the same count as the promoting `replicatedTrial` baseline); only `T2`'s finding is changed to a contradicting result; outcome flips to `PROMOTION_REFUSED` naming `CONTRADICTING_EVIDENCE_PRESENT` — proving the evaluator reads content, not count.
+4. **CAP-01 Q3** — `cap01-discovery.behavioural-test.js`: added `CAP01-B1B-AT-MINIMUM-BOUNDARY-PASSES` and `CAP01-B1C-ONE-BELOW-MINIMUM-BOUNDARY-FAILS`. Exactly 2 records (the minimum itself) passes; removing one more, down to 1, fails — pinning down that `MINIMUM_ELIGIBLE_EVIDENCE` is genuinely 2 and the comparison is `<`, which neither the original 3-record baseline nor the 1-record removal fixture could distinguish from an off-by-one or a hard-coded 3.
+5. **CAP-06 Q4** — `cap06-ingredient-intelligence.behavioural-test.js`: added `CAP06-B5-FLAT-TALLY-NOT-SUBJECT-GROUPED`. A same-subject-wording pair and a different-subject-wording pair, each with one supporting and one conflicting finding, produce identical `status`, `readinessScore` and counts — proving CAP-06 flat-tallies every record about the candidate with no CAP-05-style subject-comparison gate to regress into.
+
+### Cross-cutting NEEDS-DECISION: resolved as directed (self-declared version constants)
+
+- Added `const CAP0X_IMPLEMENTATION_VERSION = "…"` to the top of each of the seven live-capability files, initial value set to that capability's current manifest `representationVersion`: CAP-01 `"1.0.0"`, CAP-02 `"0.4.0"`, CAP-04 `"0.6.0"`, CAP-05 `"1.0.0"`, CAP-06 `"1.0.0"`, CAP-07 `"1.0.0"`, CAP-09 `"1.0.0"`. Each constant is exposed as `.implementationVersion` on the file's `window.AAB_CAP34_LIVE_CAP0X_*` export.
+- Added `validateImplementationVersions(entries, implementationVersionsByCapabilityId)` to `capability-fidelity-manifest.js`, **deliberately independent of `validateManifest()`**: archived manifest snapshots are validated by `validateManifest()` alone (see `cap34-historical-snapshot-validity.behavioural-test.js`), and an archived snapshot's `representationVersion` was correct for the implementation *at the time it was archived*, not for the implementation as it stands today — wiring this check into `validateManifest()` would have broken every historical generation whose capability has since been revised. It fails closed with `IMPLEMENTATION_VERSION_MISMATCH:<identity>` on a mismatch and `IMPLEMENTATION_VERSION_REQUIRED:<identity>` if an expected version is missing; a capability absent from the comparison map is silently skipped (not a failure), so roadmap-preview and plan-only entries are unaffected.
+- Added two fixtures to `capability-fidelity-manifest.behavioural-test.js`: `IMPLEMENTATION_VERSION_HONEST_MATCH` (loads all seven real implementation files' real constants against the real manifest — passes) and `IMPLEMENTATION_VERSION_MISMATCH_DETECTED` (perturbs only the comparison map, not the manifest or the implementation file, for CAP-01 — fails closed, naming `IMPLEMENTATION_VERSION_MISMATCH:CAP-01:ROOT`).
+- **Necessary consequence, not an extra change:** `cap34-canonical-end-to-end.behavioural-test.js` hardcoded the manifest validator's fixture count (`14`) and total (`42`) as part of its byte-bound PR #16 contract check. Adding the two fixtures above made these stale; updated to `16` and `44`. This was the one change in this pass not explicitly enumerated in the request, made because leaving it would fail the suite the two new fixtures were asked to add.
+
+### Fresh-clone full-suite run (branch head `a6926f8`, clone of `claude/pensive-knuth-pdlko1`, all 14 behavioural-test files, all exit 0)
+
+| File | Result | Fixtures |
+|---|---|---|
+| `cap01-discovery.behavioural-test.js` | PASS | 13/13 (was 11) |
+| `cap02-source-acquisition.behavioural-test.js` | PASS | 9/9 (was 7) |
+| `cap02-interoperability-mapping.behavioural-test.js` | PASS | 7/7 (unchanged) |
+| `cap04-scientific-memory.behavioural-test.js` | PASS | 14/14 (unchanged) |
+| `cap04-corpus-scale.behavioural-test.js` | PASS | 9/9 (unchanged) |
+| `cap04-scientific-memory-admission.behavioural-test.js` | PASS | 14/14 (unchanged) |
+| `cap05-reasoning.behavioural-test.js` | PASS | 11/11 (was 10) |
+| `cap06-ingredient-intelligence.behavioural-test.js` | PASS | 10/10 (was 9) |
+| `cap07-formulation-intelligence.behavioural-test.js` | PASS | 9/9 (unchanged) |
+| `cap09-governed-learning.behavioural-test.js` | PASS | 9/9 (was 8) |
+| **Seven-capability subtotal (10 files)** | **PASS** | **105/105 (was 98)** |
+| `capability-fidelity-manifest.behavioural-test.js` | PASS | 16/16 (was 14) |
+| `cap34-pathway-preview.behavioural-test.js` | PASS | 9/9 (unchanged) |
+| `cap34-canonical-end-to-end.behavioural-test.js` | PASS | 44/44 (was 42) |
+| `cap34-historical-snapshot-validity.behavioural-test.js` | PASS | 157/157 (unchanged) |
+
+`cap34-canonical-end-to-end`'s 44 is not independent of the manifest validator's 16 — it re-runs `capability-fidelity-manifest.behavioural-test.js` as a subprocess as part of proving byte-bound PR #16 contract relevance, so its total is 16 (nested manifest run) + 28 (its own receipt-validator fixtures) = 44. Summed naively across all 14 files' own reported counts (105 + 16 + 9 + 44 + 157) gives 331, but that double-counts the 16 manifest fixtures once standalone and once nested; the number that matters — every real, independent fixture that exists in this codebase — is **105 (seven capabilities) + 16 (manifest validator) + 28 (disclosure receipt, exercised only inside the end-to-end file) + 9 (pathway preview) + 157 (historical validity) = 315 distinct fixtures**, all passing.
+
+### Historical-validity regression: re-confirmed, not assumed
+
+Run from the same fresh clone as above:
+
+```
+node simulation/cap34/cap34-historical-snapshot-validity.behavioural-test.js
+```
+
+- **Result:** `PASS_CAP34_HISTORICAL_SNAPSHOT_VALIDITY_BEHAVIOURAL_PROOF`
+- **Generations checked:** 12 — unchanged from the original audit
+- **Fixture total:** 157/157 — unchanged from the original audit
+
+The version-constant addition does not touch `validateManifest()` or anything the historical-validity test calls, and this run confirms that directly rather than relying on the architectural argument alone.
+
+### What remains open
+
+Nothing from this audit's five GAPs or the cross-cutting NEEDS-DECISION remains open. No new gaps were identified while closing these. `capability-fidelity-manifest.json` itself (the `representationVersion` values, `lastVerifiedAgainst` prose fixture counts) was **not** touched in this pass, per "do not change anything else" — its `lastVerifiedAgainst` text for CAP-01, CAP-02, CAP-05, CAP-06 and CAP-09 now understates each one's real fixture count (e.g. CAP-01 reads "11/11 fixtures", now 13/13), and its `representationVersion` values were not bumped for the added test coverage. Whether either warrants a manifest update is a separate decision for a separate pass.
