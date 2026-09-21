@@ -2,7 +2,7 @@
 
 **Status:** CANDIDATE DESIGN — NOT ADMITTED. No CAP number is assigned by this document.
 **Authority:** RECORDS A PROPOSED CAPABILITY FOR FUTURE FORMAL ADMISSION. Establishes no commissioning, production, Gate D, WP05, scientific-validity or regulatory authority, grants no Launch Release status, and makes no Supabase or other provider change.
-**Relationship to CAP-05:** anchored from, and consistent with, the Governed Evidence Watch section of `governance/workstream-b/CAP-05-GOVERNED-SCIENTIFIC-REASONING-CANONICAL-CONTRACT-2026-09-20.md`. That document fixed only `EvidenceLandscapeSnapshotIdentity` and the trigger concept so they would not be lost; this document is the design pass promised there.
+**Relationship to CAP-05:** anchored from, and consistent with, the Governed Evidence Watch section of `governance/workstream-b/CAP-05-GOVERNED-SCIENTIFIC-REASONING-CANONICAL-CONTRACT-2026-09-20.md`. That document fixed only `EvidenceLandscapeSnapshotIdentity` and the trigger concept so they would not be lost; this document is the design pass promised there, now carrying the full candidate interface specification.
 **Not part of PR #16.** PR #16's boundary (`governance/workstream-b/`, `simulation/cap34/`, draft, simulation-only) is unaffected by this document. No code changes and no Supabase changes are made or authorised by this document.
 
 ## Provisional identity
@@ -125,18 +125,91 @@ If the capability-admission process accepts it, the natural next identifier woul
 
 **But CAP-35 must not become canonical merely because it is numerically available.** It becomes canonical only once the ten-point checklist above has actually been satisfied, not because the next integer happens to be free.
 
-## Gap: the full implementation contract is not yet specified
+## Full candidate interface specification
 
-The commit request for this document asked for `GovernedEvidenceWatchDefinition`, `GovernedEvidenceWatchTrigger` and `GovernedEvidenceWatchNotice` interfaces "from the prior design conversation" as the full contract this candidate would implement. Those three interfaces, under those names, do not appear verbatim anywhere in this repository, in `CAP-05-GOVERNED-SCIENTIFIC-REASONING-CANONICAL-CONTRACT-2026-09-20.md`, or anywhere else available to this session — only `EvidenceWatchNotice` (above, this document) and `EvidenceLandscapeSnapshotIdentity` (in the CAP-05 contract) were actually specified verbatim, alongside the prose responsibility boundary and prohibitions recorded above.
+The three interfaces originally flagged as missing at commit time — `GovernedEvidenceWatchDefinition`, `GovernedEvidenceWatchTrigger` and `GovernedEvidenceWatchNotice` — have since been supplied and are recorded here verbatim, alongside a fail-closed failure contract. Together with `EvidenceWatchCandidateIdentity`, `EvidenceWatchNotice` and `EvidenceLandscapeSnapshotIdentity` (the latter defined in the CAP-05 contract) above, this is the full candidate contract surface for Governed Evidence Watch.
 
-Rather than invent three interfaces and label them as sourced from a prior conversation this document cannot verify, this section records the gap plainly. What this document **does** establish as the confirmed contract surface so far:
+```typescript
+interface GovernedEvidenceWatchDefinition {
+  watchId: string;
+  schemaVersion: string;
+  authorisedBy: ScientistReference;
+  countryWorkspaceId: string;
+  organizationIds?: string[];
+  domainCodes: string[];
+  subjectScope?: string[];
+  evidenceCategories?: string[];
+  minimumAdmissionStatus: "ADMITTED";
+  excludeQuarantined: true;
+  anchoredToLandscape?: EvidenceLandscapeSnapshotIdentity;
+  status:
+    | "ACTIVE"
+    | "PAUSED"
+    | "TRIGGERED"
+    | "EXPIRED"
+    | "CANCELLED";
+  createdAt: string;
+  expiresAt?: string;
+  lastCheckedAt?: string;
+}
 
-- `EvidenceWatchCandidateIdentity` (identity/status)
-- `EvidenceWatchNotice` (output)
-- `EvidenceLandscapeSnapshotIdentity`, defined in the CAP-05 contract, as the object a watch definition must key its matching against
-- the prose responsibility boundary and prohibition list above, which a `GovernedEvidenceWatchDefinition`/`GovernedEvidenceWatchTrigger` pair would need to satisfy once specified
+interface GovernedEvidenceWatchTrigger {
+  triggerId: string;
+  watchId: string;
+  triggeredAt: string;
+  matchingMemoryRecordIds: string[];
+  matchCount: number;
+  suggestedAction: "RUN_CAP05_EVALUATION";
+  suggestedEvidenceScope: {
+    memoryRecordIds: string[];
+    asOf: string;
+  };
+  autonomousActionTaken: false;
+  landscapeModified: false;
+  evidenceModified: false;
+  knowledgePromoted: false;
+}
 
-A `GovernedEvidenceWatchDefinition` (the persisted, scientist-authorised watch record) and a `GovernedEvidenceWatchTrigger` (the event-matching contract referenced in responsibility-boundary point 2, above) remain to be specified. If a `GovernedEvidenceWatchNotice` distinct from `EvidenceWatchNotice` above was intended, that distinction also remains to be supplied.
+interface GovernedEvidenceWatchNotice {
+  noticeId: string;
+  watchId: string;
+  triggerId: string;
+  message: string;
+  matchingRecordCount: number;
+  anchoredLandscapeId?: string;
+  invitedAction: "RE_EVALUATE_EVIDENCE_LANDSCAPE";
+  invitedActionAvailable: true;
+  readOnly: true;
+  noAutonomousEvaluation: true;
+  noLandscapeUpdate: true;
+  scientistInitiatedOnly: true;
+  createdAt: string;
+  acknowledgedAt?: string;
+  dismissedAt?: string;
+}
+```
+
+`GovernedEvidenceWatchDefinition.anchoredToLandscape` is the enforced link back to CAP-05: a watch can be scoped against a prior evidence-landscape snapshot, but `GovernedEvidenceWatchTrigger.autonomousActionTaken`, `landscapeModified`, `evidenceModified` and `knowledgePromoted` are all fixed at `false` — matching alone never mutates anything. `GovernedEvidenceWatchNotice` carries the same load-bearing `false`/`true` boundary fields as `EvidenceWatchNotice` above; the two are complementary views (`EvidenceWatchNotice` is the minimal notice shape recorded at candidate-identity time, `GovernedEvidenceWatchNotice` is the fuller notice tied to a specific `GovernedEvidenceWatchTrigger`), not a contradiction to be resolved before implementation.
+
+### Failure contract
+
+```typescript
+interface GovernedEvidenceWatchFailure {
+  ok: false;
+  capabilityId: "CAP-CANDIDATE-GOVERNED-EVIDENCE-WATCH-01";
+  result: "FAIL_CLOSED";
+  error:
+    | "AUTHORITY_SCOPE_INVALID"
+    | "LANDSCAPE_SNAPSHOT_NOT_FOUND"
+    | "WATCH_DEFINITION_INVALID"
+    | "COUNTRY_BOUNDARY_VIOLATION"
+    | "SCIENTIST_REFERENCE_INVALID"
+    | "DEPENDENCY_UNAVAILABLE";
+  noWrites: true;
+  noMutation: true;
+  noNotificationSent: true;
+}
+```
 
 ## Final preference
 
@@ -154,7 +227,7 @@ This keeps CAP-05 clean and prevents a useful future monitoring function from qu
 
 - It does not admit Governed Evidence Watch as a capability, assign it CAP-35 or any CAP number, or add it to the Launch Release.
 - It does not update the Capability Architecture and Implementation Registry or the CAP-34 fidelity manifest — checklist points 8–10 remain outstanding.
-- It does not specify a complete implementation contract: `GovernedEvidenceWatchDefinition` and `GovernedEvidenceWatchTrigger` are named but not yet defined (see Gap section above).
+- It does not itself admit, register or deploy `GovernedEvidenceWatchDefinition`, `GovernedEvidenceWatchTrigger`, `GovernedEvidenceWatchNotice` or `GovernedEvidenceWatchFailure` — the interfaces are now fully specified (see "Full candidate interface specification" above), but specifying a contract is not implementing, storing or executing it.
 - It does not implement, deploy or migrate anything — no code, Supabase or other provider change is made or authorised.
 - It does not touch PR #16 or its boundary.
 - It does not alter commissioning status, satisfy Gate D, close WP05, or grant any production or commissioning authority.
