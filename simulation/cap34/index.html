@@ -1,12 +1,13 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow,noarchive"><title>AAB Controlled Simulation</title>
-<!-- Shared AAB theme/shell, loaded first, in the same order as aab-local/app/_rebuild/workbench.html: theme, shell (css), chrome, features, shell (js). This is preparation for the deferred UI-wiring pass; CAP-34's own styles/scripts below still load after these. -->
+<!-- Shared AAB theme/shell, loaded first, in the same order as aab-local/app/_rebuild/workbench.html: theme, shell (css), chrome, features, shell (js). CAP-34's own base styles, page-specific cap34-live-capabilities.v1.css layer, and scripts load after these. -->
 <link rel="stylesheet" href="./theme/aab-theme.v22.css">
 <link rel="stylesheet" href="./theme/aab-shell.v22.css?v=22">
 <script src="./theme/aab-chrome.v22.js" defer></script>
 <script src="./theme/aab-features.v22.js" defer></script>
 <script src="./theme/aab-shell.v22.js?v=22" defer></script>
-<style>:root{font-family:Inter,system-ui,sans-serif;color:#17211c;background:#f4f6f4}body{margin:0}.banner{position:sticky;top:0;z-index:5;background:#fff3cd;border-bottom:2px solid #7a5a00;padding:14px 20px;font-weight:700}main{max-width:1080px;margin:auto;padding:28px}.card{background:#fff;border:1px solid #d9dfdb;border-radius:14px;padding:20px;margin:16px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}button,select{font:inherit;padding:10px 12px}.state{padding:10px;border-left:4px solid #555;background:#f7f7f7;margin:8px 0}.preview{border-color:#7a5a00;background:#fffaf0}.label{display:inline-block;background:#7a5a00;color:white;padding:5px 8px;border-radius:5px;font-weight:700}small{color:#52605a}.danger{font-weight:700}.mono{font-family:ui-monospace,monospace}.ack{display:flex;gap:10px;align-items:flex-start;margin:14px 0}.ack input{margin-top:4px}</style></head>
+<style>:root{font-family:Inter,system-ui,sans-serif;color:#17211c;background:#f4f6f4}body{margin:0}.banner{position:sticky;top:0;z-index:5;background:#fff3cd;border-bottom:2px solid #7a5a00;padding:14px 20px;font-weight:700}main{max-width:1080px;margin:auto;padding:28px}.card{background:#fff;border:1px solid #d9dfdb;border-radius:14px;padding:20px;margin:16px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}button,select{font:inherit;padding:10px 12px}.state{padding:10px;border-left:4px solid #555;background:#f7f7f7;margin:8px 0}.preview{border-color:#7a5a00;background:#fffaf0}.label{display:inline-block;background:#7a5a00;color:white;padding:5px 8px;border-radius:5px;font-weight:700}small{color:#52605a}.danger{font-weight:700}.mono{font-family:ui-monospace,monospace}.ack{display:flex;gap:10px;align-items:flex-start;margin:14px 0}.ack input{margin-top:4px}</style>
+<link rel="stylesheet" href="./theme/cap34-live-capabilities.v1.css?v=1"></head>
 <body><div class="banner">CONTROLLED AAB SIMULATION — SYNTHETIC/REFERENCE DATA ONLY. This does not represent AAB commissioning status or prove readiness for production use of real scientific data. No production, government, scientific, regulatory or commissioning authority.</div><main>
 <h1>AAB Governed Simulation</h1><p>Experience selected AAB behaviours without supplying sovereign country scientific data. This build deliberately includes contradiction and refusal states, not only a happy path.</p>
 <section class="card"><h2>1. Simulated role</h2><select id="role"></select><div id="roleState" class="state"></div></section>
@@ -14,12 +15,78 @@
 <section class="card preview"><span class="label">CONCEPT PREVIEW — NOT AN IMPLEMENTED CAPABILITY</span><h2>3. Roadmap Preview</h2><p>These pathways describe intended governed behaviour. They do not claim that the underlying capability is implemented or ready.</p><div class="ack"><input id="ack" type="checkbox"><label for="ack">I understand that Roadmap Preview is planned capability and is not evidence of implementation or readiness.</label></div><div class="grid" id="previewButtons"></div><div id="previewOutput"></div></section>
 <section class="card"><h2>4. Capability-state explanation</h2><div id="capability"></div></section>
 <section class="card"><h2>5. Clean reset</h2><p>Reset removes session state and acknowledgement. Nothing in this simulation can be promoted into production.</p><button id="reset">Reset simulation</button><div id="resetState" class="state"></div></section>
+<section class="card"><h2>6. Live capabilities (implemented)</h2><p>These five capabilities are real, implemented evaluators — not roadmap previews. Each computes its outcome from the evidence you supply below; edit the JSON and evaluate to see the behaviour change. No production, scientific or regulatory authority is created by any output on this page.</p>
+<div class="cap34-caps">
+<div class="cap34-cap-block" data-cap="CAP-01"><h3>CAP-01 — Country Intelligence &amp; Discovery</h3><p class="cap34-desc">Classifies supplied evidence records as supporting, conflicting or insufficient and decides whether they form a governed investigation candidate.</p><label class="cap34-label" for="cap01Input">Evidence records (JSON array)</label><textarea id="cap01Input" class="cap34-textarea" rows="7">[
+  {"id":"EVID-01","state":"ELIGIBLE","source":"Synthetic field trial A","finding":"Positive early growth response observed under synthetic conditions."},
+  {"id":"EVID-02","state":"ELIGIBLE","source":"Synthetic field trial B","finding":"Corroborating positive growth response observed."}
+]</textarea><div class="cap34-actions"><button id="cap01Run" class="cap34-btn">Evaluate CAP-01</button></div><pre id="cap01Output" class="cap34-result mono"></pre></div>
+<div class="cap34-cap-block" data-cap="CAP-05"><h3>CAP-05 — Governed Scientific Reasoning</h3><p class="cap34-desc">Groups eligible evidence by subject and only flags a contradiction when two records about the same subject genuinely disagree; also names missing required evidence categories explicitly.</p><label class="cap34-label" for="cap05Input">Evidence records (JSON array)</label><textarea id="cap05Input" class="cap34-textarea" rows="7">[
+  {"id":"EVID-01","state":"ELIGIBLE","source":"Synthetic field trial A","finding":"Positive early growth response observed."},
+  {"id":"EVID-02","state":"ELIGIBLE","source":"Synthetic field trial B","finding":"Corroborating positive growth response observed."}
+]</textarea><div class="cap34-actions"><button id="cap05Run" class="cap34-btn">Evaluate CAP-05</button></div><pre id="cap05Output" class="cap34-result mono"></pre></div>
+<div class="cap34-cap-block" data-cap="CAP-06"><h3>CAP-06 — Ingredient Intelligence</h3><p class="cap34-desc">Scores one ingredient candidate's evidence into a status plus a continuous readinessScore in [0,1], so CAP-07 has something real to rank.</p><label class="cap34-label" for="cap06Input">Candidate (JSON object)</label><textarea id="cap06Input" class="cap34-textarea" rows="7">{
+  "materialId": "MAT-001",
+  "evidenceRecords": [
+    {"id":"EVID-01","state":"ELIGIBLE","finding":"Positive corroborating result."},
+    {"id":"EVID-02","state":"ELIGIBLE","finding":"Second independent positive result."}
+  ]
+}</textarea><div class="cap34-actions"><button id="cap06Run" class="cap34-btn">Evaluate CAP-06</button></div><pre id="cap06Output" class="cap34-result mono"></pre></div>
+<div class="cap34-cap-block" data-cap="CAP-07"><h3>CAP-07 — Formulation Intelligence</h3><p class="cap34-desc">Consumes CAP-06-shaped candidate results (not raw evidence) and ranks/combines them against an objective's constraints. Use the button below to feed the CAP-06 result above in directly.</p><label class="cap34-label" for="cap07Input">Objective and candidates (JSON object)</label><textarea id="cap07Input" class="cap34-textarea" rows="9">{
+  "objective": {"name":"Sample formulation objective","minReadinessScore":0.5,"minQualifyingCandidates":1,"maxCandidates":3},
+  "candidates": [
+    {"materialId":"MAT-001","status":"INGREDIENT_PROGRESSION_CANDIDATE","readinessScore":1},
+    {"materialId":"MAT-002","status":"INGREDIENT_BLOCKED_EVIDENCE_REQUIRED","readinessScore":0}
+  ]
+}</textarea><div class="cap34-actions"><button id="cap07Run" class="cap34-btn">Evaluate CAP-07</button><button id="cap07UseCap06" class="cap34-btn secondary" type="button">Add last CAP-06 result to candidates</button></div><pre id="cap07Output" class="cap34-result mono"></pre></div>
+<div class="cap34-cap-block" data-cap="CAP-09"><h3>CAP-09 — Governed Scientific Learning</h3><p class="cap34-desc">Refuses to promote a candidate finding to approved learning unless the replication requirement is met AND no eligible trial contradicts the others; refusal reasons are named explicitly.</p><label class="cap34-label" for="cap09Input">Candidate learning (JSON object)</label><textarea id="cap09Input" class="cap34-textarea" rows="7">{
+  "findingId": "FIND-001",
+  "trials": [
+    {"id":"TRIAL-01","state":"ELIGIBLE","finding":"Positive supporting result."},
+    {"id":"TRIAL-02","state":"ELIGIBLE","finding":"Second independent positive result."}
+  ]
+}</textarea><div class="cap34-actions"><button id="cap09Run" class="cap34-btn">Evaluate CAP-09</button></div><pre id="cap09Output" class="cap34-result mono"></pre></div>
+</div>
+</section>
 <section class="card"><h2>Validation</h2><pre id="validation" class="mono"></pre></section></main>
-<script src="./cap34-simulation.js"></script><script>
+<script src="./cap34-simulation.js"></script>
+<script src="./live-capabilities/cap01-discovery.js"></script>
+<script src="./live-capabilities/cap05-reasoning.js"></script>
+<script src="./live-capabilities/cap06-ingredient-intelligence.js"></script>
+<script src="./live-capabilities/cap07-formulation-intelligence.js"></script>
+<script src="./live-capabilities/cap09-governed-learning.js"></script>
+<script>
 const sim=window.AAB_CAP34_SIMULATION,role=document.getElementById("role");
 Object.entries(sim.roles).forEach(([k,v])=>{const o=document.createElement("option");o.value=k;o.textContent=v.label;role.appendChild(o)});
 function esc(v){const d=document.createElement("div");d.textContent=String(v);return d.innerHTML}function renderRole(){const s=sim.capabilityState(role.value);document.getElementById("roleState").textContent=s.explanation;document.getElementById("capability").innerHTML=Object.entries(s).filter(([k])=>k!=="explanation").map(([k,v])=>'<div class="state"><strong>'+esc(k)+':</strong> '+esc(v)+'</div>').join("")}role.addEventListener("change",renderRole);renderRole();
 Object.entries(sim.scenarios).forEach(([k,v])=>{const b=document.createElement("button");b.textContent=v.title;b.onclick=()=>{const s=sim.runScenario(k).scenario;document.getElementById("scenarioOutput").innerHTML='<div class="card"><h3>'+esc(s.title)+'</h3><p><strong>Outcome:</strong> '+esc(s.outcome)+'</p>'+s.evidence.map(e=>'<div class="state"><strong>'+esc(e.source)+'</strong><br>'+esc(e.finding)+'<br><small>'+esc(e.state)+' · '+esc(s.dataClass)+'</small></div>').join("")+'<p class="danger">'+esc(s.explanation)+'</p></div>'};document.getElementById("scenarioButtons").appendChild(b)});
 Object.entries(sim.roadmapPreviews).forEach(([k,v])=>{const b=document.createElement("button");b.textContent=v.title;b.onclick=()=>{const r=sim.enterRoadmapPreview(k,{accepted:document.getElementById("ack").checked,wordingVersion:sim.ROADMAP_ACKNOWLEDGEMENT_VERSION}),out=document.getElementById("previewOutput");if(!r.preview){out.innerHTML='<div class="state danger">'+esc(r.status)+'</div>';return}const p=r.preview;out.innerHTML='<div class="card preview"><span class="label">'+esc(p.fidelity)+'</span><h3>'+esc(p.title)+'</h3><p>'+esc(p.proposition)+'</p><ol>'+p.previewSteps.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ol><h4>Limitations</h4><ul>'+p.limitations.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ul><p class="danger">'+esc(p.nonImplications.join(" "))+'</p></div>'};document.getElementById("previewButtons").appendChild(b)});
 document.getElementById("reset").onclick=()=>{document.getElementById("scenarioOutput").innerHTML="";document.getElementById("previewOutput").innerHTML="";document.getElementById("ack").checked=false;role.value="COUNTRY_HEAD";renderRole();document.getElementById("resetState").textContent=sim.reset().status};document.getElementById("validation").textContent=JSON.stringify(sim.runValidation(),null,2);
+
+let lastCap06Result=null;
+function wireLiveCapability(capabilityId,inputId,outputId,runId,parsePayload){
+  const input=document.getElementById(inputId),output=document.getElementById(outputId),run=document.getElementById(runId);
+  run.addEventListener("click",()=>{
+    let payload;
+    try{payload=JSON.parse(input.value)}catch(e){output.textContent="INVALID_JSON_INPUT: "+e.message;return}
+    if(parsePayload){try{payload=parsePayload(payload)}catch(e){output.textContent="INVALID_INPUT_SHAPE: "+e.message;return}}
+    const result=sim.runLiveCapability(capabilityId,payload);
+    if(capabilityId==="CAP-06")lastCap06Result=result;
+    output.textContent=JSON.stringify(result,null,2)
+  })
+}
+wireLiveCapability("CAP-01","cap01Input","cap01Output","cap01Run");
+wireLiveCapability("CAP-05","cap05Input","cap05Output","cap05Run");
+wireLiveCapability("CAP-06","cap06Input","cap06Output","cap06Run");
+wireLiveCapability("CAP-07","cap07Input","cap07Output","cap07Run");
+wireLiveCapability("CAP-09","cap09Input","cap09Output","cap09Run");
+document.getElementById("cap07UseCap06").addEventListener("click",()=>{
+  if(!lastCap06Result){document.getElementById("cap07Output").textContent="Evaluate CAP-06 first — no result available to add.";return}
+  const cap07Input=document.getElementById("cap07Input");
+  let payload;
+  try{payload=JSON.parse(cap07Input.value)}catch(e){document.getElementById("cap07Output").textContent="INVALID_JSON_INPUT: "+e.message;return}
+  if(!Array.isArray(payload.candidates))payload.candidates=[];
+  payload.candidates.push({materialId:lastCap06Result.materialId,status:lastCap06Result.status,readinessScore:lastCap06Result.readinessScore});
+  cap07Input.value=JSON.stringify(payload,null,2)
+});
 </script></body></html>

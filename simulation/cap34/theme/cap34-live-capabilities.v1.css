@@ -1,0 +1,89 @@
+/* CAP-34 page-specific layer. Loaded after aab-theme.v22.css and aab-shell.v22.css,
+   following the same shared-base-plus-page-layer pattern as
+   docs/style-kit/AAB-current-page-style-kit/aab-local/app/_rebuild/workbench.html. */
+
+.cap34-caps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.cap34-cap-block {
+  border: 1px solid #d9dfdb;
+  border-radius: 12px;
+  padding: 16px;
+  background: #fbfcfb;
+}
+
+.cap34-cap-block h3 {
+  margin: 0 0 6px;
+  font-size: 15px;
+}
+
+.cap34-desc {
+  margin: 0 0 10px;
+  color: #52605a;
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+.cap34-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #52605a;
+  margin: 10px 0 4px;
+}
+
+.cap34-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #c7cfc9;
+  border-radius: 8px;
+  padding: 8px;
+  font-family: ui-monospace, monospace;
+  font-size: 12px;
+  resize: vertical;
+}
+
+.cap34-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 10px 0;
+}
+
+.cap34-btn {
+  appearance: none;
+  border: 1px solid #7a5a00;
+  background: #fff3cd;
+  color: #17211c;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-weight: 700;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+
+.cap34-btn:hover {
+  filter: brightness(0.97);
+}
+
+.cap34-btn.secondary {
+  background: #fff;
+  border-color: #c7cfc9;
+}
+
+.cap34-result {
+  max-height: 260px;
+  overflow: auto;
+  border-left: 4px solid #555;
+  background: #f7f7f7;
+  padding: 10px;
+  margin: 6px 0 0;
+  font-size: 11.5px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
