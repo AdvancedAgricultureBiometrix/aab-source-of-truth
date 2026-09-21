@@ -13,6 +13,7 @@
    * hand-written CAP-07 fixtures.
    */
 
+  const CAP07_IMPLEMENTATION_VERSION = "1.0.0";
   const CAPABILITY_ID = "CAP-07";
   const CAPABILITY_NAME = "Formulation Intelligence";
   const CLASSIFICATION = "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY";
@@ -91,6 +92,7 @@
     capabilityId: CAPABILITY_ID,
     capabilityName: CAPABILITY_NAME,
     classification: CLASSIFICATION,
+    implementationVersion: CAP07_IMPLEMENTATION_VERSION,
     evaluateFormulation
   });
 

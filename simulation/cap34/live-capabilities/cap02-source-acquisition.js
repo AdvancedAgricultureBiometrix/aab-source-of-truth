@@ -16,6 +16,7 @@
    * See cap02-source-acquisition.behavioural-test.js.
    */
 
+  const CAP02_IMPLEMENTATION_VERSION = "0.4.0";
   const CAPABILITY_ID = "CAP-02";
   const CAPABILITY_NAME = "Governed Scientific Data Acquisition & Interoperability";
   const CLASSIFICATION = "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY";
@@ -270,6 +271,7 @@
     capabilityId: CAPABILITY_ID,
     capabilityName: CAPABILITY_NAME,
     classification: CLASSIFICATION,
+    implementationVersion: CAP02_IMPLEMENTATION_VERSION,
     requiredSourceFields: REQUIRED_SOURCE_FIELDS,
     defaultReferenceVocabulary: DEFAULT_REFERENCE_VOCABULARY,
     sha256Hex,

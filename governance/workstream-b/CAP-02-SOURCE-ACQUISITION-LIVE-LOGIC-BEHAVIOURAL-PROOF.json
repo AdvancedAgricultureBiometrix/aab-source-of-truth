@@ -1,11 +1,11 @@
 {
   "proofId": "AAB-CAP34-CAP02-SOURCE-ACQUISITION-LIVE-LOGIC-BEHAVIOURAL-PROOF",
   "proofVersion": "1.0.0",
-  "generatedAtUtc": "2026-09-20T22:09:19.439Z",
+  "generatedAtUtc": "2026-09-21T05:57:26.872Z",
   "result": "PASS_CAP02_SOURCE_ACQUISITION_LIVE_LOGIC_BEHAVIOURAL_PROOF",
   "scope": "Proves stages 1-2 only of Historical Scientific Memory Recovery: a source cannot be registered without complete, named attribution, and original material cannot be preserved without a registered source, and its content hash is genuinely content-derived and matches a trusted independent SHA-256 implementation. It does not prove stage 3 extraction/classification (see CAP-04), format/unit interoperability mapping, legacy-system adapters, corpus-scale acquisition, scientific correctness, production readiness or commissioning.",
-  "fixtureCount": 7,
-  "passedFixtureCount": 7,
+  "fixtureCount": 9,
+  "passedFixtureCount": 9,
   "fixtures": [
     {
       "fixtureId": "CAP02-D0-DISPATCHER-WIRED",
@@ -89,6 +89,44 @@
         ],
         "explanation": "Source registration refused: an uploaded record must never become unattributed AAB data. Missing required attribution field(s): institution, authorityToProvide.",
         "sourceRecord": null
+      }
+    },
+    {
+      "fixtureId": "CAP02-A1B-SINGLE-FIELD-BROKEN-REFUSED",
+      "description": "Breaking exactly one required field (authorityToProvide) refuses registration and names only that field",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-02",
+        "status": "SOURCE_REGISTRATION_REFUSED",
+        "refusalReasons": [
+          "MISSING_FIELD:authorityToProvide"
+        ],
+        "explanation": "Source registration refused: an uploaded record must never become unattributed AAB data. Missing required attribution field(s): authorityToProvide.",
+        "sourceRecord": null
+      }
+    },
+    {
+      "fixtureId": "CAP02-A1C-SAME-FIELD-RESTORED-ON-SAME-OBJECT-REGISTERS",
+      "description": "Restoring the SAME field on the SAME metadata object -- no other field touched -- flips registration from refused to registered",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-02",
+        "status": "SOURCE_REGISTERED",
+        "refusalReasons": [],
+        "explanation": "Source registered with complete attribution. No material has been imported, extracted or admitted yet.",
+        "sourceRecord": {
+          "sourceId": "SRC-Synthetic Country-Synthetic Institute-Synthetic Trial Archive",
+          "country": "Synthetic Country",
+          "institution": "Synthetic Institute",
+          "department": "Synthetic Research Unit",
+          "originalSystem": "Synthetic Legacy System",
+          "datasetName": "Synthetic Trial Archive",
+          "responsibleOwner": "Synthetic Owner",
+          "dateRangeStart": "1998-01-01",
+          "dateRangeEnd": "2015-12-31",
+          "authorityToProvide": "Synthetic Institutional Authorisation",
+          "accessRestrictions": "Institution-only"
+        }
       }
     },
     {

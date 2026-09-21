@@ -11,6 +11,7 @@
    * held to.
    */
 
+  const CAP01_IMPLEMENTATION_VERSION = "1.0.0";
   const CAPABILITY_ID = "CAP-01";
   const CAPABILITY_NAME = "Country Intelligence & Discovery";
   const CLASSIFICATION = "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY";
@@ -86,6 +87,7 @@
     capabilityId: CAPABILITY_ID,
     capabilityName: CAPABILITY_NAME,
     classification: CLASSIFICATION,
+    implementationVersion: CAP01_IMPLEMENTATION_VERSION,
     evaluateDiscovery
   });
 

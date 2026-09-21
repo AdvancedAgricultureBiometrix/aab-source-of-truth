@@ -115,6 +115,23 @@ check(
   replicatedResult
 );
 
+// Content-driven proof: hold trial COUNT constant at 2 (same as
+// replicatedTrial above, which promotes) and change only the content signal
+// -- inject a contradicting result into T2 without adding or removing a
+// trial -- proving the outcome responds to content, not merely to count.
+const contentInjectedSameCount = copy(replicatedTrial);
+contentInjectedSameCount[1].finding = "No response observed, contradicting the first synthetic trial.";
+const contentInjectedResult = cap09.evaluatePromotion(candidateLearningFrom("F-CONTENT-INJECTED", contentInjectedSameCount));
+check(
+  "CAP09-B1B-CONTENT-DRIVEN-AT-CONSTANT-COUNT",
+  "Injecting a contradicting finding into T2 (trial count unchanged at 2, same as the promoting replicatedTrial baseline) flips outcome back to PROMOTION_REFUSED and names CONTRADICTING_EVIDENCE_PRESENT -- proving the evaluator reads content, not just how many trials were supplied",
+  contentInjectedResult.outcome === "PROMOTION_REFUSED"
+    && contentInjectedResult.refusalReasons.includes("CONTRADICTING_EVIDENCE_PRESENT")
+    && contentInjectedResult.computedFacts.eligibleCount === replicatedResult.computedFacts.eligibleCount
+    && contentInjectedResult.outcome !== replicatedResult.outcome,
+  contentInjectedResult
+);
+
 // --- Part C: replication ALONE is not sufficient -- a contradicting third
 // trial must refuse even though the replication requirement is already
 // met. This is the "does not learn merely because something happened"

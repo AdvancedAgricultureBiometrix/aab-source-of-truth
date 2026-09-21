@@ -22,6 +22,39 @@ vm.createContext(sandbox);
 vm.runInContext(validatorSource, sandbox, { filename: path.basename(VALIDATOR_PATH) });
 const validator = sandbox.window.AAB_CAP34_FIDELITY_MANIFEST;
 
+// Load every live capability implementation into the SAME sandbox as the
+// validator (not cap34-simulation.js, so registerLiveCapability's guard is
+// simply skipped) purely to read each one's own self-declared
+// CAP0X_IMPLEMENTATION_VERSION constant, exposed as .implementationVersion
+// on its window export -- this is the real, current implementation version,
+// not a hand-typed stand-in.
+const LIVE_CAPABILITIES_DIR = path.join(ROOT, "live-capabilities");
+const IMPLEMENTATION_FILES = {
+  "CAP-01": "cap01-discovery.js",
+  "CAP-02": "cap02-source-acquisition.js",
+  "CAP-04": "cap04-scientific-memory.js",
+  "CAP-05": "cap05-reasoning.js",
+  "CAP-06": "cap06-ingredient-intelligence.js",
+  "CAP-07": "cap07-formulation-intelligence.js",
+  "CAP-09": "cap09-governed-learning.js"
+};
+const EXPORT_NAMES = {
+  "CAP-01": "AAB_CAP34_LIVE_CAP01_DISCOVERY",
+  "CAP-02": "AAB_CAP34_LIVE_CAP02_SOURCE_ACQUISITION",
+  "CAP-04": "AAB_CAP34_LIVE_CAP04_SCIENTIFIC_MEMORY",
+  "CAP-05": "AAB_CAP34_LIVE_CAP05_REASONING",
+  "CAP-06": "AAB_CAP34_LIVE_CAP06_INGREDIENT_INTELLIGENCE",
+  "CAP-07": "AAB_CAP34_LIVE_CAP07_FORMULATION_INTELLIGENCE",
+  "CAP-09": "AAB_CAP34_LIVE_CAP09_GOVERNED_LEARNING"
+};
+for (const file of Object.values(IMPLEMENTATION_FILES)) {
+  vm.runInContext(fs.readFileSync(path.join(LIVE_CAPABILITIES_DIR, file), "utf8"), sandbox, { filename: file });
+}
+const honestImplementationVersions = {};
+for (const [capabilityId, exportName] of Object.entries(EXPORT_NAMES)) {
+  honestImplementationVersions[capabilityId] = sandbox.window[exportName].implementationVersion;
+}
+
 function copy(value) {
   return JSON.parse(JSON.stringify(value));
 }
@@ -197,13 +230,41 @@ const fixtures = [
       candidate.rosters[0].rosterDigest = candidateRoster.rosterDigest;
       return candidate;
     }
+  },
+  {
+    // Honest case: the manifest's own current representationVersion values
+    // for the seven live capabilities, checked against those SAME seven
+    // implementation files' own self-declared version constants, must match
+    // -- proving the check passes on a genuine match, not vacuously always
+    // failing closed.
+    fixtureId: "IMPLEMENTATION_VERSION_HONEST_MATCH",
+    expectedStatus: "PASS_IMPLEMENTATION_VERSIONS_MATCH",
+    expectedErrors: [],
+    validate: () => validator.validateImplementationVersions(manifest.entries, honestImplementationVersions)
+  },
+  {
+    // A manifest whose declared representationVersion for CAP-01 no longer
+    // matches CAP-01's real implementation file must fail closed, naming
+    // the specific mismatched identity and both versions involved -- the
+    // implementation file itself is untouched; only the comparison map
+    // passed to the validator is perturbed, exactly as MISSING_REPRESENTATION_VERSION
+    // above perturbs only the manifest, not the roster.
+    fixtureId: "IMPLEMENTATION_VERSION_MISMATCH_DETECTED",
+    expectedStatus: "FAIL_CLOSED_IMPLEMENTATION_VERSION_MISMATCH",
+    expectedErrors: ["IMPLEMENTATION_VERSION_MISMATCH:CAP-01:ROOT"],
+    validate: () => {
+      const perturbedVersions = Object.assign({}, honestImplementationVersions, { "CAP-01": "9.9.9-DRIFTED" });
+      return validator.validateImplementationVersions(manifest.entries, perturbedVersions);
+    }
   }
 ];
 
 const results = fixtures.map((fixture) => {
   const candidateRoster = fixture.buildRoster ? fixture.buildRoster() : copy(roster);
   const candidateRegistry = fixture.buildRegistry ? fixture.buildRegistry(candidateRoster) : copy(rosterRegistry);
-  const actual = validator.validateManifest(fixture.build(), candidateRoster, candidateRegistry);
+  const actual = fixture.validate
+    ? fixture.validate()
+    : validator.validateManifest(fixture.build(), candidateRoster, candidateRegistry);
   const statusMatched = actual.status === fixture.expectedStatus;
   const errorsMatched = fixture.expectedErrors.every((error) => actual.errors.includes(error));
   return {

@@ -1,11 +1,11 @@
 {
   "proofId": "AAB-CAP34-CAP05-REASONING-LIVE-LOGIC-BEHAVIOURAL-PROOF",
   "proofVersion": "1.0.0",
-  "generatedAtUtc": "2026-09-20T22:09:19.687Z",
+  "generatedAtUtc": "2026-09-21T05:57:27.080Z",
   "result": "PASS_CAP05_REASONING_LIVE_LOGIC_BEHAVIOURAL_PROOF",
   "scope": "Proves that CAP-05's live-simulation evaluator detects contradiction by comparing pairs of evidence sharing a derived subject (not per-record tallying), and identifies knowledge gaps by naming the specific missing required category (not a bare count), in both directions of perturbation. It does not prove scientific correctness, production readiness, sovereignty or commissioning.",
-  "fixtureCount": 10,
-  "passedFixtureCount": 10,
+  "fixtureCount": 11,
+  "passedFixtureCount": 11,
   "fixtures": [
     {
       "fixtureId": "CAP05-D0-DISPATCHER-WIRED",
@@ -143,6 +143,25 @@
           "contradictingSubjects": [
             "trial"
           ],
+          "minimumEligibleEvidence": 2
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP05-B2B-DIFFERENT-SUBJECTS-OPPOSING-STANCES-NOT-A-CONTRADICTION",
+      "description": "Two records on genuinely different derived subjects ('trial' positive, 'result' negative) produce ZERO contradictions even though an opposing stance is present somewhere in the set -- proving comparison is genuinely scoped within a shared subject, not a flat tally of stances across the whole evidence array",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-05",
+        "capabilityName": "Governed Scientific Reasoning",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "outcome": "REASONING_SUPPORTS_PROGRESSION",
+        "explanation": "All required categories are satisfied and no same-subject evidence disagrees. Reasoning supports a governed investigation candidate. It does not establish ingredient status, formulation efficacy, safety, regulatory approval or production authority.",
+        "computedFacts": {
+          "eligibleCount": 2,
+          "missingCategories": [],
+          "contradictingSubjects": [],
           "minimumEligibleEvidence": 2
         }
       }

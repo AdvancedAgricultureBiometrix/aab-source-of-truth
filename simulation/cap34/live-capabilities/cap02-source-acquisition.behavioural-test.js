@@ -88,6 +88,34 @@ check(
   missingTwoFields
 );
 
+// Bidirectionality: break exactly ONE required field, confirm refusal names
+// only that field, then fix that exact field on the SAME metadata object
+// (nothing else touched) and confirm it now registers -- A0/A1 above pair a
+// complete object against a DIFFERENT, separately-broken one; this proves
+// the same object recovers once its one defect is corrected.
+const singleFieldBroken = completeSourceMetadata({ authorityToProvide: undefined });
+const singleFieldBrokenResult = cap02.registerSource(singleFieldBroken);
+check(
+  "CAP02-A1B-SINGLE-FIELD-BROKEN-REFUSED",
+  "Breaking exactly one required field (authorityToProvide) refuses registration and names only that field",
+  singleFieldBrokenResult.status === "SOURCE_REGISTRATION_REFUSED"
+    && singleFieldBrokenResult.refusalReasons.length === 1
+    && singleFieldBrokenResult.refusalReasons[0] === "MISSING_FIELD:authorityToProvide"
+    && singleFieldBrokenResult.sourceRecord === null,
+  singleFieldBrokenResult
+);
+
+singleFieldBroken.authorityToProvide = "Synthetic Institutional Authorisation"; // fix the SAME object, nothing else touched
+const singleFieldFixedResult = cap02.registerSource(singleFieldBroken);
+check(
+  "CAP02-A1C-SAME-FIELD-RESTORED-ON-SAME-OBJECT-REGISTERS",
+  "Restoring the SAME field on the SAME metadata object -- no other field touched -- flips registration from refused to registered",
+  singleFieldFixedResult.status === "SOURCE_REGISTERED"
+    && singleFieldFixedResult.refusalReasons.length === 0
+    && singleFieldFixedResult.status !== singleFieldBrokenResult.status,
+  singleFieldFixedResult
+);
+
 // --- Part B: stage 2, preserve original ---
 const preservationWithoutRegistration = cap02.preserveOriginal(missingTwoFields, { originalContent: "synthetic content" });
 check(

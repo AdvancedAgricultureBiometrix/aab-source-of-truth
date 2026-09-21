@@ -24,6 +24,7 @@
    * regardless of how clean the extraction logic looks.
    */
 
+  const CAP04_IMPLEMENTATION_VERSION = "0.6.0";
   const CAPABILITY_ID = "CAP-04";
   const CAPABILITY_NAME = "Governed Scientific Memory";
   const CLASSIFICATION = "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY";
@@ -333,6 +334,7 @@
     capabilityId: CAPABILITY_ID,
     capabilityName: CAPABILITY_NAME,
     classification: CLASSIFICATION,
+    implementationVersion: CAP04_IMPLEMENTATION_VERSION,
     authorisedReviewerRoles: AUTHORISED_REVIEWER_ROLES,
     extractAndClassify,
     admitToScientificMemory,

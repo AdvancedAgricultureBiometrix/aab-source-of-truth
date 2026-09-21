@@ -1,7 +1,7 @@
 {
   "proofId": "AAB-CAP34-CAP04-SCIENTIFIC-MEMORY-ADMISSION-LIVE-LOGIC-BEHAVIOURAL-PROOF",
   "proofVersion": "1.1.0",
-  "generatedAtUtc": "2026-09-20T22:09:19.568Z",
+  "generatedAtUtc": "2026-09-21T05:57:27.043Z",
   "result": "PASS_CAP04_SCIENTIFIC_MEMORY_ADMISSION_LIVE_LOGIC_BEHAVIOURAL_PROOF",
   "scope": "Proves stage 7 (human review and governed admission) of Historical Scientific Memory Recovery: a reviewer's decision is necessary but never sufficient on its own -- an authorised, well-formed ADMIT is still refused for a quarantined record or an unresolved conflict, admits once a conflict is genuinely documented as resolved, requires real reviewer authority and identity, requires a documented reason even for rejection, distinguishes REJECTED_NOT_ADMITTED from EXTRACTED_UNREVIEWED, and forbids re-reviewing an already-reviewed record. It also re-proves CAP-04's structural eligibility boundary using a GENUINE admission decision, not the hand-authored positive control used before stage 7 existed. Finally, it proves the optional authorisedReviewerRoles parameter is genuinely consulted rather than accepted and ignored: a custom role list can both revoke a default-authorised role and grant a role the default list refuses, with a sanity check confirming the granted role was not already authorised -- the same standard CAP-02's reference-vocabulary parameter was held to, and the concrete evidence for cross-domain portability (e.g. Water Science or Aquaculture) of stage 7. It does not prove stage 5 detection at scale, real institutional review workflows, scientific correctness, production readiness or commissioning.",
   "fixtureCount": 14,
