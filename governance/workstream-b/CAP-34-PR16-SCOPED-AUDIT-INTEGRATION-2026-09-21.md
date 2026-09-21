@@ -71,7 +71,7 @@ Restoring `CAP01_IMPLEMENTATION_VERSION` to `"1.0.0"` returned the end-to-end ga
 
 ## Boundary
 
-- Integration commit: `0150428`.
+- Integration commit / resulting PR #16 head: `05d6c78`.
 - Resulting PR #16 head after the Step 7 fast-forward push: see the report accompanying this document.
 - No CAP-02 or CAP-04 implementation, test, or manifest-entry file was created, modified or referenced anywhere in this integration.
 - No `.php`, Supabase, migration, `aab-local/`, Workstream A, WP05 or production path was touched — `git diff 94dfea6 HEAD --name-only` shows only `governance/workstream-b/` and `simulation/cap34/` paths.
