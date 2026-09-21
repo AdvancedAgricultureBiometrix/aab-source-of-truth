@@ -11,6 +11,7 @@
    * See cap06-ingredient-intelligence.behavioural-test.js.
    */
 
+  const CAP06_IMPLEMENTATION_VERSION = "1.0.0";
   const CAPABILITY_ID = "CAP-06";
   const CAPABILITY_NAME = "Ingredient Intelligence";
   const CLASSIFICATION = "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY";
@@ -80,6 +81,7 @@
     capabilityId: CAPABILITY_ID,
     capabilityName: CAPABILITY_NAME,
     classification: CLASSIFICATION,
+    implementationVersion: CAP06_IMPLEMENTATION_VERSION,
     evaluateIngredient
   });
 

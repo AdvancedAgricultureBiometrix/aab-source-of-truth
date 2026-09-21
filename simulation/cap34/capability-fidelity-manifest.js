@@ -68,5 +68,33 @@
     if(m.capabilityCount!==requiredRosterIdentities.size)errors.push("AUTHORITATIVE_CAPABILITY_COUNT_MISMATCH");
     return Object.freeze({status:errors.length?"FAIL_CLOSED_MANIFEST_INVALID":"PASS_CAP34_FIDELITY_MANIFEST_VALID",validatorId:VALIDATOR_ID,validatorVersion:VALIDATOR_VERSION,rosterId:roster.rosterId,rosterVersion:roster.rosterVersion,rosterSnapshotId:roster.rosterSnapshotId,rosterDigest:roster.rosterDigest,manifestSnapshotId:m.manifestSnapshotId,manifestVersion:m.manifestVersion,snapshotDigest:m.snapshotDigest,capabilityCount:m.entries.length,errors});
   }
-  window.AAB_CAP34_FIDELITY_MANIFEST=Object.freeze({validatorId:VALIDATOR_ID,validatorVersion:VALIDATOR_VERSION,trustedRoster:TRUSTED_ROSTER,FIDELITY,MODE,canonicalize,computeSnapshotDigest,computeRosterDigest,validateRoster,validateManifest});
+  // Checks each manifest entry's declared representationVersion against the
+  // corresponding live implementation file's own self-declared version
+  // constant (e.g. CAP01_IMPLEMENTATION_VERSION), so an implementation
+  // edited without updating the manifest -- or a manifest edited without
+  // touching the implementation -- fails closed instead of silently
+  // drifting apart. Deliberately independent of validateManifest: archived
+  // manifest snapshots are validated by validateManifest alone (see
+  // cap34-historical-snapshot-validity.behavioural-test.js) and must never
+  // be checked against today's implementation versions, since an archived
+  // snapshot's representationVersion was correct for the implementation AT
+  // THE TIME it was archived, not for the implementation as it stands now.
+  // Only capabilities present as keys in implementationVersionsByCapabilityId
+  // are checked; a capability with no live implementation to compare
+  // against (e.g. a roadmap-preview or plan-only entry) is silently skipped,
+  // not treated as a failure.
+  function validateImplementationVersions(entries,implementationVersionsByCapabilityId){
+    const errors=[];
+    const list=Array.isArray(entries)?entries:[];
+    const map=implementationVersionsByCapabilityId||{};
+    for(const e of list){
+      if(!Object.prototype.hasOwnProperty.call(map,e.capabilityId))continue;
+      const identity=identityOf(e);
+      const implementationVersion=map[e.capabilityId];
+      if(!implementationVersion){errors.push("IMPLEMENTATION_VERSION_REQUIRED:"+identity);continue;}
+      if(implementationVersion!==e.representationVersion)errors.push("IMPLEMENTATION_VERSION_MISMATCH:"+identity);
+    }
+    return Object.freeze({status:errors.length?"FAIL_CLOSED_IMPLEMENTATION_VERSION_MISMATCH":"PASS_IMPLEMENTATION_VERSIONS_MATCH",validatorId:VALIDATOR_ID,validatorVersion:VALIDATOR_VERSION,errors});
+  }
+  window.AAB_CAP34_FIDELITY_MANIFEST=Object.freeze({validatorId:VALIDATOR_ID,validatorVersion:VALIDATOR_VERSION,trustedRoster:TRUSTED_ROSTER,FIDELITY,MODE,canonicalize,computeSnapshotDigest,computeRosterDigest,validateRoster,validateManifest,validateImplementationVersions});
 }());

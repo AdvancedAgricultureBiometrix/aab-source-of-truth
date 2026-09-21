@@ -127,6 +127,31 @@ check(
   removedResult
 );
 
+// Perturbation 1B: the exact boundary. B0 only proves 3 records pass and B1
+// only proves 1 record fails -- neither pins down whether
+// MINIMUM_ELIGIBLE_EVIDENCE is genuinely 2, since a `<=` off-by-one or a
+// hard-coded "3" would also make both of those pass. Test exactly 2 (the
+// minimum itself, must pass), then remove one more down to 1 (must fail).
+const atMinimum = baseline.slice(0, 2);
+const atMinimumResult = cap01.evaluateDiscovery(atMinimum);
+check(
+  "CAP01-B1B-AT-MINIMUM-BOUNDARY-PASSES",
+  "Exactly 2 clean, supporting, eligible records -- the minimum itself -- yields INVESTIGATION_CANDIDATE, not blocked",
+  atMinimumResult.outcome === "INVESTIGATION_CANDIDATE" && atMinimumResult.computedFacts.eligibleCount === 2,
+  atMinimumResult
+);
+
+const belowMinimum = atMinimum.slice(0, 1);
+const belowMinimumResult = cap01.evaluateDiscovery(belowMinimum);
+check(
+  "CAP01-B1C-ONE-BELOW-MINIMUM-BOUNDARY-FAILS",
+  "Removing one more record from the at-minimum set (down to 1, genuinely below the minimum of 2) flips outcome to PROGRESSION_BLOCKED_EVIDENCE_REQUIRED",
+  belowMinimumResult.outcome === "PROGRESSION_BLOCKED_EVIDENCE_REQUIRED"
+    && belowMinimumResult.computedFacts.eligibleCount === 1
+    && belowMinimumResult.outcome !== atMinimumResult.outcome,
+  belowMinimumResult
+);
+
 // Perturbation 2: contradict something that was previously consistent by
 // flipping one record's finding text to a conflicting value, nothing else
 // changed. Assertion: conflictingCount goes from 0 to >0 and outcome flips

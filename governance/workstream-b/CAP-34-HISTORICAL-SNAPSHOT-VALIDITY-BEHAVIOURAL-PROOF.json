@@ -1,7 +1,7 @@
 {
   "proofId": "AAB-CAP34-HISTORICAL-SNAPSHOT-VALIDITY-BEHAVIOURAL-PROOF",
   "proofVersion": "1.0.0",
-  "generatedAtUtc": "2026-09-20T03:35:49.448Z",
+  "generatedAtUtc": "2026-09-21T06:47:21.052Z",
   "result": "PASS_CAP34_HISTORICAL_SNAPSHOT_VALIDITY_BEHAVIOURAL_PROOF",
   "scope": "Proves that every archived manifest snapshot currently in the registry still validates structurally, that a receipt built against each one still validates against the current multi-generation registry, and that the same receipt is rejected against every other snapshot. Runs generically over whatever is in the registry, so it automatically covers new snapshots added by future capability wiring without modification. It does not prove capability implementation, scientific correctness, production readiness or commissioning.",
   "generationsChecked": 7,

@@ -12,6 +12,7 @@
    * insufficiency count. See cap05-reasoning.behavioural-test.js.
    */
 
+  const CAP05_IMPLEMENTATION_VERSION = "1.0.0";
   const CAPABILITY_ID = "CAP-05";
   const CAPABILITY_NAME = "Governed Scientific Reasoning";
   const CLASSIFICATION = "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY";
@@ -100,6 +101,7 @@
     capabilityId: CAPABILITY_ID,
     capabilityName: CAPABILITY_NAME,
     classification: CLASSIFICATION,
+    implementationVersion: CAP05_IMPLEMENTATION_VERSION,
     evaluateReasoning
   });
 

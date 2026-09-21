@@ -164,6 +164,41 @@ check(
   resolvedResult
 );
 
+// Mechanism distinctness: CAP-06 has no subject-grouping concept at all --
+// unlike CAP-05, which only flags a contradiction between two records that
+// share a derived subject key, CAP-06 flat-tallies every eligible record
+// supplied for the one candidate, regardless of subject wording. Two
+// records that would derive to the SAME CAP-05-style subject, and two
+// records that would derive to genuinely DIFFERENT ones, each pair carrying
+// one supporting and one conflicting finding, must produce the IDENTICAL
+// outcome -- proving subject identity/difference has no effect on CAP-06's
+// result, because CAP-06 has no subject-comparison gate to be affected by
+// it. A regression toward CAP-05-style subject-grouping in CAP-06 would
+// make these two results diverge.
+const sameSubjectWording = [
+  { id: "M1", source: "Synthetic assay Alpha", state: "ELIGIBLE", finding: "Consistent positive result in synthetic assay Alpha." },
+  { id: "M2", source: "Synthetic assay Alpha", state: "ELIGIBLE", finding: "No response observed, contradicting the first assay." }
+];
+const sameSubjectResult = cap06.evaluateIngredient(candidateFrom("MAT-SAME-SUBJECT-WORDING", sameSubjectWording));
+
+const differentSubjectWording = [
+  { id: "M3", source: "Synthetic assay Alpha", state: "ELIGIBLE", finding: "Consistent positive result in synthetic assay Alpha." },
+  { id: "M4", source: "Synthetic trial Beta", state: "ELIGIBLE", finding: "No response observed, contradicting the first assay." }
+];
+const differentSubjectResult = cap06.evaluateIngredient(candidateFrom("MAT-DIFFERENT-SUBJECT-WORDING", differentSubjectWording));
+
+check(
+  "CAP06-B5-FLAT-TALLY-NOT-SUBJECT-GROUPED",
+  "A same-subject-wording pair and a different-subject-wording pair, each with one supporting and one conflicting finding, produce the IDENTICAL contradiction status, conflictingCount and readinessScore -- proving CAP-06 flat-tallies all evidence about the candidate and has no CAP-05-style subject-comparison mechanism gating the result",
+  sameSubjectResult.status === "INGREDIENT_CONTRADICTION_REQUIRES_REVIEW"
+    && differentSubjectResult.status === "INGREDIENT_CONTRADICTION_REQUIRES_REVIEW"
+    && sameSubjectResult.readinessScore === differentSubjectResult.readinessScore
+    && sameSubjectResult.computedFacts.conflictingCount === 1
+    && differentSubjectResult.computedFacts.conflictingCount === 1
+    && sameSubjectResult.computedFacts.supportingCount === differentSubjectResult.computedFacts.supportingCount,
+  { sameSubjectResult, differentSubjectResult }
+);
+
 const allPassed = cases.every((c) => c.passed);
 const proof = {
   proofId: "AAB-CAP34-CAP06-INGREDIENT-INTELLIGENCE-LIVE-LOGIC-BEHAVIOURAL-PROOF",

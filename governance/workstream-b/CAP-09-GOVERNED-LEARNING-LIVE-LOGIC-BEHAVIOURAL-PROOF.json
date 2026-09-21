@@ -1,11 +1,11 @@
 {
   "proofId": "AAB-CAP34-CAP09-GOVERNED-LEARNING-LIVE-LOGIC-BEHAVIOURAL-PROOF",
   "proofVersion": "1.0.0",
-  "generatedAtUtc": "2026-09-20T03:35:49.610Z",
+  "generatedAtUtc": "2026-09-21T06:47:21.228Z",
   "result": "PASS_CAP09_GOVERNED_LEARNING_LIVE_LOGIC_BEHAVIOURAL_PROOF",
   "scope": "Proves that CAP-09 can and does explicitly refuse to promote a candidate finding to approved learning under named conditions (unreplicated single trial; contradicting evidence, including when replication alone is already satisfied), correctly names which condition(s) triggered the refusal, and correctly promotes once the missing condition is genuinely satisfied. It does not prove scientific correctness, production readiness, sovereignty or commissioning.",
-  "fixtureCount": 8,
-  "passedFixtureCount": 8,
+  "fixtureCount": 9,
+  "passedFixtureCount": 9,
   "fixtures": [
     {
       "fixtureId": "CAP09-D0-DISPATCHER-WIRED",
@@ -142,6 +142,31 @@
           "eligibleCount": 2,
           "supportingCount": 2,
           "conflictingCount": 0,
+          "insufficientCount": 0,
+          "requiredReplications": 2
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP09-B1B-CONTENT-DRIVEN-AT-CONSTANT-COUNT",
+      "description": "Injecting a contradicting finding into T2 (trial count unchanged at 2, same as the promoting replicatedTrial baseline) flips outcome back to PROMOTION_REFUSED and names CONTRADICTING_EVIDENCE_PRESENT -- proving the evaluator reads content, not just how many trials were supplied",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-09",
+        "capabilityName": "Governed Scientific Learning",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "findingId": "F-CONTENT-INJECTED",
+        "outcome": "PROMOTION_REFUSED",
+        "refusalReasons": [
+          "REPLICATION_REQUIRED",
+          "CONTRADICTING_EVIDENCE_PRESENT"
+        ],
+        "explanation": "Promotion refused: REPLICATION_REQUIRED, CONTRADICTING_EVIDENCE_PRESENT. AAB does not promote a candidate finding to approved learning merely because a trial occurred.",
+        "computedFacts": {
+          "eligibleCount": 2,
+          "supportingCount": 1,
+          "conflictingCount": 1,
           "insufficientCount": 0,
           "requiredReplications": 2
         }

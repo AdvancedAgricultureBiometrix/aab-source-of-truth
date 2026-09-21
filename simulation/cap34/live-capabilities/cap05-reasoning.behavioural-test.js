@@ -127,6 +127,30 @@ check(
   flippedSameSubjectResult
 );
 
+// Perturbation 1B: the discriminating counterpart to B2. Two records on
+// GENUINELY DIFFERENT subjects, where one carries a real opposing (negative)
+// stance -- not merely two agreeing records like B1 above, which contains no
+// disagreement anywhere and so cannot tell subject-grouped comparison apart
+// from a flat/global tally. If findContradictingSubjects ever regressed to
+// grouping everything into one bucket (the exact class of bug CAP-05's
+// design guards against), this fixture -- unlike B1 -- would catch it: a
+// positive stance on "trial" and a negative stance on "result" must NOT be
+// reported as a contradiction, because they never share a subject to
+// disagree within.
+const differentSubjectsOpposingStances = [
+  { id: "S3", source: "Synthetic trial X", state: "ELIGIBLE", finding: "Positive result under synthetic condition X." },
+  { id: "S4", source: "Synthetic result Q", state: "ELIGIBLE", finding: "No response observed under synthetic condition Q." }
+];
+const differentSubjectsResult = cap05.evaluateReasoning(differentSubjectsOpposingStances);
+check(
+  "CAP05-B2B-DIFFERENT-SUBJECTS-OPPOSING-STANCES-NOT-A-CONTRADICTION",
+  "Two records on genuinely different derived subjects ('trial' positive, 'result' negative) produce ZERO contradictions even though an opposing stance is present somewhere in the set -- proving comparison is genuinely scoped within a shared subject, not a flat tally of stances across the whole evidence array",
+  differentSubjectsResult.outcome === "REASONING_SUPPORTS_PROGRESSION"
+    && differentSubjectsResult.computedFacts.contradictingSubjects.length === 0
+    && differentSubjectsResult.computedFacts.missingCategories.length === 0,
+  differentSubjectsResult
+);
+
 // Perturbation 2: remove evidence down to 1 record.
 // Assertion: SUFFICIENT_VOLUME is named as the specific missing category.
 const removedResult = cap05.evaluateReasoning(baseline.slice(0, 1));

@@ -1,7 +1,7 @@
 {
   "proofId": "AAB-CAP34-CANONICAL-END-TO-END-BEHAVIOURAL-PROOF",
   "proofVersion": "1.1.0",
-  "generatedAtUtc": "2026-09-20T03:35:49.217Z",
+  "generatedAtUtc": "2026-09-21T06:48:01.001Z",
   "result": "PASS_CAP34_CANONICAL_END_TO_END_BEHAVIOURAL_PROOF",
   "scope": "Proves only byte-bound PR #16 contract relevance and the defined manifest/receipt validator behaviors. It does not prove capability implementation, scientific correctness, production readiness, sovereignty, commissioning, Gate D satisfaction or WP05 commencement.",
   "pr16Binding": {
@@ -40,10 +40,10 @@
   "manifestGate": {
     "result": "PASS_CAP34_MANIFEST_VALIDATOR_BEHAVIOURAL_PROOF",
     "exitCode": 0,
-    "fixtureCount": 14,
-    "passedFixtureCount": 14,
+    "fixtureCount": 16,
+    "passedFixtureCount": 16,
     "validatorVersion": "1.2.0",
-    "validatorSha256": "f5d3505fe82c5c6214f0b2b63ffb68bb67d172a78e9203f4cef516cff5d864eb"
+    "validatorSha256": "312cee7468dd6e3c940cde018e314a485df2e16731149d55d8a32c2a55f10cdb"
   },
   "receiptGate": {
     "result": "PASS_CAP34_CANONICAL_DISCLOSURE_RECEIPT_BEHAVIOURAL_PROOF",
@@ -399,8 +399,8 @@
     ]
   },
   "summary": {
-    "totalFixtureCount": 42,
-    "passedFixtureCount": 42,
+    "totalFixtureCount": 44,
+    "passedFixtureCount": 44,
     "contractBindingPassed": true
   }
 }
