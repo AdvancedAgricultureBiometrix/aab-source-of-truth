@@ -1,0 +1,16 @@
+{
+  "registryId": "AAB-WORKSTREAM-B-CAPABILITY-IDENTITY-ROSTER-REGISTRY",
+  "registryVersion": "1.0.0",
+  "appendOnly": true,
+  "rosters": [
+    {
+      "rosterId": "AAB-WORKSTREAM-B-CAPABILITY-IDENTITY-ROSTER",
+      "rosterVersion": "1.0.0",
+      "rosterSnapshotId": "WORKSTREAM-B-LAUNCH-GAP-2026-09-19-ROSTER-001",
+      "rosterDigest": "sha256:72b3469699159d47bd6c882a39378f52ff70de24c6cbe2017ac37434e5d3f41e",
+      "sourceCommitSha": "b9be2de868618b9d4d00ded7ea99159a129813af",
+      "sourceBlobSha": "ccdf183b89c4fc45d083643d89d4425a156a8230",
+      "archivedRosterReference": "CAP-34-Authoritative-Capability-Identity-Roster.json"
+    }
+  ]
+}

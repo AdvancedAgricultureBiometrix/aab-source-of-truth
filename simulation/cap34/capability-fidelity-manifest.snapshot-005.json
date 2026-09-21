@@ -1,0 +1,898 @@
+{
+  "manifestId": "AAB-CAP34-FIDELITY-MANIFEST",
+  "manifestVersion": "1.4.0",
+  "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-005",
+  "createdAt": "2026-09-20T03:30:24Z",
+  "sourceLandscapeReference": "governance/workstream-b/AAB-WORKSTREAM-B-CAPABILITY-LANDSCAPE-LAUNCH-GAP-FREEZE-2026-09-19.md",
+  "authority": "DISCLOSURE_ONLY_NO_PRODUCTION_SCIENTIFIC_REGULATORY_OR_COMMISSIONING_AUTHORITY",
+  "rule": "Complete simulator coverage does not mean complete product implementation.",
+  "fidelityVocabulary": [
+    "REAL_LOGIC_SYNTHETIC_REFERENCE_DATA",
+    "PARTIAL_REAL_LOGIC_LIMITATIONS_SHOWN",
+    "CONCEPT_PREVIEW_NOT_IMPLEMENTED",
+    "NOT_YET_REPRESENTED"
+  ],
+  "entries": [
+    {
+      "capabilityId": "CAP-01",
+      "capabilityName": "Country Intelligence & Discovery",
+      "capabilityPart": null,
+      "horizon": "LAUNCH_RELEASE",
+      "representationVersion": "1.0.0",
+      "simulatorMode": "LIVE_SIMULATION",
+      "fidelity": "REAL_LOGIC_SYNTHETIC_REFERENCE_DATA",
+      "scenarioCoverage": [
+        {
+          "scenarioId": "SIM-AGR-001",
+          "coverage": "FULL_FOR_REPRESENTED_SCOPE"
+        },
+        {
+          "scenarioId": "SIM-AGR-002",
+          "coverage": "FULL_FOR_REPRESENTED_SCOPE"
+        },
+        {
+          "scenarioId": "SIM-AGR-003",
+          "coverage": "FULL_FOR_REPRESENTED_SCOPE"
+        }
+      ],
+      "implementationReferences": [
+        "simulation/cap34/live-capabilities/cap01-discovery.js"
+      ],
+      "evidenceReferences": [
+        "simulation/cap34/live-capabilities/cap01-discovery.behavioural-test.js",
+        "governance/workstream-b/CAP-01-DISCOVERY-LIVE-LOGIC-BEHAVIOURAL-PROOF.json"
+      ],
+      "limitations": [
+        "Evidence classification uses keyword-pattern matching over synthetic finding text; it does not perform semantic, statistical or scientific interpretation of evidence content.",
+        "Only the three canonical synthetic scenario evidence sets and purpose-built synthetic perturbation fixtures have been exercised; real-world evidence formats, languages, instruments or domains are not covered.",
+        "Minimum-evidence and conflict/insufficiency thresholds are illustrative synthetic parameters, not validated scientific, regulatory or commercial thresholds.",
+        "Does not integrate with any real data source, institution, country deployment or production system."
+      ],
+      "disclosureBurden": "STANDARD",
+      "lastVerifiedAt": "2026-09-20",
+      "lastVerifiedAgainst": "CAP-01 live-logic perturbation behavioural proof (11/11 fixtures): 3 canonical scenarios plus 5 purpose-built perturbations proving bidirectional data-sensitivity, plus dispatcher-wiring checks.",
+      "classificationReason": "An evidence-driven discovery evaluator is implemented and registered into CAP-34's live-simulation dispatcher. It computes its outcome from the eligibility state and finding content of the evidence it is given -- not from which scenario was selected -- and this data-sensitivity is proven in both directions by a dedicated perturbation test separate from the three canonical scenario checks.",
+      "nonImplications": [
+        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning.",
+        "Keyword-pattern evidence classification does not constitute genuine scientific, medical or regulatory judgment and must not be presented as such."
+      ]
+    },
+    {
+      "capabilityId": "CAP-02",
+      "capabilityName": "Governed Scientific Data Acquisition & Interoperability",
+      "capabilityPart": null,
+      "horizon": "LAUNCH_RELEASE",
+      "representationVersion": "0.2.0",
+      "simulatorMode": "ROADMAP_PREVIEW",
+      "fidelity": "CONCEPT_PREVIEW_NOT_IMPLEMENTED",
+      "scenarioCoverage": [
+        {
+          "scenarioId": "SIM-ROADMAP-MEMORY-001",
+          "coverage": "CONCEPT_PREVIEW"
+        }
+      ],
+      "implementationReferences": [],
+      "evidenceReferences": [
+        "governance/workstream-b/CAP-34-CAPABILITY-PATHWAY-RECONCILIATION-2026-09-20.md",
+        "simulation/cap34/cap34-simulation.js",
+        "simulation/cap34/index.html"
+      ],
+      "limitations": [
+        "Concept preview only; no complete or behaviourally proven multi-institution historical research recovery workflow exists.",
+        "Existing source, provenance and evidence foundations do not prove legacy-system adapters, document extraction, reconciliation or institutional-scale recovery.",
+        "Imported material cannot automatically become approved learning or scientific fact."
+      ],
+      "disclosureBurden": "STANDARD",
+      "lastVerifiedAt": "2026-09-20",
+      "lastVerifiedAgainst": "GitHub canonical source review and read-only main Supabase schema inspection",
+      "classificationReason": "Historical Scientific Memory Recovery — governed multi-institution acquisition pathway concept preview.",
+      "nonImplications": [
+        "Concept-preview inclusion does not establish product implementation, scientific proof, regulatory compliance, production readiness or commissioning.",
+        "Roadmap acknowledgement does not grant scientific, regulatory, government, production or commissioning authority."
+      ]
+    },
+    {
+      "capabilityId": "CAP-03",
+      "capabilityName": "Evidence Integrity & Provenance",
+      "capabilityPart": null,
+      "horizon": "LAUNCH_RELEASE",
+      "representationVersion": "0.2.0",
+      "simulatorMode": "ROADMAP_PREVIEW",
+      "fidelity": "CONCEPT_PREVIEW_NOT_IMPLEMENTED",
+      "scenarioCoverage": [
+        {
+          "scenarioId": "SIM-ROADMAP-EXPORT-001",
+          "coverage": "CONCEPT_PREVIEW"
+        }
+      ],
+      "implementationReferences": [],
+      "evidenceReferences": [
+        "governance/workstream-b/CAP-34-CAPABILITY-PATHWAY-RECONCILIATION-2026-09-20.md",
+        "simulation/cap34/cap34-simulation.js",
+        "simulation/cap34/index.html"
+      ],
+      "limitations": [
+        "Concept preview only; no EUDR-specific or behaviourally proven smallholder export chain-of-custody implementation was found.",
+        "Existing provenance and evidence-packet foundations do not prove farm-to-shipment continuity, geolocation validity or destination-market acceptance.",
+        "Evidence assembly does not establish certification, customs acceptance, regulatory approval or market access."
+      ],
+      "disclosureBurden": "STANDARD",
+      "lastVerifiedAt": "2026-09-20",
+      "lastVerifiedAgainst": "GitHub canonical source review and read-only main Supabase schema inspection",
+      "classificationReason": "Governed Export-Compliance Evidence — smallholder-to-shipment provenance and chain-of-custody concept preview.",
+      "nonImplications": [
+        "Concept-preview inclusion does not establish product implementation, scientific proof, regulatory compliance, production readiness or commissioning.",
+        "Roadmap acknowledgement does not grant scientific, regulatory, government, production or commissioning authority."
+      ]
+    },
+    {
+      "capabilityId": "CAP-04",
+      "capabilityName": "Governed Scientific Memory",
+      "capabilityPart": null,
+      "horizon": "LAUNCH_RELEASE",
+      "representationVersion": "0.2.0",
+      "simulatorMode": "ROADMAP_PREVIEW",
+      "fidelity": "CONCEPT_PREVIEW_NOT_IMPLEMENTED",
+      "scenarioCoverage": [
+        {
+          "scenarioId": "SIM-ROADMAP-MEMORY-001",
+          "coverage": "CONCEPT_PREVIEW"
+        }
+      ],
+      "implementationReferences": [],
+      "evidenceReferences": [
+        "governance/workstream-b/CAP-34-CAPABILITY-PATHWAY-RECONCILIATION-2026-09-20.md",
+        "simulation/cap34/cap34-simulation.js",
+        "simulation/cap34/index.html"
+      ],
+      "limitations": [
+        "Concept preview only; no complete or behaviourally proven cross-institution scientific-memory recovery workflow exists.",
+        "Existing scientific-memory and negative-learning records do not prove historical corpus recovery, semantic linking, duplicate resolution or source-complete recall.",
+        "Recovered records require provenance-preserving human review and do not automatically become approved learning."
+      ],
+      "disclosureBurden": "STANDARD",
+      "lastVerifiedAt": "2026-09-20",
+      "lastVerifiedAgainst": "GitHub canonical source review and read-only main Supabase schema inspection",
+      "classificationReason": "Historical Scientific Memory Recovery — connected memory, negative-result retention and cross-institution discovery concept preview.",
+      "nonImplications": [
+        "Concept-preview inclusion does not establish product implementation, scientific proof, regulatory compliance, production readiness or commissioning.",
+        "Roadmap acknowledgement does not grant scientific, regulatory, government, production or commissioning authority."
+      ]
+    },
+    {
+      "capabilityId": "CAP-05",
+      "capabilityName": "Governed Scientific Reasoning",
+      "capabilityPart": null,
+      "horizon": "LAUNCH_RELEASE",
+      "representationVersion": "1.0.0",
+      "simulatorMode": "LIVE_SIMULATION",
+      "fidelity": "REAL_LOGIC_SYNTHETIC_REFERENCE_DATA",
+      "scenarioCoverage": [
+        {
+          "scenarioId": "SIM-AGR-001",
+          "coverage": "FULL_FOR_REPRESENTED_SCOPE"
+        },
+        {
+          "scenarioId": "SIM-AGR-002",
+          "coverage": "FULL_FOR_REPRESENTED_SCOPE"
+        },
+        {
+          "scenarioId": "SIM-AGR-003",
+          "coverage": "FULL_FOR_REPRESENTED_SCOPE"
+        }
+      ],
+      "implementationReferences": [
+        "simulation/cap34/live-capabilities/cap05-reasoning.js"
+      ],
+      "evidenceReferences": [
+        "simulation/cap34/live-capabilities/cap05-reasoning.behavioural-test.js",
+        "governance/workstream-b/CAP-05-REASONING-LIVE-LOGIC-BEHAVIOURAL-PROOF.json"
+      ],
+      "limitations": [
+        "Contradiction detection groups evidence by a keyword-derived subject key and compares stance only within that group; it does not perform semantic, statistical or scientific reasoning about the evidence's substance.",
+        "Knowledge-gap identification checks a small, illustrative set of required categories (evidence volume, absence of self-declared gaps); it is not a validated scientific, regulatory or commercial completeness standard.",
+        "Only the three canonical synthetic scenario evidence sets and purpose-built synthetic perturbation fixtures have been exercised; real-world evidence formats, languages or domains are not covered.",
+        "Does not integrate with any real data source, institution, country deployment or production system."
+      ],
+      "disclosureBurden": "STANDARD",
+      "lastVerifiedAt": "2026-09-20",
+      "lastVerifiedAgainst": "CAP-05 live-logic perturbation behavioural proof (10/10 fixtures): 3 canonical scenarios plus pairwise same-subject contradiction detection, named-category gap identification, and bidirectional sensitivity, plus dispatcher-wiring check.",
+      "classificationReason": "A pairwise-comparison reasoning evaluator is implemented and registered into CAP-34's live-simulation dispatcher. It detects contradiction only between evidence sharing a derived subject with opposing stances (not a per-record tally), and names the specific missing required category on knowledge gaps rather than reporting a bare count. This is proven by a dedicated perturbation test separate from the three canonical scenario checks.",
+      "nonImplications": [
+        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning.",
+        "Keyword-based subject grouping and stance comparison does not constitute genuine scientific, medical or regulatory reasoning and must not be presented as such."
+      ]
+    },
+    {
+      "capabilityId": "CAP-06",
+      "capabilityName": "Ingredient Intelligence",
+      "capabilityPart": null,
+      "horizon": "LAUNCH_RELEASE",
+      "representationVersion": "1.0.0",
+      "simulatorMode": "LIVE_SIMULATION",
+      "fidelity": "REAL_LOGIC_SYNTHETIC_REFERENCE_DATA",
+      "scenarioCoverage": [
+        {
+          "scenarioId": "SIM-AGR-001",
+          "coverage": "FULL_FOR_REPRESENTED_SCOPE"
+        },
+        {
+          "scenarioId": "SIM-AGR-002",
+          "coverage": "FULL_FOR_REPRESENTED_SCOPE"
+        },
+        {
+          "scenarioId": "SIM-AGR-003",
+          "coverage": "FULL_FOR_REPRESENTED_SCOPE"
+        }
+      ],
+      "implementationReferences": [
+        "simulation/cap34/live-capabilities/cap06-ingredient-intelligence.js"
+      ],
+      "evidenceReferences": [
+        "simulation/cap34/live-capabilities/cap06-ingredient-intelligence.behavioural-test.js",
+        "governance/workstream-b/CAP-06-INGREDIENT-INTELLIGENCE-LIVE-LOGIC-BEHAVIOURAL-PROOF.json"
+      ],
+      "limitations": [
+        "Produces a continuous readinessScore from evidence sufficiency and corroboration counts using illustrative synthetic thresholds; the scoring formula is not a validated scientific, regulatory or commercial standard.",
+        "Only the three canonical synthetic scenario evidence sets and purpose-built synthetic perturbation fixtures have been exercised; real-world material property data, formats or domains are not covered.",
+        "Does not integrate with any real data source, institution, country deployment or production system."
+      ],
+      "disclosureBurden": "STANDARD",
+      "lastVerifiedAt": "2026-09-20",
+      "lastVerifiedAgainst": "CAP-06 live-logic perturbation behavioural proof (9/9 fixtures): 3 canonical scenarios plus 4 purpose-built perturbations proving the readinessScore (not just status) genuinely tracks evidence sufficiency and corroboration bidirectionally, plus dispatcher-wiring check.",
+      "classificationReason": "An evidence-scoring ingredient evaluator is implemented and registered into CAP-34's live-simulation dispatcher. It produces a continuous readinessScore in [0,1], distinct from a bare categorical status, computed from real corroboration and conflict counts in the evidence supplied -- proven by a dedicated perturbation test showing the score itself (not only the label) moves correctly in both directions, including a distinct partial-credit value for disputed evidence versus zero for absent evidence.",
+      "nonImplications": [
+        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning.",
+        "The readinessScore is a synthetic illustrative metric and does not constitute genuine scientific, safety or regulatory scoring."
+      ]
+    },
+    {
+      "capabilityId": "CAP-07",
+      "capabilityName": "Formulation Intelligence",
+      "capabilityPart": null,
+      "horizon": "LAUNCH_RELEASE",
+      "representationVersion": "0.1.0",
+      "simulatorMode": "NONE",
+      "fidelity": "NOT_YET_REPRESENTED",
+      "scenarioCoverage": [],
+      "implementationReferences": [],
+      "evidenceReferences": [],
+      "limitations": [
+        "Simulator representation not yet implemented."
+      ],
+      "disclosureBurden": "STANDARD",
+      "lastVerifiedAt": null,
+      "lastVerifiedAgainst": null,
+      "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
+      "nonImplications": [
+        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
+      ]
+    },
+    {
+      "capabilityId": "CAP-08",
+      "capabilityName": "Controlled Trials & Outcomes",
+      "capabilityPart": null,
+      "horizon": "LAUNCH_RELEASE",
+      "representationVersion": "0.1.0",
+      "simulatorMode": "NONE",
+      "fidelity": "NOT_YET_REPRESENTED",
+      "scenarioCoverage": [],
+      "implementationReferences": [],
+      "evidenceReferences": [],
+      "limitations": [
+        "Simulator representation not yet implemented."
+      ],
+      "disclosureBurden": "STANDARD",
+      "lastVerifiedAt": null,
+      "lastVerifiedAgainst": null,
+      "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
+      "nonImplications": [
+        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
+      ]
+    },
+    {
+      "capabilityId": "CAP-09",
+      "capabilityName": "Governed Scientific Learning",
+      "capabilityPart": null,
+      "horizon": "LAUNCH_RELEASE",
+      "representationVersion": "0.1.0",
+      "simulatorMode": "NONE",
+      "fidelity": "NOT_YET_REPRESENTED",
+      "scenarioCoverage": [],
+      "implementationReferences": [],
+      "evidenceReferences": [],
+      "limitations": [
+        "Simulator representation not yet implemented."
+      ],
+      "disclosureBurden": "STANDARD",
+      "lastVerifiedAt": null,
+      "lastVerifiedAgainst": null,
+      "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
+      "nonImplications": [
+        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
+      ]
+    },
+    {
+      "capabilityId": "CAP-10",
+      "capabilityName": "Safety & Ecological Intelligence",
+      "capabilityPart": null,
+      "horizon": "LAUNCH_RELEASE",
+      "representationVersion": "0.1.0",
+      "simulatorMode": "NONE",
+      "fidelity": "NOT_YET_REPRESENTED",
+      "scenarioCoverage": [],
+      "implementationReferences": [],
+      "evidenceReferences": [],
+      "limitations": [
+        "Simulator representation not yet implemented."
+      ],
+      "disclosureBurden": "STANDARD",
+      "lastVerifiedAt": null,
+      "lastVerifiedAgainst": null,
+      "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
+      "nonImplications": [
+        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
+      ]
+    },
+    {
+      "capabilityId": "CAP-11",
+      "capabilityName": "Regulatory Translation & Dossier Support",
+      "capabilityPart": null,
+      "horizon": "POST_LAUNCH",
+      "representationVersion": "0.2.0",
+      "simulatorMode": "ROADMAP_PREVIEW",
+      "fidelity": "CONCEPT_PREVIEW_NOT_IMPLEMENTED",
+      "scenarioCoverage": [
+        {
+          "scenarioId": "SIM-ROADMAP-EXPORT-001",
+          "coverage": "CONCEPT_PREVIEW"
+        }
+      ],
+      "implementationReferences": [],
+      "evidenceReferences": [
+        "governance/workstream-b/CAP-34-CAPABILITY-PATHWAY-RECONCILIATION-2026-09-20.md",
+        "simulation/cap34/cap34-simulation.js",
+        "simulation/cap34/index.html"
+      ],
+      "limitations": [
+        "Concept preview only; no EUDR-specific or behaviourally proven export-compliance dossier workflow was found.",
+        "Existing regulatory requirement, dossier passport and translation foundations do not prove current legal interpretation, completeness or regulator acceptance.",
+        "Dossier completeness does not equal regulatory approval, certification, customs acceptance or guaranteed market access."
+      ],
+      "disclosureBurden": "STANDARD",
+      "lastVerifiedAt": "2026-09-20",
+      "lastVerifiedAgainst": "GitHub canonical source review and read-only main Supabase schema inspection",
+      "classificationReason": "Governed Export-Compliance Evidence — destination-market requirement mapping and dossier concept preview.",
+      "nonImplications": [
+        "Concept-preview inclusion does not establish product implementation, scientific proof, regulatory compliance, production readiness or commissioning.",
+        "Roadmap acknowledgement does not grant scientific, regulatory, government, production or commissioning authority."
+      ]
+    },
+    {
+      "capabilityId": "CAP-12",
+      "capabilityName": "Controlled Manufacturing Transfer",
+      "capabilityPart": null,
+      "horizon": "POST_LAUNCH",
+      "representationVersion": "0.1.0",
+      "simulatorMode": "NONE",
+      "fidelity": "NOT_YET_REPRESENTED",
+      "scenarioCoverage": [],
+      "implementationReferences": [],
+      "evidenceReferences": [],
+      "limitations": [
+        "Simulator representation not yet implemented."
+      ],
+      "disclosureBurden": "STANDARD",
+      "lastVerifiedAt": null,
+      "lastVerifiedAgainst": null,
+      "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
+      "nonImplications": [
+        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
+      ]
+    },
+    {
+      "capabilityId": "CAP-13",
+      "capabilityName": "Conversational AAB Intelligence",
+      "capabilityPart": null,
+      "horizon": "LAUNCH_RELEASE",
+      "representationVersion": "0.1.0",
+      "simulatorMode": "NONE",
+      "fidelity": "NOT_YET_REPRESENTED",
+      "scenarioCoverage": [],
+      "implementationReferences": [],
+      "evidenceReferences": [],
+      "limitations": [
+        "Simulator representation not yet implemented."
+      ],
+      "disclosureBurden": "STANDARD",
+      "lastVerifiedAt": null,
+      "lastVerifiedAgainst": null,
+      "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
+      "nonImplications": [
+        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
+      ]
+    },
+    {
+      "capabilityId": "CAP-14",
+      "capabilityName": "Minimum Sovereign Scientific Messaging",
+      "capabilityPart": "A",
+      "horizon": "LAUNCH_RELEASE",
+      "representationVersion": "0.1.0",
+      "simulatorMode": "NONE",
+      "fidelity": "NOT_YET_REPRESENTED",
+      "scenarioCoverage": [],
+      "implementationReferences": [],
+      "evidenceReferences": [],
+      "limitations": [
+        "Simulator representation not yet implemented."
+      ],
+      "disclosureBurden": "STANDARD",
+      "lastVerifiedAt": null,
+      "lastVerifiedAgainst": null,
+      "classificationReason": "Initial manifest truthfully records no CAP-14 simulator representation yet.",
+      "nonImplications": [
+        "Manifest inclusion does not establish implementation."
+      ]
+    },
+    {
+      "capabilityId": "CAP-14",
+      "capabilityName": "Advanced Collaboration",
+      "capabilityPart": "B",
+      "horizon": "POST_LAUNCH",
+      "representationVersion": "0.1.0",
+      "simulatorMode": "NONE",
+      "fidelity": "NOT_YET_REPRESENTED",
+      "scenarioCoverage": [],
+      "implementationReferences": [],
+      "evidenceReferences": [],
+      "limitations": [
+        "Simulator representation not yet implemented."
+      ],
+      "disclosureBurden": "STANDARD",
+      "lastVerifiedAt": null,
+      "lastVerifiedAgainst": null,
+      "classificationReason": "Initial manifest truthfully records no CAP-14 simulator representation yet.",
+      "nonImplications": [
+        "Manifest inclusion does not establish implementation."
+      ]
+    },
+    {
+      "capabilityId": "CAP-15",
+      "capabilityName": "Work & Attention Management",
+      "capabilityPart": null,
+      "horizon": "LAUNCH_RELEASE",
+      "representationVersion": "0.1.0",
+      "simulatorMode": "NONE",
+      "fidelity": "NOT_YET_REPRESENTED",
+      "scenarioCoverage": [],
+      "implementationReferences": [],
+      "evidenceReferences": [],
+      "limitations": [
+        "Simulator representation not yet implemented."
+      ],
+      "disclosureBurden": "STANDARD",
+      "lastVerifiedAt": null,
+      "lastVerifiedAgainst": null,
+      "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
+      "nonImplications": [
+        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
+      ]
+    },
+    {
+      "capabilityId": "CAP-16",
+      "capabilityName": "Sovereign Country Provisioning",
+      "capabilityPart": null,
+      "horizon": "LAUNCH_RELEASE",
+      "representationVersion": "0.1.0",
+      "simulatorMode": "NONE",
+      "fidelity": "NOT_YET_REPRESENTED",
+      "scenarioCoverage": [],
+      "implementationReferences": [],
+      "evidenceReferences": [],
+      "limitations": [
+        "Simulator representation not yet implemented."
+      ],
+      "disclosureBurden": "STANDARD",
+      "lastVerifiedAt": null,
+      "lastVerifiedAgainst": null,
+      "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
+      "nonImplications": [
+        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
+      ]
+    },
+    {
+      "capabilityId": "CAP-17",
+      "capabilityName": "Technical Qualification",
+      "capabilityPart": null,
+      "horizon": "LAUNCH_RELEASE",
+      "representationVersion": "0.1.0",
+      "simulatorMode": "NONE",
+      "fidelity": "NOT_YET_REPRESENTED",
+      "scenarioCoverage": [],
+      "implementationReferences": [],
+      "evidenceReferences": [],
+      "limitations": [
+        "Simulator representation not yet implemented."
+      ],
+      "disclosureBurden": "STANDARD",
+      "lastVerifiedAt": null,
+      "lastVerifiedAgainst": null,
+      "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
+      "nonImplications": [
+        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
+      ]
+    },
+    {
+      "capabilityId": "CAP-18",
+      "capabilityName": "Governed Release & Country Update Management",
+      "capabilityPart": null,
+      "horizon": "LAUNCH_RELEASE",
+      "representationVersion": "0.1.0",
+      "simulatorMode": "NONE",
+      "fidelity": "NOT_YET_REPRESENTED",
+      "scenarioCoverage": [],
+      "implementationReferences": [],
+      "evidenceReferences": [],
+      "limitations": [
+        "Simulator representation not yet implemented."
+      ],
+      "disclosureBurden": "STANDARD",
+      "lastVerifiedAt": null,
+      "lastVerifiedAgainst": null,
+      "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
+      "nonImplications": [
+        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
+      ]
+    },
+    {
+      "capabilityId": "CAP-19",
+      "capabilityName": "Country-Local Support & Diagnostics",
+      "capabilityPart": null,
+      "horizon": "LAUNCH_RELEASE",
+      "representationVersion": "0.1.0",
+      "simulatorMode": "NONE",
+      "fidelity": "NOT_YET_REPRESENTED",
+      "scenarioCoverage": [],
+      "implementationReferences": [],
+      "evidenceReferences": [],
+      "limitations": [
+        "Simulator representation not yet implemented."
+      ],
+      "disclosureBurden": "STANDARD",
+      "lastVerifiedAt": null,
+      "lastVerifiedAgainst": null,
+      "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
+      "nonImplications": [
+        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
+      ]
+    },
+    {
+      "capabilityId": "CAP-20",
+      "capabilityName": "Country Capability Catalogue & Selection",
+      "capabilityPart": null,
+      "horizon": "LAUNCH_RELEASE",
+      "representationVersion": "0.1.0",
+      "simulatorMode": "NONE",
+      "fidelity": "NOT_YET_REPRESENTED",
+      "scenarioCoverage": [],
+      "implementationReferences": [],
+      "evidenceReferences": [],
+      "limitations": [
+        "Simulator representation not yet implemented."
+      ],
+      "disclosureBurden": "STANDARD",
+      "lastVerifiedAt": null,
+      "lastVerifiedAgainst": null,
+      "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
+      "nonImplications": [
+        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
+      ]
+    },
+    {
+      "capabilityId": "CAP-21",
+      "capabilityName": "Commercial Agreement & Entitlement Management",
+      "capabilityPart": null,
+      "horizon": "LAUNCH_RELEASE",
+      "representationVersion": "0.1.0",
+      "simulatorMode": "NONE",
+      "fidelity": "NOT_YET_REPRESENTED",
+      "scenarioCoverage": [],
+      "implementationReferences": [],
+      "evidenceReferences": [],
+      "limitations": [
+        "Simulator representation not yet implemented."
+      ],
+      "disclosureBurden": "STANDARD",
+      "lastVerifiedAt": null,
+      "lastVerifiedAgainst": null,
+      "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
+      "nonImplications": [
+        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
+      ]
+    },
+    {
+      "capabilityId": "CAP-22",
+      "capabilityName": "Capability Availability, Readiness & Activation Control",
+      "capabilityPart": null,
+      "horizon": "LAUNCH_RELEASE",
+      "representationVersion": "0.1.0",
+      "simulatorMode": "NONE",
+      "fidelity": "NOT_YET_REPRESENTED",
+      "scenarioCoverage": [],
+      "implementationReferences": [],
+      "evidenceReferences": [],
+      "limitations": [
+        "Simulator representation not yet implemented."
+      ],
+      "disclosureBurden": "STANDARD",
+      "lastVerifiedAt": null,
+      "lastVerifiedAgainst": null,
+      "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
+      "nonImplications": [
+        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
+      ]
+    },
+    {
+      "capabilityId": "CAP-23",
+      "capabilityName": "Governed Identity & Authority Resolution",
+      "capabilityPart": null,
+      "horizon": "LAUNCH_RELEASE",
+      "representationVersion": "0.1.0",
+      "simulatorMode": "NONE",
+      "fidelity": "NOT_YET_REPRESENTED",
+      "scenarioCoverage": [],
+      "implementationReferences": [],
+      "evidenceReferences": [],
+      "limitations": [
+        "Simulator representation not yet implemented."
+      ],
+      "disclosureBurden": "STANDARD",
+      "lastVerifiedAt": null,
+      "lastVerifiedAgainst": null,
+      "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
+      "nonImplications": [
+        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
+      ]
+    },
+    {
+      "capabilityId": "CAP-24",
+      "capabilityName": "Governed Country, Institution & Professional Participation",
+      "capabilityPart": null,
+      "horizon": "LAUNCH_RELEASE",
+      "representationVersion": "0.1.0",
+      "simulatorMode": "NONE",
+      "fidelity": "NOT_YET_REPRESENTED",
+      "scenarioCoverage": [],
+      "implementationReferences": [],
+      "evidenceReferences": [],
+      "limitations": [
+        "Simulator representation not yet implemented."
+      ],
+      "disclosureBurden": "STANDARD",
+      "lastVerifiedAt": null,
+      "lastVerifiedAgainst": null,
+      "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
+      "nonImplications": [
+        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
+      ]
+    },
+    {
+      "capabilityId": "CAP-25",
+      "capabilityName": "Governed Human Decision & Approval Control",
+      "capabilityPart": null,
+      "horizon": "LAUNCH_RELEASE",
+      "representationVersion": "0.1.0",
+      "simulatorMode": "NONE",
+      "fidelity": "NOT_YET_REPRESENTED",
+      "scenarioCoverage": [],
+      "implementationReferences": [],
+      "evidenceReferences": [],
+      "limitations": [
+        "Simulator representation not yet implemented."
+      ],
+      "disclosureBurden": "STANDARD",
+      "lastVerifiedAt": null,
+      "lastVerifiedAgainst": null,
+      "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
+      "nonImplications": [
+        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
+      ]
+    },
+    {
+      "capabilityId": "CAP-26",
+      "capabilityName": "Sovereign Country Data Boundary",
+      "capabilityPart": null,
+      "horizon": "LAUNCH_RELEASE",
+      "representationVersion": "0.1.0",
+      "simulatorMode": "NONE",
+      "fidelity": "NOT_YET_REPRESENTED",
+      "scenarioCoverage": [],
+      "implementationReferences": [],
+      "evidenceReferences": [],
+      "limitations": [
+        "Simulator representation not yet implemented."
+      ],
+      "disclosureBurden": "STANDARD",
+      "lastVerifiedAt": null,
+      "lastVerifiedAgainst": null,
+      "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
+      "nonImplications": [
+        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
+      ]
+    },
+    {
+      "capabilityId": "CAP-27",
+      "capabilityName": "Protected Security Enforcement",
+      "capabilityPart": null,
+      "horizon": "LAUNCH_RELEASE",
+      "representationVersion": "0.1.0",
+      "simulatorMode": "NONE",
+      "fidelity": "NOT_YET_REPRESENTED",
+      "scenarioCoverage": [],
+      "implementationReferences": [],
+      "evidenceReferences": [],
+      "limitations": [
+        "Simulator representation not yet implemented."
+      ],
+      "disclosureBurden": "STANDARD",
+      "lastVerifiedAt": null,
+      "lastVerifiedAgainst": null,
+      "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
+      "nonImplications": [
+        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
+      ]
+    },
+    {
+      "capabilityId": "CAP-28",
+      "capabilityName": "Continuity, Backup & Recovery",
+      "capabilityPart": null,
+      "horizon": "LAUNCH_RELEASE",
+      "representationVersion": "0.1.0",
+      "simulatorMode": "NONE",
+      "fidelity": "NOT_YET_REPRESENTED",
+      "scenarioCoverage": [],
+      "implementationReferences": [],
+      "evidenceReferences": [],
+      "limitations": [
+        "Simulator representation not yet implemented."
+      ],
+      "disclosureBurden": "STANDARD",
+      "lastVerifiedAt": null,
+      "lastVerifiedAgainst": null,
+      "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
+      "nonImplications": [
+        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
+      ]
+    },
+    {
+      "capabilityId": "CAP-30",
+      "capabilityName": "Governed Country Assurance & Audit",
+      "capabilityPart": null,
+      "horizon": "LAUNCH_RELEASE",
+      "representationVersion": "0.1.0",
+      "simulatorMode": "NONE",
+      "fidelity": "NOT_YET_REPRESENTED",
+      "scenarioCoverage": [],
+      "implementationReferences": [],
+      "evidenceReferences": [],
+      "limitations": [
+        "Simulator representation not yet implemented."
+      ],
+      "disclosureBurden": "STANDARD",
+      "lastVerifiedAt": null,
+      "lastVerifiedAgainst": null,
+      "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
+      "nonImplications": [
+        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
+      ]
+    },
+    {
+      "capabilityId": "CAP-31",
+      "capabilityName": "Governed Domain Framework",
+      "capabilityPart": null,
+      "horizon": "LAUNCH_RELEASE",
+      "representationVersion": "0.1.0",
+      "simulatorMode": "NONE",
+      "fidelity": "NOT_YET_REPRESENTED",
+      "scenarioCoverage": [],
+      "implementationReferences": [],
+      "evidenceReferences": [],
+      "limitations": [
+        "Simulator representation not yet implemented."
+      ],
+      "disclosureBurden": "STANDARD",
+      "lastVerifiedAt": null,
+      "lastVerifiedAgainst": null,
+      "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
+      "nonImplications": [
+        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
+      ]
+    },
+    {
+      "capabilityId": "CAP-32",
+      "capabilityName": "Domain-Specific Scientific Intelligence",
+      "capabilityPart": null,
+      "horizon": "LAUNCH_RELEASE",
+      "representationVersion": "0.1.0",
+      "simulatorMode": "NONE",
+      "fidelity": "NOT_YET_REPRESENTED",
+      "scenarioCoverage": [],
+      "implementationReferences": [],
+      "evidenceReferences": [],
+      "limitations": [
+        "Simulator representation not yet implemented."
+      ],
+      "disclosureBurden": "STANDARD",
+      "lastVerifiedAt": null,
+      "lastVerifiedAgainst": null,
+      "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
+      "nonImplications": [
+        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
+      ]
+    },
+    {
+      "capabilityId": "CAP-33",
+      "capabilityName": "Cross-Domain Scientific Reasoning",
+      "capabilityPart": null,
+      "horizon": "FUTURE_PLATFORM",
+      "representationVersion": "0.1.0",
+      "simulatorMode": "NONE",
+      "fidelity": "NOT_YET_REPRESENTED",
+      "scenarioCoverage": [],
+      "implementationReferences": [],
+      "evidenceReferences": [],
+      "limitations": [
+        "Simulator representation not yet implemented."
+      ],
+      "disclosureBurden": "EXCEPTIONAL",
+      "lastVerifiedAt": null,
+      "lastVerifiedAgainst": null,
+      "classificationReason": "Initial manifest truthfully records no simulator representation yet.",
+      "nonImplications": [
+        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
+      ]
+    },
+    {
+      "capabilityId": "CAP-34",
+      "capabilityName": "Governed AAB Simulation & Demonstration Environment",
+      "capabilityPart": null,
+      "horizon": "PRE_LAUNCH_EVALUATION_ENABLING",
+      "representationVersion": "0.1.0",
+      "simulatorMode": "LIVE_SIMULATION",
+      "fidelity": "PARTIAL_REAL_LOGIC_LIMITATIONS_SHOWN",
+      "scenarioCoverage": [
+        {
+          "scenarioId": "SIM-AGR-001",
+          "coverage": "PARTIAL"
+        },
+        {
+          "scenarioId": "SIM-AGR-002",
+          "coverage": "PARTIAL"
+        },
+        {
+          "scenarioId": "SIM-AGR-003",
+          "coverage": "PARTIAL"
+        }
+      ],
+      "implementationReferences": [
+        "simulation/cap34/cap34-simulation.js",
+        "simulation/cap34/index.html"
+      ],
+      "evidenceReferences": [
+        "simulation/cap34/README.md"
+      ],
+      "limitations": [
+        "Initial isolated simulator boundary and synthetic scenario harness only; full end-product capability integration is not implemented."
+      ],
+      "disclosureBurden": "STANDARD",
+      "lastVerifiedAt": "2026-09-19",
+      "lastVerifiedAgainst": "CAP34 initial isolated build",
+      "classificationReason": "Initial CAP-34 safety/simulation contract is implemented on the controlled branch, with explicit limitations.",
+      "nonImplications": [
+        "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning."
+      ]
+    }
+  ],
+  "capabilityCount": 34,
+  "snapshotDigest": "sha256:e6b3f86112ead6a4ed1d7ab4df9dc620f55527330c4374f02d317b1ad32486eb"
+}

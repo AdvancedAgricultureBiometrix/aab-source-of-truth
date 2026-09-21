@@ -1,0 +1,400 @@
+{
+  "proofId": "AAB-CAP34-CAP01-DISCOVERY-LIVE-LOGIC-BEHAVIOURAL-PROOF",
+  "proofVersion": "1.0.0",
+  "generatedAtUtc": "2026-09-21T06:47:21.089Z",
+  "result": "PASS_CAP01_DISCOVERY_LIVE_LOGIC_BEHAVIOURAL_PROOF",
+  "scope": "Proves only that CAP-01's live-simulation evaluator computes its outcome from the actual evidence content and state passed to it, in both directions (evidence removed/added, findings flipped), and reaches every defined outcome from real scenario data. It does not prove scientific correctness, production readiness, sovereignty or commissioning.",
+  "fixtureCount": 13,
+  "passedFixtureCount": 13,
+  "fixtures": [
+    {
+      "fixtureId": "CAP01-D0-DISPATCHER-WIRED",
+      "description": "sim.runLiveCapability('CAP-01', ...) reaches the same evaluator as calling it directly, proving registration actually happened",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-01",
+        "capabilityName": "Country Intelligence & Discovery",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "outcome": "INVESTIGATION_CANDIDATE",
+        "explanation": "All 3 eligible record(s) support the same direction with no conflict or insufficiency. Evidence supports a governed investigation candidate. It does not establish ingredient status, formulation efficacy, safety, regulatory approval or production authority.",
+        "computedFacts": {
+          "eligibleCount": 3,
+          "supportingCount": 3,
+          "conflictingCount": 0,
+          "insufficientCount": 0,
+          "minimumEligibleEvidence": 2
+        },
+        "evidenceClassification": [
+          {
+            "id": "E1",
+            "classification": "SUPPORTING"
+          },
+          {
+            "id": "E2",
+            "classification": "SUPPORTING"
+          },
+          {
+            "id": "E3",
+            "classification": "SUPPORTING"
+          }
+        ]
+      }
+    },
+    {
+      "fixtureId": "CAP01-D1-DISPATCHER-FAIL-CLOSED",
+      "description": "Dispatching an unregistered capability id fails closed instead of silently returning something",
+      "passed": true,
+      "actual": {
+        "status": "FAIL_CLOSED_UNKNOWN_LIVE_CAPABILITY",
+        "capabilityId": "CAP-99-NOT-REGISTERED"
+      }
+    },
+    {
+      "fixtureId": "CAP01-A1-HAPPY-PATH",
+      "description": "Unmodified HAPPY_PATH evidence (3 eligible, no conflict, no insufficiency) yields INVESTIGATION_CANDIDATE",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-01",
+        "capabilityName": "Country Intelligence & Discovery",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "outcome": "INVESTIGATION_CANDIDATE",
+        "explanation": "All 3 eligible record(s) support the same direction with no conflict or insufficiency. Evidence supports a governed investigation candidate. It does not establish ingredient status, formulation efficacy, safety, regulatory approval or production authority.",
+        "computedFacts": {
+          "eligibleCount": 3,
+          "supportingCount": 3,
+          "conflictingCount": 0,
+          "insufficientCount": 0,
+          "minimumEligibleEvidence": 2
+        },
+        "evidenceClassification": [
+          {
+            "id": "E1",
+            "classification": "SUPPORTING"
+          },
+          {
+            "id": "E2",
+            "classification": "SUPPORTING"
+          },
+          {
+            "id": "E3",
+            "classification": "SUPPORTING"
+          }
+        ]
+      }
+    },
+    {
+      "fixtureId": "CAP01-A2-CONTRADICTION",
+      "description": "Unmodified CONTRADICTION evidence (conflicting findings present) yields CONTRADICTION_REQUIRES_REVIEW, not a smoothed-over answer",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-01",
+        "capabilityName": "Country Intelligence & Discovery",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "outcome": "CONTRADICTION_REQUIRES_REVIEW",
+        "explanation": "AAB preserves the disagreement: 2 of 3 eligible record(s) report a conflicting or null result. No consensus finding or approved learning is created.",
+        "computedFacts": {
+          "eligibleCount": 3,
+          "supportingCount": 1,
+          "conflictingCount": 2,
+          "insufficientCount": 0,
+          "minimumEligibleEvidence": 2
+        },
+        "evidenceClassification": [
+          {
+            "id": "E1",
+            "classification": "SUPPORTING"
+          },
+          {
+            "id": "E2",
+            "classification": "CONFLICTING"
+          },
+          {
+            "id": "E3",
+            "classification": "CONFLICTING"
+          }
+        ]
+      }
+    },
+    {
+      "fixtureId": "CAP01-A3-MISSING-EVIDENCE",
+      "description": "Unmodified MISSING_EVIDENCE evidence (1 record, explicitly insufficient) yields PROGRESSION_BLOCKED_EVIDENCE_REQUIRED, not a confident answer",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-01",
+        "capabilityName": "Country Intelligence & Discovery",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "outcome": "PROGRESSION_BLOCKED_EVIDENCE_REQUIRED",
+        "explanation": "There is insufficient evidence to support progression: 1 eligible record(s) explicitly report missing or unproven evidence.",
+        "computedFacts": {
+          "eligibleCount": 1,
+          "supportingCount": 0,
+          "conflictingCount": 0,
+          "insufficientCount": 1,
+          "minimumEligibleEvidence": 2
+        },
+        "evidenceClassification": [
+          {
+            "id": "E1",
+            "classification": "INSUFFICIENT"
+          }
+        ]
+      }
+    },
+    {
+      "fixtureId": "CAP01-B0-BASELINE",
+      "description": "Purpose-built 3-record baseline yields INVESTIGATION_CANDIDATE",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-01",
+        "capabilityName": "Country Intelligence & Discovery",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "outcome": "INVESTIGATION_CANDIDATE",
+        "explanation": "All 3 eligible record(s) support the same direction with no conflict or insufficiency. Evidence supports a governed investigation candidate. It does not establish ingredient status, formulation efficacy, safety, regulatory approval or production authority.",
+        "computedFacts": {
+          "eligibleCount": 3,
+          "supportingCount": 3,
+          "conflictingCount": 0,
+          "insufficientCount": 0,
+          "minimumEligibleEvidence": 2
+        },
+        "evidenceClassification": [
+          {
+            "id": "P1",
+            "classification": "SUPPORTING"
+          },
+          {
+            "id": "P2",
+            "classification": "SUPPORTING"
+          },
+          {
+            "id": "P3",
+            "classification": "SUPPORTING"
+          }
+        ]
+      }
+    },
+    {
+      "fixtureId": "CAP01-B1-EVIDENCE-REMOVED",
+      "description": "Removing 2 of 3 baseline records (down to 1, below the minimum) flips outcome to PROGRESSION_BLOCKED_EVIDENCE_REQUIRED",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-01",
+        "capabilityName": "Country Intelligence & Discovery",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "outcome": "PROGRESSION_BLOCKED_EVIDENCE_REQUIRED",
+        "explanation": "There is insufficient evidence to support progression: only 1 eligible record(s) were supplied, below the minimum of 2.",
+        "computedFacts": {
+          "eligibleCount": 1,
+          "supportingCount": 1,
+          "conflictingCount": 0,
+          "insufficientCount": 0,
+          "minimumEligibleEvidence": 2
+        },
+        "evidenceClassification": [
+          {
+            "id": "P1",
+            "classification": "SUPPORTING"
+          }
+        ]
+      }
+    },
+    {
+      "fixtureId": "CAP01-B1B-AT-MINIMUM-BOUNDARY-PASSES",
+      "description": "Exactly 2 clean, supporting, eligible records -- the minimum itself -- yields INVESTIGATION_CANDIDATE, not blocked",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-01",
+        "capabilityName": "Country Intelligence & Discovery",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "outcome": "INVESTIGATION_CANDIDATE",
+        "explanation": "All 2 eligible record(s) support the same direction with no conflict or insufficiency. Evidence supports a governed investigation candidate. It does not establish ingredient status, formulation efficacy, safety, regulatory approval or production authority.",
+        "computedFacts": {
+          "eligibleCount": 2,
+          "supportingCount": 2,
+          "conflictingCount": 0,
+          "insufficientCount": 0,
+          "minimumEligibleEvidence": 2
+        },
+        "evidenceClassification": [
+          {
+            "id": "P1",
+            "classification": "SUPPORTING"
+          },
+          {
+            "id": "P2",
+            "classification": "SUPPORTING"
+          }
+        ]
+      }
+    },
+    {
+      "fixtureId": "CAP01-B1C-ONE-BELOW-MINIMUM-BOUNDARY-FAILS",
+      "description": "Removing one more record from the at-minimum set (down to 1, genuinely below the minimum of 2) flips outcome to PROGRESSION_BLOCKED_EVIDENCE_REQUIRED",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-01",
+        "capabilityName": "Country Intelligence & Discovery",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "outcome": "PROGRESSION_BLOCKED_EVIDENCE_REQUIRED",
+        "explanation": "There is insufficient evidence to support progression: only 1 eligible record(s) were supplied, below the minimum of 2.",
+        "computedFacts": {
+          "eligibleCount": 1,
+          "supportingCount": 1,
+          "conflictingCount": 0,
+          "insufficientCount": 0,
+          "minimumEligibleEvidence": 2
+        },
+        "evidenceClassification": [
+          {
+            "id": "P1",
+            "classification": "SUPPORTING"
+          }
+        ]
+      }
+    },
+    {
+      "fixtureId": "CAP01-B2-VALUE-FLIPPED-TO-CONFLICT",
+      "description": "Flipping one baseline record's finding to a conflicting value flips outcome to CONTRADICTION_REQUIRES_REVIEW",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-01",
+        "capabilityName": "Country Intelligence & Discovery",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "outcome": "CONTRADICTION_REQUIRES_REVIEW",
+        "explanation": "AAB preserves the disagreement: 1 of 3 eligible record(s) report a conflicting or null result. No consensus finding or approved learning is created.",
+        "computedFacts": {
+          "eligibleCount": 3,
+          "supportingCount": 2,
+          "conflictingCount": 1,
+          "insufficientCount": 0,
+          "minimumEligibleEvidence": 2
+        },
+        "evidenceClassification": [
+          {
+            "id": "P1",
+            "classification": "SUPPORTING"
+          },
+          {
+            "id": "P2",
+            "classification": "CONFLICTING"
+          },
+          {
+            "id": "P3",
+            "classification": "SUPPORTING"
+          }
+        ]
+      }
+    },
+    {
+      "fixtureId": "CAP01-B3-VALUE-FLIPPED-TO-RESOLVED",
+      "description": "Resolving the CONTRADICTION scenario's conflicting findings flips outcome back to INVESTIGATION_CANDIDATE",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-01",
+        "capabilityName": "Country Intelligence & Discovery",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "outcome": "INVESTIGATION_CANDIDATE",
+        "explanation": "All 3 eligible record(s) support the same direction with no conflict or insufficiency. Evidence supports a governed investigation candidate. It does not establish ingredient status, formulation efficacy, safety, regulatory approval or production authority.",
+        "computedFacts": {
+          "eligibleCount": 3,
+          "supportingCount": 3,
+          "conflictingCount": 0,
+          "insufficientCount": 0,
+          "minimumEligibleEvidence": 2
+        },
+        "evidenceClassification": [
+          {
+            "id": "E1",
+            "classification": "SUPPORTING"
+          },
+          {
+            "id": "E2",
+            "classification": "SUPPORTING"
+          },
+          {
+            "id": "E3",
+            "classification": "SUPPORTING"
+          }
+        ]
+      }
+    },
+    {
+      "fixtureId": "CAP01-B4-INSUFFICIENCY-INJECTED-AT-CONSTANT-COUNT",
+      "description": "Injecting an explicit insufficiency finding (count unchanged at 3) still flips outcome to PROGRESSION_BLOCKED_EVIDENCE_REQUIRED",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-01",
+        "capabilityName": "Country Intelligence & Discovery",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "outcome": "PROGRESSION_BLOCKED_EVIDENCE_REQUIRED",
+        "explanation": "There is insufficient evidence to support progression: 1 eligible record(s) explicitly report missing or unproven evidence.",
+        "computedFacts": {
+          "eligibleCount": 3,
+          "supportingCount": 2,
+          "conflictingCount": 0,
+          "insufficientCount": 1,
+          "minimumEligibleEvidence": 2
+        },
+        "evidenceClassification": [
+          {
+            "id": "P1",
+            "classification": "SUPPORTING"
+          },
+          {
+            "id": "P2",
+            "classification": "SUPPORTING"
+          },
+          {
+            "id": "P3",
+            "classification": "INSUFFICIENT"
+          }
+        ]
+      }
+    },
+    {
+      "fixtureId": "CAP01-B5-INELIGIBLE-EVIDENCE-IGNORED",
+      "description": "Adding a non-ELIGIBLE record does not change eligibleCount or outcome",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-01",
+        "capabilityName": "Country Intelligence & Discovery",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "outcome": "INVESTIGATION_CANDIDATE",
+        "explanation": "All 3 eligible record(s) support the same direction with no conflict or insufficiency. Evidence supports a governed investigation candidate. It does not establish ingredient status, formulation efficacy, safety, regulatory approval or production authority.",
+        "computedFacts": {
+          "eligibleCount": 3,
+          "supportingCount": 3,
+          "conflictingCount": 0,
+          "insufficientCount": 0,
+          "minimumEligibleEvidence": 2
+        },
+        "evidenceClassification": [
+          {
+            "id": "P1",
+            "classification": "SUPPORTING"
+          },
+          {
+            "id": "P2",
+            "classification": "SUPPORTING"
+          },
+          {
+            "id": "P3",
+            "classification": "SUPPORTING"
+          }
+        ]
+      }
+    }
+  ]
+}

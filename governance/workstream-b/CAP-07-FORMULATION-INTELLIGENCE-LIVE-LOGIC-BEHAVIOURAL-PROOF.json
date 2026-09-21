@@ -1,0 +1,341 @@
+{
+  "proofId": "AAB-CAP34-CAP07-FORMULATION-INTELLIGENCE-LIVE-LOGIC-BEHAVIOURAL-PROOF",
+  "proofVersion": "1.0.0",
+  "generatedAtUtc": "2026-09-21T06:47:21.194Z",
+  "result": "PASS_CAP07_FORMULATION_INTELLIGENCE_LIVE_LOGIC_BEHAVIOURAL_PROOF",
+  "scope": "Proves that CAP-07 genuinely combines/scores candidates against an objective's constraints (changing either changes the output), and -- specifically -- that CAP-07's output responds to CAP-06's REAL, independently re-evaluated output across the capability boundary, in both directions, including upstream contradiction propagating to a review flag rather than being averaged away. It does not prove scientific correctness, production readiness, sovereignty or commissioning.",
+  "fixtureCount": 9,
+  "passedFixtureCount": 9,
+  "fixtures": [
+    {
+      "fixtureId": "CAP07-D0-DISPATCHER-WIRED",
+      "description": "sim.runLiveCapability('CAP-07', ...) reaches the same evaluator as calling it directly",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-07",
+        "capabilityName": "Formulation Intelligence",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "objectiveName": "Standard synthetic objective",
+        "outcome": "FORMULATION_CANDIDATE_READY",
+        "formulationScore": 0.9,
+        "qualifyingCount": 2,
+        "selectedCandidates": [
+          {
+            "materialId": "MAT-1",
+            "status": "INGREDIENT_PROGRESSION_CANDIDATE",
+            "readinessScore": 1
+          },
+          {
+            "materialId": "MAT-2",
+            "status": "INGREDIENT_PROGRESSION_CANDIDATE",
+            "readinessScore": 0.8
+          }
+        ],
+        "explanation": "2 candidate(s) selected with no unresolved contradiction, average readiness 0.900.",
+        "computedFacts": {
+          "totalCandidatesConsidered": 2,
+          "qualifyingCount": 2,
+          "minReadinessScore": 0.6,
+          "minQualifyingCandidates": 2,
+          "maxCandidates": 3
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP07-A0-BASELINE-READY",
+      "description": "2 qualifying candidates at or above threshold, meeting minQualifyingCandidates, yields FORMULATION_CANDIDATE_READY with a genuinely averaged score",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-07",
+        "capabilityName": "Formulation Intelligence",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "objectiveName": "Standard synthetic objective",
+        "outcome": "FORMULATION_CANDIDATE_READY",
+        "formulationScore": 0.9,
+        "qualifyingCount": 2,
+        "selectedCandidates": [
+          {
+            "materialId": "MAT-1",
+            "status": "INGREDIENT_PROGRESSION_CANDIDATE",
+            "readinessScore": 1
+          },
+          {
+            "materialId": "MAT-2",
+            "status": "INGREDIENT_PROGRESSION_CANDIDATE",
+            "readinessScore": 0.8
+          }
+        ],
+        "explanation": "2 candidate(s) selected with no unresolved contradiction, average readiness 0.900.",
+        "computedFacts": {
+          "totalCandidatesConsidered": 2,
+          "qualifyingCount": 2,
+          "minReadinessScore": 0.6,
+          "minQualifyingCandidates": 2,
+          "maxCandidates": 3
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP07-B0-STRICTER-OBJECTIVE-EXCLUDES-CANDIDATE",
+      "description": "Raising minReadinessScore above MAT-2's score (0.8) drops qualifying count below minQualifyingCandidates, blocking the formulation with the SAME ingredient list",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-07",
+        "capabilityName": "Formulation Intelligence",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "objectiveName": "Standard synthetic objective",
+        "outcome": "FORMULATION_BLOCKED_INSUFFICIENT_CANDIDATES",
+        "formulationScore": 0,
+        "qualifyingCount": 1,
+        "selectedCandidates": [],
+        "explanation": "Only 1 candidate(s) meet the objective's minimum readiness score of 0.85, below the required 2.",
+        "computedFacts": {
+          "totalCandidatesConsidered": 2,
+          "qualifyingCount": 1,
+          "minReadinessScore": 0.85,
+          "minQualifyingCandidates": 2,
+          "maxCandidates": 3
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP07-B1-RELAXED-OBJECTIVE-ACCEPTS-SINGLE-CANDIDATE",
+      "description": "Lowering minQualifyingCandidates to 1 accepts a single strong candidate that the standard objective alone would still require 2 for",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-07",
+        "capabilityName": "Formulation Intelligence",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "objectiveName": "Standard synthetic objective",
+        "outcome": "FORMULATION_CANDIDATE_READY",
+        "formulationScore": 1,
+        "qualifyingCount": 1,
+        "selectedCandidates": [
+          {
+            "materialId": "MAT-1",
+            "status": "INGREDIENT_PROGRESSION_CANDIDATE",
+            "readinessScore": 1
+          }
+        ],
+        "explanation": "1 candidate(s) selected with no unresolved contradiction, average readiness 1.000.",
+        "computedFacts": {
+          "totalCandidatesConsidered": 1,
+          "qualifyingCount": 1,
+          "minReadinessScore": 0.6,
+          "minQualifyingCandidates": 1,
+          "maxCandidates": 3
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP07-C0-CROSS-CAPABILITY-BASELINE",
+      "description": "CAP-07 fed CAP-06's REAL output for 2 well-corroborated materials reaches FORMULATION_CANDIDATE_READY",
+      "passed": true,
+      "actual": {
+        "cap06ResultA": {
+          "capabilityId": "CAP-06",
+          "capabilityName": "Ingredient Intelligence",
+          "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+          "productionAuthority": false,
+          "materialId": "MAT-A",
+          "status": "INGREDIENT_PROGRESSION_CANDIDATE",
+          "readinessScore": 1,
+          "explanation": "2 eligible record(s) support the candidate with no conflict or insufficiency.",
+          "computedFacts": {
+            "eligibleCount": 2,
+            "supportingCount": 2,
+            "conflictingCount": 0,
+            "insufficientCount": 0,
+            "requiredCorroboration": 2
+          }
+        },
+        "cap06ResultB": {
+          "capabilityId": "CAP-06",
+          "capabilityName": "Ingredient Intelligence",
+          "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+          "productionAuthority": false,
+          "materialId": "MAT-B",
+          "status": "INGREDIENT_PROGRESSION_CANDIDATE",
+          "readinessScore": 1,
+          "explanation": "2 eligible record(s) support the candidate with no conflict or insufficiency.",
+          "computedFacts": {
+            "eligibleCount": 2,
+            "supportingCount": 2,
+            "conflictingCount": 0,
+            "insufficientCount": 0,
+            "requiredCorroboration": 2
+          }
+        },
+        "formulationBaseline": {
+          "capabilityId": "CAP-07",
+          "capabilityName": "Formulation Intelligence",
+          "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+          "productionAuthority": false,
+          "objectiveName": "Standard synthetic objective",
+          "outcome": "FORMULATION_CANDIDATE_READY",
+          "formulationScore": 1,
+          "qualifyingCount": 2,
+          "selectedCandidates": [
+            {
+              "materialId": "MAT-A",
+              "status": "INGREDIENT_PROGRESSION_CANDIDATE",
+              "readinessScore": 1
+            },
+            {
+              "materialId": "MAT-B",
+              "status": "INGREDIENT_PROGRESSION_CANDIDATE",
+              "readinessScore": 1
+            }
+          ],
+          "explanation": "2 candidate(s) selected with no unresolved contradiction, average readiness 1.000.",
+          "computedFacts": {
+            "totalCandidatesConsidered": 2,
+            "qualifyingCount": 2,
+            "minReadinessScore": 0.6,
+            "minQualifyingCandidates": 2,
+            "maxCandidates": 3
+          }
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP07-C1-UPSTREAM-CAP06-CHANGED",
+      "description": "Removing MAT-A's corroborating record changes CAP-06's real output for it (sanity check before checking CAP-07 downstream)",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-06",
+        "capabilityName": "Ingredient Intelligence",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "materialId": "MAT-A",
+        "status": "INGREDIENT_BLOCKED_EVIDENCE_REQUIRED",
+        "readinessScore": 0,
+        "explanation": "Only 1 eligible record(s) supplied, below the corroboration requirement of 2.",
+        "computedFacts": {
+          "eligibleCount": 1,
+          "supportingCount": 1,
+          "conflictingCount": 0,
+          "insufficientCount": 0,
+          "requiredCorroboration": 2
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP07-C2-DOWNSTREAM-FORMULATION-RESPONDS-TO-UPSTREAM-CHANGE",
+      "description": "Feeding CAP-06's re-evaluated (weakened) real output into CAP-07, with the SAME objective, changes CAP-07's outcome: only 1 candidate still qualifies, blocking the formulation",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-07",
+        "capabilityName": "Formulation Intelligence",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "objectiveName": "Standard synthetic objective",
+        "outcome": "FORMULATION_BLOCKED_INSUFFICIENT_CANDIDATES",
+        "formulationScore": 0,
+        "qualifyingCount": 1,
+        "selectedCandidates": [],
+        "explanation": "Only 1 candidate(s) meet the objective's minimum readiness score of 0.6, below the required 2.",
+        "computedFacts": {
+          "totalCandidatesConsidered": 2,
+          "qualifyingCount": 1,
+          "minReadinessScore": 0.6,
+          "minQualifyingCandidates": 2,
+          "maxCandidates": 3
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP07-C3-CROSS-CAPABILITY-BIDIRECTIONAL",
+      "description": "Restoring MAT-A's evidence and re-running both CAP-06 then CAP-07 recovers FORMULATION_CANDIDATE_READY",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-07",
+        "capabilityName": "Formulation Intelligence",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "objectiveName": "Standard synthetic objective",
+        "outcome": "FORMULATION_CANDIDATE_READY",
+        "formulationScore": 1,
+        "qualifyingCount": 2,
+        "selectedCandidates": [
+          {
+            "materialId": "MAT-A",
+            "status": "INGREDIENT_PROGRESSION_CANDIDATE",
+            "readinessScore": 1
+          },
+          {
+            "materialId": "MAT-B",
+            "status": "INGREDIENT_PROGRESSION_CANDIDATE",
+            "readinessScore": 1
+          }
+        ],
+        "explanation": "2 candidate(s) selected with no unresolved contradiction, average readiness 1.000.",
+        "computedFacts": {
+          "totalCandidatesConsidered": 2,
+          "qualifyingCount": 2,
+          "minReadinessScore": 0.6,
+          "minQualifyingCandidates": 2,
+          "maxCandidates": 3
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP07-C4-UPSTREAM-CONTRADICTION-PROPAGATES-TO-REVIEW",
+      "description": "A contradicted CAP-06 result, even if numerically above threshold, forces CAP-07 into FORMULATION_REQUIRES_REVIEW rather than a clean READY",
+      "passed": true,
+      "actual": {
+        "cap06ResultContradicted": {
+          "capabilityId": "CAP-06",
+          "capabilityName": "Ingredient Intelligence",
+          "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+          "productionAuthority": false,
+          "materialId": "MAT-C",
+          "status": "INGREDIENT_CONTRADICTION_REQUIRES_REVIEW",
+          "readinessScore": 0.3333333333333333,
+          "explanation": "2 of 3 eligible record(s) conflict with the rest. Readiness is reduced, not zero, and not full confidence.",
+          "computedFacts": {
+            "eligibleCount": 3,
+            "supportingCount": 1,
+            "conflictingCount": 2,
+            "insufficientCount": 0,
+            "requiredCorroboration": 2
+          }
+        },
+        "formulationWithContradiction": {
+          "capabilityId": "CAP-07",
+          "capabilityName": "Formulation Intelligence",
+          "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+          "productionAuthority": false,
+          "objectiveName": "Standard synthetic objective",
+          "outcome": "FORMULATION_REQUIRES_REVIEW",
+          "formulationScore": 0.6666666666666666,
+          "qualifyingCount": 2,
+          "selectedCandidates": [
+            {
+              "materialId": "MAT-B",
+              "status": "INGREDIENT_PROGRESSION_CANDIDATE",
+              "readinessScore": 1
+            },
+            {
+              "materialId": "MAT-C",
+              "status": "INGREDIENT_CONTRADICTION_REQUIRES_REVIEW",
+              "readinessScore": 0.3333333333333333
+            }
+          ],
+          "explanation": "At least one selected candidate carries an unresolved ingredient-level contradiction. The formulation score is reported, but the formulation is not clean-ready.",
+          "computedFacts": {
+            "totalCandidatesConsidered": 2,
+            "qualifyingCount": 2,
+            "minReadinessScore": 0.2,
+            "minQualifyingCandidates": 2,
+            "maxCandidates": 3
+          }
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,250 @@
+{
+  "proofId": "AAB-CAP34-CAP06-INGREDIENT-INTELLIGENCE-LIVE-LOGIC-BEHAVIOURAL-PROOF",
+  "proofVersion": "1.0.0",
+  "generatedAtUtc": "2026-09-21T06:47:21.158Z",
+  "result": "PASS_CAP06_INGREDIENT_INTELLIGENCE_LIVE_LOGIC_BEHAVIOURAL_PROOF",
+  "scope": "Proves that CAP-06's live-simulation evaluator computes a continuous readinessScore that genuinely tracks evidence sufficiency and corroboration in both directions, distinguishing zero-evidence, disputed and fully-corroborated states with different score values, not just different labels. It does not prove scientific correctness, production readiness, sovereignty or commissioning.",
+  "fixtureCount": 10,
+  "passedFixtureCount": 10,
+  "fixtures": [
+    {
+      "fixtureId": "CAP06-D0-DISPATCHER-WIRED",
+      "description": "sim.runLiveCapability('CAP-06', ...) reaches the same evaluator as calling it directly",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-06",
+        "capabilityName": "Ingredient Intelligence",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "materialId": "MAT-HAPPY",
+        "status": "INGREDIENT_PROGRESSION_CANDIDATE",
+        "readinessScore": 1,
+        "explanation": "3 eligible record(s) support the candidate with no conflict or insufficiency.",
+        "computedFacts": {
+          "eligibleCount": 3,
+          "supportingCount": 3,
+          "conflictingCount": 0,
+          "insufficientCount": 0,
+          "requiredCorroboration": 2
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP06-A1-HAPPY-PATH",
+      "description": "HAPPY_PATH evidence yields INGREDIENT_PROGRESSION_CANDIDATE with a full readinessScore",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-06",
+        "capabilityName": "Ingredient Intelligence",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "materialId": "MAT-HAPPY",
+        "status": "INGREDIENT_PROGRESSION_CANDIDATE",
+        "readinessScore": 1,
+        "explanation": "3 eligible record(s) support the candidate with no conflict or insufficiency.",
+        "computedFacts": {
+          "eligibleCount": 3,
+          "supportingCount": 3,
+          "conflictingCount": 0,
+          "insufficientCount": 0,
+          "requiredCorroboration": 2
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP06-A2-CONTRADICTION",
+      "description": "CONTRADICTION evidence yields INGREDIENT_CONTRADICTION_REQUIRES_REVIEW with a reduced (not zero, not full) readinessScore",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-06",
+        "capabilityName": "Ingredient Intelligence",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "materialId": "MAT-CONTRA",
+        "status": "INGREDIENT_CONTRADICTION_REQUIRES_REVIEW",
+        "readinessScore": 0.3333333333333333,
+        "explanation": "2 of 3 eligible record(s) conflict with the rest. Readiness is reduced, not zero, and not full confidence.",
+        "computedFacts": {
+          "eligibleCount": 3,
+          "supportingCount": 1,
+          "conflictingCount": 2,
+          "insufficientCount": 0,
+          "requiredCorroboration": 2
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP06-A3-MISSING-EVIDENCE",
+      "description": "MISSING_EVIDENCE yields INGREDIENT_BLOCKED_EVIDENCE_REQUIRED with a zero readinessScore, not a confident partial score",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-06",
+        "capabilityName": "Ingredient Intelligence",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "materialId": "MAT-MISSING",
+        "status": "INGREDIENT_BLOCKED_EVIDENCE_REQUIRED",
+        "readinessScore": 0,
+        "explanation": "1 eligible record(s) explicitly report missing or unproven evidence.",
+        "computedFacts": {
+          "eligibleCount": 1,
+          "supportingCount": 0,
+          "conflictingCount": 0,
+          "insufficientCount": 1,
+          "requiredCorroboration": 2
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP06-B0-BASELINE",
+      "description": "2-record baseline (both supporting) yields INGREDIENT_PROGRESSION_CANDIDATE, readinessScore 1",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-06",
+        "capabilityName": "Ingredient Intelligence",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "materialId": "MAT-BASE",
+        "status": "INGREDIENT_PROGRESSION_CANDIDATE",
+        "readinessScore": 1,
+        "explanation": "2 eligible record(s) support the candidate with no conflict or insufficiency.",
+        "computedFacts": {
+          "eligibleCount": 2,
+          "supportingCount": 2,
+          "conflictingCount": 0,
+          "insufficientCount": 0,
+          "requiredCorroboration": 2
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP06-B1-CORROBORATION-REMOVED",
+      "description": "Removing 1 of 2 corroborating records drops readinessScore to 0 and flips status to blocked",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-06",
+        "capabilityName": "Ingredient Intelligence",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "materialId": "MAT-ONE",
+        "status": "INGREDIENT_BLOCKED_EVIDENCE_REQUIRED",
+        "readinessScore": 0,
+        "explanation": "Only 1 eligible record(s) supplied, below the corroboration requirement of 2.",
+        "computedFacts": {
+          "eligibleCount": 1,
+          "supportingCount": 1,
+          "conflictingCount": 0,
+          "insufficientCount": 0,
+          "requiredCorroboration": 2
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP06-B2-SCORE-CAPPED-AT-ONE",
+      "description": "A third corroborating record still yields readinessScore 1 (capped), not > 1",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-06",
+        "capabilityName": "Ingredient Intelligence",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "materialId": "MAT-THREE",
+        "status": "INGREDIENT_PROGRESSION_CANDIDATE",
+        "readinessScore": 1,
+        "explanation": "3 eligible record(s) support the candidate with no conflict or insufficiency.",
+        "computedFacts": {
+          "eligibleCount": 3,
+          "supportingCount": 3,
+          "conflictingCount": 0,
+          "insufficientCount": 0,
+          "requiredCorroboration": 2
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP06-B3-CONFLICT-INJECTED-PARTIAL-SCORE",
+      "description": "Flipping one record to conflicting (count unchanged) flips status to review with a nonzero, sub-1 score, distinct from the zero-evidence case",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-06",
+        "capabilityName": "Ingredient Intelligence",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "materialId": "MAT-CONFLICT",
+        "status": "INGREDIENT_CONTRADICTION_REQUIRES_REVIEW",
+        "readinessScore": 0.5,
+        "explanation": "1 of 2 eligible record(s) conflict with the rest. Readiness is reduced, not zero, and not full confidence.",
+        "computedFacts": {
+          "eligibleCount": 2,
+          "supportingCount": 1,
+          "conflictingCount": 1,
+          "insufficientCount": 0,
+          "requiredCorroboration": 2
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP06-B4-RESOLVED-BIDIRECTIONAL",
+      "description": "Resolving the CONTRADICTION scenario's conflict flips status back to progression-candidate with readinessScore 1",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-06",
+        "capabilityName": "Ingredient Intelligence",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "materialId": "MAT-RESOLVED",
+        "status": "INGREDIENT_PROGRESSION_CANDIDATE",
+        "readinessScore": 1,
+        "explanation": "3 eligible record(s) support the candidate with no conflict or insufficiency.",
+        "computedFacts": {
+          "eligibleCount": 3,
+          "supportingCount": 3,
+          "conflictingCount": 0,
+          "insufficientCount": 0,
+          "requiredCorroboration": 2
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP06-B5-FLAT-TALLY-NOT-SUBJECT-GROUPED",
+      "description": "A same-subject-wording pair and a different-subject-wording pair, each with one supporting and one conflicting finding, produce the IDENTICAL contradiction status, conflictingCount and readinessScore -- proving CAP-06 flat-tallies all evidence about the candidate and has no CAP-05-style subject-comparison mechanism gating the result",
+      "passed": true,
+      "actual": {
+        "sameSubjectResult": {
+          "capabilityId": "CAP-06",
+          "capabilityName": "Ingredient Intelligence",
+          "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+          "productionAuthority": false,
+          "materialId": "MAT-SAME-SUBJECT-WORDING",
+          "status": "INGREDIENT_CONTRADICTION_REQUIRES_REVIEW",
+          "readinessScore": 0.5,
+          "explanation": "1 of 2 eligible record(s) conflict with the rest. Readiness is reduced, not zero, and not full confidence.",
+          "computedFacts": {
+            "eligibleCount": 2,
+            "supportingCount": 1,
+            "conflictingCount": 1,
+            "insufficientCount": 0,
+            "requiredCorroboration": 2
+          }
+        },
+        "differentSubjectResult": {
+          "capabilityId": "CAP-06",
+          "capabilityName": "Ingredient Intelligence",
+          "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+          "productionAuthority": false,
+          "materialId": "MAT-DIFFERENT-SUBJECT-WORDING",
+          "status": "INGREDIENT_CONTRADICTION_REQUIRES_REVIEW",
+          "readinessScore": 0.5,
+          "explanation": "1 of 2 eligible record(s) conflict with the rest. Readiness is reduced, not zero, and not full confidence.",
+          "computedFacts": {
+            "eligibleCount": 2,
+            "supportingCount": 1,
+            "conflictingCount": 1,
+            "insufficientCount": 0,
+            "requiredCorroboration": 2
+          }
+        }
+      }
+    }
+  ]
+}

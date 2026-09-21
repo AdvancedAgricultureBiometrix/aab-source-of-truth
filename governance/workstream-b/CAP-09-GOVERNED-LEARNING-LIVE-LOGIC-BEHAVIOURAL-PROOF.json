@@ -1,0 +1,222 @@
+{
+  "proofId": "AAB-CAP34-CAP09-GOVERNED-LEARNING-LIVE-LOGIC-BEHAVIOURAL-PROOF",
+  "proofVersion": "1.0.0",
+  "generatedAtUtc": "2026-09-21T06:47:21.228Z",
+  "result": "PASS_CAP09_GOVERNED_LEARNING_LIVE_LOGIC_BEHAVIOURAL_PROOF",
+  "scope": "Proves that CAP-09 can and does explicitly refuse to promote a candidate finding to approved learning under named conditions (unreplicated single trial; contradicting evidence, including when replication alone is already satisfied), correctly names which condition(s) triggered the refusal, and correctly promotes once the missing condition is genuinely satisfied. It does not prove scientific correctness, production readiness, sovereignty or commissioning.",
+  "fixtureCount": 9,
+  "passedFixtureCount": 9,
+  "fixtures": [
+    {
+      "fixtureId": "CAP09-D0-DISPATCHER-WIRED",
+      "description": "sim.runLiveCapability('CAP-09', ...) reaches the same evaluator as calling it directly",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-09",
+        "capabilityName": "Governed Scientific Learning",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "findingId": "F-HAPPY",
+        "outcome": "PROMOTED_TO_APPROVED_LEARNING",
+        "refusalReasons": [],
+        "explanation": "3 independent supporting trial(s) meet the replication requirement of 2 with no contradicting or self-declared-insufficient trial present.",
+        "computedFacts": {
+          "eligibleCount": 3,
+          "supportingCount": 3,
+          "conflictingCount": 0,
+          "insufficientCount": 0,
+          "requiredReplications": 2
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP09-A1-HAPPY-PATH-PROMOTES",
+      "description": "3 independent consistent trials (>= replication requirement, no contradiction) promotes to approved learning with zero refusal reasons",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-09",
+        "capabilityName": "Governed Scientific Learning",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "findingId": "F-HAPPY",
+        "outcome": "PROMOTED_TO_APPROVED_LEARNING",
+        "refusalReasons": [],
+        "explanation": "3 independent supporting trial(s) meet the replication requirement of 2 with no contradicting or self-declared-insufficient trial present.",
+        "computedFacts": {
+          "eligibleCount": 3,
+          "supportingCount": 3,
+          "conflictingCount": 0,
+          "insufficientCount": 0,
+          "requiredReplications": 2
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP09-A2-CONTRADICTION-REFUSES-NAMED",
+      "description": "CONTRADICTION scenario refuses promotion and names CONTRADICTING_EVIDENCE_PRESENT explicitly among its reasons",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-09",
+        "capabilityName": "Governed Scientific Learning",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "findingId": "F-CONTRA",
+        "outcome": "PROMOTION_REFUSED",
+        "refusalReasons": [
+          "REPLICATION_REQUIRED",
+          "CONTRADICTING_EVIDENCE_PRESENT"
+        ],
+        "explanation": "Promotion refused: REPLICATION_REQUIRED, CONTRADICTING_EVIDENCE_PRESENT. AAB does not promote a candidate finding to approved learning merely because a trial occurred.",
+        "computedFacts": {
+          "eligibleCount": 3,
+          "supportingCount": 1,
+          "conflictingCount": 2,
+          "insufficientCount": 0,
+          "requiredReplications": 2
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP09-A3-MISSING-EVIDENCE-REFUSES-NAMED",
+      "description": "MISSING_EVIDENCE scenario (1 trial only) refuses and names REPLICATION_REQUIRED explicitly",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-09",
+        "capabilityName": "Governed Scientific Learning",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "findingId": "F-MISSING",
+        "outcome": "PROMOTION_REFUSED",
+        "refusalReasons": [
+          "REPLICATION_REQUIRED",
+          "SELF_DECLARED_EVIDENCE_GAP"
+        ],
+        "explanation": "Promotion refused: REPLICATION_REQUIRED, SELF_DECLARED_EVIDENCE_GAP. AAB does not promote a candidate finding to approved learning merely because a trial occurred.",
+        "computedFacts": {
+          "eligibleCount": 1,
+          "supportingCount": 0,
+          "conflictingCount": 0,
+          "insufficientCount": 1,
+          "requiredReplications": 2
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP09-B0-SINGLE-UNREPLICATED-TRIAL-REFUSED",
+      "description": "A single unreplicated trial, with no contradiction at all, is STILL refused, naming REPLICATION_REQUIRED and nothing else",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-09",
+        "capabilityName": "Governed Scientific Learning",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "findingId": "F-SINGLE",
+        "outcome": "PROMOTION_REFUSED",
+        "refusalReasons": [
+          "REPLICATION_REQUIRED"
+        ],
+        "explanation": "Promotion refused: REPLICATION_REQUIRED. AAB does not promote a candidate finding to approved learning merely because a trial occurred.",
+        "computedFacts": {
+          "eligibleCount": 1,
+          "supportingCount": 1,
+          "conflictingCount": 0,
+          "insufficientCount": 0,
+          "requiredReplications": 2
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP09-B1-REPLICATION-SATISFIED-PROMOTES",
+      "description": "Adding one genuinely independent replicating trial (2 total, no conflict) flips the SAME finding from refused to promoted",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-09",
+        "capabilityName": "Governed Scientific Learning",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "findingId": "F-REPLICATED",
+        "outcome": "PROMOTED_TO_APPROVED_LEARNING",
+        "refusalReasons": [],
+        "explanation": "2 independent supporting trial(s) meet the replication requirement of 2 with no contradicting or self-declared-insufficient trial present.",
+        "computedFacts": {
+          "eligibleCount": 2,
+          "supportingCount": 2,
+          "conflictingCount": 0,
+          "insufficientCount": 0,
+          "requiredReplications": 2
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP09-B1B-CONTENT-DRIVEN-AT-CONSTANT-COUNT",
+      "description": "Injecting a contradicting finding into T2 (trial count unchanged at 2, same as the promoting replicatedTrial baseline) flips outcome back to PROMOTION_REFUSED and names CONTRADICTING_EVIDENCE_PRESENT -- proving the evaluator reads content, not just how many trials were supplied",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-09",
+        "capabilityName": "Governed Scientific Learning",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "findingId": "F-CONTENT-INJECTED",
+        "outcome": "PROMOTION_REFUSED",
+        "refusalReasons": [
+          "REPLICATION_REQUIRED",
+          "CONTRADICTING_EVIDENCE_PRESENT"
+        ],
+        "explanation": "Promotion refused: REPLICATION_REQUIRED, CONTRADICTING_EVIDENCE_PRESENT. AAB does not promote a candidate finding to approved learning merely because a trial occurred.",
+        "computedFacts": {
+          "eligibleCount": 2,
+          "supportingCount": 1,
+          "conflictingCount": 1,
+          "insufficientCount": 0,
+          "requiredReplications": 2
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP09-C0-CONTRADICTION-OVERRIDES-SATISFIED-REPLICATION",
+      "description": "Even with the replication requirement already met (2 supporting trials), a contradicting 3rd trial refuses promotion, naming CONTRADICTING_EVIDENCE_PRESENT specifically -- not REPLICATION_REQUIRED, since replication is genuinely satisfied",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-09",
+        "capabilityName": "Governed Scientific Learning",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "findingId": "F-CONTRADICTED-REPLICATED",
+        "outcome": "PROMOTION_REFUSED",
+        "refusalReasons": [
+          "CONTRADICTING_EVIDENCE_PRESENT"
+        ],
+        "explanation": "Promotion refused: CONTRADICTING_EVIDENCE_PRESENT. AAB does not promote a candidate finding to approved learning merely because a trial occurred.",
+        "computedFacts": {
+          "eligibleCount": 3,
+          "supportingCount": 2,
+          "conflictingCount": 1,
+          "insufficientCount": 0,
+          "requiredReplications": 2
+        }
+      }
+    },
+    {
+      "fixtureId": "CAP09-D1-RESOLVED-CONTRADICTION-PROMOTES",
+      "description": "Resolving the CONTRADICTION scenario's disagreement recovers PROMOTED_TO_APPROVED_LEARNING with zero refusal reasons",
+      "passed": true,
+      "actual": {
+        "capabilityId": "CAP-09",
+        "capabilityName": "Governed Scientific Learning",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "productionAuthority": false,
+        "findingId": "F-RESOLVED",
+        "outcome": "PROMOTED_TO_APPROVED_LEARNING",
+        "refusalReasons": [],
+        "explanation": "3 independent supporting trial(s) meet the replication requirement of 2 with no contradicting or self-declared-insufficient trial present.",
+        "computedFacts": {
+          "eligibleCount": 3,
+          "supportingCount": 3,
+          "conflictingCount": 0,
+          "insufficientCount": 0,
+          "requiredReplications": 2
+        }
+      }
+    }
+  ]
+}
