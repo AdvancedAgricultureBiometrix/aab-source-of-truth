@@ -1,0 +1,539 @@
+{
+  "proofId": "AAB-CAP34-SCS-ROADMAP-PREVIEW-BEHAVIOURAL-PROOF",
+  "proofVersion": "1.0.0",
+  "generatedAtUtc": "2026-09-22T21:19:07.262Z",
+  "result": "PASS_CAP34_SCS_ROADMAP_PREVIEW_BEHAVIOURAL_PROOF",
+  "scope": "Proves only that the SCS Roadmap Preview section presents twelve non-operational SCS capability identities and the SCS Brain candidate under a fail-closed acknowledgement gate, with no evaluate/run action and no disclosure-receipt or fidelity-manifest API invoked. It does not prove SCS capability admission, implementation, scientific completeness, regulatory compliance, production readiness or commissioning.",
+  "fixtureCount": 14,
+  "passedFixtureCount": 14,
+  "fixtures": [
+    {
+      "fixtureId": "SCS-01-TWELVE-CAPABILITIES-PRESENT",
+      "passed": true,
+      "actual": {
+        "count": 12
+      }
+    },
+    {
+      "fixtureId": "SCS-02-ROSTER-ORDER-PRESERVED",
+      "passed": true,
+      "actual": [
+        "SCS-CAP-01",
+        "SCS-CAP-02",
+        "SCS-CAP-03",
+        "SCS-CAP-04",
+        "SCS-CAP-05",
+        "SCS-CAP-06",
+        "SCS-CAP-07",
+        "SCS-CAP-08",
+        "SCS-CAP-09",
+        "SCS-CAP-10",
+        "SCS-CAP-11",
+        "SCS-CAP-12"
+      ]
+    },
+    {
+      "fixtureId": "SCS-03-DESIGN-CONTRACT-BADGES-RENDER",
+      "passed": true,
+      "actual": [
+        {
+          "id": "SCS-CAP-01",
+          "name": "Regulatory Framework Registration",
+          "responsibility": "Register a specific regulatory framework and generate the evidence requirement specification that governs what must be admitted before a due diligence evaluation can proceed.",
+          "maturity": "DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED",
+          "exclusions": [
+            "Does not evaluate evidence.",
+            "Does not make compliance determinations."
+          ],
+          "contractPath": "governance/workstream-b/SCS-CAP-01-REGULATORY-FRAMEWORK-REGISTRATION-CANONICAL-CONTRACT-2026-09-22.md"
+        },
+        {
+          "id": "SCS-CAP-03",
+          "name": "Plot and Land Unit Registration",
+          "responsibility": "Register a geographic plot as a real-world entity, with boundary evidence, tenure claims, and framework associations recorded as separate records.",
+          "maturity": "DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED",
+          "exclusions": [
+            "Does not verify legal title or tenure.",
+            "Does not confirm regulatory sufficiency."
+          ],
+          "contractPath": "governance/workstream-b/SCS-CAP-03-PLOT-AND-LAND-UNIT-REGISTRATION-CANONICAL-CONTRACT-2026-09-22.md"
+        },
+        {
+          "id": "SCS-CAP-04",
+          "name": "Deforestation Evidence Admission",
+          "responsibility": "Admit genuine, attributable, and usable deforestation evidence and record precisely what each item observed, analysed, and attested.",
+          "maturity": "DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED",
+          "exclusions": [
+            "Does not determine whether admitted evidence is sufficient for any framework.",
+            "Does not strengthen a source's claim beyond what the source declared."
+          ],
+          "contractPath": "governance/workstream-b/SCS-CAP-04-DEFORESTATION-EVIDENCE-ADMISSION-CANONICAL-CONTRACT-2026-09-22.md"
+        },
+        {
+          "id": "SCS-CAP-06",
+          "name": "Due Diligence Sufficiency Evaluation",
+          "responsibility": "Given admitted evidence, produce an honest evidence landscape identifying what is sufficient and what gaps remain — a sufficiency evaluation, not a compliance finding.",
+          "maturity": "DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED",
+          "exclusions": [
+            "Does not produce due diligence statements.",
+            "Does not automatically approve evidence."
+          ],
+          "contractPath": "governance/workstream-b/SCS-CAP-06-DUE-DILIGENCE-SUFFICIENCY-EVALUATION-CANONICAL-CONTRACT-2026-09-22.md"
+        },
+        {
+          "id": "SCS-CAP-08",
+          "name": "Due Diligence Package Compilation",
+          "responsibility": "Compile a governed due diligence package assembling all admitted evidence, provenance, gaps and the human review decision for presentation to a regulatory authority.",
+          "maturity": "DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED",
+          "exclusions": [
+            "Does not submit the package to any regulatory authority.",
+            "Does not sign on behalf of the operator."
+          ],
+          "contractPath": "governance/workstream-b/SCS-CAP-08-DUE-DILIGENCE-PACKAGE-COMPILATION-CANONICAL-CONTRACT-2026-09-22.md"
+        },
+        {
+          "id": "SCS-CAP-09",
+          "name": "Regulatory Review and Promotion",
+          "responsibility": "The human gate before any due diligence package can be compiled — a qualified compliance officer reviews the sufficiency evaluation and records a permanent decision.",
+          "maturity": "DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED",
+          "exclusions": [
+            "Does not make the legal compliance determination.",
+            "Does not produce due diligence statements."
+          ],
+          "contractPath": "governance/workstream-b/SCS-CAP-09-REGULATORY-REVIEW-AND-PROMOTION-CANONICAL-CONTRACT-2026-09-22.md"
+        }
+      ]
+    },
+    {
+      "fixtureId": "SCS-04-CONCEPT-PREVIEW-BADGES-RENDER",
+      "passed": true,
+      "actual": [
+        {
+          "id": "SCS-CAP-02",
+          "name": "Operator and Supplier Identity Registration",
+          "responsibility": "Register legal entities, their roles in the supply chain, and their authority to provide specific types of evidence, including the aggregator role.",
+          "maturity": "CONCEPT_PREVIEW_NOT_IMPLEMENTED",
+          "exclusions": [
+            "Does not verify legal identity.",
+            "Does not grant compliance authority."
+          ],
+          "contractPath": null
+        },
+        {
+          "id": "SCS-CAP-05",
+          "name": "Supply Chain Custody Evidence Admission",
+          "responsibility": "Govern the ingestion of custody chain evidence proving the commodity's journey from plot to market.",
+          "maturity": "CONCEPT_PREVIEW_NOT_IMPLEMENTED",
+          "exclusions": [
+            "Does not make compliance determinations.",
+            "Does not produce due diligence statements."
+          ],
+          "contractPath": null
+        },
+        {
+          "id": "SCS-CAP-07",
+          "name": "Evidence Source Discovery",
+          "responsibility": "For a specific country, commodity and gap type, surface authoritative sources that could provide missing evidence.",
+          "maturity": "CONCEPT_PREVIEW_NOT_IMPLEMENTED",
+          "exclusions": [
+            "Does not fill gaps itself.",
+            "Does not admit evidence."
+          ],
+          "contractPath": null
+        },
+        {
+          "id": "SCS-CAP-10",
+          "name": "Challenge Response and Evidence Retrieval",
+          "responsibility": "When a due diligence statement is challenged, retrieve the exact evidence package admitted at the time and prove the provenance chain is intact.",
+          "maturity": "CONCEPT_PREVIEW_NOT_IMPLEMENTED",
+          "exclusions": [
+            "Does not respond to challenges on the operator's behalf.",
+            "Does not alter historical evidence records."
+          ],
+          "contractPath": null
+        },
+        {
+          "id": "SCS-CAP-11",
+          "name": "Regulatory Framework Update Management",
+          "responsibility": "When a regulation is amended, identify which existing evidence packages are affected and surface what needs human review.",
+          "maturity": "CONCEPT_PREVIEW_NOT_IMPLEMENTED",
+          "exclusions": [
+            "Does not automatically invalidate previously admitted evidence.",
+            "Does not determine that existing evidence is insufficient under a new framework."
+          ],
+          "contractPath": null
+        },
+        {
+          "id": "SCS-CAP-12",
+          "name": "Cross-Boundary Evidence Reference",
+          "responsibility": "For supply chains spanning multiple country environments, manage governed references to evidence admitted in another country's environment.",
+          "maturity": "CONCEPT_PREVIEW_NOT_IMPLEMENTED",
+          "exclusions": [
+            "Does not copy evidence across country boundaries.",
+            "Does not bypass the receiving country's admission standards."
+          ],
+          "contractPath": null
+        }
+      ]
+    },
+    {
+      "fixtureId": "SCS-05-NO-CAPABILITY-EVALUATE-ACTION",
+      "passed": true,
+      "actual": [
+        [
+          "id",
+          "name",
+          "responsibility",
+          "maturity",
+          "exclusions",
+          "contractPath"
+        ],
+        [
+          "id",
+          "name",
+          "responsibility",
+          "maturity",
+          "exclusions",
+          "contractPath"
+        ],
+        [
+          "id",
+          "name",
+          "responsibility",
+          "maturity",
+          "exclusions",
+          "contractPath"
+        ],
+        [
+          "id",
+          "name",
+          "responsibility",
+          "maturity",
+          "exclusions",
+          "contractPath"
+        ],
+        [
+          "id",
+          "name",
+          "responsibility",
+          "maturity",
+          "exclusions",
+          "contractPath"
+        ],
+        [
+          "id",
+          "name",
+          "responsibility",
+          "maturity",
+          "exclusions",
+          "contractPath"
+        ],
+        [
+          "id",
+          "name",
+          "responsibility",
+          "maturity",
+          "exclusions",
+          "contractPath"
+        ],
+        [
+          "id",
+          "name",
+          "responsibility",
+          "maturity",
+          "exclusions",
+          "contractPath"
+        ],
+        [
+          "id",
+          "name",
+          "responsibility",
+          "maturity",
+          "exclusions",
+          "contractPath"
+        ],
+        [
+          "id",
+          "name",
+          "responsibility",
+          "maturity",
+          "exclusions",
+          "contractPath"
+        ],
+        [
+          "id",
+          "name",
+          "responsibility",
+          "maturity",
+          "exclusions",
+          "contractPath"
+        ],
+        [
+          "id",
+          "name",
+          "responsibility",
+          "maturity",
+          "exclusions",
+          "contractPath"
+        ]
+      ]
+    },
+    {
+      "fixtureId": "SCS-06-NO-RUN-OR-EVALUATE-API-EXPOSED",
+      "passed": true,
+      "actual": {
+        "keys": [
+          "CLASSIFICATION",
+          "DOMAIN",
+          "SCS_ROADMAP_ACKNOWLEDGEMENT_VERSION",
+          "DOMAIN_DISCLOSURE",
+          "MATURITY",
+          "capabilities",
+          "brainCandidate",
+          "revealPreview",
+          "runValidation"
+        ]
+      }
+    },
+    {
+      "fixtureId": "SCS-07-ACK-GATE-FAIL-CLOSED-WHEN-UNCHECKED",
+      "passed": true,
+      "actual": {
+        "status": "FAIL_CLOSED_SCS_ROADMAP_ACKNOWLEDGEMENT_REQUIRED"
+      }
+    },
+    {
+      "fixtureId": "SCS-08-ACK-GATE-VERSION-LOCKED",
+      "passed": true,
+      "actual": {
+        "status": "FAIL_CLOSED_SCS_ROADMAP_ACKNOWLEDGEMENT_REQUIRED"
+      }
+    },
+    {
+      "fixtureId": "SCS-09-ACK-GATE-REVEALS-CARDS-ON-ACCEPT",
+      "passed": true,
+      "actual": {
+        "status": "PASS_SCS_ROADMAP_PREVIEW_DISCLOSED",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "domain": "SUPPLY_CHAIN_SOVEREIGNTY",
+        "productionAuthority": false,
+        "implementedCapability": false,
+        "admittedCapability": false,
+        "acknowledgement": {
+          "accepted": true,
+          "wordingVersion": "CAP34-SCS-ROADMAP-ACK-1.0.0"
+        },
+        "capabilities": [
+          {
+            "id": "SCS-CAP-01",
+            "name": "Regulatory Framework Registration",
+            "responsibility": "Register a specific regulatory framework and generate the evidence requirement specification that governs what must be admitted before a due diligence evaluation can proceed.",
+            "maturity": "DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED",
+            "exclusions": [
+              "Does not evaluate evidence.",
+              "Does not make compliance determinations."
+            ],
+            "contractPath": "governance/workstream-b/SCS-CAP-01-REGULATORY-FRAMEWORK-REGISTRATION-CANONICAL-CONTRACT-2026-09-22.md"
+          },
+          {
+            "id": "SCS-CAP-02",
+            "name": "Operator and Supplier Identity Registration",
+            "responsibility": "Register legal entities, their roles in the supply chain, and their authority to provide specific types of evidence, including the aggregator role.",
+            "maturity": "CONCEPT_PREVIEW_NOT_IMPLEMENTED",
+            "exclusions": [
+              "Does not verify legal identity.",
+              "Does not grant compliance authority."
+            ],
+            "contractPath": null
+          },
+          {
+            "id": "SCS-CAP-03",
+            "name": "Plot and Land Unit Registration",
+            "responsibility": "Register a geographic plot as a real-world entity, with boundary evidence, tenure claims, and framework associations recorded as separate records.",
+            "maturity": "DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED",
+            "exclusions": [
+              "Does not verify legal title or tenure.",
+              "Does not confirm regulatory sufficiency."
+            ],
+            "contractPath": "governance/workstream-b/SCS-CAP-03-PLOT-AND-LAND-UNIT-REGISTRATION-CANONICAL-CONTRACT-2026-09-22.md"
+          },
+          {
+            "id": "SCS-CAP-04",
+            "name": "Deforestation Evidence Admission",
+            "responsibility": "Admit genuine, attributable, and usable deforestation evidence and record precisely what each item observed, analysed, and attested.",
+            "maturity": "DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED",
+            "exclusions": [
+              "Does not determine whether admitted evidence is sufficient for any framework.",
+              "Does not strengthen a source's claim beyond what the source declared."
+            ],
+            "contractPath": "governance/workstream-b/SCS-CAP-04-DEFORESTATION-EVIDENCE-ADMISSION-CANONICAL-CONTRACT-2026-09-22.md"
+          },
+          {
+            "id": "SCS-CAP-05",
+            "name": "Supply Chain Custody Evidence Admission",
+            "responsibility": "Govern the ingestion of custody chain evidence proving the commodity's journey from plot to market.",
+            "maturity": "CONCEPT_PREVIEW_NOT_IMPLEMENTED",
+            "exclusions": [
+              "Does not make compliance determinations.",
+              "Does not produce due diligence statements."
+            ],
+            "contractPath": null
+          },
+          {
+            "id": "SCS-CAP-06",
+            "name": "Due Diligence Sufficiency Evaluation",
+            "responsibility": "Given admitted evidence, produce an honest evidence landscape identifying what is sufficient and what gaps remain — a sufficiency evaluation, not a compliance finding.",
+            "maturity": "DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED",
+            "exclusions": [
+              "Does not produce due diligence statements.",
+              "Does not automatically approve evidence."
+            ],
+            "contractPath": "governance/workstream-b/SCS-CAP-06-DUE-DILIGENCE-SUFFICIENCY-EVALUATION-CANONICAL-CONTRACT-2026-09-22.md"
+          },
+          {
+            "id": "SCS-CAP-07",
+            "name": "Evidence Source Discovery",
+            "responsibility": "For a specific country, commodity and gap type, surface authoritative sources that could provide missing evidence.",
+            "maturity": "CONCEPT_PREVIEW_NOT_IMPLEMENTED",
+            "exclusions": [
+              "Does not fill gaps itself.",
+              "Does not admit evidence."
+            ],
+            "contractPath": null
+          },
+          {
+            "id": "SCS-CAP-08",
+            "name": "Due Diligence Package Compilation",
+            "responsibility": "Compile a governed due diligence package assembling all admitted evidence, provenance, gaps and the human review decision for presentation to a regulatory authority.",
+            "maturity": "DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED",
+            "exclusions": [
+              "Does not submit the package to any regulatory authority.",
+              "Does not sign on behalf of the operator."
+            ],
+            "contractPath": "governance/workstream-b/SCS-CAP-08-DUE-DILIGENCE-PACKAGE-COMPILATION-CANONICAL-CONTRACT-2026-09-22.md"
+          },
+          {
+            "id": "SCS-CAP-09",
+            "name": "Regulatory Review and Promotion",
+            "responsibility": "The human gate before any due diligence package can be compiled — a qualified compliance officer reviews the sufficiency evaluation and records a permanent decision.",
+            "maturity": "DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED",
+            "exclusions": [
+              "Does not make the legal compliance determination.",
+              "Does not produce due diligence statements."
+            ],
+            "contractPath": "governance/workstream-b/SCS-CAP-09-REGULATORY-REVIEW-AND-PROMOTION-CANONICAL-CONTRACT-2026-09-22.md"
+          },
+          {
+            "id": "SCS-CAP-10",
+            "name": "Challenge Response and Evidence Retrieval",
+            "responsibility": "When a due diligence statement is challenged, retrieve the exact evidence package admitted at the time and prove the provenance chain is intact.",
+            "maturity": "CONCEPT_PREVIEW_NOT_IMPLEMENTED",
+            "exclusions": [
+              "Does not respond to challenges on the operator's behalf.",
+              "Does not alter historical evidence records."
+            ],
+            "contractPath": null
+          },
+          {
+            "id": "SCS-CAP-11",
+            "name": "Regulatory Framework Update Management",
+            "responsibility": "When a regulation is amended, identify which existing evidence packages are affected and surface what needs human review.",
+            "maturity": "CONCEPT_PREVIEW_NOT_IMPLEMENTED",
+            "exclusions": [
+              "Does not automatically invalidate previously admitted evidence.",
+              "Does not determine that existing evidence is insufficient under a new framework."
+            ],
+            "contractPath": null
+          },
+          {
+            "id": "SCS-CAP-12",
+            "name": "Cross-Boundary Evidence Reference",
+            "responsibility": "For supply chains spanning multiple country environments, manage governed references to evidence admitted in another country's environment.",
+            "maturity": "CONCEPT_PREVIEW_NOT_IMPLEMENTED",
+            "exclusions": [
+              "Does not copy evidence across country boundaries.",
+              "Does not bypass the receiving country's admission standards."
+            ],
+            "contractPath": null
+          }
+        ],
+        "brainCandidate": {
+          "designation": "SCS-BRAIN-CANDIDATE-01",
+          "name": "Governed Supply Chain Evidence Intelligence",
+          "isNumberedCapability": false,
+          "admissionStatus": "NOT_ADMITTED",
+          "implementationStatus": "NOT_IMPLEMENTED",
+          "statement": "A candidate composition layer that would read governed outputs from SCS-CAP-01, SCS-CAP-03, SCS-CAP-04 and SCS-CAP-06 to produce an evidence landscape for human review. It is not a numbered capability, is not admitted, and is not implemented.",
+          "contractPath": "governance/workstream-b/SCS-BRAIN-CANDIDATE-01-GOVERNED-EVIDENCE-INTELLIGENCE-2026-09-22.md"
+        }
+      }
+    },
+    {
+      "fixtureId": "SCS-10-BRAIN-CANDIDATE-NOT-NUMBERED",
+      "passed": true,
+      "actual": {
+        "designation": "SCS-BRAIN-CANDIDATE-01",
+        "name": "Governed Supply Chain Evidence Intelligence",
+        "isNumberedCapability": false,
+        "admissionStatus": "NOT_ADMITTED",
+        "implementationStatus": "NOT_IMPLEMENTED",
+        "statement": "A candidate composition layer that would read governed outputs from SCS-CAP-01, SCS-CAP-03, SCS-CAP-04 and SCS-CAP-06 to produce an evidence landscape for human review. It is not a numbered capability, is not admitted, and is not implemented.",
+        "contractPath": "governance/workstream-b/SCS-BRAIN-CANDIDATE-01-GOVERNED-EVIDENCE-INTELLIGENCE-2026-09-22.md"
+      }
+    },
+    {
+      "fixtureId": "SCS-11-BRAIN-CANDIDATE-NOT-ADMITTED-OR-IMPLEMENTED",
+      "passed": true,
+      "actual": {
+        "designation": "SCS-BRAIN-CANDIDATE-01",
+        "name": "Governed Supply Chain Evidence Intelligence",
+        "isNumberedCapability": false,
+        "admissionStatus": "NOT_ADMITTED",
+        "implementationStatus": "NOT_IMPLEMENTED",
+        "statement": "A candidate composition layer that would read governed outputs from SCS-CAP-01, SCS-CAP-03, SCS-CAP-04 and SCS-CAP-06 to produce an evidence landscape for human review. It is not a numbered capability, is not admitted, and is not implemented.",
+        "contractPath": "governance/workstream-b/SCS-BRAIN-CANDIDATE-01-GOVERNED-EVIDENCE-INTELLIGENCE-2026-09-22.md"
+      }
+    },
+    {
+      "fixtureId": "SCS-12-DOMAIN-DISCLOSURE-PRESENT-AND-VISIBLE",
+      "passed": true,
+      "actual": {
+        "disclosure": "Supply Chain Sovereignty (SCS) domain preview. None of the twelve SCS capabilities are admitted, implemented, or operational. This section is identity and design documentation only — no evidence is evaluated, no evidence is admitted, and no disclosure receipt is produced here."
+      }
+    },
+    {
+      "fixtureId": "SCS-13-SELF-VALIDATION-PASSES",
+      "passed": true,
+      "actual": {
+        "status": "PASS_SCS_ROADMAP_PREVIEW_READY",
+        "classification": "CONTROLLED_AAB_SIMULATION_SYNTHETIC_REFERENCE_ONLY",
+        "domain": "SUPPLY_CHAIN_SOVEREIGNTY",
+        "checks": {
+          "twelveCapabilitiesPresent": true,
+          "rosterOrderPreserved": true,
+          "sixDesignContractCapabilities": true,
+          "sixConceptPreviewCapabilities": true,
+          "designContractCapabilitiesHaveContracts": true,
+          "conceptPreviewCapabilitiesHaveNoContract": true,
+          "everyCapabilityHasExclusions": true,
+          "noCapabilityExposesEvaluateOrRun": true,
+          "gateFailsClosedWithoutAcknowledgement": true,
+          "gateDisclosesNoAuthorityWhenAccepted": true,
+          "brainCandidateNotNumbered": true,
+          "brainCandidateNotAmongCapabilities": true,
+          "brainCandidateNotAdmittedOrImplemented": true,
+          "domainDisclosurePresent": true
+        }
+      }
+    },
+    {
+      "fixtureId": "SCS-14-NO-RECEIPT-CHAIN-INVOKED",
+      "passed": true,
+      "actual": {
+        "windowKeys": [
+          "AAB_CAP34_SCS_ROADMAP_PREVIEW"
+        ]
+      }
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow,noarchive"><title>AAB Controlled Simulation</title>
-<style>:root{font-family:Inter,system-ui,sans-serif;color:#17211c;background:#f4f6f4}body{margin:0}.banner{position:sticky;top:0;z-index:5;background:#fff3cd;border-bottom:2px solid #7a5a00;padding:14px 20px;font-weight:700}main{max-width:1080px;margin:auto;padding:28px}.card{background:#fff;border:1px solid #d9dfdb;border-radius:14px;padding:20px;margin:16px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}button,select{font:inherit;padding:10px 12px}.state{padding:10px;border-left:4px solid #555;background:#f7f7f7;margin:8px 0}.preview{border-color:#7a5a00;background:#fffaf0}.label{display:inline-block;background:#7a5a00;color:white;padding:5px 8px;border-radius:5px;font-weight:700}small{color:#52605a}.danger{font-weight:700}.mono{font-family:ui-monospace,monospace}.ack{display:flex;gap:10px;align-items:flex-start;margin:14px 0}.ack input{margin-top:4px}</style></head>
+<style>:root{font-family:Inter,system-ui,sans-serif;color:#17211c;background:#f4f6f4}body{margin:0}.banner{position:sticky;top:0;z-index:5;background:#fff3cd;border-bottom:2px solid #7a5a00;padding:14px 20px;font-weight:700}main{max-width:1080px;margin:auto;padding:28px}.card{background:#fff;border:1px solid #d9dfdb;border-radius:14px;padding:20px;margin:16px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}button,select{font:inherit;padding:10px 12px}.state{padding:10px;border-left:4px solid #555;background:#f7f7f7;margin:8px 0}.preview{border-color:#7a5a00;background:#fffaf0}.label{display:inline-block;background:#7a5a00;color:white;padding:5px 8px;border-radius:5px;font-weight:700}small{color:#52605a}.danger{font-weight:700}.mono{font-family:ui-monospace,monospace}.ack{display:flex;gap:10px;align-items:flex-start;margin:14px 0}.ack input{margin-top:4px}.scs-banner{background:#eef1ff;border:2px solid #2a3a9e;color:#161d5c;padding:10px 14px;border-radius:8px;font-weight:700;margin-bottom:12px}.scs-card{border-color:#2a3a9e;background:#f6f7ff}.label.design-contract{background:#1f6b3f}.brain-card{border:2px dashed #2a3a9e;background:#eef1ff}</style></head>
 <body><div class="banner">CONTROLLED AAB SIMULATION — SYNTHETIC/REFERENCE DATA ONLY. This does not represent AAB commissioning status or prove readiness for production use of real scientific data. No production, government, scientific, regulatory or commissioning authority.</div><main>
 <h1>AAB Governed Simulation</h1><p>Experience selected AAB behaviours without supplying sovereign country scientific data. This build deliberately includes contradiction and refusal states, not only a happy path.</p>
 <section class="card"><h2>1. Simulated role</h2><select id="role"></select><div id="roleState" class="state"></div></section>
@@ -8,12 +8,37 @@
 <section class="card preview"><span class="label">CONCEPT PREVIEW — NOT AN IMPLEMENTED CAPABILITY</span><h2>3. Roadmap Preview</h2><p>These pathways describe intended governed behaviour. They do not claim that the underlying capability is implemented or ready.</p><div class="ack"><input id="ack" type="checkbox"><label for="ack">I understand that Roadmap Preview is planned capability and is not evidence of implementation or readiness.</label></div><div class="grid" id="previewButtons"></div><div id="previewOutput"></div></section>
 <section class="card"><h2>4. Capability-state explanation</h2><div id="capability"></div></section>
 <section class="card"><h2>5. Clean reset</h2><p>Reset removes session state and acknowledgement. Nothing in this simulation can be promoted into production.</p><button id="reset">Reset simulation</button><div id="resetState" class="state"></div></section>
+<section class="card scs-card"><div class="scs-banner">SUPPLY CHAIN SOVEREIGNTY (SCS) DOMAIN — SEPARATE FROM AGRICULTURAL SCIENCE (AGR). Evidence, authority and admission are never shared between the two domains.</div>
+<h2>6. SCS Roadmap Preview — Supply Chain Sovereignty</h2>
+<p class="danger" id="scsDomainDisclosure"></p>
+<div class="ack"><input id="scsAck" type="checkbox"><label for="scsAck">I understand that the SCS Roadmap Preview shows proposed capability identities only. None of the twelve SCS capabilities are admitted, implemented, or operational, and no evidence is evaluated or admitted here.</label></div>
+<div id="scsPreviewState" class="state"></div>
+<div class="grid" id="scsCapabilities"></div>
+<div id="scsBrainCandidate"></div>
+</section>
 <section class="card"><h2>Validation</h2><pre id="validation" class="mono"></pre></section></main>
-<script src="./cap34-simulation.js"></script><script>
+<script src="./cap34-simulation.js"></script><script src="./scs-roadmap-preview.js"></script><script>
 const sim=window.AAB_CAP34_SIMULATION,role=document.getElementById("role");
 Object.entries(sim.roles).forEach(([k,v])=>{const o=document.createElement("option");o.value=k;o.textContent=v.label;role.appendChild(o)});
 function esc(v){const d=document.createElement("div");d.textContent=String(v);return d.innerHTML}function renderRole(){const s=sim.capabilityState(role.value);document.getElementById("roleState").textContent=s.explanation;document.getElementById("capability").innerHTML=Object.entries(s).filter(([k])=>k!=="explanation").map(([k,v])=>'<div class="state"><strong>'+esc(k)+':</strong> '+esc(v)+'</div>').join("")}role.addEventListener("change",renderRole);renderRole();
 Object.entries(sim.scenarios).forEach(([k,v])=>{const b=document.createElement("button");b.textContent=v.title;b.onclick=()=>{const s=sim.runScenario(k).scenario;document.getElementById("scenarioOutput").innerHTML='<div class="card"><h3>'+esc(s.title)+'</h3><p><strong>Outcome:</strong> '+esc(s.outcome)+'</p>'+s.evidence.map(e=>'<div class="state"><strong>'+esc(e.source)+'</strong><br>'+esc(e.finding)+'<br><small>'+esc(e.state)+' · '+esc(s.dataClass)+'</small></div>').join("")+'<p class="danger">'+esc(s.explanation)+'</p></div>'};document.getElementById("scenarioButtons").appendChild(b)});
 Object.entries(sim.roadmapPreviews).forEach(([k,v])=>{const b=document.createElement("button");b.textContent=v.title;b.onclick=()=>{const r=sim.enterRoadmapPreview(k,{accepted:document.getElementById("ack").checked,wordingVersion:sim.ROADMAP_ACKNOWLEDGEMENT_VERSION}),out=document.getElementById("previewOutput");if(!r.preview){out.innerHTML='<div class="state danger">'+esc(r.status)+'</div>';return}const p=r.preview;out.innerHTML='<div class="card preview"><span class="label">'+esc(p.fidelity)+'</span><h3>'+esc(p.title)+'</h3><p>'+esc(p.proposition)+'</p><ol>'+p.previewSteps.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ol><h4>Limitations</h4><ul>'+p.limitations.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ul><p class="danger">'+esc(p.nonImplications.join(" "))+'</p></div>'};document.getElementById("previewButtons").appendChild(b)});
-document.getElementById("reset").onclick=()=>{document.getElementById("scenarioOutput").innerHTML="";document.getElementById("previewOutput").innerHTML="";document.getElementById("ack").checked=false;role.value="COUNTRY_HEAD";renderRole();document.getElementById("resetState").textContent=sim.reset().status};document.getElementById("validation").textContent=JSON.stringify(sim.runValidation(),null,2);
+document.getElementById("reset").onclick=()=>{document.getElementById("scenarioOutput").innerHTML="";document.getElementById("previewOutput").innerHTML="";document.getElementById("ack").checked=false;role.value="COUNTRY_HEAD";renderRole();document.getElementById("resetState").textContent=sim.reset().status;if(window.AAB_CAP34_SCS_ROADMAP_PREVIEW){document.getElementById("scsAck").checked=false;renderScs()}};document.getElementById("validation").textContent=JSON.stringify(sim.runValidation(),null,2);
+(function(){
+const scs=window.AAB_CAP34_SCS_ROADMAP_PREVIEW;
+if(!scs)return;
+document.getElementById("scsDomainDisclosure").textContent=scs.DOMAIN_DISCLOSURE;
+function badgeClass(m){return m===scs.MATURITY.DESIGN_CONTRACT?"label design-contract":"label"}
+window.renderScs=function renderScs(){
+const r=scs.revealPreview({accepted:document.getElementById("scsAck").checked,wordingVersion:scs.SCS_ROADMAP_ACKNOWLEDGEMENT_VERSION});
+const caps=document.getElementById("scsCapabilities"),brain=document.getElementById("scsBrainCandidate"),state=document.getElementById("scsPreviewState");
+if(!r.capabilities){caps.innerHTML="";brain.innerHTML="";state.textContent=r.status;return}
+state.textContent=r.status+" — no SCS capability is admitted, implemented, or operational.";
+caps.innerHTML=r.capabilities.map(c=>'<div class="card scs-card"><span class="'+badgeClass(c.maturity)+'">'+esc(c.maturity)+'</span><h3>'+esc(c.id)+' — '+esc(c.name)+'</h3><p>'+esc(c.responsibility)+'</p><ul>'+c.exclusions.map(x=>'<li>'+esc(x)+'</li>').join("")+'</ul>'+(c.contractPath?'<p class="mono">'+esc(c.contractPath)+'</p>':'<p><small>No canonical contract yet.</small></p>')+'</div>').join("");
+const b=r.brainCandidate;
+brain.innerHTML='<div class="card brain-card"><span class="label">CANDIDATE — NOT A NUMBERED CAPABILITY</span><h3>'+esc(b.designation)+' — '+esc(b.name)+'</h3><p>'+esc(b.statement)+'</p><p class="mono">'+esc(b.contractPath)+'</p></div>'
+};
+document.getElementById("scsAck").addEventListener("change",renderScs);
+renderScs();
+}());
 </script></body></html>
