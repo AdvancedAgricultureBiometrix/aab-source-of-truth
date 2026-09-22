@@ -150,10 +150,10 @@ Three provider-neutral SCS capability contracts have been designed and recorded.
 | Field | Value |
 |---|---|
 | Admission status | `PROPOSED_NOT_ADMITTED` |
-| Representation maturity | `PARTIAL_INTERFACE_DESIGN_ONLY` |
+| Representation maturity | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` |
 | Implementation | NOT AUTHORISED — NOT STARTED |
-| Launch candidate | NO — next canonical contract to be designed |
-| Partial interfaces | `ScsPlotSufficiencyRequest`, `ScsPlotSufficiencyResult`, `ScsDeforestationSufficiencyRequest`, `ScsTemporalCoverageResult` — defined within SCS-CAP-03 and SCS-CAP-04 contracts |
+| Launch candidate | NO — second design phase complete |
+| Contract | `governance/workstream-b/SCS-CAP-06-DUE-DILIGENCE-SUFFICIENCY-EVALUATION-CANONICAL-CONTRACT-2026-09-22.md` |
 | Dependencies | SCS-CAP-01, SCS-CAP-03, SCS-CAP-04 |
 
 **Responsibility:** Given admitted evidence for a specific operator, commodity, and regulatory framework — produce an honest evidence landscape identifying what is sufficient and what gaps remain. Evaluate collective temporal and spatial coverage. Identify conflicting evidence. Require human decision for material gaps. This is a sufficiency evaluation, not a compliance finding.
