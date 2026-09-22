@@ -216,10 +216,10 @@ Three provider-neutral SCS capability contracts have been designed and recorded.
 | Field | Value |
 |---|---|
 | Admission status | `PROPOSED_NOT_ADMITTED` |
-| Representation maturity | `PARTIAL_INTERFACE_DESIGN_ONLY` |
+| Representation maturity | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` |
 | Implementation | NOT AUTHORISED — NOT STARTED |
-| Launch candidate | NO — to be designed after SCS-CAP-06 |
-| Contract | None |
+| Launch candidate | NO — second design phase complete |
+| Contract | `governance/workstream-b/SCS-CAP-09-REGULATORY-REVIEW-AND-PROMOTION-CANONICAL-CONTRACT-2026-09-22.md` |
 | Dependencies | SCS-CAP-01, SCS-CAP-03, SCS-CAP-04, SCS-CAP-06 |
 
 **Responsibility:** The human gate before any due diligence package can be compiled. A qualified compliance officer with appropriate authority reviews the sufficiency evaluation and decides whether to proceed to a due diligence statement. They can approve, refuse, require more evidence, or flag a material gap. Their decision is recorded, linked to the specific evidence records it was based on, and retained permanently. No due diligence package can be compiled without this decision having been made and recorded.
@@ -303,7 +303,7 @@ Three provider-neutral SCS capability contracts have been designed and recorded.
 | SCS-CAP-06 | Due Diligence Sufficiency Evaluation | `PROPOSED_NOT_ADMITTED` | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` | NO |
 | SCS-CAP-07 | Evidence Source Discovery | `PROPOSED_NOT_ADMITTED` | `CONCEPT_PREVIEW_NOT_IMPLEMENTED` | NO |
 | SCS-CAP-08 | Due Diligence Package Compilation | `PROPOSED_NOT_ADMITTED` | `PARTIAL_INTERFACE_DESIGN_ONLY` | NO |
-| SCS-CAP-09 | Regulatory Review and Promotion | `PROPOSED_NOT_ADMITTED` | `PARTIAL_INTERFACE_DESIGN_ONLY` | NO |
+| SCS-CAP-09 | Regulatory Review and Promotion | `PROPOSED_NOT_ADMITTED` | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` | NO |
 | SCS-CAP-10 | Challenge Response and Evidence Retrieval | `PROPOSED_NOT_ADMITTED` | `CONCEPT_PREVIEW_NOT_IMPLEMENTED` | NO |
 | SCS-CAP-11 | Regulatory Framework Update Management | `PROPOSED_NOT_ADMITTED` | `CONCEPT_PREVIEW_NOT_IMPLEMENTED` | NO |
 | SCS-CAP-12 | Cross-Boundary Evidence Reference | `PROPOSED_NOT_ADMITTED` | `CONCEPT_PREVIEW_NOT_IMPLEMENTED` | NO |
