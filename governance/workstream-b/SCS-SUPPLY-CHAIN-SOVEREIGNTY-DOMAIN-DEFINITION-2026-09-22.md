@@ -100,6 +100,67 @@ The following are intentionally excluded from the roadmap at this stage:
 - **Predictive compliance risk scoring** — risks being treated as authoritative when it must not be
 - **Direct regulatory submission integration** (TRACES NT API) — a provider adapter decision, not a canonical capability; appropriate once the domain is more mature
 
+## Global deployment — this is not a regional tool
+
+The Supply Chain Sovereignty domain is designed for global deployment from the start. The land tenure, documentation, and regulatory readiness problems that make EUDR compliance difficult in Thailand and Vietnam are structural problems shared by commodity-producing countries worldwide. The platform architecture must reflect this from the beginning — country-specific configuration layered on top of country-neutral canonical contracts, not a regional solution retrofitted for other markets.
+
+### The global EUDR exposure landscape
+
+Every region below faces the same underlying structure: smallholder producers who are the actual source of the commodity but have informal or incomplete land documentation; aggregators or processors who buy from multiple smallholders and hold the EU market relationships; operators who bear the legal due diligence responsibility; and a gap between what the regulation requires (plot-level traceability) and what currently exists.
+
+**Southeast Asia — immediate target markets:**
+- **Thailand** — rubber, palm oil. Significant smallholder sector, GPS coordinates often unregistered formally. Entry market.
+- **Vietnam** — coffee, rubber, timber. Similar land tenure complexity. Entry market.
+- **Indonesia** — world's largest palm oil and rubber producer. Estimated 40% of palm oil from smallholders without formal land titles. Largest single-country opportunity after entry markets.
+- **Malaysia** — second largest palm oil producer. Similar smallholder profile to Indonesia.
+- **Myanmar, Cambodia, Laos** — emerging coffee and rubber producers. Lower institutional capacity, higher complexity.
+- **Philippines** — coconut and coffee. Smallholder-dominated.
+
+**West and Central Africa — highest urgency after Southeast Asia:**
+- **Côte d'Ivoire and Ghana** — together produce approximately 60% of world cocoa. Estimated 600,000 cocoa farming households in Côte d'Ivoire alone, majority without formal land titles. EUDR readiness is poor. EU chocolate companies are under acute pressure to resolve this.
+- **Cameroon, DRC, Gabon** — significant timber and palm oil sectors. More complex traditional land rights systems.
+
+**South America:**
+- **Brazil** — largest single-country EUDR exposure by volume. World's largest soy, beef and coffee producer. Complex mix of large industrial operations and smallholder farms particularly in the Amazon region.
+- **Colombia, Peru, Bolivia** — significant coffee production. Smallholder-dominated supply chains.
+- **Ecuador** — major cocoa producer.
+
+**South and Central Asia:**
+- **India** — significant rubber (Kerala) and coffee (Karnataka, Tamil Nadu) production. Smallholder-dominated. Complex land records.
+- **Sri Lanka** — rubber and timber.
+
+### Priority sequencing
+
+1. Thailand and Vietnam — entry markets. Existing relationships and institutional context.
+2. Indonesia — largest single opportunity after entry markets. Shares enough regional context that platform extensions are manageable.
+3. Ghana and Côte d'Ivoire — highest developmental impact. Requires different institutional partnerships but enormous commercial pressure from EU buyers creates urgency.
+4. Brazil — largest volume exposure globally. More institutional capacity than Africa or Southeast Asia.
+5. Colombia — coffee, strong EU market relationship, manageable institutional complexity.
+6. Malaysia — palm oil, similar profile to Indonesia.
+
+### What this means for the platform architecture
+
+**Country configuration must include, for each deployed country:**
+- Which land registry systems are authoritative
+- Which GPS polygon formats are standard
+- Which traditional land tenure systems are legally recognised
+- Which national forestry authority datasets are accepted as deforestation evidence
+- Which certification bodies operate in this country (RSPO for palm oil, Rainforest Alliance for coffee, FSC for timber)
+- Which government agencies issue the relevant documentation
+- What the national implementation of EUDR looks like — each country is developing its own compliance frameworks
+
+**The aggregator role must be explicitly modelled:**
+
+A pattern common across all target markets: an aggregator — a cooperative, trading company, or processing facility — collects commodity from hundreds or thousands of smallholders and presents a consolidated due diligence package to the EU market operator. Each smallholder's plot requires individual registration and deforestation evidence. The aggregator manages the data collection workflow across their entire supplier base.
+
+This pattern affects SCS-CAP-02 (Operator and Supplier Identity Registration) and SCS-CAP-03 (Plot and Land Unit Registration), both of which must support bulk registration workflows for aggregators managing large supplier bases. This is noted here so the capability designs reflect it correctly, even though bulk aggregator workflows are not in the initial three-capability launch scope.
+
+### What participating countries gain
+
+An institution that participates as an early adopter of the Supply Chain Sovereignty domain is not adopting a regional compliance tool. They are establishing themselves as an early node in a global governed evidence network. Their plot registrations, their deforestation evidence, and their due diligence packages are governed to the same standard as every other country on the platform. When a Thai rubber exporter and a Ghanaian cocoa cooperative both use AAB-backed due diligence packages, an EU customs authority is dealing with the same governed evidence standard in both cases — which is precisely what the regulation is trying to achieve.
+
+Early adopters shape the platform. The countries that participate first have the most influence over how the canonical contracts, the evidence requirement specifications, and the regulatory framework configurations are designed. That influence diminishes as the platform matures and more countries join.
+
 ## What this document does not establish
 
 - It does not admit any SCS capability
