@@ -300,7 +300,7 @@ Three provider-neutral SCS capability contracts have been designed and recorded.
 | SCS-CAP-03 | Plot and Land Unit Registration | `PROPOSED_NOT_ADMITTED` | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` | YES |
 | SCS-CAP-04 | Deforestation Evidence Admission | `PROPOSED_NOT_ADMITTED` | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` | YES |
 | SCS-CAP-05 | Supply Chain Custody Evidence Admission | `PROPOSED_NOT_ADMITTED` | `CONCEPT_PREVIEW_NOT_IMPLEMENTED` | NO |
-| SCS-CAP-06 | Due Diligence Sufficiency Evaluation | `PROPOSED_NOT_ADMITTED` | `PARTIAL_INTERFACE_DESIGN_ONLY` | NO |
+| SCS-CAP-06 | Due Diligence Sufficiency Evaluation | `PROPOSED_NOT_ADMITTED` | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` | NO |
 | SCS-CAP-07 | Evidence Source Discovery | `PROPOSED_NOT_ADMITTED` | `CONCEPT_PREVIEW_NOT_IMPLEMENTED` | NO |
 | SCS-CAP-08 | Due Diligence Package Compilation | `PROPOSED_NOT_ADMITTED` | `PARTIAL_INTERFACE_DESIGN_ONLY` | NO |
 | SCS-CAP-09 | Regulatory Review and Promotion | `PROPOSED_NOT_ADMITTED` | `PARTIAL_INTERFACE_DESIGN_ONLY` | NO |
