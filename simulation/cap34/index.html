@@ -1,14 +1,14 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow,noarchive"><title>AAB Controlled Simulation</title>
-<!-- Shared AAB theme/shell, loaded first, in the same order as aab-local/app/_rebuild/workbench.html: theme, shell (css), chrome, features, shell (js). CAP-34's own base styles, page-specific cap34-live-capabilities.v1.css layer, and scripts load after these. -->
+<!-- Shared AAB theme/shell, loaded first, in the same order as aab-local/app/_rebuild/workbench.html: theme, shell (css), chrome, features, shell (js). CAP-34's own page-shell layer (cap34-shell.v1.css), live-capabilities layer (cap34-live-capabilities.v1.css) and scripts load after these. -->
 <link rel="stylesheet" href="./theme/aab-theme.v22.css">
 <link rel="stylesheet" href="./theme/aab-shell.v22.css?v=22">
 <script src="./theme/aab-chrome.v22.js" defer></script>
 <script src="./theme/aab-features.v22.js" defer></script>
 <script src="./theme/aab-shell.v22.js?v=22" defer></script>
-<style>:root{font-family:Inter,system-ui,sans-serif;color:#17211c;background:#f4f6f4}body{margin:0}.banner{position:sticky;top:0;z-index:5;background:#fff3cd;border-bottom:2px solid #7a5a00;padding:14px 20px;font-weight:700}main{max-width:1080px;margin:auto;padding:28px}.card{background:#fff;border:1px solid #d9dfdb;border-radius:14px;padding:20px;margin:16px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}button,select{font:inherit;padding:10px 12px}.state{padding:10px;border-left:4px solid #555;background:#f7f7f7;margin:8px 0}.preview{border-color:#7a5a00;background:#fffaf0}.label{display:inline-block;background:#7a5a00;color:white;padding:5px 8px;border-radius:5px;font-weight:700}small{color:#52605a}.danger{font-weight:700}.mono{font-family:ui-monospace,monospace}.ack{display:flex;gap:10px;align-items:flex-start;margin:14px 0}.ack input{margin-top:4px}</style>
+<link rel="stylesheet" href="./theme/cap34-shell.v1.css?v=1">
 <link rel="stylesheet" href="./theme/cap34-live-capabilities.v1.css?v=1"></head>
-<body><div class="banner">CONTROLLED AAB SIMULATION — SYNTHETIC/REFERENCE DATA ONLY. This does not represent AAB commissioning status or prove readiness for production use of real scientific data. No production, government, scientific, regulatory or commissioning authority.</div><main>
+<body data-aab-title="AAB Governed Simulation" data-aab-sub="CAP-34 controlled simulation — synthetic/reference data only" data-aab-toolbar="refresh,diag" data-aab-nav="[]"><div class="banner">CONTROLLED AAB SIMULATION — SYNTHETIC/REFERENCE DATA ONLY. This does not represent AAB commissioning status or prove readiness for production use of real scientific data. No production, government, scientific, regulatory or commissioning authority.</div><main class="aab-wrap">
 <h1>AAB Governed Simulation</h1><p>Experience selected AAB behaviours without supplying sovereign country scientific data. This build deliberately includes contradiction and refusal states, not only a happy path.</p>
 <section class="card"><h2>1. Simulated role</h2><select id="role"></select><div id="roleState" class="state"></div></section>
 <section class="card"><h2>2. Synthetic scenario</h2><div class="grid" id="scenarioButtons"></div><div id="scenarioOutput"></div></section>

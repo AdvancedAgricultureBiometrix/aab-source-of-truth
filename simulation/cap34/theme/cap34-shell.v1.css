@@ -1,0 +1,124 @@
+/* CAP-34 page shell polish. Restyles the same class names the page's own
+   inline script already hardcodes into generated markup (.card, .state,
+   .preview, .label, .danger, .mono, .ack, .grid) so both static and
+   JS-generated content pick up the AAB dark theme without any script
+   changes. Loaded after aab-theme.v22.css / aab-shell.v22.css and before
+   cap34-live-capabilities.v1.css. */
+
+main.aab-wrap{padding-top:20px}
+
+main.aab-wrap > h1{
+  font-size:26px;
+  margin:6px 0 8px;
+  font-weight:700;
+  letter-spacing:.01em;
+  color:var(--text);
+}
+main.aab-wrap > p{
+  color:var(--muted);
+  margin:0 0 20px;
+  font-size:14px;
+  line-height:1.55;
+  max-width:760px;
+}
+
+.banner{
+  font-weight:700;
+  font-size:13px;
+  letter-spacing:.02em;
+  line-height:1.5;
+  color:rgba(255,255,255,.92);
+  padding:14px 18px;
+  border-radius:16px;
+  border:1px solid rgba(243,183,79,.32);
+  background:
+    linear-gradient(180deg, rgba(243,183,79,.14), rgba(243,183,79,.05));
+  box-shadow:0 14px 40px rgba(0,0,0,.30);
+  margin:18px auto 0;
+  max-width:var(--max);
+}
+
+.card{padding:18px 20px}
+.card > h2:first-child,
+.card > h3:first-child{
+  margin:0 0 14px;
+  padding-bottom:12px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  font-size:15px;
+  font-weight:700;
+  letter-spacing:.01em;
+  color:var(--text);
+}
+
+.preview{
+  border-color:rgba(214,168,79,.35);
+  background:
+    linear-gradient(180deg, rgba(214,168,79,.07), rgba(214,168,79,.02));
+}
+
+.label{
+  display:inline-block;
+  background:var(--accent);
+  color:#1b1509;
+  padding:5px 10px;
+  border-radius:999px;
+  font-weight:700;
+  font-size:11px;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+
+.state{
+  padding:10px 12px;
+  border-left:4px solid rgba(214,168,79,.55);
+  background:rgba(255,255,255,.035);
+  border-radius:0 10px 10px 0;
+  margin:8px 0;
+  color:rgba(255,255,255,.85);
+  font-size:13px;
+  line-height:1.5;
+}
+.state strong{color:var(--text)}
+
+.danger{font-weight:700;color:var(--attn)}
+
+.mono{
+  font-family:var(--mono);
+  color:rgba(255,255,255,.82);
+  font-size:12.5px;
+}
+
+.ack{display:flex;gap:10px;align-items:flex-start;margin:14px 0}
+.ack label{color:var(--muted);font-size:13px;line-height:1.5}
+.ack input{margin-top:4px}
+
+small{color:var(--muted)}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:14px;
+}
+
+/* Plain, unclassed <button>/<select> elements the page's script creates
+   (role selector, scenario/roadmap buttons, reset button) — .cap34-btn
+   in the live-capabilities section keeps its own distinct styling. */
+main.aab-wrap button:not(.cap34-btn),
+main.aab-wrap select{
+  font:inherit;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 14px;
+  border:1px solid rgba(214,168,79,.28);
+  background:rgba(255,255,255,.035);
+  color:rgba(255,255,255,.90);
+  border-radius:999px;
+  cursor:pointer;
+}
+main.aab-wrap button:not(.cap34-btn):hover{
+  background:rgba(255,255,255,.06);
+  border-color:rgba(214,168,79,.45);
+}
+main.aab-wrap button:not(.cap34-btn):active{transform:translateY(1px)}
+main.aab-wrap select{cursor:default;padding:10px 12px;background:rgba(0,0,0,.22)}
