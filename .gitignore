@@ -27,3 +27,4 @@ coverage/
 *.zip
 *.tar
 *.tar.gz
+.claude/
