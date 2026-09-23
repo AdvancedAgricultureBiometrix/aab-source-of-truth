@@ -1,8 +1,8 @@
 {
   "manifestId": "AAB-CAP34-FIDELITY-MANIFEST",
-  "manifestVersion": "1.7.0",
-  "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-008",
-  "createdAt": "2026-09-23T01:53:09Z",
+  "manifestVersion": "1.6.0",
+  "manifestSnapshotId": "CAP34-MANIFEST-2026-09-20-SNAPSHOT-007",
+  "createdAt": "2026-09-20T03:35:11Z",
   "sourceLandscapeReference": "governance/workstream-b/AAB-WORKSTREAM-B-CAPABILITY-LANDSCAPE-LAUNCH-GAP-FREEZE-2026-09-19.md",
   "authority": "DISCLOSURE_ONLY_NO_PRODUCTION_SCIENTIFIC_REGULATORY_OR_COMMISSIONING_AUTHORITY",
   "rule": "Complete simulator coverage does not mean complete product implementation.",
@@ -50,7 +50,7 @@
       ],
       "disclosureBurden": "STANDARD",
       "lastVerifiedAt": "2026-09-20",
-      "lastVerifiedAgainst": "CAP-01 live-logic perturbation behavioural proof (13/13 fixtures): 3 canonical scenarios plus 5 purpose-built perturbations proving bidirectional data-sensitivity, plus dispatcher-wiring checks.",
+      "lastVerifiedAgainst": "CAP-01 live-logic perturbation behavioural proof (11/11 fixtures): 3 canonical scenarios plus 5 purpose-built perturbations proving bidirectional data-sensitivity, plus dispatcher-wiring checks.",
       "classificationReason": "An evidence-driven discovery evaluator is implemented and registered into CAP-34's live-simulation dispatcher. It computes its outcome from the eligibility state and finding content of the evidence it is given -- not from which scenario was selected -- and this data-sensitivity is proven in both directions by a dedicated perturbation test separate from the three canonical scenario checks.",
       "nonImplications": [
         "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning.",
@@ -196,7 +196,7 @@
       ],
       "disclosureBurden": "STANDARD",
       "lastVerifiedAt": "2026-09-20",
-      "lastVerifiedAgainst": "CAP-05 live-logic perturbation behavioural proof (11/11 fixtures): 3 canonical scenarios plus pairwise same-subject contradiction detection, named-category gap identification, and bidirectional sensitivity, plus dispatcher-wiring check.",
+      "lastVerifiedAgainst": "CAP-05 live-logic perturbation behavioural proof (10/10 fixtures): 3 canonical scenarios plus pairwise same-subject contradiction detection, named-category gap identification, and bidirectional sensitivity, plus dispatcher-wiring check.",
       "classificationReason": "A pairwise-comparison reasoning evaluator is implemented and registered into CAP-34's live-simulation dispatcher. It detects contradiction only between evidence sharing a derived subject with opposing stances (not a per-record tally), and names the specific missing required category on knowledge gaps rather than reporting a bare count. This is proven by a dedicated perturbation test separate from the three canonical scenario checks.",
       "nonImplications": [
         "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning.",
@@ -239,7 +239,7 @@
       ],
       "disclosureBurden": "STANDARD",
       "lastVerifiedAt": "2026-09-20",
-      "lastVerifiedAgainst": "CAP-06 live-logic perturbation behavioural proof (10/10 fixtures): 3 canonical scenarios plus 4 purpose-built perturbations proving the readinessScore (not just status) genuinely tracks evidence sufficiency and corroboration bidirectionally, plus dispatcher-wiring check.",
+      "lastVerifiedAgainst": "CAP-06 live-logic perturbation behavioural proof (9/9 fixtures): 3 canonical scenarios plus 4 purpose-built perturbations proving the readinessScore (not just status) genuinely tracks evidence sufficiency and corroboration bidirectionally, plus dispatcher-wiring check.",
       "classificationReason": "An evidence-scoring ingredient evaluator is implemented and registered into CAP-34's live-simulation dispatcher. It produces a continuous readinessScore in [0,1], distinct from a bare categorical status, computed from real corroboration and conflict counts in the evidence supplied -- proven by a dedicated perturbation test showing the score itself (not only the label) moves correctly in both directions, including a distinct partial-credit value for disputed evidence versus zero for absent evidence.",
       "nonImplications": [
         "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning.",
@@ -349,7 +349,7 @@
       ],
       "disclosureBurden": "HEIGHTENED",
       "lastVerifiedAt": "2026-09-20",
-      "lastVerifiedAgainst": "CAP-09 live-logic perturbation behavioural proof (9/9 fixtures): 3 canonical scenarios; a single unreplicated trial refused and named; the same finding promoted once genuinely replicated; a contradicting trial refusing promotion EVEN WHEN the replication requirement is already satisfied, proving contradiction is independently sufficient to refuse; and bidirectional recovery once resolved.",
+      "lastVerifiedAgainst": "CAP-09 live-logic perturbation behavioural proof (8/8 fixtures): 3 canonical scenarios; a single unreplicated trial refused and named; the same finding promoted once genuinely replicated; a contradicting trial refusing promotion EVEN WHEN the replication requirement is already satisfied, proving contradiction is independently sufficient to refuse; and bidirectional recovery once resolved.",
       "classificationReason": "A promotion-refusal evaluator is implemented and registered into CAP-34's live-simulation dispatcher, directly enforcing that a candidate finding is not promoted to approved learning merely because a trial occurred. It is proven capable of refusing under named, independently-sufficient conditions -- unreplicated evidence, or contradicting evidence even with replication otherwise satisfied -- and of promoting once the missing condition is genuinely met, by a dedicated perturbation test rather than by declaration.",
       "nonImplications": [
         "Manifest inclusion does not establish product implementation, scientific proof, production readiness or commissioning.",
@@ -939,5 +939,5 @@
     }
   ],
   "capabilityCount": 34,
-  "snapshotDigest": "sha256:4ed009519ae2aaf524564d51044ae82e560cbcb2ab4d4b8ad55535a1551f8190"
+  "snapshotDigest": "sha256:94eb64ca7ba19e8c5e61e03f29fc3d7f20cc467ed8aed5ae22fe68a250bd252e"
 }
