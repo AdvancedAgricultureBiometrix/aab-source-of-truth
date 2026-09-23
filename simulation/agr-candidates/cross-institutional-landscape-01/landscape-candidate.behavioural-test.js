@@ -776,10 +776,14 @@ const baselineContradicts = (baseline, subjectKey) => baseline.computedFacts.con
 //     none => GOVERNED_COMPOSITION_PROFILE.
 // ===========================================================================
 const GOVERNED_FUNCTIONS = [
-  { functionId: "DATASET_AND_PARTICIPATION_AUTHORISATION", attribution: "NOT_PROVIDED_BY_CAP04_OR_CAP05_CONTRACT",
-    fixtures: ["F07-B-UNAUTHORISED-DATASET-EXCLUDED", "F07-C-MISSING-PARTICIPATION-AUTHORITY-FAILS-CLOSED", "F07-D-DATASET-WITHOUT-SHARING-AUTHORITY-FAILS-CLOSED"],
+  { functionId: "DATASET_LEVEL_SHARING_AUTHORITY", attribution: "NOT_PROVIDED_BY_CAP04_OR_CAP05_CONTRACT",
+    fixtures: ["F07-B-UNAUTHORISED-DATASET-EXCLUDED", "F07-D-DATASET-WITHOUT-SHARING-AUTHORITY-FAILS-CLOSED"],
     baselineFixture: "F07-H-COMPOSITION-LEAKS-UNAUTHORISED-DATASET",
-    basis: "The CAP-05 request contract offers an organizationIds filter (F07-I shows institution-level exclusion is composable) but no dataset-level sharing authority or participation authority; the CAP-05 contract fails closed on cross-boundary records rather than governing them." },
+    basis: "The CAP-05 request contract offers an organizationIds filter (F07-I shows institution-level exclusion is composable) but no dataset-level sharing authority; the CAP-05 contract fails closed on cross-boundary records rather than governing them." },
+  { functionId: "PARTICIPATION_AUTHORITY", attribution: "UNRESOLVED_PENDING_CAP24_CONTRACT",
+    fixtures: ["F07-C-MISSING-PARTICIPATION-AUTHORITY-FAILS-CLOSED"],
+    baselineFixture: null,
+    basis: "Participation authority may be assigned to CAP-24 (Governed Country, Institution and Professional Participation), inferred from its title. CAP-24 has no contract and is NOT_YET_REPRESENTED, so condition (a) cannot be established. Not counted; unresolved pending CAP-24's contract." },
   { functionId: "METHODOLOGICAL_COMPARABILITY", attribution: "NOT_PROVIDED_BY_CAP04_OR_CAP05_CONTRACT",
     fixtures: ["F05-A-INCOMPATIBILITY-SURFACED", "F05-B-DECLARED-COMPATIBILITY-ALLOWS-COMPARISON", "F05-C-SIMILAR-NAMES-NOT-AUTO-POOLED"],
     baselineFixture: "F05-D-COMPOSITION-SILENTLY-POOLS",
@@ -836,6 +840,7 @@ const functionResults = GOVERNED_FUNCTIONS.map((fn) => {
   return Object.assign({}, fn, { unknownFixtureIds: unknown, candidateFixturesPass, baselineInsufficiencyDemonstrated, countsAsLogicBeyondComposition: beyondComposition });
 });
 const beyond = functionResults.filter((fn) => fn.countsAsLogicBeyondComposition).map((fn) => fn.functionId);
+const unresolved = functionResults.filter((fn) => /^UNRESOLVED_/.test(fn.attribution)).map((fn) => fn.functionId);
 const classification = !allPassed || functionResults.some((fn) => fn.unknownFixtureIds.length > 0)
   ? "UNDETERMINED_FIXTURES_FAILED"
   : (beyond.length > 0 ? "CANDIDATE_FOR_SEPARATE_CAPABILITY_REVIEW" : "GOVERNED_COMPOSITION_PROFILE");
@@ -845,6 +850,7 @@ const capabilityIdentityAssessment = {
   decisionRule: "Beyond composition only when a governed function is not provided by the CAP-04/CAP-05 canonical contracts or assigned elsewhere, a composition-baseline fixture demonstrates the baseline fails it, and every candidate fixture for it passes. One or more such functions => CANDIDATE_FOR_SEPARATE_CAPABILITY_REVIEW; none => GOVERNED_COMPOSITION_PROFILE.",
   classification,
   functionsBeyondComposition: beyond,
+  functionsUnresolved: unresolved,
   functions: functionResults,
   designRecordCriteria: {
     distinctFailureContract: "DEMONSTRATED — PARTICIPATION_AUTHORITY_MISSING, DATASET_AUTHORITY_INVALID, CAP04_ELIGIBILITY_REQUIREMENT_WEAKENED, RECEIPT_REQUEST_MISMATCH and CAP05_VERSION_UNAVAILABLE are not in the CAP-05 failure contract (F07-C, F07-D, F07-F, F10-G, F12-E).",
@@ -885,5 +891,5 @@ const proof = {
 };
 
 fs.writeFileSync(PROOF_FILE, JSON.stringify(proof, null, 2) + "\n");
-process.stdout.write(JSON.stringify({ result: proof.result, fixtureCount: proof.fixtureCount, passedFixtureCount: proof.passedFixtureCount, requirementTotals, classification, functionsBeyondComposition: beyond, failed: cases.filter((c) => !c.passed).map((c) => c.fixtureId) }, null, 2) + "\n");
+process.stdout.write(JSON.stringify({ result: proof.result, fixtureCount: proof.fixtureCount, passedFixtureCount: proof.passedFixtureCount, requirementTotals, classification, functionsBeyondComposition: beyond, functionsUnresolved: unresolved, failed: cases.filter((c) => !c.passed).map((c) => c.fixtureId) }, null, 2) + "\n");
 process.exitCode = allPassed ? 0 : 1;

@@ -19,7 +19,8 @@ through composition alone.
 
 A function was counted as beyond composition only if all three conditions held:
 
-1. Neither the CAP-04 nor the CAP-05 contract provides it
+1. Neither the CAP-04 nor the CAP-05 contract provides it, and it is not
+   assigned to another designated capability
 2. The composition baseline demonstrably fails it
 3. Every candidate fixture for that function passes
 
@@ -27,7 +28,7 @@ This rule was stated as fixed in the code before any assessment ran — this
 chronology cannot be verified from the repository, as the rule and the fixtures
 landed in a single commit.
 
-## The five functions beyond composition
+## The beyond-composition functions
 
 ### 1. Dataset-level and participation authority
 
@@ -42,8 +43,9 @@ is confirmed.
 (which institutions may participate and with which datasets). However, under the
 code's own three-condition rule, a function is only counted as beyond composition
 if it is not "assigned to another designated capability." CAP-24 (Governed
-Country, Institution and Professional Participation) is named as the candidate
-home for participation authority, but CAP-24 has no contract and is marked
+Country, Institution and Professional Participation) is the inferred candidate
+home for participation authority, based on its title, but CAP-24 has no contract
+and is marked
 NOT_YET_REPRESENTED. Participation authority cannot be confirmed as beyond
 composition until CAP-24's contract establishes or excludes this function.
 This function is unresolved pending CAP-24's contract.
@@ -89,9 +91,13 @@ The canonical CAP-05 contract fails closed with EVIDENCE_ACCESS_DENIED when
 restricted evidence is encountered. A contract-faithful composition would
 therefore refuse the request rather than proceed. The candidate instead proceeds
 with a disclosed limitation — surfacing that restricted evidence exists without
-exposing its content (fixture F11-F). This refusal-versus-disclosed-limitation
-distinction is the actual difference, not a "leak": the composition baseline
-does not leak protected content, it refuses. The candidate's ability to proceed
+exposing its content (fixtures F11-A to F11-E). The composition baseline fixture,
+F11-F, uses the live CAP-05 evaluator, which has no access check: there the
+restricted opposing stance is exposed as a contradiction. A contract-faithful
+composition would not expose it; it would refuse. The actual difference is
+therefore refusal versus disclosed limitation: the candidate proceeds with a
+disclosed limitation where a contract-faithful composition would refuse. The
+candidate's ability to proceed
 honestly with a disclosed limitation requires access-control logic at the
 landscape layer that the CAP-05 contract does not provide. This function is
 confirmed.
@@ -118,8 +124,10 @@ overstating the case:
 63 fixtures passing across 12 requirement categories. Most requirements have
 perturbation and adversarial cases, but coverage is not uniform: R01, R03, and
 R09 have no adversarial fixture; R07, R08, R09, and R12 have no perturbation
-fixture. The fixture-type coverage claim in the behavioural proof should not be
-read as complete bidirectional perturbation for every requirement.
+fixture. The uniform-coverage claim appeared in the provider-neutral contract
+(since corrected) and in the behavioural test file's header comment, not in the
+behavioural proof. It should not be read as complete bidirectional perturbation
+for every requirement.
 
 | Requirement | Fixtures |
 |---|---|

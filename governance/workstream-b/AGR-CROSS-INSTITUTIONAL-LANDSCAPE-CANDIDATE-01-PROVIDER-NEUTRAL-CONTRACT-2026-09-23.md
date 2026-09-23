@@ -610,7 +610,7 @@ interface CrossInstitutionalLandscapeFailure {
 
 ## Controlled fixtures
 
-The suite runs every fixture against the candidate, which composes the real live CAP-05 evaluator (`cap05-reasoning.js`, implementation 1.0.0). Where a fixture is marked *attribution*, it runs the same inputs through a **composition baseline** instead: CAP-04 admission and workspace filtering, the CAP-05 request contract's `organizationIds` and `asOf` bounds, then live CAP-05. Each requirement includes perturbations in both directions and adversarial attempts, not only happy paths.
+The suite runs every fixture against the candidate, which composes the real live CAP-05 evaluator (`cap05-reasoning.js`, implementation 1.0.0). Where a fixture is marked *attribution*, it runs the same inputs through a **composition baseline** instead: CAP-04 admission and workspace filtering, the CAP-05 request contract's `organizationIds` and `asOf` bounds, then live CAP-05. Most requirements include perturbation and adversarial cases, not only happy paths, but coverage is not uniform: R01, R03 and R09 have no adversarial fixture; R07, R08, R09 and R12 have no perturbation fixture.
 
 | # | Requirement | Fixtures | What the adversarial and perturbation cases prove |
 |---|---|---|---|
@@ -629,7 +629,7 @@ The suite runs every fixture against the candidate, which composes the real live
 
 **Result: 63 of 63 fixtures pass.**
 
-The suite was also checked against 18 deliberately planted faults in a scratch copy of the evaluator. Examples:
+The build session reported that the suite was also checked against 18 deliberately planted faults in a scratch copy of the evaluator. Examples reported:
 
 - disabling de-duplication;
 - pooling methodologies;
@@ -644,7 +644,7 @@ The suite was also checked against 18 deliberately planted faults in a scratch c
 - leaking restricted identities;
 - writing into input records.
 
-Every planted fault was caught by at least one fixture.
+The build session reported that every planted fault was caught by at least one fixture. These claims cannot be verified from the repository — the scratch copy was not committed, and both the rule and the fixtures landed in a single commit. They are recorded here as reported but are not independently verifiable.
 
 ## Capability-identity result
 
@@ -652,7 +652,7 @@ Every planted fault was caught by at least one fixture.
 
 **Classification: `CANDIDATE_FOR_SEPARATE_CAPABILITY_REVIEW`**
 
-The decision rule was fixed in the suite before evaluation. A governed function counts as logic beyond composition only when all three conditions hold:
+The decision rule was stated as fixed in the suite before evaluation — this chronology cannot be verified from the repository, as the rule and the fixtures landed in a single commit. A governed function counts as logic beyond composition only when all three conditions hold:
 
 1. It is not provided by the CAP-04 or CAP-05 canonical contracts, and is not assigned to another designated capability.
 2. A composition-baseline fixture demonstrates that the baseline fails it.
@@ -662,11 +662,12 @@ One or more such functions gives `CANDIDATE_FOR_SEPARATE_CAPABILITY_REVIEW`; non
 
 | Governed function | Attribution | Composition baseline | Counts |
 |---|---|---|---|
-| Dataset-level and participation authorisation | Not in CAP-04/CAP-05 contracts | F07-H: unauthorised dataset enters CAP-05 and creates a contradiction | **Yes** |
+| Dataset-level sharing authority | Not in CAP-04/CAP-05 contracts | F07-H: unauthorised dataset enters CAP-05 and creates a contradiction | **Yes** |
+| Participation authority | Possibly assigned to CAP-24, which has no contract (`NOT_YET_REPRESENTED`) | — | **Unresolved** pending CAP-24's contract |
 | Methodological comparability | Not in CAP-04/CAP-05 contracts | F05-D: methodologies silently pooled into a contradiction | **Yes** |
 | Authorised unit transformation | Not in CAP-04/CAP-05 contracts | F04-E: no conversion, no incomparability declaration | **Yes** |
 | Duplicate-weight prevention | Not in CAP-04/CAP-05 contracts | F08-E: a duplicate changes CAP-05's outcome by satisfying its volume check | **Yes** |
-| Restricted evidence disclosed as limitation | Not in CAP-04/CAP-05 contracts | F11-F: restricted opposing stance becomes visible as a contradiction | **Yes** |
+| Restricted evidence disclosed as limitation | Not in CAP-04/CAP-05 contracts | F11-F: the fixture baseline (live CAP-05, no access check) exposes the restricted opposing stance; the canonical CAP-05 contract would instead refuse with `EVIDENCE_ACCESS_DENIED`. The candidate proceeds with a disclosed limitation where a contract-faithful composition would refuse | **Yes** |
 | Evidence-set freezing and scope binding | Partially in CAP-05 (`EvidenceLandscapeSnapshotIdentity`) | — | No |
 | Staleness notice | Assigned to Governed Evidence Watch by the CAP-05 contract | — | No |
 | Same-subject contradiction; cross-subject distinction | CAP-05 (F02-D, F03-C) | — | No |
@@ -692,11 +693,39 @@ It means the fixtures show five governed functions that composition of CAP-04 an
 
 It does not admit the candidate, assign a CAP number, or decide the outcome of that review.
 
-Before any review, three matters must be settled:
+Before any review, four matters must be settled:
 
 1. **Governed Evidence Watch overlap.** The candidate's staleness notice overlaps the Governed Evidence Watch that the CAP-05 contract names as the next design task. One of them must own staleness.
 2. **Lifecycle.** A separately numbered capability would need a governed lifecycle for frozen sets, receipts and notices. That has not been designed or demonstrated.
-3. **CAP-04/CAP-05 alternative.** Some of the five functions could instead be added to CAP-04 or CAP-05, in particular dataset-level sharing authority and duplicate detection. Review should decide deliberately between a new capability and extending existing contracts.
+**3. Whether CAP-23, CAP-24, or extensions to existing capabilities are the right home**
+
+Two functions require a decision about where they belong before this candidate
+can be considered for admission:
+
+Dataset-level sharing authority (confirmed as beyond composition) might belong
+in CAP-24 (Governed Country, Institution and Professional Participation) — the
+designated capability for institutional participation governance — or it might
+require its own logic in this candidate. This cannot be determined until CAP-24
+has a contract.
+
+Participation authority is likely the natural scope of CAP-24. Once CAP-24's
+contract is written, this question should be revisited.
+
+Duplicate detection might be better placed in CAP-04 where admission decisions
+live. If it can be placed there cleanly without overloading CAP-04, the
+candidate's case weakens for that function.
+
+This question cannot be answered until CAP-23 and CAP-24 have contracts.
+
+**4. Integrity failure and access reclassification as staleness triggers**
+
+If staleness ownership is assigned to this candidate, two material changes to
+previously included records are not currently detected: document integrity
+becoming FAILED, and sharing classification becoming more restrictive, after the
+evidence set is frozen. Admission revocation or supersession and evidence version
+changes do trigger staleness notices (F10-E, F10-F). Permitted use withdrawal and
+methodology or unit-transformation authority changes have not been tested. If
+staleness belongs to the Governed Evidence Watch, this question transfers with it.
 
 The composition baseline uses the live CAP-05 simulation evaluator (1.0.0), which is thinner than the CAP-05 canonical contract. To avoid overstating the candidate, functions the CAP-05 contract assigns to CAP-05 are attributed to CAP-05 even where the live evaluator lacks them.
 
