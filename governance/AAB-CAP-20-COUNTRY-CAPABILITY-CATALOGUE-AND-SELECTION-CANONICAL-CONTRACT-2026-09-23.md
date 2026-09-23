@@ -88,7 +88,7 @@ cached value when the authoritative source says otherwise.
 
 | Conflict scenario | Required behaviour |
 |---|---|
-| Catalogue says ADMITTED, roster says NOT_ADMITTED | Display NOT_ADMITTED |
+| Catalogue says ADMITTED, admission registry says NOT_ADMITTED | Display NOT_ADMITTED |
 | Catalogue says IMPLEMENTED, implementation authority unavailable | Display IMPLEMENTATION_STATUS_UNVERIFIABLE |
 | Entitlement exists, activation registry says inactive | Display NOT_ACTIVATED |
 | Commercially available globally, unavailable in this jurisdiction | Display jurisdiction restriction prominently |
@@ -174,7 +174,7 @@ interface AabCatalogueEntry {
       freshnessLimitHours: number;
     };
     admissionStatus?: {
-      authorityType: "CAPABILITY_IDENTITY_ROSTER";
+      authorityType: "CAPABILITY_ADMISSION_REGISTRY";
       recordId: string;
       recordVersion: string;
       observedAt: string;
@@ -312,6 +312,47 @@ interface AabSelectionRequest {
 }
 ```
 
+### Selection request decision
+
+```typescript
+interface AabSelectionRequestDecision {
+  decisionId: string;
+  requestId: string;
+
+  decision:
+    | "APPROVED_TO_PROCEED"
+    | "APPROVED_WITH_MODIFICATIONS"
+    | "DECLINED"
+    | "REQUIRES_ADDITIONAL_INFORMATION"
+    | "WITHDRAWN";
+
+  reviewedItems: Array<{
+    capabilityId: string;
+    domainId: string;
+    itemDecision:
+      | "APPROVED"
+      | "APPROVED_WITH_MODIFICATIONS"
+      | "DECLINED"
+      | "DEFERRED";
+    reasons: string[];
+  }>;
+
+  decisionReasons: string[];
+  modifications?: string[];
+  nextSteps?: string[];
+
+  decidedBy: ActorReference; // Shared platform type — defined in platform type registry
+  decidedAt: string;
+
+  // Decision is not entitlement
+  authorityBoundary: {
+    approvalIsNotEntitlement: true;
+    approvalIsNotActivation: true;
+    approvalIsNotCommercialCommitment: true;
+  };
+}
+```
+
 ### Catalogue query — jurisdiction-aware
 
 ```typescript
@@ -371,7 +412,7 @@ A capability that is not yet implemented and not yet admitted displays:
   maturityDisclosure: {
     currentMaturityExplanation: "This capability exists as a concept preview only. No implementation exists. No admission has been granted.",
     whatItWillDo: "For a specific country, commodity and gap type, surface authoritative sources that could provide missing deforestation or custody evidence.",
-    whatItCannotDoToday: "Cannot be selected, purchased, provisioned or activated. Cannot provide evidence source recommendations.",
+    whatItCannotDoToday: "Cannot be purchased, provisioned or activated. An interest request may be submitted but does not create a commercial commitment. Cannot provide evidence source recommendations.",
     estimatedAvailability: "Not determined. Depends on prior capability implementation and admission.",
     dependencies: ["SCS-CAP-01", "SCS-CAP-06"]
   }
@@ -457,6 +498,7 @@ CAP-20 must appear in its own catalogue — honestly.
     catalogueVisibility: "VISIBLE",
     requestabilityStatus: "NOT_YET_REQUESTABLE",
     commercialAvailability: "NOT_COMMERCIALLY_AVAILABLE",
+    jurisdictionAvailability: "REQUIRES_ASSESSMENT",
     implementationStatus: "NOT_IMPLEMENTED",
     admissionStatus: "NOT_ADMITTED",
     provisioningStatus: "NOT_PROVISIONED",
