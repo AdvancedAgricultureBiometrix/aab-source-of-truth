@@ -62,10 +62,10 @@ Three provider-neutral SCS capability contracts have been designed and recorded.
 | Field | Value |
 |---|---|
 | Admission status | `PROPOSED_NOT_ADMITTED` |
-| Representation maturity | `CONCEPT_PREVIEW_NOT_IMPLEMENTED` |
+| Representation maturity | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` |
 | Implementation | NOT AUTHORISED — NOT STARTED |
-| Launch candidate | NO — second phase |
-| Contract | None |
+| Launch candidate | NO — second phase, contract now complete |
+| Contract | `governance/workstream-b/SCS-CAP-02-OPERATOR-AND-SUPPLIER-IDENTITY-REGISTRATION-CANONICAL-CONTRACT-2026-09-23.md` |
 | Dependencies | SCS-CAP-01 |
 
 **Responsibility:** Register legal entities, their roles in the supply chain, their country of operation, and their authority to provide specific types of evidence. Must explicitly model the aggregator role — a cooperative, trading company, or processing facility that manages evidence collection across hundreds or thousands of smallholder suppliers.
@@ -296,7 +296,7 @@ Three provider-neutral SCS capability contracts have been designed and recorded.
 | Capability | Name | Admission | Maturity | Launch |
 |---|---|---|---|---|
 | SCS-CAP-01 | Regulatory Framework Registration | `PROPOSED_NOT_ADMITTED` | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` | YES |
-| SCS-CAP-02 | Operator and Supplier Identity Registration | `PROPOSED_NOT_ADMITTED` | `CONCEPT_PREVIEW_NOT_IMPLEMENTED` | NO |
+| SCS-CAP-02 | Operator and Supplier Identity Registration | `PROPOSED_NOT_ADMITTED` | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` | NO |
 | SCS-CAP-03 | Plot and Land Unit Registration | `PROPOSED_NOT_ADMITTED` | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` | YES |
 | SCS-CAP-04 | Deforestation Evidence Admission | `PROPOSED_NOT_ADMITTED` | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` | YES |
 | SCS-CAP-05 | Supply Chain Custody Evidence Admission | `PROPOSED_NOT_ADMITTED` | `CONCEPT_PREVIEW_NOT_IMPLEMENTED` | NO |
