@@ -3,10 +3,11 @@
 /**
  * AGR-CROSS-INSTITUTIONAL-LANDSCAPE-CANDIDATE-01 controlled behavioural proof.
  *
- * Twelve requirement groups, each with a baseline case plus perturbation
- * (the output changes as predicted when one input changes, in both
- * directions) and adversarial assertions (attempts to smuggle in weight,
- * authority, content or intent are refused). The candidate composes the
+ * Twelve requirement groups. Most have perturbation cases (the output changes
+ * as predicted when one input changes) and adversarial assertions (attempts
+ * to smuggle in weight, authority, content or intent are refused), but
+ * coverage is not uniform: R01, R03 and R09 have no adversarial fixture;
+ * R07, R08, R09 and R12 have no perturbation fixture. The candidate composes the
  * REAL live CAP-05 evaluator; it is never stubbed.
  *
  * The same fixtures are also run through a COMPOSITION BASELINE: what the
@@ -805,6 +806,10 @@ const GOVERNED_FUNCTIONS = [
     baselineFixture: null,
     basis: "CAP-05's EvidenceLandscapeSnapshotIdentity already binds record IDs, a set digest and asOf. The candidate extends it with selection scope, exclusions, admission decisions and withheld references, but the core mechanism is not new. Not counted." },
   { functionId: "STALENESS_NOTICE", attribution: "ASSIGNED_TO_GOVERNED_EVIDENCE_WATCH_BY_CAP05_CONTRACT",
+    // Ownership remains unresolved: the CAP-05 contract names the Governed
+    // Evidence Watch, but that is not a final decision. The candidate's open
+    // question 1 records whether this candidate or the Watch owns staleness
+    // as undecided.
     fixtures: ["F10-B-STALENESS-NOTICE-ISSUED", "F10-D-OUT-OF-SCOPE-LATE-EVIDENCE-IS-NOT-STALENESS", "F10-E-NEWER-VERSION-MAKES-STALE", "F10-F-ADMISSION-CHANGE-MAKES-STALE", "F10-G-STALENESS-BOUND-TO-EXACT-SCOPE", "F10-H-STALENESS-IS-DELIBERATE-NOT-MONITORING"],
     baselineFixture: null,
     basis: "The CAP-05 contract assigns staleness notices to the separate Governed Evidence Watch design. The candidate's deliberate staleness check overlaps it and must be reconciled with it. Not counted." },

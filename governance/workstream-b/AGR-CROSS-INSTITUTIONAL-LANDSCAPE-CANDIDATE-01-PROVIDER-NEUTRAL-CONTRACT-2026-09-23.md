@@ -669,7 +669,7 @@ One or more such functions gives `CANDIDATE_FOR_SEPARATE_CAPABILITY_REVIEW`; non
 | Duplicate-weight prevention | Not in CAP-04/CAP-05 contracts | F08-E: a duplicate changes CAP-05's outcome by satisfying its volume check | **Yes** |
 | Restricted evidence disclosed as limitation | Not in CAP-04/CAP-05 contracts | F11-F: the fixture baseline (live CAP-05, no access check) exposes the restricted opposing stance; the canonical CAP-05 contract would instead refuse with `EVIDENCE_ACCESS_DENIED`. The candidate proceeds with a disclosed limitation where a contract-faithful composition would refuse | **Yes** |
 | Evidence-set freezing and scope binding | Partially in CAP-05 (`EvidenceLandscapeSnapshotIdentity`) | — | No |
-| Staleness notice | Assigned to Governed Evidence Watch by the CAP-05 contract | — | No |
+| Staleness notice | Ownership unresolved: the CAP-05 contract names the Governed Evidence Watch, but open question 1 records whether this candidate or the Watch owns staleness as undecided | — | No |
 | Same-subject contradiction; cross-subject distinction | CAP-05 (F02-D, F03-C) | — | No |
 | Cross-institution agreement | CAP-05 (F01-C) | — | No |
 | Knowledge gaps | CAP-05 contract | — | No |
