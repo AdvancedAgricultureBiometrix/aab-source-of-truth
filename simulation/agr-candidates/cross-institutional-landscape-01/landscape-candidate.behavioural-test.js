@@ -37,8 +37,17 @@ const cap05 = sandbox.window.AAB_CAP34_LIVE_CAP05_REASONING;
 const candidate = sandbox.window.AAB_AGR_CROSS_INSTITUTIONAL_LANDSCAPE_CANDIDATE_01;
 
 const digest = (text) => "sha256:" + crypto.createHash("sha256").update(String(text)).digest("hex");
+// Deterministic test stand-in for the keyed, request-scoped generator that an
+// authorised disclosure component supplies in production.
+function generateWithheldReference(record, landscapeRequestId) {
+  return digest(
+    "test-key\u0000" +
+    landscapeRequestId + "\u0000" +
+    record.evidenceRecordId + "@" + record.evidenceRecordVersion
+  );
+}
 const clockAt = (iso) => () => iso;
-const DEPS = Object.freeze({ cap05, digest, now: clockAt("2026-09-23T02:00:00Z") });
+const DEPS = Object.freeze({ cap05, digest, generateWithheldReference, now: clockAt("2026-09-23T02:00:00Z") });
 
 const copy = (value) => JSON.parse(JSON.stringify(value));
 const canon = (value) => candidate.canonicalize(JSON.parse(JSON.stringify(value)));
@@ -645,7 +654,10 @@ const baselineContradicts = (baseline, subjectKey) => baseline.computedFacts.con
 
   check("F11-C-OPAQUE-REFERENCE-SUPPORTS-AUDIT", 11,
     "The receipt carries an opaque withheld reference that an authorised auditor can verify against the record, without the receipt revealing it",
-    out.receipt.withheldReferences.length === 1 && out.receipt.withheldReferences[0] === digest("withheld\u0000R-A-RESTRICTED@1"),
+    out.receipt.withheldReferences.length === 1 && out.receipt.withheldReferences[0] === generateWithheldReference(
+      { evidenceRecordId: "R-A-RESTRICTED", evidenceRecordVersion: 1 },
+      "LREQ-TH-RUBBER-001"
+    ),
     out.receipt.withheldReferences);
 
   const outOfScope = run(baseRequest(), baseRecords().concat([restricted({ dateObserved: "2015-01-01" })]));

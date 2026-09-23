@@ -1,7 +1,7 @@
 {
   "proofId": "AAB-AGR-CROSS-INSTITUTIONAL-LANDSCAPE-CANDIDATE-01-BEHAVIOURAL-PROOF",
   "proofVersion": "1.0.0",
-  "generatedAtUtc": "2026-09-23T03:45:25.666Z",
+  "generatedAtUtc": "2026-09-23T21:31:28.556Z",
   "result": "PASS_AGR_CROSS_INSTITUTIONAL_LANDSCAPE_CANDIDATE_01_BEHAVIOURAL_PROOF",
   "scope": "Proves the candidate reference evaluator's behaviour on synthetic multi-institution fixtures, and compares it with a composition baseline of CAP-04 selection plus the live CAP-05 evaluator. It does not admit the candidate, assign a CAP number, or prove scientific correctness, production readiness, sovereignty or commissioning.",
   "candidateVersion": "0.1.0",
@@ -1454,7 +1454,7 @@
       "description": "The receipt carries an opaque withheld reference that an authorised auditor can verify against the record, without the receipt revealing it",
       "passed": true,
       "actual": [
-        "sha256:b6f5b8f3a65fb54672ee67dd6d47cf4085d87e0a579a2f03c7f53286bdc40be6"
+        "sha256:888dd279ef3a7319889c5fedb0518a69e6747f1091748e2e567a8a41a2075f66"
       ]
     },
     {
@@ -1463,7 +1463,7 @@
       "description": "Adversarial: even when a restricted record is excluded for scope, its exclusion entry withholds its identity",
       "passed": true,
       "actual": {
-        "withheldReference": "sha256:b6f5b8f3a65fb54672ee67dd6d47cf4085d87e0a579a2f03c7f53286bdc40be6",
+        "withheldReference": "sha256:888dd279ef3a7319889c5fedb0518a69e6747f1091748e2e567a8a41a2075f66",
         "institutionId": "INST-ALPHA",
         "reasonCodes": [
           "OUTSIDE_TEMPORAL_SCOPE"

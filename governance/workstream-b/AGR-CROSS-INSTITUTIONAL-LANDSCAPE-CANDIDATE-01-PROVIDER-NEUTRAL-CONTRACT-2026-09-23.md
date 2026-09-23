@@ -249,7 +249,10 @@ interface FrozenEvidenceSet {
   withheldDisclosure: Array<{
     institutionId: string;
     accessClassification: string;
-    // digest("withheld" + NUL + evidenceRecordId + "@" + version)
+    // Produced by the injected generateWithheldReference(record, requestId),
+    // never computed by the candidate. Production supplies a keyed,
+    // request-scoped generator (e.g. HMAC) from an authorised disclosure
+    // component, so the reference cannot be confirmed by guessing a record ID.
     withheldReference: string;
   }>;
 }
@@ -595,6 +598,7 @@ interface CrossInstitutionalLandscapeFailure {
     | "CAP05_DEPENDENCY_UNAVAILABLE"
     | "DIGEST_DEPENDENCY_UNAVAILABLE"
     | "CLOCK_DEPENDENCY_UNAVAILABLE"
+    | "WITHHELD_REFERENCE_DEPENDENCY_UNAVAILABLE"
   >;
   reasons: string[];
 
