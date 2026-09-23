@@ -1,0 +1,1672 @@
+{
+  "proofId": "AAB-AGR-CROSS-INSTITUTIONAL-LANDSCAPE-CANDIDATE-01-BEHAVIOURAL-PROOF",
+  "proofVersion": "1.0.0",
+  "generatedAtUtc": "2026-09-23T03:45:25.666Z",
+  "result": "PASS_AGR_CROSS_INSTITUTIONAL_LANDSCAPE_CANDIDATE_01_BEHAVIOURAL_PROOF",
+  "scope": "Proves the candidate reference evaluator's behaviour on synthetic multi-institution fixtures, and compares it with a composition baseline of CAP-04 selection plus the live CAP-05 evaluator. It does not admit the candidate, assign a CAP number, or prove scientific correctness, production readiness, sovereignty or commissioning.",
+  "candidateVersion": "0.1.0",
+  "cap05ImplementationVersion": "1.0.0",
+  "fixtureCount": 63,
+  "passedFixtureCount": 63,
+  "requirementTotals": {
+    "R01": {
+      "fixtureCount": 3,
+      "passedFixtureCount": 3
+    },
+    "R02": {
+      "fixtureCount": 4,
+      "passedFixtureCount": 4
+    },
+    "R03": {
+      "fixtureCount": 3,
+      "passedFixtureCount": 3
+    },
+    "R04": {
+      "fixtureCount": 5,
+      "passedFixtureCount": 5
+    },
+    "R05": {
+      "fixtureCount": 4,
+      "passedFixtureCount": 4
+    },
+    "R06": {
+      "fixtureCount": 4,
+      "passedFixtureCount": 4
+    },
+    "R07": {
+      "fixtureCount": 9,
+      "passedFixtureCount": 9
+    },
+    "R08": {
+      "fixtureCount": 6,
+      "passedFixtureCount": 6
+    },
+    "R09": {
+      "fixtureCount": 3,
+      "passedFixtureCount": 3
+    },
+    "R10": {
+      "fixtureCount": 9,
+      "passedFixtureCount": 9
+    },
+    "R11": {
+      "fixtureCount": 7,
+      "passedFixtureCount": 7
+    },
+    "R12": {
+      "fixtureCount": 6,
+      "passedFixtureCount": 6
+    }
+  },
+  "capabilityIdentityAssessment": {
+    "question": "Does this candidate introduce material governed logic beyond authorised CAP-04 evidence selection followed by CAP-05 evaluation?",
+    "decisionRule": "Beyond composition only when a governed function is not provided by the CAP-04/CAP-05 canonical contracts or assigned elsewhere, a composition-baseline fixture demonstrates the baseline fails it, and every candidate fixture for it passes. One or more such functions => CANDIDATE_FOR_SEPARATE_CAPABILITY_REVIEW; none => GOVERNED_COMPOSITION_PROFILE.",
+    "classification": "CANDIDATE_FOR_SEPARATE_CAPABILITY_REVIEW",
+    "functionsBeyondComposition": [
+      "DATASET_AND_PARTICIPATION_AUTHORISATION",
+      "METHODOLOGICAL_COMPARABILITY",
+      "AUTHORISED_UNIT_TRANSFORMATION",
+      "DUPLICATE_WEIGHT_PREVENTION",
+      "RESTRICTED_EVIDENCE_DISCLOSED_AS_LIMITATION"
+    ],
+    "functions": [
+      {
+        "functionId": "DATASET_AND_PARTICIPATION_AUTHORISATION",
+        "attribution": "NOT_PROVIDED_BY_CAP04_OR_CAP05_CONTRACT",
+        "fixtures": [
+          "F07-B-UNAUTHORISED-DATASET-EXCLUDED",
+          "F07-C-MISSING-PARTICIPATION-AUTHORITY-FAILS-CLOSED",
+          "F07-D-DATASET-WITHOUT-SHARING-AUTHORITY-FAILS-CLOSED"
+        ],
+        "baselineFixture": "F07-H-COMPOSITION-LEAKS-UNAUTHORISED-DATASET",
+        "basis": "The CAP-05 request contract offers an organizationIds filter (F07-I shows institution-level exclusion is composable) but no dataset-level sharing authority or participation authority; the CAP-05 contract fails closed on cross-boundary records rather than governing them.",
+        "unknownFixtureIds": [],
+        "candidateFixturesPass": true,
+        "baselineInsufficiencyDemonstrated": true,
+        "countsAsLogicBeyondComposition": true
+      },
+      {
+        "functionId": "METHODOLOGICAL_COMPARABILITY",
+        "attribution": "NOT_PROVIDED_BY_CAP04_OR_CAP05_CONTRACT",
+        "fixtures": [
+          "F05-A-INCOMPATIBILITY-SURFACED",
+          "F05-B-DECLARED-COMPATIBILITY-ALLOWS-COMPARISON",
+          "F05-C-SIMILAR-NAMES-NOT-AUTO-POOLED"
+        ],
+        "baselineFixture": "F05-D-COMPOSITION-SILENTLY-POOLS",
+        "basis": "CAP-04 stores methodReference as data and CAP-05 compares stances by subject only; neither assesses whether methodologies are comparable.",
+        "unknownFixtureIds": [],
+        "candidateFixturesPass": true,
+        "baselineInsufficiencyDemonstrated": true,
+        "countsAsLogicBeyondComposition": true
+      },
+      {
+        "functionId": "AUTHORISED_UNIT_TRANSFORMATION",
+        "attribution": "NOT_PROVIDED_BY_CAP04_OR_CAP05_CONTRACT",
+        "fixtures": [
+          "F04-A-AUTHORISED-TRANSFORMATION-APPLIED",
+          "F04-B-NO-AUTHORISATION-MEANS-INCOMPARABLE",
+          "F04-C-UNREFERENCED-TRANSFORMATION-REFUSED",
+          "F04-D-RECORD-SUPPLIED-CONVERSION-IGNORED"
+        ],
+        "baselineFixture": "F04-E-COMPOSITION-HAS-NO-UNIT-GOVERNANCE",
+        "basis": "Neither contract defines unit transformations, their authority, or declared incomparability.",
+        "unknownFixtureIds": [],
+        "candidateFixturesPass": true,
+        "baselineInsufficiencyDemonstrated": true,
+        "countsAsLogicBeyondComposition": true
+      },
+      {
+        "functionId": "DUPLICATE_WEIGHT_PREVENTION",
+        "attribution": "NOT_PROVIDED_BY_CAP04_OR_CAP05_CONTRACT",
+        "fixtures": [
+          "F08-A-DUPLICATE-CANNOT-MANUFACTURE-AGREEMENT",
+          "F08-B-SAME-SOURCE-RECORD-IS-DUPLICATE",
+          "F08-C-DUPLICATES-CANNOT-OUTVOTE",
+          "F08-D-DUPLICATE-DOES-NOT-SATISFY-CAP05-VOLUME",
+          "F08-F-ONE-VERSION-PER-RECORD"
+        ],
+        "baselineFixture": "F08-E-COMPOSITION-GIVES-DUPLICATE-WEIGHT",
+        "basis": "CAP-04 admits each institution's submission as its own record; nothing in either contract collapses the same observation submitted by different institutions.",
+        "unknownFixtureIds": [],
+        "candidateFixturesPass": true,
+        "baselineInsufficiencyDemonstrated": true,
+        "countsAsLogicBeyondComposition": true
+      },
+      {
+        "functionId": "RESTRICTED_EVIDENCE_DISCLOSED_AS_LIMITATION",
+        "attribution": "NOT_PROVIDED_BY_CAP04_OR_CAP05_CONTRACT",
+        "fixtures": [
+          "F11-A-RESTRICTED-WITHHELD-AS-LIMITATION",
+          "F11-B-NO-RESTRICTED-CONTENT-IN-ANY-OUTPUT",
+          "F11-C-OPAQUE-REFERENCE-SUPPORTS-AUDIT",
+          "F11-D-RESTRICTED-EXCLUSION-ALSO-OPAQUE",
+          "F11-E-WITHHOLDING-IS-THE-ONLY-DIFFERENCE"
+        ],
+        "baselineFixture": "F11-F-COMPOSITION-LEAKS-BY-INFERENCE",
+        "basis": "The CAP-05 contract returns FAIL_CLOSED EVIDENCE_ACCESS_DENIED with no partial landscape; it has no path to proceed while disclosing withheld evidence as a counted, opaque limitation. The live composition has no access check at all.",
+        "unknownFixtureIds": [],
+        "candidateFixturesPass": true,
+        "baselineInsufficiencyDemonstrated": true,
+        "countsAsLogicBeyondComposition": true
+      },
+      {
+        "functionId": "EVIDENCE_SET_FREEZING_AND_SCOPE_BINDING",
+        "attribution": "PARTIALLY_PROVIDED_BY_CAP05_CONTRACT",
+        "fixtures": [
+          "F10-A-LATE-EVIDENCE-CANNOT-ENTER-FROZEN-SCOPE",
+          "F10-C-FROZEN-RESULT-IS-IMMUTABLE",
+          "F10-I-FROZEN-SET-AND-RECEIPT-PRESERVE-BINDING"
+        ],
+        "baselineFixture": null,
+        "basis": "CAP-05's EvidenceLandscapeSnapshotIdentity already binds record IDs, a set digest and asOf. The candidate extends it with selection scope, exclusions, admission decisions and withheld references, but the core mechanism is not new. Not counted.",
+        "unknownFixtureIds": [],
+        "candidateFixturesPass": true,
+        "baselineInsufficiencyDemonstrated": false,
+        "countsAsLogicBeyondComposition": false
+      },
+      {
+        "functionId": "STALENESS_NOTICE",
+        "attribution": "ASSIGNED_TO_GOVERNED_EVIDENCE_WATCH_BY_CAP05_CONTRACT",
+        "fixtures": [
+          "F10-B-STALENESS-NOTICE-ISSUED",
+          "F10-D-OUT-OF-SCOPE-LATE-EVIDENCE-IS-NOT-STALENESS",
+          "F10-E-NEWER-VERSION-MAKES-STALE",
+          "F10-F-ADMISSION-CHANGE-MAKES-STALE",
+          "F10-G-STALENESS-BOUND-TO-EXACT-SCOPE",
+          "F10-H-STALENESS-IS-DELIBERATE-NOT-MONITORING"
+        ],
+        "baselineFixture": null,
+        "basis": "The CAP-05 contract assigns staleness notices to the separate Governed Evidence Watch design. The candidate's deliberate staleness check overlaps it and must be reconciled with it. Not counted.",
+        "unknownFixtureIds": [],
+        "candidateFixturesPass": true,
+        "baselineInsufficiencyDemonstrated": false,
+        "countsAsLogicBeyondComposition": false
+      },
+      {
+        "functionId": "SAME_SUBJECT_CONTRADICTION_AND_CROSS_SUBJECT_DISTINCTION",
+        "attribution": "PROVIDED_BY_CAP05",
+        "fixtures": [
+          "F02-A-SAME-SUBJECT-CONTRADICTION",
+          "F02-B-CONTRADICTION-BIDIRECTIONAL",
+          "F02-C-NO-MAJORITY-RESOLUTION",
+          "F03-A-CROSS-SUBJECT-NOT-CONTRADICTION",
+          "F03-B-SAME-SUBJECT-FLIPS-TO-CONTRADICTION"
+        ],
+        "baselineFixture": null,
+        "basis": "F02-D and F03-C show the live CAP-05 evaluator performs this within composition.",
+        "unknownFixtureIds": [],
+        "candidateFixturesPass": true,
+        "baselineInsufficiencyDemonstrated": false,
+        "countsAsLogicBeyondComposition": false
+      },
+      {
+        "functionId": "CROSS_INSTITUTION_AGREEMENT",
+        "attribution": "PROVIDED_BY_CAP05",
+        "fixtures": [
+          "F01-A-CROSS-INSTITUTION-AGREEMENT",
+          "F01-B-AGREEMENT-DEPENDS-ON-DATA"
+        ],
+        "baselineFixture": null,
+        "basis": "F01-C: absence of contradiction across institutions is available through composition; grouping by institution is presentation.",
+        "unknownFixtureIds": [],
+        "candidateFixturesPass": true,
+        "baselineInsufficiencyDemonstrated": false,
+        "countsAsLogicBeyondComposition": false
+      },
+      {
+        "functionId": "KNOWLEDGE_GAPS",
+        "attribution": "PROVIDED_BY_CAP05_CONTRACT",
+        "fixtures": [
+          "F06-A-MISSING-CATEGORIES-ARE-KNOWLEDGE-GAPS",
+          "F06-B-GAP-CLOSES-WHEN-EVIDENCE-ARRIVES",
+          "F06-C-TEMPORAL-AND-GEOGRAPHIC-GAPS",
+          "F06-D-NO-EVIDENCE-FAILS-CLOSED-NOT-NEGATIVE"
+        ],
+        "baselineFixture": null,
+        "basis": "The CAP-05 contract's knowledgeGaps names missingEvidenceCategory per subject. The live CAP-05 evaluator reports only global categories, so the reference evaluator computes per-subject gaps as a stand-in for CAP-05 contract behaviour. Not counted.",
+        "unknownFixtureIds": [],
+        "candidateFixturesPass": true,
+        "baselineInsufficiencyDemonstrated": false,
+        "countsAsLogicBeyondComposition": false
+      },
+      {
+        "functionId": "REPUTATION_NEUTRALITY",
+        "attribution": "INVARIANT_NOT_LOGIC",
+        "fixtures": [
+          "F09-A-REPUTATION-CHANGES-NOTHING",
+          "F09-B-SIDES-ARE-SYMMETRIC",
+          "F09-C-NO-REPUTATION-IN-OUTPUT"
+        ],
+        "baselineFixture": null,
+        "basis": "A constraint on every capability, not a mechanism. Not counted.",
+        "unknownFixtureIds": [],
+        "candidateFixturesPass": true,
+        "baselineInsufficiencyDemonstrated": false,
+        "countsAsLogicBeyondComposition": false
+      },
+      {
+        "functionId": "NO_OPERATIONAL_OUTPUT",
+        "attribution": "SHARED_BOUNDARY_WITH_CAP05",
+        "fixtures": [
+          "F12-A-OPERATIONAL-OUTPUTS-FAIL-CLOSED",
+          "F12-B-NO-OPERATIONAL-LANGUAGE-IN-OUTPUT",
+          "F12-C-NO-MEMORY-WRITE-OR-PROMOTION",
+          "F12-D-AUTHORITY-BOUNDARY-ON-EVERY-OUTPUT",
+          "F12-E-CAP05-VERSION-MUST-MATCH",
+          "F12-F-STATELESS-AND-DETERMINISTIC"
+        ],
+        "baselineFixture": null,
+        "basis": "CAP-05's authority boundary already forbids verdicts, promotion and writes. Not counted.",
+        "unknownFixtureIds": [],
+        "candidateFixturesPass": true,
+        "baselineInsufficiencyDemonstrated": false,
+        "countsAsLogicBeyondComposition": false
+      }
+    ],
+    "designRecordCriteria": {
+      "distinctFailureContract": "DEMONSTRATED — PARTICIPATION_AUTHORITY_MISSING, DATASET_AUTHORITY_INVALID, CAP04_ELIGIBILITY_REQUIREMENT_WEAKENED, RECEIPT_REQUEST_MISMATCH and CAP05_VERSION_UNAVAILABLE are not in the CAP-05 failure contract (F07-C, F07-D, F07-F, F10-G, F12-E).",
+      "distinctDisclosureReceiptType": "DEMONSTRATED — LANDSCAPE_DISCLOSURE_RECEIPT binds selection scope, exclusions, duplicates and opaque withheld references (F10-I, F11-C).",
+      "distinctAuthorityBoundary": "PARTIAL — the boundary adds cross-institutional flags (noInstitutionRanked, restrictedEvidenceDisclosedOnlyAsLimitation) to CAP-05's advisory boundary (F12-D).",
+      "independentLifecycle": "NOT_DEMONSTRATED — the reference evaluator is deliberately stateless; a lifecycle for frozen sets, receipts and staleness notices would need governed persistence that is out of scope.",
+      "distinctGatewayAction": "NOT_DEMONSTRATED — no gateway was in scope."
+    },
+    "caveats": [
+      "This is a classification for review, not admission. No CAP number is assigned.",
+      "The staleness notice overlaps the Governed Evidence Watch design in the CAP-05 contract and must be reconciled before any admission review.",
+      "The composition baseline uses the live CAP-05 simulation evaluator (1.0.0), which is thinner than the CAP-05 canonical contract; functions the contract assigns to CAP-05 are therefore attributed to CAP-05 even where the live evaluator lacks them."
+    ]
+  },
+  "fixtures": [
+    {
+      "fixtureId": "F01-A-CROSS-INSTITUTION-AGREEMENT",
+      "requirement": 1,
+      "description": "Two authorised institutions' admitted records on the same subject, both SUPPORTS, produce one cross-institutional agreement and no contradiction",
+      "passed": true,
+      "actual": {
+        "observations": [
+          {
+            "subjectKey": "rubber-yield-rainfall-deficit",
+            "methodologyGroupId": "RAIN-MONTHLY-AGG-V2",
+            "stance": "SUPPORTS",
+            "independentObservationCount": 2,
+            "recordIds": [
+              "R-A-1",
+              "R-B-1"
+            ],
+            "contributingInstitutionIds": [
+              "INST-ALPHA",
+              "INST-BETA"
+            ],
+            "duplicateSubmissionsAlsoReportedBy": [],
+            "crossInstitutionalAgreement": true,
+            "nonDirectionalRecordIds": [],
+            "valueSummary": {
+              "canonicalUnit": "kg/ha",
+              "comparableValueCount": 2,
+              "minimum": 1390,
+              "maximum": 1450
+            }
+          }
+        ],
+        "contradictions": []
+      }
+    },
+    {
+      "fixtureId": "F01-B-AGREEMENT-DEPENDS-ON-DATA",
+      "requirement": 1,
+      "description": "Perturbation: removing Beta's record leaves a single-institution observation; cross-institutional agreement is no longer claimed",
+      "passed": true,
+      "actual": [
+        {
+          "subjectKey": "rubber-yield-rainfall-deficit",
+          "methodologyGroupId": "RAIN-MONTHLY-AGG-V2",
+          "stance": "SUPPORTS",
+          "independentObservationCount": 1,
+          "recordIds": [
+            "R-A-1"
+          ],
+          "contributingInstitutionIds": [
+            "INST-ALPHA"
+          ],
+          "duplicateSubmissionsAlsoReportedBy": [],
+          "crossInstitutionalAgreement": false,
+          "nonDirectionalRecordIds": [],
+          "valueSummary": {
+            "canonicalUnit": "kg/ha",
+            "comparableValueCount": 1,
+            "minimum": 1450,
+            "maximum": 1450
+          }
+        }
+      ]
+    },
+    {
+      "fixtureId": "F01-C-COMPOSITION-PROVIDES-AGREEMENT",
+      "requirement": 1,
+      "description": "Attribution: the composition baseline (live CAP-05) also finds no contradiction on the agreeing subject, so agreement is available through composition",
+      "passed": true,
+      "actual": {
+        "selectedRecordIds": [
+          "R-A-1",
+          "R-B-1"
+        ],
+        "cap05Outcome": "REASONING_SUPPORTS_PROGRESSION",
+        "computedFacts": {
+          "eligibleCount": 2,
+          "missingCategories": [],
+          "contradictingSubjects": [],
+          "minimumEligibleEvidence": 2
+        }
+      }
+    },
+    {
+      "fixtureId": "F02-A-SAME-SUBJECT-CONTRADICTION",
+      "requirement": 2,
+      "description": "Beta OPPOSES where Alpha SUPPORTS on the same subject and methodology: CAP-05 detects one unresolved contradiction naming both sides",
+      "passed": true,
+      "actual": [
+        {
+          "subjectKey": "rubber-yield-rainfall-deficit",
+          "methodologyGroupId": "RAIN-MONTHLY-AGG-V2",
+          "supportingRecordIds": [
+            "R-A-1"
+          ],
+          "opposingRecordIds": [
+            "R-B-1"
+          ],
+          "supportingInstitutionIds": [
+            "INST-ALPHA"
+          ],
+          "opposingInstitutionIds": [
+            "INST-BETA"
+          ],
+          "detectedBy": "CAP-05",
+          "resolutionStatus": "UNRESOLVED_HUMAN_REVIEW_REQUIRED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "F02-B-CONTRADICTION-BIDIRECTIONAL",
+      "requirement": 2,
+      "description": "Perturbation back: restoring Beta's stance to SUPPORTS removes the contradiction",
+      "passed": true,
+      "actual": {
+        "before": 1,
+        "after": 0
+      }
+    },
+    {
+      "fixtureId": "F02-C-NO-MAJORITY-RESOLUTION",
+      "requirement": 2,
+      "description": "Adversarial: three supporting records against one opposing record still yield an UNRESOLVED contradiction; no count-based resolution or majority label",
+      "passed": true,
+      "actual": [
+        {
+          "subjectKey": "rubber-yield-rainfall-deficit",
+          "methodologyGroupId": "RAIN-MONTHLY-AGG-V2",
+          "supportingRecordIds": [
+            "R-A-1",
+            "R-G-1",
+            "R-G-2"
+          ],
+          "opposingRecordIds": [
+            "R-B-1"
+          ],
+          "supportingInstitutionIds": [
+            "INST-ALPHA",
+            "INST-GAMMA"
+          ],
+          "opposingInstitutionIds": [
+            "INST-BETA"
+          ],
+          "detectedBy": "CAP-05",
+          "resolutionStatus": "UNRESOLVED_HUMAN_REVIEW_REQUIRED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "F02-D-COMPOSITION-DETECTS-CONTRADICTION",
+      "requirement": 2,
+      "description": "Attribution: the composition baseline's live CAP-05 detects the same contradiction; contradiction detection is CAP-05's, not the candidate's",
+      "passed": true,
+      "actual": {
+        "selectedRecordIds": [
+          "R-A-1",
+          "R-B-1"
+        ],
+        "cap05Outcome": "CONTRADICTION_REQUIRES_REVIEW",
+        "computedFacts": {
+          "eligibleCount": 2,
+          "missingCategories": [],
+          "contradictingSubjects": [
+            "rubber-yield-rainfall-deficit"
+          ],
+          "minimumEligibleEvidence": 2
+        }
+      }
+    },
+    {
+      "fixtureId": "F03-A-CROSS-SUBJECT-NOT-CONTRADICTION",
+      "requirement": 3,
+      "description": "Opposing results about different subjects produce zero contradictions and one compatible difference explicitly marked isContradiction:false",
+      "passed": true,
+      "actual": [
+        {
+          "subjectKeys": [
+            "rubber-latex-quality-rainfall-deficit",
+            "rubber-yield-rainfall-deficit"
+          ],
+          "stances": [
+            "OPPOSES",
+            "SUPPORTS"
+          ],
+          "classification": "OPPOSING_RESULTS_CONCERN_DIFFERENT_SUBJECTS",
+          "isContradiction": false
+        }
+      ]
+    },
+    {
+      "fixtureId": "F03-B-SAME-SUBJECT-FLIPS-TO-CONTRADICTION",
+      "requirement": 3,
+      "description": "Perturbation: moving the opposing record onto the same subject turns the compatible difference into a genuine contradiction",
+      "passed": true,
+      "actual": {
+        "contradictions": 1,
+        "compatibleDifferences": 0
+      }
+    },
+    {
+      "fixtureId": "F03-C-COMPOSITION-RESPECTS-SUBJECTS",
+      "requirement": 3,
+      "description": "Attribution: live CAP-05 in the composition baseline also reports no cross-subject contradiction",
+      "passed": true,
+      "actual": {
+        "selectedRecordIds": [
+          "R-A-1",
+          "R-B-1"
+        ],
+        "cap05Outcome": "REASONING_SUPPORTS_PROGRESSION",
+        "computedFacts": {
+          "eligibleCount": 2,
+          "missingCategories": [],
+          "contradictingSubjects": [],
+          "minimumEligibleEvidence": 2
+        }
+      }
+    },
+    {
+      "fixtureId": "F04-A-AUTHORISED-TRANSFORMATION-APPLIED",
+      "requirement": 4,
+      "description": "A lb/acre value is converted to kg/ha only through the request's authorised transformation, which is named with its authority",
+      "passed": true,
+      "actual": {
+        "unitRow": {
+          "subjectKey": "rubber-yield-rainfall-deficit",
+          "canonicalUnit": "kg/ha",
+          "converted": [
+            {
+              "evidenceRecordId": "R-B-1",
+              "fromUnit": "lb/acre",
+              "toUnit": "kg/ha",
+              "transformationId": "TX-LBACRE-KGHA-V1",
+              "authorisedBy": "SYNTHETIC-METHODS-BOARD",
+              "authorityReference": "MB-2026-004"
+            }
+          ],
+          "incomparable": []
+        },
+        "valueSummary": {
+          "canonicalUnit": "kg/ha",
+          "comparableValueCount": 2,
+          "minimum": 1389.8539999999998,
+          "maximum": 1450
+        }
+      }
+    },
+    {
+      "fixtureId": "F04-B-NO-AUTHORISATION-MEANS-INCOMPARABLE",
+      "requirement": 4,
+      "description": "Perturbation: removing the authorised transformation makes the value explicitly incomparable, excluded from the value comparison and disclosed as a limitation",
+      "passed": true,
+      "actual": {
+        "row": {
+          "subjectKey": "rubber-yield-rainfall-deficit",
+          "canonicalUnit": "kg/ha",
+          "converted": [],
+          "incomparable": [
+            {
+              "evidenceRecordId": "R-B-1",
+              "unit": "lb/acre",
+              "reasonCode": "NO_AUTHORISED_UNIT_TRANSFORMATION"
+            }
+          ]
+        },
+        "valueSummary": {
+          "canonicalUnit": "kg/ha",
+          "comparableValueCount": 1,
+          "minimum": 1450,
+          "maximum": 1450
+        }
+      }
+    },
+    {
+      "fixtureId": "F04-C-UNREFERENCED-TRANSFORMATION-REFUSED",
+      "requirement": 4,
+      "description": "Adversarial: a transformation lacking an authority reference is not applied",
+      "passed": true,
+      "actual": {
+        "subjectKey": "rubber-yield-rainfall-deficit",
+        "canonicalUnit": "kg/ha",
+        "converted": [],
+        "incomparable": [
+          {
+            "evidenceRecordId": "R-B-1",
+            "unit": "lb/acre",
+            "reasonCode": "NO_AUTHORISED_UNIT_TRANSFORMATION"
+          }
+        ]
+      }
+    },
+    {
+      "fixtureId": "F04-D-RECORD-SUPPLIED-CONVERSION-IGNORED",
+      "requirement": 4,
+      "description": "Adversarial: a conversion factor carried inside the evidence record itself is ignored; the value stays incomparable",
+      "passed": true,
+      "actual": {
+        "canonicalUnit": "kg/ha",
+        "comparableValueCount": 1,
+        "minimum": 1450,
+        "maximum": 1450
+      }
+    },
+    {
+      "fixtureId": "F04-E-COMPOSITION-HAS-NO-UNIT-GOVERNANCE",
+      "requirement": 4,
+      "description": "Attribution: the composition baseline carries no unit comparability assessment or transformation record; it neither converts nor declares incomparability",
+      "passed": true,
+      "actual": {
+        "selectedRecordIds": [
+          "R-A-1",
+          "R-B-1"
+        ],
+        "cap05Outcome": "REASONING_SUPPORTS_PROGRESSION",
+        "computedFacts": {
+          "eligibleCount": 2,
+          "missingCategories": [],
+          "contradictingSubjects": [],
+          "minimumEligibleEvidence": 2
+        }
+      }
+    },
+    {
+      "fixtureId": "F05-A-INCOMPATIBILITY-SURFACED",
+      "requirement": 5,
+      "description": "Opposing records under different methodologies are not pooled into a contradiction; the incompatibility is surfaced with both methodology groups",
+      "passed": true,
+      "actual": [
+        {
+          "subjectKey": "rubber-yield-rainfall-deficit",
+          "methodologyGroups": [
+            {
+              "methodologyGroupId": "RAIN-AWS-HOURLY-V1",
+              "methodologyReferences": [
+                "RAIN-AWS-HOURLY-V1"
+              ],
+              "recordIds": [
+                "R-B-1"
+              ]
+            },
+            {
+              "methodologyGroupId": "RAIN-MONTHLY-AGG-V2",
+              "methodologyReferences": [
+                "RAIN-MONTHLY-AGG-V2"
+              ],
+              "recordIds": [
+                "R-A-1"
+              ]
+            }
+          ],
+          "treatment": "EVALUATED_SEPARATELY_PER_METHODOLOGY_GROUP_NOT_POOLED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "F05-B-DECLARED-COMPATIBILITY-ALLOWS-COMPARISON",
+      "requirement": 5,
+      "description": "Perturbation: only when the request explicitly declares the two methodologies compatible are they compared, and the contradiction then appears",
+      "passed": true,
+      "actual": [
+        {
+          "subjectKey": "rubber-yield-rainfall-deficit",
+          "methodologyGroupId": "RAIN-AWS-HOURLY-V1+RAIN-MONTHLY-AGG-V2",
+          "supportingRecordIds": [
+            "R-A-1"
+          ],
+          "opposingRecordIds": [
+            "R-B-1"
+          ],
+          "supportingInstitutionIds": [
+            "INST-ALPHA"
+          ],
+          "opposingInstitutionIds": [
+            "INST-BETA"
+          ],
+          "detectedBy": "CAP-05",
+          "resolutionStatus": "UNRESOLVED_HUMAN_REVIEW_REQUIRED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "F05-C-SIMILAR-NAMES-NOT-AUTO-POOLED",
+      "requirement": 5,
+      "description": "Adversarial: a similarly named methodology version (V2 vs V3) is not assumed compatible",
+      "passed": true,
+      "actual": [
+        {
+          "subjectKey": "rubber-yield-rainfall-deficit",
+          "methodologyGroups": [
+            {
+              "methodologyGroupId": "RAIN-MONTHLY-AGG-V2",
+              "methodologyReferences": [
+                "RAIN-MONTHLY-AGG-V2"
+              ],
+              "recordIds": [
+                "R-A-1"
+              ]
+            },
+            {
+              "methodologyGroupId": "RAIN-MONTHLY-AGG-V3",
+              "methodologyReferences": [
+                "RAIN-MONTHLY-AGG-V3"
+              ],
+              "recordIds": [
+                "R-B-1"
+              ]
+            }
+          ],
+          "treatment": "EVALUATED_SEPARATELY_PER_METHODOLOGY_GROUP_NOT_POOLED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "F05-D-COMPOSITION-SILENTLY-POOLS",
+      "requirement": 5,
+      "description": "Attribution: the composition baseline pools the two methodologies and reports a contradiction that the evidence cannot support",
+      "passed": true,
+      "actual": {
+        "selectedRecordIds": [
+          "R-A-1",
+          "R-B-1"
+        ],
+        "cap05Outcome": "CONTRADICTION_REQUIRES_REVIEW",
+        "computedFacts": {
+          "eligibleCount": 2,
+          "missingCategories": [],
+          "contradictingSubjects": [
+            "rubber-yield-rainfall-deficit"
+          ],
+          "minimumEligibleEvidence": 2
+        }
+      }
+    },
+    {
+      "fixtureId": "F06-A-MISSING-CATEGORIES-ARE-KNOWLEDGE-GAPS",
+      "requirement": 6,
+      "description": "Missing required categories are named per subject as knowledge gaps; the subject with no evidence is UNKNOWN-state, never opposed or negative",
+      "passed": true,
+      "actual": {
+        "gaps": [
+          {
+            "subjectKey": "rubber-latex-quality-rainfall-deficit",
+            "missingEvidenceCategory": "FIELD_TRIAL",
+            "consequence": "KNOWLEDGE_GAP_NOT_A_NEGATIVE_FINDING"
+          },
+          {
+            "subjectKey": "rubber-latex-quality-rainfall-deficit",
+            "missingEvidenceCategory": "LONG_TERM_MONITORING",
+            "consequence": "KNOWLEDGE_GAP_NOT_A_NEGATIVE_FINDING"
+          },
+          {
+            "subjectKey": "rubber-tapping-panel-dryness",
+            "missingEvidenceCategory": "LONG_TERM_MONITORING",
+            "consequence": "KNOWLEDGE_GAP_NOT_A_NEGATIVE_FINDING"
+          }
+        ],
+        "subjects": [
+          {
+            "subjectKey": "rubber-latex-quality-rainfall-deficit",
+            "evidenceState": "NO_ELIGIBLE_EVIDENCE_KNOWLEDGE_GAP",
+            "includedRecordCount": 0
+          },
+          {
+            "subjectKey": "rubber-tapping-panel-dryness",
+            "evidenceState": "OBSERVED_WITHOUT_CONTRADICTION",
+            "includedRecordCount": 1
+          },
+          {
+            "subjectKey": "rubber-yield-rainfall-deficit",
+            "evidenceState": "OBSERVED_WITHOUT_CONTRADICTION",
+            "includedRecordCount": 2
+          }
+        ]
+      }
+    },
+    {
+      "fixtureId": "F06-B-GAP-CLOSES-WHEN-EVIDENCE-ARRIVES",
+      "requirement": 6,
+      "description": "Perturbation: adding the missing monitoring record for the panel subject closes exactly that gap",
+      "passed": true,
+      "actual": [
+        {
+          "subjectKey": "rubber-latex-quality-rainfall-deficit",
+          "missingEvidenceCategory": "FIELD_TRIAL",
+          "consequence": "KNOWLEDGE_GAP_NOT_A_NEGATIVE_FINDING"
+        },
+        {
+          "subjectKey": "rubber-latex-quality-rainfall-deficit",
+          "missingEvidenceCategory": "LONG_TERM_MONITORING",
+          "consequence": "KNOWLEDGE_GAP_NOT_A_NEGATIVE_FINDING"
+        }
+      ]
+    },
+    {
+      "fixtureId": "F06-C-TEMPORAL-AND-GEOGRAPHIC-GAPS",
+      "requirement": 6,
+      "description": "Uncovered years and regions in the declared scope are reported as gaps",
+      "passed": true,
+      "actual": {
+        "temporal": [
+          {
+            "year": 2019,
+            "consequence": "NO_ELIGIBLE_EVIDENCE_FOR_PERIOD"
+          },
+          {
+            "year": 2020,
+            "consequence": "NO_ELIGIBLE_EVIDENCE_FOR_PERIOD"
+          },
+          {
+            "year": 2024,
+            "consequence": "NO_ELIGIBLE_EVIDENCE_FOR_PERIOD"
+          }
+        ],
+        "geographic": []
+      }
+    },
+    {
+      "fixtureId": "F06-D-NO-EVIDENCE-FAILS-CLOSED-NOT-NEGATIVE",
+      "requirement": 6,
+      "description": "Adversarial: when no eligible evidence exists at all, the candidate fails closed with EVIDENCE_SET_EMPTY rather than emitting a negative landscape",
+      "passed": true,
+      "actual": {
+        "ok": false,
+        "candidateId": "AGR-CROSS-INSTITUTIONAL-LANDSCAPE-CANDIDATE-01",
+        "result": "FAIL_CLOSED",
+        "errors": [
+          "EVIDENCE_SET_EMPTY"
+        ],
+        "reasons": [
+          "No authorised, admitted, disclosable evidence falls within the declared scope. 0 record(s) were withheld under access restrictions and 1 were excluded."
+        ],
+        "partialLandscapeReturned": false,
+        "noWrites": true,
+        "noMutation": true
+      }
+    },
+    {
+      "fixtureId": "F07-A-NON-PARTICIPATING-INSTITUTION-EXCLUDED",
+      "requirement": 7,
+      "description": "A record from a non-participating institution is excluded with a reason and cannot create a contradiction",
+      "passed": true,
+      "actual": {
+        "evidenceRecordId": "R-U-1",
+        "evidenceRecordVersion": 1,
+        "institutionId": "INST-UNAUTH",
+        "reasonCodes": [
+          "INSTITUTION_NOT_PARTICIPATING"
+        ]
+      }
+    },
+    {
+      "fixtureId": "F07-B-UNAUTHORISED-DATASET-EXCLUDED",
+      "requirement": 7,
+      "description": "A participating institution's record from a dataset outside the authorised sharing scope is excluded",
+      "passed": true,
+      "actual": {
+        "evidenceRecordId": "R-A-PRIV",
+        "evidenceRecordVersion": 1,
+        "institutionId": "INST-ALPHA",
+        "reasonCodes": [
+          "DATASET_NOT_AUTHORISED"
+        ]
+      }
+    },
+    {
+      "fixtureId": "F07-C-MISSING-PARTICIPATION-AUTHORITY-FAILS-CLOSED",
+      "requirement": 7,
+      "description": "An institution named without a participation authority fails the whole request closed, with no partial landscape",
+      "passed": true,
+      "actual": {
+        "ok": false,
+        "candidateId": "AGR-CROSS-INSTITUTIONAL-LANDSCAPE-CANDIDATE-01",
+        "result": "FAIL_CLOSED",
+        "errors": [
+          "PARTICIPATION_AUTHORITY_MISSING"
+        ],
+        "reasons": [
+          "Every participating institution must carry a participation authority: INST-GAMMA."
+        ],
+        "partialLandscapeReturned": false,
+        "noWrites": true,
+        "noMutation": true
+      }
+    },
+    {
+      "fixtureId": "F07-D-DATASET-WITHOUT-SHARING-AUTHORITY-FAILS-CLOSED",
+      "requirement": 7,
+      "description": "A dataset declared without a sharing authority fails the request closed",
+      "passed": true,
+      "actual": {
+        "ok": false,
+        "candidateId": "AGR-CROSS-INSTITUTIONAL-LANDSCAPE-CANDIDATE-01",
+        "result": "FAIL_CLOSED",
+        "errors": [
+          "DATASET_AUTHORITY_INVALID"
+        ],
+        "reasons": [
+          "Every authorised dataset must belong to a participating institution and carry a sharing authority: DS-BETA-RUBBER."
+        ],
+        "partialLandscapeReturned": false,
+        "noWrites": true,
+        "noMutation": true
+      }
+    },
+    {
+      "fixtureId": "F07-E-REQUESTER-WITHOUT-AUTHORITY-FAILS-CLOSED",
+      "requirement": 7,
+      "description": "A requester without cross-institutional landscape authority fails closed",
+      "passed": true,
+      "actual": {
+        "ok": false,
+        "candidateId": "AGR-CROSS-INSTITUTIONAL-LANDSCAPE-CANDIDATE-01",
+        "result": "FAIL_CLOSED",
+        "errors": [
+          "REQUESTER_NOT_AUTHORISED"
+        ],
+        "reasons": [
+          "The requesting actor must hold REQUEST_CROSS_INSTITUTIONAL_LANDSCAPE."
+        ],
+        "partialLandscapeReturned": false,
+        "noWrites": true,
+        "noMutation": true
+      }
+    },
+    {
+      "fixtureId": "F07-F-CAP04-ELIGIBILITY-CANNOT-BE-WEAKENED",
+      "requirement": 7,
+      "description": "Adversarial: a request that weakens the CAP-04 eligibility requirement fails closed, and a QUARANTINED record is excluded as CAP04_NOT_ADMITTED",
+      "passed": true,
+      "actual": {
+        "failure": {
+          "ok": false,
+          "candidateId": "AGR-CROSS-INSTITUTIONAL-LANDSCAPE-CANDIDATE-01",
+          "result": "FAIL_CLOSED",
+          "errors": [
+            "CAP04_ELIGIBILITY_REQUIREMENT_WEAKENED"
+          ],
+          "reasons": [
+            "The CAP-04 eligibility requirement cannot be weakened below ADMITTED, eligible for scientific memory and integrity VERIFIED."
+          ],
+          "partialLandscapeReturned": false,
+          "noWrites": true,
+          "noMutation": true
+        },
+        "exclusion": {
+          "evidenceRecordId": "R-G-Q",
+          "evidenceRecordVersion": 1,
+          "institutionId": "INST-GAMMA",
+          "reasonCodes": [
+            "CAP04_NOT_ADMITTED"
+          ]
+        }
+      }
+    },
+    {
+      "fixtureId": "F07-G-CROSS-JURISDICTION-EXCLUDED",
+      "requirement": 7,
+      "description": "A record from outside the declared jurisdiction is excluded even when its institution participates",
+      "passed": true,
+      "actual": {
+        "evidenceRecordId": "R-G-VN",
+        "evidenceRecordVersion": 1,
+        "institutionId": "INST-GAMMA",
+        "reasonCodes": [
+          "JURISDICTION_OUT_OF_SCOPE"
+        ]
+      }
+    },
+    {
+      "fixtureId": "F07-H-COMPOSITION-LEAKS-UNAUTHORISED-DATASET",
+      "requirement": 7,
+      "description": "Attribution: the composition baseline has no dataset-level sharing authority, so the unauthorised dataset enters CAP-05 and creates a contradiction",
+      "passed": true,
+      "actual": {
+        "selectedRecordIds": [
+          "R-A-1",
+          "R-A-PRIV",
+          "R-B-1"
+        ],
+        "cap05Outcome": "CONTRADICTION_REQUIRES_REVIEW",
+        "computedFacts": {
+          "eligibleCount": 3,
+          "missingCategories": [],
+          "contradictingSubjects": [
+            "rubber-yield-rainfall-deficit"
+          ],
+          "minimumEligibleEvidence": 2
+        }
+      }
+    },
+    {
+      "fixtureId": "F07-I-COMPOSITION-HANDLES-INSTITUTION-FILTER",
+      "requirement": 7,
+      "description": "Attribution: an institution-level filter IS available through the CAP-05 request's organizationIds, so F07-A alone is composable",
+      "passed": true,
+      "actual": {
+        "selectedRecordIds": [
+          "R-A-1",
+          "R-B-1"
+        ],
+        "cap05Outcome": "REASONING_SUPPORTS_PROGRESSION",
+        "computedFacts": {
+          "eligibleCount": 2,
+          "missingCategories": [],
+          "contradictingSubjects": [],
+          "minimumEligibleEvidence": 2
+        }
+      }
+    },
+    {
+      "fixtureId": "F08-A-DUPLICATE-CANNOT-MANUFACTURE-AGREEMENT",
+      "requirement": 8,
+      "description": "Beta re-submitting Alpha's observation (same content digest) is recorded as a duplicate: one independent observation, no cross-institutional agreement",
+      "passed": true,
+      "actual": {
+        "duplicates": [
+          {
+            "evidenceRecordId": "R-B-DUP",
+            "evidenceRecordVersion": 1,
+            "institutionId": "INST-BETA",
+            "duplicateOf": {
+              "evidenceRecordId": "R-A-1",
+              "evidenceRecordVersion": 1
+            },
+            "duplicateBasis": "SAME_CONTENT_DIGEST"
+          }
+        ],
+        "observation": {
+          "subjectKey": "rubber-yield-rainfall-deficit",
+          "methodologyGroupId": "RAIN-MONTHLY-AGG-V2",
+          "stance": "SUPPORTS",
+          "independentObservationCount": 1,
+          "recordIds": [
+            "R-A-1"
+          ],
+          "contributingInstitutionIds": [
+            "INST-ALPHA"
+          ],
+          "duplicateSubmissionsAlsoReportedBy": [
+            "INST-BETA"
+          ],
+          "crossInstitutionalAgreement": false,
+          "nonDirectionalRecordIds": [],
+          "valueSummary": {
+            "canonicalUnit": "kg/ha",
+            "comparableValueCount": 1,
+            "minimum": 1450,
+            "maximum": 1450
+          }
+        }
+      }
+    },
+    {
+      "fixtureId": "F08-B-SAME-SOURCE-RECORD-IS-DUPLICATE",
+      "requirement": 8,
+      "description": "Adversarial: a re-extraction of the same source record with a different content digest is still one observation",
+      "passed": true,
+      "actual": [
+        {
+          "evidenceRecordId": "R-B-RESUB",
+          "evidenceRecordVersion": 1,
+          "institutionId": "INST-BETA",
+          "duplicateOf": {
+            "evidenceRecordId": "R-A-1",
+            "evidenceRecordVersion": 1
+          },
+          "duplicateBasis": "SAME_SOURCE_RECORD"
+        }
+      ]
+    },
+    {
+      "fixtureId": "F08-C-DUPLICATES-CANNOT-OUTVOTE",
+      "requirement": 8,
+      "description": "Adversarial: three duplicates of a supporting record count once; the contradiction shows one supporting and one opposing record",
+      "passed": true,
+      "actual": [
+        {
+          "subjectKey": "rubber-yield-rainfall-deficit",
+          "methodologyGroupId": "RAIN-MONTHLY-AGG-V2",
+          "supportingRecordIds": [
+            "R-A-1"
+          ],
+          "opposingRecordIds": [
+            "R-G-OPP"
+          ],
+          "supportingInstitutionIds": [
+            "INST-ALPHA"
+          ],
+          "opposingInstitutionIds": [
+            "INST-GAMMA"
+          ],
+          "detectedBy": "CAP-05",
+          "resolutionStatus": "UNRESOLVED_HUMAN_REVIEW_REQUIRED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "F08-D-DUPLICATE-DOES-NOT-SATISFY-CAP05-VOLUME",
+      "requirement": 8,
+      "description": "One observation plus its duplicate reaches CAP-05 as one record, so CAP-05 still reports SUFFICIENT_VOLUME missing",
+      "passed": true,
+      "actual": {
+        "implementationVersion": "1.0.0",
+        "inputRecordCount": 1,
+        "outcome": "PROGRESSION_BLOCKED_EVIDENCE_REQUIRED",
+        "computedFacts": {
+          "eligibleCount": 1,
+          "missingCategories": [
+            "SUFFICIENT_VOLUME"
+          ],
+          "contradictingSubjects": [],
+          "minimumEligibleEvidence": 2
+        }
+      }
+    },
+    {
+      "fixtureId": "F08-E-COMPOSITION-GIVES-DUPLICATE-WEIGHT",
+      "requirement": 8,
+      "description": "Attribution: in the composition baseline the duplicate is counted as a second eligible record and changes CAP-05's outcome by satisfying SUFFICIENT_VOLUME",
+      "passed": true,
+      "actual": {
+        "selectedRecordIds": [
+          "R-A-1",
+          "R-B-DUP"
+        ],
+        "cap05Outcome": "REASONING_SUPPORTS_PROGRESSION",
+        "computedFacts": {
+          "eligibleCount": 2,
+          "missingCategories": [],
+          "contradictingSubjects": [],
+          "minimumEligibleEvidence": 2
+        }
+      }
+    },
+    {
+      "fixtureId": "F08-F-ONE-VERSION-PER-RECORD",
+      "requirement": 8,
+      "description": "Two admitted versions of one record count once: the latest within the cut-off is included, the earlier is excluded as superseded",
+      "passed": true,
+      "actual": {
+        "included": [
+          {
+            "evidenceRecordId": "R-A-1",
+            "evidenceRecordVersion": 2,
+            "institutionId": "INST-ALPHA",
+            "datasetId": "DS-ALPHA-RUBBER",
+            "subjectKey": "rubber-yield-rainfall-deficit",
+            "admissionDecisionId": "MAD-R-A-1-v2",
+            "admissionDecision": "ADMITTED",
+            "admittedAt": "2026-05-01T00:00:00Z",
+            "contentDigest": "sha256:content-R-A-1-v2"
+          }
+        ],
+        "superseded": {
+          "evidenceRecordId": "R-A-1",
+          "evidenceRecordVersion": 1,
+          "institutionId": "INST-ALPHA",
+          "reasonCodes": [
+            "SUPERSEDED_BY_LATER_VERSION_WITHIN_CUT_OFF"
+          ]
+        }
+      }
+    },
+    {
+      "fixtureId": "F09-A-REPUTATION-CHANGES-NOTHING",
+      "requirement": 9,
+      "description": "Inverting or removing institutional reputation fields leaves the result digest and evidence-set digest byte-identical",
+      "passed": true,
+      "actual": {
+        "original": "sha256:ffdf8814153fe3fbc2c6648bd3b0581d95786685c742aeda1fd0e42e9f2ed99d",
+        "reranked": "sha256:ffdf8814153fe3fbc2c6648bd3b0581d95786685c742aeda1fd0e42e9f2ed99d",
+        "unranked": "sha256:ffdf8814153fe3fbc2c6648bd3b0581d95786685c742aeda1fd0e42e9f2ed99d"
+      }
+    },
+    {
+      "fixtureId": "F09-B-SIDES-ARE-SYMMETRIC",
+      "requirement": 9,
+      "description": "Swapping which institution holds which stance mirrors the contradiction exactly; neither side is preferred when the higher-ranked institution holds it",
+      "passed": true,
+      "actual": {
+        "mirrored": {
+          "subjectKey": "rubber-yield-rainfall-deficit",
+          "methodologyGroupId": "RAIN-MONTHLY-AGG-V2",
+          "supportingRecordIds": [
+            "R-B-1"
+          ],
+          "opposingRecordIds": [
+            "R-A-1"
+          ],
+          "supportingInstitutionIds": [
+            "INST-BETA"
+          ],
+          "opposingInstitutionIds": [
+            "INST-ALPHA"
+          ],
+          "detectedBy": "CAP-05",
+          "resolutionStatus": "UNRESOLVED_HUMAN_REVIEW_REQUIRED"
+        },
+        "flagship": {
+          "subjectKey": "rubber-yield-rainfall-deficit",
+          "methodologyGroupId": "RAIN-MONTHLY-AGG-V2",
+          "supportingRecordIds": [
+            "R-A-1"
+          ],
+          "opposingRecordIds": [
+            "R-B-1"
+          ],
+          "supportingInstitutionIds": [
+            "INST-ALPHA"
+          ],
+          "opposingInstitutionIds": [
+            "INST-BETA"
+          ],
+          "detectedBy": "CAP-05",
+          "resolutionStatus": "UNRESOLVED_HUMAN_REVIEW_REQUIRED"
+        }
+      }
+    },
+    {
+      "fixtureId": "F09-C-NO-REPUTATION-IN-OUTPUT",
+      "requirement": 9,
+      "description": "No reputation, prestige or rank value appears anywhere in the result or receipt, and institution coverage stays in identifier order when reputation is inverted or removed",
+      "passed": true,
+      "actual": [
+        [
+          "INST-ALPHA",
+          "INST-BETA",
+          "INST-GAMMA"
+        ],
+        [
+          "INST-ALPHA",
+          "INST-BETA",
+          "INST-GAMMA"
+        ],
+        [
+          "INST-ALPHA",
+          "INST-BETA",
+          "INST-GAMMA"
+        ]
+      ]
+    },
+    {
+      "fixtureId": "F10-A-LATE-EVIDENCE-CANNOT-ENTER-FROZEN-SCOPE",
+      "requirement": 10,
+      "description": "Re-running the same request with a record admitted after the cut-off leaves the included set, observations and contradictions identical; the late record is excluded by cut-off",
+      "passed": true,
+      "actual": {
+        "evidenceRecordId": "R-G-NEW",
+        "evidenceRecordVersion": 1,
+        "institutionId": "INST-GAMMA",
+        "reasonCodes": [
+          "ADMITTED_AFTER_EVIDENCE_CUT_OFF"
+        ]
+      }
+    },
+    {
+      "fixtureId": "F10-B-STALENESS-NOTICE-ISSUED",
+      "requirement": 10,
+      "description": "A deliberate staleness check reports POTENTIALLY_STALE, names the newly eligible record, and returns no new landscape",
+      "passed": true,
+      "actual": {
+        "ok": true,
+        "noticeId": "STALENESS-ac832534a563879f",
+        "assessedAt": "2026-09-23T02:00:00Z",
+        "noticeDigest": "sha256:5db5caef68b09cc76b7cf640bf237dc838dedf8aa1c4ca94ac832534a563879f",
+        "noticeType": "LANDSCAPE_STALENESS_NOTICE",
+        "candidateId": "AGR-CROSS-INSTITUTIONAL-LANDSCAPE-CANDIDATE-01",
+        "landscapeId": "LANDSCAPE-7a7681cc21f8a62b",
+        "receiptId": "RECEIPT-437e42c0794c69b5",
+        "frozenSetId": "FROZEN-f2f3a8509323749e",
+        "evidenceSetDigest": "sha256:dc99194d080d91f1f75515d8371a4d4480b7881e375de8e6f2f3a8509323749e",
+        "originalResultDigest": "sha256:f2da24437f2bff4f141ff5fc68fe71d4ef211416540025fc7a7681cc21f8a62b",
+        "evidenceCutOff": "2026-06-30T00:00:00Z",
+        "status": "POTENTIALLY_STALE",
+        "triggers": [
+          {
+            "reasonCode": "NEW_ELIGIBLE_EVIDENCE_ADMITTED_AFTER_CUT_OFF",
+            "evidenceRecordId": "R-G-NEW",
+            "evidenceRecordVersion": 1,
+            "subjectKey": "rubber-yield-rainfall-deficit"
+          }
+        ],
+        "originalLandscapeUnchanged": true,
+        "reEvaluationRequiresDeliberateRequest": true,
+        "noAutomaticReEvaluation": true,
+        "noMonitoringEstablished": true
+      }
+    },
+    {
+      "fixtureId": "F10-C-FROZEN-RESULT-IS-IMMUTABLE",
+      "requirement": 10,
+      "description": "After the staleness notice the original result is byte-identical, and attempts to append to it or move its cut-off throw",
+      "passed": true,
+      "actual": {
+        "mutationRefused": true,
+        "rewriteRefused": true
+      }
+    },
+    {
+      "fixtureId": "F10-D-OUT-OF-SCOPE-LATE-EVIDENCE-IS-NOT-STALENESS",
+      "requirement": 10,
+      "description": "Perturbation: late evidence from a non-participating institution does not make the landscape stale",
+      "passed": true,
+      "actual": {
+        "ok": true,
+        "noticeId": "STALENESS-377b09ed5a68b100",
+        "assessedAt": "2026-09-23T02:00:00Z",
+        "noticeDigest": "sha256:e068f4fb079bc479e54e5d6156ae3bbd78d602eceec7712b377b09ed5a68b100",
+        "noticeType": "LANDSCAPE_STALENESS_NOTICE",
+        "candidateId": "AGR-CROSS-INSTITUTIONAL-LANDSCAPE-CANDIDATE-01",
+        "landscapeId": "LANDSCAPE-7a7681cc21f8a62b",
+        "receiptId": "RECEIPT-437e42c0794c69b5",
+        "frozenSetId": "FROZEN-f2f3a8509323749e",
+        "evidenceSetDigest": "sha256:dc99194d080d91f1f75515d8371a4d4480b7881e375de8e6f2f3a8509323749e",
+        "originalResultDigest": "sha256:f2da24437f2bff4f141ff5fc68fe71d4ef211416540025fc7a7681cc21f8a62b",
+        "evidenceCutOff": "2026-06-30T00:00:00Z",
+        "status": "NO_NEWER_ELIGIBLE_EVIDENCE_FOUND",
+        "triggers": [],
+        "originalLandscapeUnchanged": true,
+        "reEvaluationRequiresDeliberateRequest": true,
+        "noAutomaticReEvaluation": true,
+        "noMonitoringEstablished": true
+      }
+    },
+    {
+      "fixtureId": "F10-E-NEWER-VERSION-MAKES-STALE",
+      "requirement": 10,
+      "description": "A newer version of an included record admitted after the cut-off is reported as a staleness trigger",
+      "passed": true,
+      "actual": [
+        {
+          "reasonCode": "NEWER_VERSION_OF_INCLUDED_EVIDENCE_ADMITTED",
+          "evidenceRecordId": "R-A-1",
+          "evidenceRecordVersion": 2,
+          "subjectKey": "rubber-yield-rainfall-deficit"
+        }
+      ]
+    },
+    {
+      "fixtureId": "F10-F-ADMISSION-CHANGE-MAKES-STALE",
+      "requirement": 10,
+      "description": "An included record that is no longer admitted is reported as a staleness trigger; the original result is not edited",
+      "passed": true,
+      "actual": [
+        {
+          "reasonCode": "INCLUDED_EVIDENCE_ADMISSION_NO_LONGER_CURRENT",
+          "evidenceRecordId": "R-B-1",
+          "evidenceRecordVersion": 1
+        }
+      ]
+    },
+    {
+      "fixtureId": "F10-G-STALENESS-BOUND-TO-EXACT-SCOPE",
+      "requirement": 10,
+      "description": "Adversarial: a staleness check against a different scope (moved cut-off) fails closed",
+      "passed": true,
+      "actual": {
+        "ok": false,
+        "candidateId": "AGR-CROSS-INSTITUTIONAL-LANDSCAPE-CANDIDATE-01",
+        "result": "FAIL_CLOSED",
+        "errors": [
+          "RECEIPT_REQUEST_MISMATCH"
+        ],
+        "reasons": [
+          "The staleness check must use the exact request scope the receipt was bound to."
+        ],
+        "partialLandscapeReturned": false,
+        "noWrites": true,
+        "noMutation": true
+      }
+    },
+    {
+      "fixtureId": "F10-H-STALENESS-IS-DELIBERATE-NOT-MONITORING",
+      "requirement": 10,
+      "description": "Staleness is a stateless deliberate check: repeating it later yields the same notice digest, and the candidate exposes no watch, subscribe or schedule operation",
+      "passed": true,
+      "actual": {
+        "exported": [
+          "assessStaleness",
+          "authorityBoundary",
+          "candidateId",
+          "candidateVersion",
+          "canonicalize",
+          "classification",
+          "evaluateLandscape",
+          "selectAuthorisedEvidence",
+          "validateRequest"
+        ],
+        "noticeDigest": "sha256:5db5caef68b09cc76b7cf640bf237dc838dedf8aa1c4ca94ac832534a563879f"
+      }
+    },
+    {
+      "fixtureId": "F10-I-FROZEN-SET-AND-RECEIPT-PRESERVE-BINDING",
+      "requirement": 10,
+      "description": "The frozen set and receipt preserve exact record IDs, versions, admission decision IDs, selection scope and cut-off; the set digest recomputes exactly",
+      "passed": true,
+      "actual": {
+        "frozenSet": [
+          {
+            "evidenceRecordId": "R-A-1",
+            "evidenceRecordVersion": 1,
+            "institutionId": "INST-ALPHA",
+            "datasetId": "DS-ALPHA-RUBBER",
+            "subjectKey": "rubber-yield-rainfall-deficit",
+            "admissionDecisionId": "MAD-R-A-1",
+            "admissionDecision": "ADMITTED",
+            "admittedAt": "2026-03-01T00:00:00Z",
+            "contentDigest": "sha256:content-R-A-1"
+          },
+          {
+            "evidenceRecordId": "R-B-1",
+            "evidenceRecordVersion": 1,
+            "institutionId": "INST-BETA",
+            "datasetId": "DS-BETA-RUBBER",
+            "subjectKey": "rubber-yield-rainfall-deficit",
+            "admissionDecisionId": "MAD-R-B-1",
+            "admissionDecision": "ADMITTED",
+            "admittedAt": "2026-03-15T00:00:00Z",
+            "contentDigest": "sha256:content-R-B-1"
+          }
+        ],
+        "receiptIncluded": [
+          {
+            "evidenceRecordId": "R-A-1",
+            "evidenceRecordVersion": 1,
+            "institutionId": "INST-ALPHA",
+            "admissionDecisionId": "MAD-R-A-1",
+            "admissionDecision": "ADMITTED"
+          },
+          {
+            "evidenceRecordId": "R-B-1",
+            "evidenceRecordVersion": 1,
+            "institutionId": "INST-BETA",
+            "admissionDecisionId": "MAD-R-B-1",
+            "admissionDecision": "ADMITTED"
+          }
+        ]
+      }
+    },
+    {
+      "fixtureId": "F11-A-RESTRICTED-WITHHELD-AS-LIMITATION",
+      "requirement": 11,
+      "description": "A restricted opposing record is withheld: no contradiction is derived from it, and it appears only as a counted limitation for its institution",
+      "passed": true,
+      "actual": {
+        "limitation": {
+          "limitationCode": "RESTRICTED_EVIDENCE_WITHHELD",
+          "institutionId": "INST-ALPHA",
+          "accessClassification": "INSTITUTION_RESTRICTED",
+          "withheldRecordCount": 1,
+          "detail": "Evidence under INSTITUTION_RESTRICTED was withheld from this landscape; the comparison may be incomplete. Its content is not disclosed."
+        },
+        "receiptWithheld": [
+          {
+            "institutionId": "INST-ALPHA",
+            "accessClassification": "INSTITUTION_RESTRICTED",
+            "withheldRecordCount": 1,
+            "contentDisclosed": false
+          }
+        ]
+      }
+    },
+    {
+      "fixtureId": "F11-B-NO-RESTRICTED-CONTENT-IN-ANY-OUTPUT",
+      "requirement": 11,
+      "description": "Adversarial: the restricted record's ID, source reference, value, content digest and admission decision ID appear nowhere in the result, receipt, frozen set or comparability assessments",
+      "passed": true,
+      "actual": {
+        "leakedTokens": []
+      }
+    },
+    {
+      "fixtureId": "F11-C-OPAQUE-REFERENCE-SUPPORTS-AUDIT",
+      "requirement": 11,
+      "description": "The receipt carries an opaque withheld reference that an authorised auditor can verify against the record, without the receipt revealing it",
+      "passed": true,
+      "actual": [
+        "sha256:b6f5b8f3a65fb54672ee67dd6d47cf4085d87e0a579a2f03c7f53286bdc40be6"
+      ]
+    },
+    {
+      "fixtureId": "F11-D-RESTRICTED-EXCLUSION-ALSO-OPAQUE",
+      "requirement": 11,
+      "description": "Adversarial: even when a restricted record is excluded for scope, its exclusion entry withholds its identity",
+      "passed": true,
+      "actual": {
+        "withheldReference": "sha256:b6f5b8f3a65fb54672ee67dd6d47cf4085d87e0a579a2f03c7f53286bdc40be6",
+        "institutionId": "INST-ALPHA",
+        "reasonCodes": [
+          "OUTSIDE_TEMPORAL_SCOPE"
+        ],
+        "identityWithheld": true
+      }
+    },
+    {
+      "fixtureId": "F11-E-WITHHOLDING-IS-THE-ONLY-DIFFERENCE",
+      "requirement": 11,
+      "description": "Perturbation: the same record under a disclosable classification is included and the contradiction appears, so withholding alone kept it out",
+      "passed": true,
+      "actual": [
+        {
+          "subjectKey": "rubber-yield-rainfall-deficit",
+          "methodologyGroupId": "RAIN-MONTHLY-AGG-V2",
+          "supportingRecordIds": [
+            "R-A-1",
+            "R-B-1"
+          ],
+          "opposingRecordIds": [
+            "R-A-RESTRICTED"
+          ],
+          "supportingInstitutionIds": [
+            "INST-ALPHA",
+            "INST-BETA"
+          ],
+          "opposingInstitutionIds": [
+            "INST-ALPHA"
+          ],
+          "detectedBy": "CAP-05",
+          "resolutionStatus": "UNRESOLVED_HUMAN_REVIEW_REQUIRED"
+        }
+      ]
+    },
+    {
+      "fixtureId": "F11-F-COMPOSITION-LEAKS-BY-INFERENCE",
+      "requirement": 11,
+      "description": "Attribution: the composition baseline has no disclosure-as-limitation path; the restricted record enters CAP-05 and its opposing stance becomes visible as a contradiction",
+      "passed": true,
+      "actual": {
+        "selectedRecordIds": [
+          "R-A-1",
+          "R-A-RESTRICTED",
+          "R-B-1"
+        ],
+        "cap05Outcome": "CONTRADICTION_REQUIRES_REVIEW",
+        "computedFacts": {
+          "eligibleCount": 3,
+          "missingCategories": [],
+          "contradictingSubjects": [
+            "rubber-yield-rainfall-deficit"
+          ],
+          "minimumEligibleEvidence": 2
+        }
+      }
+    },
+    {
+      "fixtureId": "F11-G-RESTRICTED-STALENESS-COUNT-ONLY",
+      "requirement": 11,
+      "description": "Late restricted evidence makes the landscape potentially stale by count only; the notice reveals nothing about the record",
+      "passed": true,
+      "actual": [
+        {
+          "reasonCode": "NEW_RESTRICTED_EVIDENCE_ADMITTED_AFTER_CUT_OFF",
+          "withheldRecordCount": 1,
+          "contentDisclosed": false
+        }
+      ]
+    },
+    {
+      "fixtureId": "F12-A-OPERATIONAL-OUTPUTS-FAIL-CLOSED",
+      "requirement": 12,
+      "description": "Requesting a recommendation, winning institution, ranking, verdict, contradiction resolution, promotion or memory write fails the whole request closed",
+      "passed": true,
+      "actual": [
+        {
+          "output": "POLICY_RECOMMENDATION",
+          "ok": false,
+          "errors": [
+            "OPERATIONAL_INTENT_BLOCKED"
+          ],
+          "partialLandscapeReturned": false
+        },
+        {
+          "output": "WINNING_INSTITUTION",
+          "ok": false,
+          "errors": [
+            "OPERATIONAL_INTENT_BLOCKED"
+          ],
+          "partialLandscapeReturned": false
+        },
+        {
+          "output": "INSTITUTION_RANKING",
+          "ok": false,
+          "errors": [
+            "OPERATIONAL_INTENT_BLOCKED"
+          ],
+          "partialLandscapeReturned": false
+        },
+        {
+          "output": "VERDICT",
+          "ok": false,
+          "errors": [
+            "OPERATIONAL_INTENT_BLOCKED"
+          ],
+          "partialLandscapeReturned": false
+        },
+        {
+          "output": "CONTRADICTION_RESOLUTION",
+          "ok": false,
+          "errors": [
+            "OPERATIONAL_INTENT_BLOCKED"
+          ],
+          "partialLandscapeReturned": false
+        },
+        {
+          "output": "KNOWLEDGE_PROMOTION",
+          "ok": false,
+          "errors": [
+            "OPERATIONAL_INTENT_BLOCKED"
+          ],
+          "partialLandscapeReturned": false
+        },
+        {
+          "output": "MEMORY_WRITE_BACK",
+          "ok": false,
+          "errors": [
+            "OPERATIONAL_INTENT_BLOCKED"
+          ],
+          "partialLandscapeReturned": false
+        }
+      ]
+    },
+    {
+      "fixtureId": "F12-B-NO-OPERATIONAL-LANGUAGE-IN-OUTPUT",
+      "requirement": 12,
+      "description": "Adversarial scan: no key or value in the result or receipt (outside the authority boundary) recommends, selects a winner, promotes or issues a verdict",
+      "passed": true,
+      "actual": {
+        "forbidden": []
+      }
+    },
+    {
+      "fixtureId": "F12-C-NO-MEMORY-WRITE-OR-PROMOTION",
+      "requirement": 12,
+      "description": "Deep-frozen inputs are read without mutation, and CAP-04 write and CAP-09 promotion traps offered to the candidate are never called by evaluation or staleness",
+      "passed": true,
+      "actual": {
+        "threw": null,
+        "staleThrew": null,
+        "calls": []
+      }
+    },
+    {
+      "fixtureId": "F12-D-AUTHORITY-BOUNDARY-ON-EVERY-OUTPUT",
+      "requirement": 12,
+      "description": "Every result and receipt carries the full advisory-only authority boundary, and every contradiction is left unresolved",
+      "passed": true,
+      "actual": {
+        "readOnly": true,
+        "advisoryOnly": true,
+        "statelessDeliberateEvaluation": true,
+        "noVerdictProduced": true,
+        "noInstitutionRanked": true,
+        "noContradictionResolved": true,
+        "noPolicyRecommendation": true,
+        "noKnowledgePromotion": true,
+        "noWriteBackToInstitutionalMemory": true,
+        "noAutonomousMonitoring": true,
+        "institutionalProvenanceIsDataNotWeighting": true,
+        "restrictedEvidenceDisclosedOnlyAsLimitation": true
+      }
+    },
+    {
+      "fixtureId": "F12-E-CAP05-VERSION-MUST-MATCH",
+      "requirement": 12,
+      "description": "Requesting a CAP-05 evaluation version that is not the one available fails closed rather than silently using another version",
+      "passed": true,
+      "actual": {
+        "ok": false,
+        "candidateId": "AGR-CROSS-INSTITUTIONAL-LANDSCAPE-CANDIDATE-01",
+        "result": "FAIL_CLOSED",
+        "errors": [
+          "CAP05_VERSION_UNAVAILABLE"
+        ],
+        "reasons": [
+          "Requested CAP-05 evaluation version 2.0.0 is not the available version 1.0.0."
+        ],
+        "partialLandscapeReturned": false,
+        "noWrites": true,
+        "noMutation": true
+      }
+    },
+    {
+      "fixtureId": "F12-F-STATELESS-AND-DETERMINISTIC",
+      "requirement": 12,
+      "description": "The same request and records at a different time give the same result digest and landscape ID; only generatedAt differs",
+      "passed": true,
+      "actual": {
+        "first": "sha256:f2da24437f2bff4f141ff5fc68fe71d4ef211416540025fc7a7681cc21f8a62b",
+        "later": "sha256:f2da24437f2bff4f141ff5fc68fe71d4ef211416540025fc7a7681cc21f8a62b"
+      }
+    }
+  ]
+}

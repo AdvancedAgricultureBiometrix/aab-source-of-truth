@@ -254,8 +254,8 @@ AAB's honest uncertainty — surfacing contradictions rather than resolving them
 1. ~~Complete independent PR reviews~~ — done
 2. ~~Merge PR #18~~ — done at `e24f7f2`
 3. ~~Record this candidate design~~ — this document
-4. Define provider-neutral interfaces in a full candidate contract
-5. Build controlled multi-institution test fixtures — at minimum three institutions, two contradictions, one methodological incompatibility, one excluded record
+4. ~~Define provider-neutral interfaces in a full candidate contract~~ — done in `AGR-CROSS-INSTITUTIONAL-LANDSCAPE-CANDIDATE-01-PROVIDER-NEUTRAL-CONTRACT-2026-09-23.md`
+5. ~~Build controlled multi-institution test fixtures — at minimum three institutions, two contradictions, one methodological incompatibility, one excluded record~~ — done: 63/63 fixtures pass; fixture-derived classification `CANDIDATE_FOR_SEPARATE_CAPABILITY_REVIEW` (no CAP number assigned), recorded in the candidate contract and `AGR-CROSS-INSTITUTIONAL-LANDSCAPE-CANDIDATE-01-BEHAVIOURAL-PROOF.json`
 6. Confirm that CAP-04 and CAP-05 can provide the function through composition
 7. Determine whether an independent authority boundary, lifecycle, or disclosure receipt type is required
 8. If composition is sufficient — document as a composition profile, no CAP number
