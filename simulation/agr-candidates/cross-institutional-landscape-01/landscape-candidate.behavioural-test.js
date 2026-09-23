@@ -16,8 +16,10 @@
  * organizationIds and asOf bounds, then the live CAP-05 evaluator). Where
  * the baseline fails a requirement that the candidate meets, that governed
  * function is evidence of logic beyond composition. The capability-identity
- * classification is derived mechanically from those fixture results by a
- * rule fixed below, before any evaluation runs.
+ * classification is derived mechanically from those fixture results by the
+ * rule below. The rule was stated as fixed before any evaluation ran — this
+ * chronology cannot be verified from the repository, as the rule and the
+ * fixtures landed in a single commit.
  */
 
 const fs = require("fs");
