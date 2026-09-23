@@ -107,6 +107,34 @@ That is what the platform is for. That is why every design decision is made
 the way it is. And that is the standard against which every future decision 
 will be held.
 
+## Positioning statement for institutional conversations
+
+The following statement is accurate today and may be used in institutional conversations, proposals, and public-facing materials. It must not be used to imply that AAB is currently operational, that compliance decisions can be made using AAB today, or that any capability is currently admitted or implemented beyond what the platform's honest maturity disclosure states.
+
+> AAB is the only governed intelligence platform that admits supply chain evidence honestly, discloses gaps rather than papering them over, and produces a defensible, traceable evidence record that can withstand regulatory challenge — while keeping the country's data sovereign. It is being built to serve the people the existing tools exclude — smallholder farmers, cooperatives, and institutions in countries where the documentation infrastructure that wealthier markets take for granted does not yet exist.
+
+### What makes this statement accurate
+
+**Honest gap disclosure** — every other EUDR compliance tool produces certificates and checklists. AAB produces a governed evidence record that explicitly states what is known, what is uncertain, and what is missing. A customs authority examining a challenged shipment sees the full picture — not a manufactured assertion of compliance.
+
+**Traceable evidence chains** — every piece of admitted evidence has a traceable provenance chain from source to admission decision. The four temporal layers of satellite evidence are recorded separately and never silently merged. Tenure claims are recorded honestly without being treated as verified title. Custody events are admitted individually — the chain emerges from the collective evidence, not from a system that asserts continuity without proving it.
+
+**Regulatory defensibility** — when a due diligence statement is challenged, an AAB-backed evidence package can demonstrate exactly what was admitted, when, by whom, on what evidence, with what gaps disclosed, and what human decisions were made. That is more defensible than any certificate produced by a black-box system.
+
+**Data sovereignty** — every other EUDR compliance tool of significance is operated by a European or American vendor. The evidence about Thai rubber plots, Vietnamese coffee farms, and Indonesian palm oil smallholders lives on foreign infrastructure. AAB deploys as a sovereign country environment. The data stays in the country, governed by the country's own authority chain.
+
+**Smallholder inclusion** — a Thai rubber smallholder with GPS coordinates and no formal land title is not excluded from the platform. They are admitted honestly, their gap is recorded explicitly, and the compliance officer receives the information needed to make a real decision. This matters enormously for Thailand and Vietnam where the majority of commodity production comes from smallholders that existing tools exclude or paper over.
+
+**Regulatory preparedness** — EUDR is not the last regulation of its kind. Carbon border adjustment mechanisms, conflict minerals regulation, modern slavery supply chain laws — the same structural problem arrives in different forms. A country that builds governed evidence infrastructure now is prepared. A country that does not will face each new regulation from the same unprepared position.
+
+### What this statement does not claim
+
+- It does not claim AAB is currently operational
+- It does not claim any capability is currently admitted or implemented beyond what the honest maturity disclosure states
+- It does not claim that an institution can submit EUDR due diligence statements backed by AAB today
+- It does not guarantee regulatory acceptance by any customs authority
+- The legal responsibility for any due diligence statement remains with the named human operator
+
 ## Note on website use
 
 This document is a candidate for inclusion on the aab.ag platform website. 
