@@ -678,7 +678,7 @@ const baselineContradicts = (baseline, subjectKey) => baseline.computedFacts.con
 
   const baseline = compositionBaseline(baseRequest(), baseRecords().concat([restricted()]));
   check("F11-F-COMPOSITION-LEAKS-BY-INFERENCE", 11,
-    "Attribution: the composition baseline has no disclosure-as-limitation path; the restricted record enters CAP-05 and its opposing stance becomes visible as a contradiction",
+    "Attribution: the composition baseline has no disclosure-as-limitation path; the restricted record enters CAP-05 and its opposing stance becomes visible as a contradiction (live evaluator baseline; a contract-faithful composition would refuse with EVIDENCE_ACCESS_DENIED rather than expose the stance)",
     baseline.selectedRecordIds.includes("R-A-RESTRICTED") && baselineContradicts(baseline, PRIMARY),
     baseline);
 

@@ -1,7 +1,7 @@
 {
   "proofId": "AAB-AGR-CROSS-INSTITUTIONAL-LANDSCAPE-CANDIDATE-01-BEHAVIOURAL-PROOF",
   "proofVersion": "1.0.0",
-  "generatedAtUtc": "2026-09-23T22:05:23.457Z",
+  "generatedAtUtc": "2026-09-23T22:50:42.594Z",
   "result": "PASS_AGR_CROSS_INSTITUTIONAL_LANDSCAPE_CANDIDATE_01_BEHAVIOURAL_PROOF",
   "scope": "Proves the candidate reference evaluator's behaviour on synthetic multi-institution fixtures, and compares it with a composition baseline of CAP-04 selection plus the live CAP-05 evaluator. It does not admit the candidate, assign a CAP number, or prove scientific correctness, production readiness, sovereignty or commissioning.",
   "candidateVersion": "0.1.0",
@@ -1517,7 +1517,7 @@
     {
       "fixtureId": "F11-F-COMPOSITION-LEAKS-BY-INFERENCE",
       "requirement": 11,
-      "description": "Attribution: the composition baseline has no disclosure-as-limitation path; the restricted record enters CAP-05 and its opposing stance becomes visible as a contradiction",
+      "description": "Attribution: the composition baseline has no disclosure-as-limitation path; the restricted record enters CAP-05 and its opposing stance becomes visible as a contradiction (live evaluator baseline; a contract-faithful composition would refuse with EVIDENCE_ACCESS_DENIED rather than expose the stance)",
       "passed": true,
       "actual": {
         "selectedRecordIds": [
