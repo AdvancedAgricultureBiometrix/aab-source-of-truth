@@ -22,7 +22,7 @@ The AGR domain uses a machine-readable frozen JSON roster (`simulation/cap34/cap
 
 ## Institutional position as of 2026-09-22
 
-Three provider-neutral SCS capability contracts have been designed and recorded. They define the regulatory standard, plot and tenure representation, and deforestation-evidence admission boundaries. They have not yet been implemented or behaviourally proven. Nine additional capabilities remain proposed. None of the twelve currently makes compliance decisions, produces due diligence statements, or possesses regulatory authority.
+Seven provider-neutral SCS capability contracts have been designed and recorded: SCS-CAP-01 (Regulatory Framework Registration), SCS-CAP-02 (Operator and Supplier Identity Registration), SCS-CAP-03 (Plot and Land Unit Registration), SCS-CAP-04 (Deforestation Evidence Admission), SCS-CAP-06 (Due Diligence Sufficiency Evaluation), SCS-CAP-08 (Due Diligence Package Compilation), and SCS-CAP-09 (Regulatory Review and Promotion). None have been implemented or behaviourally proven. Five additional capabilities remain at concept preview stage. None of the twelve currently makes compliance decisions, produces due diligence statements, or possesses regulatory authority.
 
 ## Domain-level exclusions applying to all twelve capabilities
 
