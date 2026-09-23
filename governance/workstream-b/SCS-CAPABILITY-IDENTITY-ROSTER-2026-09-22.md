@@ -22,7 +22,7 @@ The AGR domain uses a machine-readable frozen JSON roster (`simulation/cap34/cap
 
 ## Institutional position as of 2026-09-22
 
-Seven provider-neutral SCS capability contracts have been designed and recorded: SCS-CAP-01 (Regulatory Framework Registration), SCS-CAP-02 (Operator and Supplier Identity Registration), SCS-CAP-03 (Plot and Land Unit Registration), SCS-CAP-04 (Deforestation Evidence Admission), SCS-CAP-06 (Due Diligence Sufficiency Evaluation), SCS-CAP-08 (Due Diligence Package Compilation), and SCS-CAP-09 (Regulatory Review and Promotion). None have been implemented or behaviourally proven. Five additional capabilities remain at concept preview stage. None of the twelve currently makes compliance decisions, produces due diligence statements, or possesses regulatory authority.
+Eight provider-neutral SCS capability contracts have been designed and recorded: SCS-CAP-01 (Regulatory Framework Registration), SCS-CAP-02 (Operator and Supplier Identity Registration), SCS-CAP-03 (Plot and Land Unit Registration), SCS-CAP-04 (Deforestation Evidence Admission), SCS-CAP-05 (Supply Chain Custody Evidence Admission), SCS-CAP-06 (Due Diligence Sufficiency Evaluation), SCS-CAP-08 (Due Diligence Package Compilation), and SCS-CAP-09 (Regulatory Review and Promotion). None have been implemented or behaviourally proven. Four additional capabilities remain at concept preview stage. None of the twelve currently makes compliance decisions, produces due diligence statements, or possesses regulatory authority.
 
 ## Domain-level exclusions applying to all twelve capabilities
 
@@ -131,11 +131,11 @@ Seven provider-neutral SCS capability contracts have been designed and recorded:
 | Field | Value |
 |---|---|
 | Admission status | `PROPOSED_NOT_ADMITTED` |
-| Representation maturity | `CONCEPT_PREVIEW_NOT_IMPLEMENTED` |
+| Representation maturity | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` |
 | Implementation | NOT AUTHORISED — NOT STARTED |
-| Launch candidate | NO — second phase |
-| Contract | None |
-| Dependencies | SCS-CAP-01, SCS-CAP-03 |
+| Launch candidate | NO — second phase, contract now complete |
+| Contract | `governance/workstream-b/SCS-CAP-05-SUPPLY-CHAIN-CUSTODY-EVIDENCE-ADMISSION-CANONICAL-CONTRACT-2026-09-23.md` |
+| Dependencies | SCS-CAP-01, SCS-CAP-02, SCS-CAP-03 |
 
 **Responsibility:** Govern the ingestion of custody chain evidence — purchase records, transport documents, processing facility certifications, chain of custody certificates. Distinct from deforestation evidence: proves the commodity's journey from plot to market, not what happened to the land it came from. Requires its own admission criteria and its own evidence taxonomy.
 
@@ -299,7 +299,7 @@ Seven provider-neutral SCS capability contracts have been designed and recorded:
 | SCS-CAP-02 | Operator and Supplier Identity Registration | `PROPOSED_NOT_ADMITTED` | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` | NO |
 | SCS-CAP-03 | Plot and Land Unit Registration | `PROPOSED_NOT_ADMITTED` | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` | YES |
 | SCS-CAP-04 | Deforestation Evidence Admission | `PROPOSED_NOT_ADMITTED` | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` | YES |
-| SCS-CAP-05 | Supply Chain Custody Evidence Admission | `PROPOSED_NOT_ADMITTED` | `CONCEPT_PREVIEW_NOT_IMPLEMENTED` | NO |
+| SCS-CAP-05 | Supply Chain Custody Evidence Admission | `PROPOSED_NOT_ADMITTED` | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` | NO |
 | SCS-CAP-06 | Due Diligence Sufficiency Evaluation | `PROPOSED_NOT_ADMITTED` | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` | NO |
 | SCS-CAP-07 | Evidence Source Discovery | `PROPOSED_NOT_ADMITTED` | `CONCEPT_PREVIEW_NOT_IMPLEMENTED` | NO |
 | SCS-CAP-08 | Due Diligence Package Compilation | `PROPOSED_NOT_ADMITTED` | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` | NO |
