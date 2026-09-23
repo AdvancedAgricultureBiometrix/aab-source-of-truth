@@ -122,8 +122,8 @@ interface AabCountryDeploymentAgreement {
       authorityBasis: string;
     };
     aabSignatory: {
-      signatorId: string;
-      signatorName: string;
+      authorisedSignatoryId: string;
+      authorisedSignatoryName: string;
     };
   };
 
@@ -142,7 +142,7 @@ interface AabCountryDeploymentAgreement {
   // What is permitted under this agreement
   permittedScope: {
     domainIds: string[];
-    permittedParticipantCategories: Array
+    permittedParticipantCategories: Array<
       | "GOVERNMENT_AGENCY"
       | "COMMERCIAL_OPERATOR"
       | "COOPERATIVE"
@@ -287,8 +287,7 @@ interface AabParticipantEntitlement {
       organisationId: string;
       sponsorshipBasis: string;
       // Subsidies are explicit — never unexplained
-      subsidyAmount?: string;
-      subsidyCurrency?: string;
+      // Subsidy amounts and currency live in the external commercial agreement
       subsidySource: string;
     };
   };
@@ -319,6 +318,9 @@ interface AabParticipantEntitlement {
   // Dependencies and restrictions
   dependencies: string[];
   restrictions: string[];
+
+  // Audit trail from initial interest to commercial commitment
+  originatingSelectionRequestId?: string;
 
   // Commercial reference — financial terms live outside the platform
   externalAgreementReference: {
@@ -458,7 +460,7 @@ interface AabEntitlementProvider {
     updatedBy: ActorReference
   ): Promise<AabCountryDeploymentAgreement>;
 
-  supersededCountryDeploymentAgreement(
+  supersedeCountryDeploymentAgreement(
     priorAgreementId: string,
     replacementAgreement: AabCountryDeploymentAgreement,
     supersessionReason: string,
