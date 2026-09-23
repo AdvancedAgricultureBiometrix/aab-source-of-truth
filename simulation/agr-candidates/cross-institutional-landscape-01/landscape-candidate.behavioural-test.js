@@ -3,10 +3,11 @@
 /**
  * AGR-CROSS-INSTITUTIONAL-LANDSCAPE-CANDIDATE-01 controlled behavioural proof.
  *
- * Twelve requirement groups, each with a baseline case plus perturbation
- * (the output changes as predicted when one input changes, in both
- * directions) and adversarial assertions (attempts to smuggle in weight,
- * authority, content or intent are refused). The candidate composes the
+ * Twelve requirement groups. Most have perturbation cases (the output changes
+ * as predicted when one input changes) and adversarial assertions (attempts
+ * to smuggle in weight, authority, content or intent are refused), but
+ * coverage is not uniform: R01, R03 and R09 have no adversarial fixture;
+ * R07, R08, R09 and R12 have no perturbation fixture. The candidate composes the
  * REAL live CAP-05 evaluator; it is never stubbed.
  *
  * The same fixtures are also run through a COMPOSITION BASELINE: what the
@@ -15,8 +16,10 @@
  * organizationIds and asOf bounds, then the live CAP-05 evaluator). Where
  * the baseline fails a requirement that the candidate meets, that governed
  * function is evidence of logic beyond composition. The capability-identity
- * classification is derived mechanically from those fixture results by a
- * rule fixed below, before any evaluation runs.
+ * classification is derived mechanically from those fixture results by the
+ * rule below. The rule was stated as fixed before any evaluation ran — this
+ * chronology cannot be verified from the repository, as the rule and the
+ * fixtures landed in a single commit.
  */
 
 const fs = require("fs");
@@ -37,8 +40,17 @@ const cap05 = sandbox.window.AAB_CAP34_LIVE_CAP05_REASONING;
 const candidate = sandbox.window.AAB_AGR_CROSS_INSTITUTIONAL_LANDSCAPE_CANDIDATE_01;
 
 const digest = (text) => "sha256:" + crypto.createHash("sha256").update(String(text)).digest("hex");
+// Deterministic test stand-in for the keyed, request-scoped generator that an
+// authorised disclosure component supplies in production.
+function generateWithheldReference(record, landscapeRequestId) {
+  return digest(
+    "test-key\u0000" +
+    landscapeRequestId + "\u0000" +
+    record.evidenceRecordId + "@" + record.evidenceRecordVersion
+  );
+}
 const clockAt = (iso) => () => iso;
-const DEPS = Object.freeze({ cap05, digest, now: clockAt("2026-09-23T02:00:00Z") });
+const DEPS = Object.freeze({ cap05, digest, generateWithheldReference, now: clockAt("2026-09-23T02:00:00Z") });
 
 const copy = (value) => JSON.parse(JSON.stringify(value));
 const canon = (value) => candidate.canonicalize(JSON.parse(JSON.stringify(value)));
@@ -645,7 +657,10 @@ const baselineContradicts = (baseline, subjectKey) => baseline.computedFacts.con
 
   check("F11-C-OPAQUE-REFERENCE-SUPPORTS-AUDIT", 11,
     "The receipt carries an opaque withheld reference that an authorised auditor can verify against the record, without the receipt revealing it",
-    out.receipt.withheldReferences.length === 1 && out.receipt.withheldReferences[0] === digest("withheld\u0000R-A-RESTRICTED@1"),
+    out.receipt.withheldReferences.length === 1 && out.receipt.withheldReferences[0] === generateWithheldReference(
+      { evidenceRecordId: "R-A-RESTRICTED", evidenceRecordVersion: 1 },
+      "LREQ-TH-RUBBER-001"
+    ),
     out.receipt.withheldReferences);
 
   const outOfScope = run(baseRequest(), baseRecords().concat([restricted({ dateObserved: "2015-01-01" })]));
@@ -663,7 +678,7 @@ const baselineContradicts = (baseline, subjectKey) => baseline.computedFacts.con
 
   const baseline = compositionBaseline(baseRequest(), baseRecords().concat([restricted()]));
   check("F11-F-COMPOSITION-LEAKS-BY-INFERENCE", 11,
-    "Attribution: the composition baseline has no disclosure-as-limitation path; the restricted record enters CAP-05 and its opposing stance becomes visible as a contradiction",
+    "Attribution: the composition baseline has no disclosure-as-limitation path; the restricted record enters CAP-05 and its opposing stance becomes visible as a contradiction (live evaluator baseline; a contract-faithful composition would refuse with EVIDENCE_ACCESS_DENIED rather than expose the stance)",
     baseline.selectedRecordIds.includes("R-A-RESTRICTED") && baselineContradicts(baseline, PRIMARY),
     baseline);
 
@@ -753,7 +768,7 @@ const baselineContradicts = (baseline, subjectKey) => baseline.computedFacts.con
 // ===========================================================================
 // Capability-identity assessment — derived from the fixtures above.
 //
-// Decision rule (fixed before evaluation):
+// Decision rule (stated as fixed before evaluation — chronology unverifiable from repo):
 //   * If any fixture fails, the question is UNDETERMINED.
 //   * A governed function counts as beyond composition only when
 //     (a) it is not provided by the CAP-04 or CAP-05 canonical contracts and
@@ -764,10 +779,14 @@ const baselineContradicts = (baseline, subjectKey) => baseline.computedFacts.con
 //     none => GOVERNED_COMPOSITION_PROFILE.
 // ===========================================================================
 const GOVERNED_FUNCTIONS = [
-  { functionId: "DATASET_AND_PARTICIPATION_AUTHORISATION", attribution: "NOT_PROVIDED_BY_CAP04_OR_CAP05_CONTRACT",
-    fixtures: ["F07-B-UNAUTHORISED-DATASET-EXCLUDED", "F07-C-MISSING-PARTICIPATION-AUTHORITY-FAILS-CLOSED", "F07-D-DATASET-WITHOUT-SHARING-AUTHORITY-FAILS-CLOSED"],
+  { functionId: "DATASET_LEVEL_SHARING_AUTHORITY", attribution: "NOT_PROVIDED_BY_CAP04_OR_CAP05_CONTRACT",
+    fixtures: ["F07-B-UNAUTHORISED-DATASET-EXCLUDED", "F07-D-DATASET-WITHOUT-SHARING-AUTHORITY-FAILS-CLOSED"],
     baselineFixture: "F07-H-COMPOSITION-LEAKS-UNAUTHORISED-DATASET",
-    basis: "The CAP-05 request contract offers an organizationIds filter (F07-I shows institution-level exclusion is composable) but no dataset-level sharing authority or participation authority; the CAP-05 contract fails closed on cross-boundary records rather than governing them." },
+    basis: "The CAP-05 request contract offers an organizationIds filter (F07-I shows institution-level exclusion is composable) but no dataset-level sharing authority; the CAP-05 contract fails closed on cross-boundary records rather than governing them." },
+  { functionId: "PARTICIPATION_AUTHORITY", attribution: "UNRESOLVED_PENDING_CAP24_CONTRACT",
+    fixtures: ["F07-C-MISSING-PARTICIPATION-AUTHORITY-FAILS-CLOSED"],
+    baselineFixture: null,
+    basis: "Participation authority may be assigned to CAP-24 (Governed Country, Institution and Professional Participation), inferred from its title. CAP-24 has no contract and is NOT_YET_REPRESENTED, so condition (a) cannot be established. Not counted; unresolved pending CAP-24's contract." },
   { functionId: "METHODOLOGICAL_COMPARABILITY", attribution: "NOT_PROVIDED_BY_CAP04_OR_CAP05_CONTRACT",
     fixtures: ["F05-A-INCOMPATIBILITY-SURFACED", "F05-B-DECLARED-COMPATIBILITY-ALLOWS-COMPARISON", "F05-C-SIMILAR-NAMES-NOT-AUTO-POOLED"],
     baselineFixture: "F05-D-COMPOSITION-SILENTLY-POOLS",
@@ -789,6 +808,10 @@ const GOVERNED_FUNCTIONS = [
     baselineFixture: null,
     basis: "CAP-05's EvidenceLandscapeSnapshotIdentity already binds record IDs, a set digest and asOf. The candidate extends it with selection scope, exclusions, admission decisions and withheld references, but the core mechanism is not new. Not counted." },
   { functionId: "STALENESS_NOTICE", attribution: "ASSIGNED_TO_GOVERNED_EVIDENCE_WATCH_BY_CAP05_CONTRACT",
+    // Ownership remains unresolved: the CAP-05 contract names the Governed
+    // Evidence Watch, but that is not a final decision. The candidate's open
+    // question 1 records whether this candidate or the Watch owns staleness
+    // as undecided.
     fixtures: ["F10-B-STALENESS-NOTICE-ISSUED", "F10-D-OUT-OF-SCOPE-LATE-EVIDENCE-IS-NOT-STALENESS", "F10-E-NEWER-VERSION-MAKES-STALE", "F10-F-ADMISSION-CHANGE-MAKES-STALE", "F10-G-STALENESS-BOUND-TO-EXACT-SCOPE", "F10-H-STALENESS-IS-DELIBERATE-NOT-MONITORING"],
     baselineFixture: null,
     basis: "The CAP-05 contract assigns staleness notices to the separate Governed Evidence Watch design. The candidate's deliberate staleness check overlaps it and must be reconciled with it. Not counted." },
@@ -824,6 +847,7 @@ const functionResults = GOVERNED_FUNCTIONS.map((fn) => {
   return Object.assign({}, fn, { unknownFixtureIds: unknown, candidateFixturesPass, baselineInsufficiencyDemonstrated, countsAsLogicBeyondComposition: beyondComposition });
 });
 const beyond = functionResults.filter((fn) => fn.countsAsLogicBeyondComposition).map((fn) => fn.functionId);
+const unresolved = functionResults.filter((fn) => /^UNRESOLVED_/.test(fn.attribution)).map((fn) => fn.functionId);
 const classification = !allPassed || functionResults.some((fn) => fn.unknownFixtureIds.length > 0)
   ? "UNDETERMINED_FIXTURES_FAILED"
   : (beyond.length > 0 ? "CANDIDATE_FOR_SEPARATE_CAPABILITY_REVIEW" : "GOVERNED_COMPOSITION_PROFILE");
@@ -833,6 +857,7 @@ const capabilityIdentityAssessment = {
   decisionRule: "Beyond composition only when a governed function is not provided by the CAP-04/CAP-05 canonical contracts or assigned elsewhere, a composition-baseline fixture demonstrates the baseline fails it, and every candidate fixture for it passes. One or more such functions => CANDIDATE_FOR_SEPARATE_CAPABILITY_REVIEW; none => GOVERNED_COMPOSITION_PROFILE.",
   classification,
   functionsBeyondComposition: beyond,
+  functionsUnresolved: unresolved,
   functions: functionResults,
   designRecordCriteria: {
     distinctFailureContract: "DEMONSTRATED — PARTICIPATION_AUTHORITY_MISSING, DATASET_AUTHORITY_INVALID, CAP04_ELIGIBILITY_REQUIREMENT_WEAKENED, RECEIPT_REQUEST_MISMATCH and CAP05_VERSION_UNAVAILABLE are not in the CAP-05 failure contract (F07-C, F07-D, F07-F, F10-G, F12-E).",
@@ -873,5 +898,5 @@ const proof = {
 };
 
 fs.writeFileSync(PROOF_FILE, JSON.stringify(proof, null, 2) + "\n");
-process.stdout.write(JSON.stringify({ result: proof.result, fixtureCount: proof.fixtureCount, passedFixtureCount: proof.passedFixtureCount, requirementTotals, classification, functionsBeyondComposition: beyond, failed: cases.filter((c) => !c.passed).map((c) => c.fixtureId) }, null, 2) + "\n");
+process.stdout.write(JSON.stringify({ result: proof.result, fixtureCount: proof.fixtureCount, passedFixtureCount: proof.passedFixtureCount, requirementTotals, classification, functionsBeyondComposition: beyond, functionsUnresolved: unresolved, failed: cases.filter((c) => !c.passed).map((c) => c.fixtureId) }, null, 2) + "\n");
 process.exitCode = allPassed ? 0 : 1;

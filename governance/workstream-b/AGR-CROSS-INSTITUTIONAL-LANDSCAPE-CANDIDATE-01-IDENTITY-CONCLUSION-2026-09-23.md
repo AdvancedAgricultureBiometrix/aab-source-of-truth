@@ -19,21 +19,41 @@ through composition alone.
 
 A function was counted as beyond composition only if all three conditions held:
 
-1. Neither the CAP-04 nor the CAP-05 contract provides it
+1. Neither the CAP-04 nor the CAP-05 contract provides it, and it is not
+   assigned to another designated capability
 2. The composition baseline demonstrably fails it
 3. Every candidate fixture for that function passes
 
-This rule was fixed in the code before any assessment ran.
+This rule was stated as fixed in the code before any assessment ran — this
+chronology cannot be verified from the repository, as the rule and the fixtures
+landed in a single commit.
 
-## The five functions beyond composition
+## The beyond-composition functions
 
 ### 1. Dataset-level and participation authority
 
-In the composition baseline, an unauthorised dataset enters CAP-05 and creates
-a false contradiction (fixture F07-H). The candidate enforces dataset-level
-sharing authority before any evidence reaches the evaluation layer. Neither
-CAP-04 nor CAP-05 governs cross-institution dataset access at the landscape
-evaluation level.
+1a. Dataset-level sharing authority — an unauthorised dataset entering CAP-05
+creates a false contradiction in the composition baseline (fixture F07-H). The
+candidate enforces dataset-level sharing authority before any evidence reaches
+the evaluation layer. Neither the CAP-04 nor the CAP-05 contract governs
+cross-institution dataset access at the landscape evaluation level. This function
+is confirmed.
+
+1b. Participation authority — the candidate also enforces participation authority
+(which institutions may participate and with which datasets). However, under the
+code's own three-condition rule, a function is only counted as beyond composition
+if it is not "assigned to another designated capability." CAP-24 (Governed
+Country, Institution and Professional Participation) is the inferred candidate
+home for participation authority, based on its title, but CAP-24 has no contract
+and is marked
+NOT_YET_REPRESENTED. Participation authority cannot be confirmed as beyond
+composition until CAP-24's contract establishes or excludes this function.
+This function is unresolved pending CAP-24's contract.
+
+Note: the composition baseline also omits CAP-04's own `sharingClassification`
+and `permittedUses` fields. A fully faithful composition baseline would include
+these. This does not change the conclusion but should be corrected in a future
+fixture revision.
 
 ### 2. Methodological comparability
 
@@ -45,10 +65,17 @@ reasoning provides.
 
 ### 3. Authorised unit transformation
 
-The composition baseline has no unit handling at all (fixture F04-E). The
-candidate converts units only through an explicitly authorised transformation
-registry — or declares the evidence incomparable if no authorised transformation
-exists. This is governed logic not present in either CAP-04 or CAP-05.
+The composition baseline has no unit handling (fixture F04-E proves this by
+confirming that the words "unit" and "transformation" are absent from baseline
+output). The candidate converts units only through an explicitly authorised
+transformation registry — or declares the evidence incomparable if no authorised
+transformation exists. This is governed logic not present in either CAP-04 or
+CAP-05.
+
+Note: the baseline fails condition 2 by omission rather than by producing an
+incorrect evidence state — unit conversion in the candidate affects only
+`valueSummary` min/max and does not change contradiction or evidence states.
+This function is confirmed but the baseline distinction is weak.
 
 ### 4. Duplicate-weight prevention
 
@@ -60,11 +87,20 @@ Neither prevents the same evidence from being counted twice across institutions.
 
 ### 5. Restricted evidence disclosed only as a limitation
 
-In the composition baseline, a restricted opposing stance leaks as a visible
-contradiction (fixture F11-F). The candidate surfaces restricted evidence as
-a disclosed limitation without exposing the protected content. This requires
-access-control logic at the landscape layer that neither CAP-04 nor CAP-05
-provides.
+The canonical CAP-05 contract fails closed with EVIDENCE_ACCESS_DENIED when
+restricted evidence is encountered. A contract-faithful composition would
+therefore refuse the request rather than proceed. The candidate instead proceeds
+with a disclosed limitation — surfacing that restricted evidence exists without
+exposing its content (fixtures F11-A to F11-E). The composition baseline fixture,
+F11-F, uses the live CAP-05 evaluator, which has no access check: there the
+restricted opposing stance is exposed as a contradiction. A contract-faithful
+composition would not expose it; it would refuse. The actual difference is
+therefore refusal versus disclosed limitation: the candidate proceeds with a
+disclosed limitation where a contract-faithful composition would refuse. The
+candidate's ability to proceed
+honestly with a disclosed limitation requires access-control logic at the
+landscape layer that the CAP-05 contract does not provide. This function is
+confirmed.
 
 ## What was not counted
 
@@ -75,15 +111,23 @@ overstating the case:
   filtering — CAP-05 already provides these
 - Evidence-set freezing — CAP-05's snapshot identity already covers the
   core of this
-- Staleness — assigned to the separate Governed Evidence Watch design,
-  not to this candidate
+- Staleness — excluded from the count because ownership is unresolved
+  (see open question 1). It was not counted as a beyond-composition function
+  because the decision of whether this candidate or the Governed Evidence Watch
+  owns staleness has not been made. If ownership is assigned to this candidate,
+  staleness detection will need to be revisited.
 - No independent lifecycle or gateway action was demonstrated, because the
   evaluator is stateless
 
 ## Fixture evidence
 
-63 fixtures passing across 12 requirement categories. Every requirement has
-perturbation cases in both directions and adversarial cases.
+63 fixtures passing across 12 requirement categories. Most requirements have
+perturbation and adversarial cases, but coverage is not uniform: R01, R03, and
+R09 have no adversarial fixture; R07, R08, R09, and R12 have no perturbation
+fixture. The uniform-coverage claim appeared in the provider-neutral contract
+(since corrected) and in the behavioural test file's header comment, not in the
+behavioural proof. It should not be read as complete bidirectional perturbation
+for every requirement.
 
 | Requirement | Fixtures |
 |---|---|
@@ -100,12 +144,16 @@ perturbation cases in both directions and adversarial cases.
 | R11 Restricted evidence disclosed only as limitation | 7 |
 | R12 No recommendation, promotion, verdict or memory write | 6 |
 
-Mutation check: 18 faults planted in a scratch copy of the evaluator — every
-one caught. A weak reputation test was strengthened before committing.
+Mutation check: the build session reported that 18 faults were planted in a
+scratch copy of the evaluator and every one was caught, and that a weak
+reputation test was strengthened before committing. These claims cannot be
+verified from the repository — the scratch copy was not committed, and both
+the rule and the fixtures landed in a single commit. They are recorded here
+as reported but are not independently verifiable.
 
 ## Open questions before any admission review
 
-These three questions must be answered before this candidate can be considered
+These four questions must be answered before this candidate can be considered
 for formal admission as a numbered capability:
 
 **1. Staleness ownership**
@@ -125,17 +173,47 @@ defensible when challenged. It has not been fully designed. The current
 implementation is stateless and does not maintain frozen set lifecycle records
 beyond the immediate evaluation.
 
-**3. Whether to extend CAP-04/CAP-05 instead**
+**3. Whether CAP-23, CAP-24, or extensions to CAP-04/CAP-05 are the right home**
 
-Dataset-level sharing authority might be better placed in CAP-23 (Governed
-Identity and Authority Resolution) or CAP-24 (Governed Country, Institution
-and Professional Participation), where cross-institution identity and access
-decisions live. Duplicate detection might be better placed in CAP-04 where
-admission decisions live. If either function can be cleanly placed in an
-existing capability without overloading it, the candidate's case for
-independent admission weakens for that function. If cross-institution
-coordination makes placement in existing capabilities impossible, the candidate's
-case strengthens. This must be examined before admission.
+Two functions require a decision about where they belong before this candidate
+can be considered for admission:
+
+Dataset-level sharing authority (confirmed as beyond composition) might belong
+in CAP-24 (Governed Country, Institution and Professional Participation) — the
+designated capability for institutional participation governance — or it might
+require its own logic in this candidate. This cannot be determined until CAP-24
+has a contract. Until then, dataset-level sharing authority remains a
+beyond-composition function of this candidate.
+
+Participation authority (unresolved) is likely the natural scope of CAP-24.
+Once CAP-24's contract is written, this question should be revisited.
+
+Duplicate detection might be better placed in CAP-04 where admission decisions
+live. If it can be placed there cleanly without overloading CAP-04, the
+candidate's case weakens for that function.
+
+Neither the provider-neutral contract nor the conclusion document should frame
+this question as "extend CAP-04/CAP-05 instead." The more accurate framing is
+whether cross-institution coordination belongs in CAP-23/CAP-24 or in this
+candidate — and that question cannot be answered until those capabilities have
+contracts.
+
+**4. Integrity failure and access reclassification as staleness triggers**
+
+If staleness ownership is assigned to this candidate, two material changes to
+previously included records are not currently detected:
+
+- Document integrity becoming FAILED after the evidence set is frozen
+- Sharing classification becoming more restrictive after the evidence set is frozen
+
+Note: admission revocation/supersession and evidence version changes do trigger
+staleness notices — fixtures F10-E and F10-F prove this. Permitted use withdrawal
+and methodology/unit-transformation authority changes have not been tested and
+their behaviour is not determined.
+
+This gap must be resolved before the candidate can take on staleness
+responsibility. If staleness belongs to the Governed Evidence Watch, this
+question transfers with it.
 
 ## What this conclusion does not establish
 

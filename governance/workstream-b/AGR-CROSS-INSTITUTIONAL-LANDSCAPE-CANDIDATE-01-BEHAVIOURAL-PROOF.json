@@ -1,7 +1,7 @@
 {
   "proofId": "AAB-AGR-CROSS-INSTITUTIONAL-LANDSCAPE-CANDIDATE-01-BEHAVIOURAL-PROOF",
   "proofVersion": "1.0.0",
-  "generatedAtUtc": "2026-09-23T03:45:25.666Z",
+  "generatedAtUtc": "2026-09-23T22:50:42.594Z",
   "result": "PASS_AGR_CROSS_INSTITUTIONAL_LANDSCAPE_CANDIDATE_01_BEHAVIOURAL_PROOF",
   "scope": "Proves the candidate reference evaluator's behaviour on synthetic multi-institution fixtures, and compares it with a composition baseline of CAP-04 selection plus the live CAP-05 evaluator. It does not admit the candidate, assign a CAP number, or prove scientific correctness, production readiness, sovereignty or commissioning.",
   "candidateVersion": "0.1.0",
@@ -63,27 +63,42 @@
     "decisionRule": "Beyond composition only when a governed function is not provided by the CAP-04/CAP-05 canonical contracts or assigned elsewhere, a composition-baseline fixture demonstrates the baseline fails it, and every candidate fixture for it passes. One or more such functions => CANDIDATE_FOR_SEPARATE_CAPABILITY_REVIEW; none => GOVERNED_COMPOSITION_PROFILE.",
     "classification": "CANDIDATE_FOR_SEPARATE_CAPABILITY_REVIEW",
     "functionsBeyondComposition": [
-      "DATASET_AND_PARTICIPATION_AUTHORISATION",
+      "DATASET_LEVEL_SHARING_AUTHORITY",
       "METHODOLOGICAL_COMPARABILITY",
       "AUTHORISED_UNIT_TRANSFORMATION",
       "DUPLICATE_WEIGHT_PREVENTION",
       "RESTRICTED_EVIDENCE_DISCLOSED_AS_LIMITATION"
     ],
+    "functionsUnresolved": [
+      "PARTICIPATION_AUTHORITY"
+    ],
     "functions": [
       {
-        "functionId": "DATASET_AND_PARTICIPATION_AUTHORISATION",
+        "functionId": "DATASET_LEVEL_SHARING_AUTHORITY",
         "attribution": "NOT_PROVIDED_BY_CAP04_OR_CAP05_CONTRACT",
         "fixtures": [
           "F07-B-UNAUTHORISED-DATASET-EXCLUDED",
-          "F07-C-MISSING-PARTICIPATION-AUTHORITY-FAILS-CLOSED",
           "F07-D-DATASET-WITHOUT-SHARING-AUTHORITY-FAILS-CLOSED"
         ],
         "baselineFixture": "F07-H-COMPOSITION-LEAKS-UNAUTHORISED-DATASET",
-        "basis": "The CAP-05 request contract offers an organizationIds filter (F07-I shows institution-level exclusion is composable) but no dataset-level sharing authority or participation authority; the CAP-05 contract fails closed on cross-boundary records rather than governing them.",
+        "basis": "The CAP-05 request contract offers an organizationIds filter (F07-I shows institution-level exclusion is composable) but no dataset-level sharing authority; the CAP-05 contract fails closed on cross-boundary records rather than governing them.",
         "unknownFixtureIds": [],
         "candidateFixturesPass": true,
         "baselineInsufficiencyDemonstrated": true,
         "countsAsLogicBeyondComposition": true
+      },
+      {
+        "functionId": "PARTICIPATION_AUTHORITY",
+        "attribution": "UNRESOLVED_PENDING_CAP24_CONTRACT",
+        "fixtures": [
+          "F07-C-MISSING-PARTICIPATION-AUTHORITY-FAILS-CLOSED"
+        ],
+        "baselineFixture": null,
+        "basis": "Participation authority may be assigned to CAP-24 (Governed Country, Institution and Professional Participation), inferred from its title. CAP-24 has no contract and is NOT_YET_REPRESENTED, so condition (a) cannot be established. Not counted; unresolved pending CAP-24's contract.",
+        "unknownFixtureIds": [],
+        "candidateFixturesPass": true,
+        "baselineInsufficiencyDemonstrated": false,
+        "countsAsLogicBeyondComposition": false
       },
       {
         "functionId": "METHODOLOGICAL_COMPARABILITY",
@@ -1454,7 +1469,7 @@
       "description": "The receipt carries an opaque withheld reference that an authorised auditor can verify against the record, without the receipt revealing it",
       "passed": true,
       "actual": [
-        "sha256:b6f5b8f3a65fb54672ee67dd6d47cf4085d87e0a579a2f03c7f53286bdc40be6"
+        "sha256:888dd279ef3a7319889c5fedb0518a69e6747f1091748e2e567a8a41a2075f66"
       ]
     },
     {
@@ -1463,7 +1478,7 @@
       "description": "Adversarial: even when a restricted record is excluded for scope, its exclusion entry withholds its identity",
       "passed": true,
       "actual": {
-        "withheldReference": "sha256:b6f5b8f3a65fb54672ee67dd6d47cf4085d87e0a579a2f03c7f53286bdc40be6",
+        "withheldReference": "sha256:888dd279ef3a7319889c5fedb0518a69e6747f1091748e2e567a8a41a2075f66",
         "institutionId": "INST-ALPHA",
         "reasonCodes": [
           "OUTSIDE_TEMPORAL_SCOPE"
@@ -1502,7 +1517,7 @@
     {
       "fixtureId": "F11-F-COMPOSITION-LEAKS-BY-INFERENCE",
       "requirement": 11,
-      "description": "Attribution: the composition baseline has no disclosure-as-limitation path; the restricted record enters CAP-05 and its opposing stance becomes visible as a contradiction",
+      "description": "Attribution: the composition baseline has no disclosure-as-limitation path; the restricted record enters CAP-05 and its opposing stance becomes visible as a contradiction (live evaluator baseline; a contract-faithful composition would refuse with EVIDENCE_ACCESS_DENIED rather than expose the stance)",
       "passed": true,
       "actual": {
         "selectedRecordIds": [

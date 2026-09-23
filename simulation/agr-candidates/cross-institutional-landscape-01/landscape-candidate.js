@@ -117,6 +117,13 @@
     if (!cap05 || typeof cap05.evaluateReasoning !== "function" || !nonEmptyString(cap05.implementationVersion)) return "CAP05_DEPENDENCY_UNAVAILABLE";
     if (typeof deps.digest !== "function") return "DIGEST_DEPENDENCY_UNAVAILABLE";
     if (typeof deps.now !== "function") return "CLOCK_DEPENDENCY_UNAVAILABLE";
+    // generateWithheldReference(record, requestId) returns the opaque reference
+    // for a restricted record. It is injected, never computed here, because an
+    // unkeyed digest of a record identifier can be confirmed by anyone who can
+    // guess that identifier. Production supplies a keyed, request-scoped
+    // generator from an authorised disclosure component; the candidate never
+    // holds the key.
+    if (typeof deps.generateWithheldReference !== "function") return "WITHHELD_REFERENCE_DEPENDENCY_UNAVAILABLE";
     return null;
   }
 
@@ -254,7 +261,7 @@
     return reasons;
   }
 
-  function selectAuthorisedEvidence(request, candidateRecords, options, digest) {
+  function selectAuthorisedEvidence(request, candidateRecords, options, generateWithheldReference) {
     const opts = options || {};
     const records = (Array.isArray(candidateRecords) ? candidateRecords : []).slice().sort(recordOrder);
     const disclosable = new Set(request.accessAndDisclosure.disclosableClassifications);
@@ -266,7 +273,7 @@
       const reasons = exclusionReasonsFor(record, request, opts);
       if (reasons.length > 0 && !disclosable.has(record.accessClassification)) {
         // Even an exclusion must not reveal a restricted record's identity.
-        excluded.push({ withheldReference: digest("withheld\u0000" + record.evidenceRecordId + "@" + record.evidenceRecordVersion), institutionId: record.institutionId, reasonCodes: reasons, identityWithheld: true });
+        excluded.push({ withheldReference: generateWithheldReference(record, request.requestId), institutionId: record.institutionId, reasonCodes: reasons, identityWithheld: true });
       } else if (reasons.length > 0) {
         excluded.push(Object.assign(recordRef(record), { institutionId: record.institutionId, reasonCodes: reasons }));
       } else if (!disclosable.has(record.accessClassification)) {
@@ -323,7 +330,7 @@
       accessClassification: record.accessClassification,
       // Opaque reference: lets an authorised auditor confirm what was withheld
       // without the receipt exposing the record's identity or content.
-      withheldReference: dependencies.digest("withheld\u0000" + record.evidenceRecordId + "@" + record.evidenceRecordVersion)
+      withheldReference: dependencies.generateWithheldReference(record, request.requestId)
     })).sort((a, b) => (a.withheldReference < b.withheldReference ? -1 : 1));
 
     const body = {
@@ -664,7 +671,7 @@
     const validation = validateRequest(request, dependencies);
     if (validation.errors.length > 0) return failClosed(validation.errors, validation.reasons);
 
-    const selection = selectAuthorisedEvidence(request, candidateRecords, {}, dependencies.digest);
+    const selection = selectAuthorisedEvidence(request, candidateRecords, {}, dependencies.generateWithheldReference);
     if (selection.included.length === 0) {
       return failClosed(["EVIDENCE_SET_EMPTY"], [
         "No authorised, admitted, disclosable evidence falls within the declared scope. " + selection.withheld.length + " record(s) were withheld under access restrictions and " + selection.excluded.length + " were excluded."
@@ -766,7 +773,7 @@
     }
 
     const includedVersions = new Map(receipt.includedEvidence.map((record) => [record.evidenceRecordId, record.evidenceRecordVersion]));
-    const now = selectAuthorisedEvidence(request, currentCandidateRecords, { ignoreCutOff: true }, dependencies.digest);
+    const now = selectAuthorisedEvidence(request, currentCandidateRecords, { ignoreCutOff: true }, dependencies.generateWithheldReference);
     const triggers = [];
     for (const record of now.included) {
       if (!(String(record.admission.admittedAt) > receipt.evidenceCutOff)) continue;
