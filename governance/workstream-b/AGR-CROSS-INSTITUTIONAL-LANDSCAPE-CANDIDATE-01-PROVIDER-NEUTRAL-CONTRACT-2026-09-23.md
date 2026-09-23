@@ -18,7 +18,7 @@ The reference evaluator is a synthetic-fixture reference only. It is not wired i
 
 ## Governing boundaries
 
-- Provider-neutral interfaces only. The CAP-05 evaluator, digest function and clock are injected dependencies.
+- Provider-neutral interfaces only. The CAP-05 evaluator, digest function, clock, and withheld-reference generator are injected dependencies.
 - One stateless, deliberate evaluation per human request. No autonomous monitoring, watch, schedule or continuing process.
 - Read-only and advisory-only. Inputs are never mutated; outputs are immutable.
 - No writes into CAP-04 memory. No CAP-09 learning promotion.
