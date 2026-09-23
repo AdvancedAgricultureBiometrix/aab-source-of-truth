@@ -768,7 +768,7 @@ const baselineContradicts = (baseline, subjectKey) => baseline.computedFacts.con
 // ===========================================================================
 // Capability-identity assessment — derived from the fixtures above.
 //
-// Decision rule (fixed before evaluation):
+// Decision rule (stated as fixed before evaluation — chronology unverifiable from repo):
 //   * If any fixture fails, the question is UNDETERMINED.
 //   * A governed function counts as beyond composition only when
 //     (a) it is not provided by the CAP-04 or CAP-05 canonical contracts and
