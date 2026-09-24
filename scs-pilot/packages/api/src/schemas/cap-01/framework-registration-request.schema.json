@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-01:framework-registration-request:1",
+  "title": "ScsFrameworkRegistrationRequest",
+  "description": "SCS-CAP-01 registerFramework request: every ScsRegulatoryFramework field a submitter provides. Not in the request, because the system sets them: frameworkId, schemaVersion, registeredAt, registeredBy (from the authenticated actor), status (ACTIVE on registration), versionHistory (empty on registration), and the evidence specification's specId, generatedAt and generatedFromFrameworkVersion.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["regulation", "scope", "evidenceRequirements"],
+  "properties": {
+    "regulation": {
+      "title": "ScsFrameworkRegulationInput",
+      "description": "What this framework governs (ScsRegulatoryFramework.regulation).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["regulationId", "regulationName", "regulationVersion", "regulationDate", "regulatoryAuthority", "sourceReference"],
+      "properties": {
+        "regulationId": { "$ref": "#/$defs/nonBlankText" },
+        "regulationName": { "$ref": "#/$defs/nonBlankText" },
+        "regulationVersion": { "$ref": "#/$defs/nonBlankText" },
+        "regulationDate": { "type": "string", "format": "date" },
+        "regulatoryAuthority": { "$ref": "#/$defs/nonBlankText" },
+        "sourceReference": { "$ref": "#/$defs/nonBlankText" }
+      }
+    },
+    "scope": {
+      "title": "ScsFrameworkScopeInput",
+      "description": "Specific scope (ScsRegulatoryFramework.scope). effectiveTo, when given, must not be before effectiveFrom — enforced by the database.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["commodityCode", "commodityName", "countryOfOrigin", "destinationMarket", "applicableNationalLaws", "effectiveFrom"],
+      "properties": {
+        "commodityCode": { "$ref": "#/$defs/nonBlankText" },
+        "commodityName": { "$ref": "#/$defs/nonBlankText" },
+        "countryOfOrigin": { "$ref": "#/$defs/nonBlankText" },
+        "destinationMarket": { "$ref": "#/$defs/nonBlankText" },
+        "applicableNationalLaws": { "$ref": "#/$defs/textList" },
+        "effectiveFrom": { "type": "string", "format": "date" },
+        "effectiveTo": { "type": "string", "format": "date" }
+      }
+    },
+    "evidenceRequirements": {
+      "title": "ScsEvidenceRequirementSpecInput",
+      "description": "The ScsEvidenceRequirementSpec parameters, DECLARED by the authorised registrant. CAP-01 adds only the system-generated fields specId, generatedAt and generatedFromFrameworkVersion; the specification is immutable after registration. TODO(spec-derivation) — CONTRACT GAP: the SCS-CAP-01 canonical contract says the specification is generated at registration but defines no rules for deriving its values from the regulation, scope and commodity. Until those rules are specified in the contract, the values are declared, never derived; no derivation rules are invented here. The rules must be specified before a production implementation.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["deforestationEvidence", "custodyEvidence", "plotRequirements", "sufficiencyThreshold", "specLimitations"],
+      "properties": {
+        "deforestationEvidence": {
+          "title": "ScsDeforestationEvidenceRequirementInput",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["referenceCutoffDate", "requiredCoverageType", "acceptedSourceTypes", "integrityRequirement", "authorityConfirmationRequired"],
+          "properties": {
+            "referenceCutoffDate": { "type": "string", "format": "date" },
+            "requiredCoverageType": { "type": "string", "enum": ["FULL_PLOT_COVERAGE", "REPRESENTATIVE_SAMPLE", "RISK_BASED"] },
+            "acceptedSourceTypes": { "$ref": "#/$defs/textList" },
+            "minimumResolutionMetres": { "type": "number", "exclusiveMinimum": 0 },
+            "minimumRecencyDays": { "type": "integer", "minimum": 0 },
+            "integrityRequirement": { "type": "string", "enum": ["VERIFIED", "VERIFIABLE"] },
+            "authorityConfirmationRequired": { "type": "boolean" }
+          }
+        },
+        "custodyEvidence": {
+          "title": "ScsCustodyEvidenceRequirementInput",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["requiredDocumentTypes", "chainOfCustodyStandards", "traceabilityDepth"],
+          "properties": {
+            "requiredDocumentTypes": { "$ref": "#/$defs/textList" },
+            "chainOfCustodyStandards": { "$ref": "#/$defs/textList" },
+            "traceabilityDepth": { "type": "string", "enum": ["FIRST_SUPPLIER", "FULL_CHAIN", "RISK_PROPORTIONATE"] }
+          }
+        },
+        "plotRequirements": {
+          "title": "ScsPlotRequirementInput",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["geolocationRequired", "landRegistryRequired", "minimumPlotIdentifierType", "ownershipVerificationRequired"],
+          "properties": {
+            "geolocationRequired": { "type": "boolean" },
+            "landRegistryRequired": { "type": "boolean" },
+            "minimumPlotIdentifierType": { "$ref": "#/$defs/nonBlankText" },
+            "ownershipVerificationRequired": { "type": "boolean" }
+          }
+        },
+        "sufficiencyThreshold": {
+          "title": "ScsSufficiencyThresholdInput",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["allPlotsRegistered", "allPlotsHaveDeforestationEvidence", "custodyChainComplete", "noUnresolvedGaps", "humanReviewCompleted"],
+          "properties": {
+            "allPlotsRegistered": { "type": "boolean" },
+            "allPlotsHaveDeforestationEvidence": { "type": "boolean" },
+            "custodyChainComplete": { "type": "boolean" },
+            "noUnresolvedGaps": { "type": "boolean" },
+            "humanReviewCompleted": { "type": "boolean" }
+          }
+        },
+        "specLimitations": { "$ref": "#/$defs/textList" }
+      }
+    }
+  },
+  "$defs": {
+    "nonBlankText": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000,
+      "pattern": "\\S"
+    },
+    "textList": {
+      "type": "array",
+      "maxItems": 200,
+      "items": { "$ref": "#/$defs/nonBlankText" }
+    }
+  }
+}

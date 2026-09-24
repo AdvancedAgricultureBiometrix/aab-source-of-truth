@@ -15,6 +15,15 @@ import type { DbConfig } from "../foundation/db.js";
 
 const MIGRATIONS_DIR = fileURLToPath(new URL("../../../db/migrations/", import.meta.url));
 
+/**
+ * Test files run in parallel processes, but migration 004 alters the role
+ * scs_api, which exists once per PostgreSQL instance, not per database.
+ * Concurrent ALTER ROLE fails ("tuple concurrently updated"), so building a
+ * migrated database is serialised with a session advisory lock taken on the
+ * shared admin database. The tests themselves still run in parallel.
+ */
+const MIGRATION_LOCK_KEY = 7_374_001; // arbitrary, fixed: "scs test migrations"
+
 export function adminUrl(): string {
   const url = process.env["SCS_TEST_ADMIN_DATABASE_URL"];
   if (url === undefined || url.trim() === "") {
@@ -46,27 +55,39 @@ export async function createMigratedDatabase(): Promise<MigratedDatabase> {
   const name = randomName("scs_test");
   const roles: string[] = [];
 
-  const server = new pg.Client({ connectionString: url });
-  await server.connect();
-  try {
-    await server.query(`CREATE DATABASE ${name}`);
-  } finally {
-    await server.end();
-  }
-
   const target = new URL(url);
   target.pathname = `/${name}`;
+  const server = new pg.Client({ connectionString: url });
   const admin = new pg.Client({ connectionString: target.toString() });
-  await admin.connect();
+  let created = false;
+  let adminConnected = false;
 
-  const files = (await readdir(MIGRATIONS_DIR)).filter((f) => f.endsWith(".sql")).sort();
-  if (files.length === 0) throw new Error(`no migrations found in ${MIGRATIONS_DIR}`);
-  for (const file of files) {
-    try {
-      await admin.query(await readFile(new URL(file, new URL("../../../db/migrations/", import.meta.url)), "utf8"));
-    } catch (err) {
-      throw new Error(`migration ${file} failed: ${(err as Error).message}`);
+  await server.connect();
+  try {
+    await server.query("SELECT pg_advisory_lock($1)", [MIGRATION_LOCK_KEY]);
+    await server.query(`CREATE DATABASE ${name}`);
+    created = true;
+    await admin.connect();
+    adminConnected = true;
+
+    const files = (await readdir(MIGRATIONS_DIR)).filter((f) => f.endsWith(".sql")).sort();
+    if (files.length === 0) throw new Error(`no migrations found in ${MIGRATIONS_DIR}`);
+    for (const file of files) {
+      try {
+        await admin.query(await readFile(new URL(file, new URL("../../../db/migrations/", import.meta.url)), "utf8"));
+      } catch (err) {
+        throw new Error(`migration ${file} failed: ${(err as Error).message}`);
+      }
     }
+  } catch (err) {
+    // Never leave a half-built database or an open connection behind: an open
+    // client would keep the test process alive instead of reporting the failure.
+    if (adminConnected) await admin.end().catch(() => undefined);
+    if (created) await server.query(`DROP DATABASE IF EXISTS ${name} WITH (FORCE)`).catch(() => undefined);
+    throw err;
+  } finally {
+    await server.query("SELECT pg_advisory_unlock($1)", [MIGRATION_LOCK_KEY]).catch(() => undefined);
+    await server.end();
   }
 
   return {

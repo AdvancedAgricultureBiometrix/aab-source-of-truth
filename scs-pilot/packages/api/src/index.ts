@@ -1,16 +1,20 @@
 // SCS pilot API — entry point.
 //
-// Boot order: read database configuration, connect as the restricted role and
-// verify it (foundation/db.ts refuses owner, superuser and BYPASSRLS roles),
-// then listen. Any startup failure is logged and the process exits non-zero.
+// Boot order, each step fatal on failure (logged, exit 1):
+//   1. database configuration, connection and role check — foundation/db.ts
+//      refuses owner, superuser, BYPASSRLS and other elevated roles
+//   2. authentication — the static actors file (SCS_AUTH_STATIC_ACTORS_FILE)
+//      is loaded and every entry validated
+//   3. listen — foundation/server.ts
 //
-// Exposes GET /health only. No capability is implemented yet; the HTTP layer
-// moves to foundation/server.ts next.
+// No capability is implemented yet: the route table is empty, so the API
+// answers GET /health and returns the canonical 404 envelope for everything
+// else.
 
-import { createServer } from "node:http";
-
+import { StaticTokenAuthenticator } from "./foundation/auth.js";
 import { log } from "./foundation/correlation.js";
 import { connectDatabase, dbConfigFromEnv, RestrictedRoleViolation, type Database } from "./foundation/db.js";
+import { createApiServer } from "./foundation/server.js";
 
 async function main(): Promise<void> {
   let db: Database;
@@ -26,17 +30,20 @@ async function main(): Promise<void> {
     return;
   }
 
-  const port = Number(process.env["API_PORT"] ?? 3000);
-  const server = createServer((req, res) => {
-    if (req.method === "GET" && req.url === "/health") {
-      res.writeHead(200, { "content-type": "application/json" });
-      res.end(JSON.stringify({ status: "ok", service: "scs-pilot-api", capabilitiesImplemented: [] }));
-      return;
-    }
-    res.writeHead(404, { "content-type": "application/json" });
-    res.end(JSON.stringify({ error: "NOT_FOUND" }));
-  });
+  let authenticator: StaticTokenAuthenticator;
+  try {
+    const file = process.env["SCS_AUTH_STATIC_ACTORS_FILE"];
+    if (file === undefined || file.trim() === "") throw new Error("SCS_AUTH_STATIC_ACTORS_FILE is not set");
+    authenticator = await StaticTokenAuthenticator.fromFile(file);
+  } catch (err) {
+    log.error("startup failed: authentication is not configured", { err });
+    await db.close();
+    process.exitCode = 1;
+    return;
+  }
 
+  const port = Number(process.env["API_PORT"] ?? 3000);
+  const server = createApiServer({ routes: [], authenticator, db });
   server.listen(port, () => log.info("scs-pilot-api listening", { port }));
 
   for (const signal of ["SIGINT", "SIGTERM"] as const) {

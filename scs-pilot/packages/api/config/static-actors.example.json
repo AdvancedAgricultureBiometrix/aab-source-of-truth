@@ -1,0 +1,14 @@
+{
+  "actors": [
+    {
+      "tokenSha256": "REPLACE_WITH_SHA256_OF_A_RANDOM_TOKEN_OF_AT_LEAST_32_CHARACTERS",
+      "actor": {
+        "actorId": "compliance-officer-01",
+        "actorType": "HUMAN",
+        "roles": ["COMPLIANCE_OFFICER"],
+        "organizationId": "example-organisation",
+        "authenticationMethod": "STATIC_TOKEN"
+      }
+    }
+  ]
+}

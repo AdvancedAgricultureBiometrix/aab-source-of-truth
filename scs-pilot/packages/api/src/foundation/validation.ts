@@ -50,19 +50,28 @@ const ajv = new Ajv2020({
 });
 addFormats(ajv, ["date", "date-time", "uuid", "uri", "email"]);
 
-const compiled = new Map<string, { source: string; fn: ValidateFunction }>();
+const registered = new Map<string, string>(); // $id → JSON source
+
+/**
+ * Make a schema known by its $id, so other schemas can $ref it. Registering
+ * the same $id again with identical content is a no-op; with different
+ * content it is refused — one $id always means one schema.
+ */
+export function registerSchema(schema: JsonSchema): void {
+  const source = JSON.stringify(schema);
+  const existing = registered.get(schema.$id);
+  if (existing !== undefined) {
+    if (existing !== source) throw new Error(`Schema $id ${schema.$id} was already compiled with different content`);
+    return;
+  }
+  ajv.addSchema(schema);
+  registered.set(schema.$id, source);
+}
 
 function getValidator(schema: JsonSchema): ValidateFunction {
-  const source = JSON.stringify(schema);
-  const cached = compiled.get(schema.$id);
-  if (cached) {
-    if (cached.source !== source) {
-      throw new Error(`Schema $id ${schema.$id} was already compiled with different content`);
-    }
-    return cached.fn;
-  }
-  const fn = ajv.compile(schema);
-  compiled.set(schema.$id, { source, fn });
+  registerSchema(schema);
+  const fn = ajv.getSchema(schema.$id);
+  if (fn === undefined) throw new Error(`Schema $id ${schema.$id} could not be compiled`);
   return fn;
 }
 

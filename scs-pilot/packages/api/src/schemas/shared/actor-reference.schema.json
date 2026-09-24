@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:shared:actor-reference:1",
+  "title": "ActorReference",
+  "description": "PILOT DEFINITION. Every SCS canonical contract references ActorReference but none defines it (TODO(actor-reference)). This is the shape the pilot records wherever a contract says ActorReference; it must be confirmed in a shared contract before admission.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["actorId", "actorType", "roles", "authenticationMethod"],
+  "properties": {
+    "actorId": {
+      "description": "Stable identifier of the person or service. Unique within the deployment.",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._:@-]{1,128}$"
+    },
+    "actorType": {
+      "description": "Whether the actor is a person or an automated service.",
+      "type": "string",
+      "enum": ["HUMAN", "SERVICE"]
+    },
+    "roles": {
+      "description": "Roles held by the actor, e.g. COMPLIANCE_OFFICER. Capabilities decide which roles they accept.",
+      "type": "array",
+      "uniqueItems": true,
+      "maxItems": 32,
+      "items": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]{1,63}$" }
+    },
+    "organizationId": {
+      "description": "Organisation the actor acts for, if any.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "\\S"
+    },
+    "authenticationMethod": {
+      "description": "How the actor was authenticated for this request. When OIDC replaces the pilot's static tokens, the shape of ActorReference does not change — only this value changes, from STATIC_TOKEN to OIDC.",
+      "type": "string",
+      "enum": ["STATIC_TOKEN", "OIDC"]
+    }
+  }
+}
