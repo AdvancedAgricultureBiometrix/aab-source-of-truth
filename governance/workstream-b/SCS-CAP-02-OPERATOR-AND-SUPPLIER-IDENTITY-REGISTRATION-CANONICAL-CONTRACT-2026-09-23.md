@@ -1076,6 +1076,12 @@ store is not built.
 different scopes and statuses, combine into one summary for `getParty` is not defined. It must
 be specified before `getParty` is implemented.
 
+**Contract gap: an assessment with no verified attributes.** `verificationScope.verifiedAttributes`
+may be empty: this contract does not require an assessment to name at least one attribute it
+verified. An assessment recording `VERIFIED_FOR_DECLARED_SCOPE` or `PARTIALLY_VERIFIED` with no
+verified attributes says little about what was verified. Whether at least one attribute is
+required, and for which statuses, must be specified before a production implementation.
+
 **Contract gap: sub-national jurisdictions.** `jurisdictionCode` accepts ISO 3166-1 alpha-2
 country codes only. Province-level jurisdictions (ISO 3166-2, for example `TH-10`) are not yet
 accepted.
