@@ -6,6 +6,8 @@
 --
 --   ScsPartyIdentity                  → scs.party_identity
 --     .identityEvidence.evidenceIds   → scs.party_identity_evidence (one row per id)
+--   ScsPartyIdentityEvidenceSubmission → scs.party_identity_evidence_submission
+--     .evidenceIds                    → scs.party_identity_evidence (submission_id set)
 --     .verificationAssessments[]      → scs.party_verification_assessment
 --   ScsPartyRoleClaim                 → scs.party_role_claim
 --   ScsSupplyChainRelationship        → scs.supply_chain_relationship
@@ -14,6 +16,8 @@
 -- Current-state reference for the CAP-02 tables. The migration that creates
 -- them is generated from this file and must produce exactly this definition.
 -- Requires cap-01.sql first: it creates schema scs and scs.set_updated_at().
+-- party_identity_evidence_submission also needs scs.reject_modification()
+-- from platform.sql and role scs_api from roles-rls.sql.
 --
 -- Mapping rules (same as CAP-01)
 --   * Governed record primary key (…Id)          → uuid, gen_random_uuid() default
@@ -36,6 +40,10 @@
 --   * Every identifier ≤ 63 characters — PostgreSQL silently truncates longer
 --     names. A too-long contract field name gets a shortened column plus a
 --     comment giving the full contract name (see representation_mandate).
+--
+-- Identity evidence submission: added to the CAP-02 contract (commit 3e508ed)
+-- and implemented in migration 006 — party_identity_evidence_submission
+-- (append-only) and party_identity_evidence.submission_id.
 --
 -- otherActionDescription: added to the CAP-02 contract (commit 2ee4503) and
 -- implemented in migration 003 — representation_mandate.other_action_description,
@@ -137,14 +145,50 @@ CREATE TABLE scs.party_identity (
 );
 
 
--- ── identityEvidence.evidenceIds ────────────────────────────────────────────
--- The contract defines identity evidence only as a list of evidence ids on
--- the party (plus limitations, kept on party_identity). One row per id.
+-- ── ScsPartyIdentityEvidenceSubmission — evidence submitted after registration
+-- Append-only for every role (trigger, function from platform.sql). Evidence
+-- is admitted, not verified: a submission never changes the party record.
+CREATE TABLE scs.party_identity_evidence_submission (
+  submission_id                     uuid        NOT NULL DEFAULT gen_random_uuid(),
+  party_id                          uuid        NOT NULL,
+  party_version                     integer     NOT NULL,   -- the party's version when submitted
+  evidence_limitations              text[]      NOT NULL,
+  submitted_by                      jsonb       NOT NULL,   -- ActorReference
+  submitting_organization_id        text,                   -- optional; issued outside SCS
+  submitted_at                      timestamptz NOT NULL DEFAULT now(),
+
+  created_at                        timestamptz NOT NULL DEFAULT now(),
+
+  CONSTRAINT party_identity_evidence_submission_pk PRIMARY KEY (submission_id),
+  CONSTRAINT party_identity_evidence_submission_party_fk
+    FOREIGN KEY (party_id) REFERENCES scs.party_identity (party_id)
+    ON DELETE RESTRICT ON UPDATE RESTRICT,
+
+  -- deliberate — beyond the contract: the target of the evidence links'
+  -- foreign key, so a link can only name a submission for its own party and
+  -- party version
+  CONSTRAINT party_identity_evidence_submission_party_version_uq
+    UNIQUE (submission_id, party_id, party_version),
+  CONSTRAINT party_identity_evidence_submission_version_ck
+    CHECK (party_version >= 1),
+  CONSTRAINT party_identity_evidence_submission_actor_object_ck
+    CHECK (jsonb_typeof(submitted_by) = 'object'),
+  CONSTRAINT party_identity_evidence_submission_no_null_elements_ck
+    CHECK (array_position(evidence_limitations, NULL) IS NULL),
+  CONSTRAINT party_identity_evidence_submission_org_not_blank_ck
+    CHECK (submitting_organization_id IS NULL OR btrim(submitting_organization_id) <> '')
+);
+
+-- ── identityEvidence.evidenceIds, and evidenceIds of later submissions ──────
+-- One row per evidence id. Evidence given at registration has no submission
+-- (submission_id NULL; its limitations are kept on party_identity). Evidence
+-- submitted later names its submission, which holds its limitations.
 CREATE TABLE scs.party_identity_evidence (
   party_identity_evidence_id        uuid        NOT NULL DEFAULT gen_random_uuid(),
   party_id                          uuid        NOT NULL,
   party_version                     integer     NOT NULL,
   evidence_id                       uuid        NOT NULL,   -- no FK: TODO(evidence)
+  submission_id                     uuid,                   -- NULL: given at registration
 
   created_at                        timestamptz NOT NULL DEFAULT now(),
   updated_at                        timestamptz NOT NULL DEFAULT now(),
@@ -153,8 +197,14 @@ CREATE TABLE scs.party_identity_evidence (
   CONSTRAINT party_identity_evidence_party_fk
     FOREIGN KEY (party_id) REFERENCES scs.party_identity (party_id)
     ON DELETE RESTRICT ON UPDATE RESTRICT,
+  -- submission, party and version must all match (not checked when NULL)
+  CONSTRAINT party_identity_evidence_submission_fk
+    FOREIGN KEY (submission_id, party_id, party_version)
+    REFERENCES scs.party_identity_evidence_submission (submission_id, party_id, party_version)
+    ON DELETE RESTRICT ON UPDATE RESTRICT,
 
-  -- deliberate — beyond the contract
+  -- deliberate — beyond the contract; also stops the same evidence id being
+  -- linked twice to one party version, at registration or by any submission
   CONSTRAINT party_identity_evidence_uq
     UNIQUE (party_id, party_version, evidence_id),
   CONSTRAINT party_identity_evidence_version_positive_ck
@@ -523,6 +573,10 @@ CREATE INDEX supply_chain_relationship_to_idx        ON scs.supply_chain_relatio
 CREATE INDEX supply_chain_relationship_claimed_by_idx ON scs.supply_chain_relationship (claimed_by_party_id);
 CREATE INDEX representation_mandate_granting_idx     ON scs.representation_mandate (granting_party_id);
 CREATE INDEX representation_mandate_representative_idx ON scs.representation_mandate (representative_party_id);
+CREATE INDEX party_identity_evidence_submission_party_idx
+  ON scs.party_identity_evidence_submission (party_id);
+CREATE INDEX party_identity_evidence_submission_link_idx
+  ON scs.party_identity_evidence (submission_id);
 
 
 -- ── updated_at maintained by the database (function from cap-01.sql) ───────
@@ -546,6 +600,15 @@ CREATE TRIGGER representation_mandate_set_updated_at
   FOR EACH ROW EXECUTE FUNCTION scs.set_updated_at();
 
 
+-- ── Append-only (function from platform.sql) ───────────────────────────────
+CREATE TRIGGER party_identity_evidence_submission_append_only
+  BEFORE UPDATE OR DELETE ON scs.party_identity_evidence_submission
+  FOR EACH ROW EXECUTE FUNCTION scs.reject_modification();
+CREATE TRIGGER party_identity_evidence_submission_no_truncate
+  BEFORE TRUNCATE ON scs.party_identity_evidence_submission
+  FOR EACH STATEMENT EXECUTE FUNCTION scs.reject_modification();
+
+
 COMMENT ON TABLE scs.party_identity IS
   'SCS-CAP-02 ScsPartyIdentity. REGISTERED means a governed record exists — nothing more; verification is separate (party_verification_assessment).';
 COMMENT ON TABLE scs.party_identity_evidence IS
@@ -560,3 +623,18 @@ COMMENT ON TABLE scs.representation_mandate IS
   'SCS-CAP-02 ScsRepresentationMandate. Separate from any relationship; enumerated actions only; revocable.';
 COMMENT ON COLUMN scs.representation_mandate.other_action_description IS
   'otherActionDescription — names the specific action; required exactly when permitted_actions includes OTHER_EXPLICITLY_NAMED.';
+COMMENT ON TABLE scs.party_identity_evidence_submission IS
+  'SCS-CAP-02 ScsPartyIdentityEvidenceSubmission. Evidence admitted after registration, not verified; never changes the party record. Append-only for every role.';
+COMMENT ON COLUMN scs.party_identity_evidence.submission_id IS
+  'The ScsPartyIdentityEvidenceSubmission that linked this evidence id; NULL for evidence given at registration.';
+
+
+-- ── Grants and row-level security for tables created after migration 004 ───
+-- Same rule as schema/roles-rls.sql: SELECT + INSERT for scs_api, RLS on, two
+-- permissive policies. (Tables created by migration 002 are in roles-rls.sql.)
+GRANT SELECT, INSERT ON scs.party_identity_evidence_submission TO scs_api;
+ALTER TABLE scs.party_identity_evidence_submission ENABLE ROW LEVEL SECURITY;
+CREATE POLICY party_identity_evidence_submission_scs_api_select ON scs.party_identity_evidence_submission
+  AS PERMISSIVE FOR SELECT TO scs_api USING (true);
+CREATE POLICY party_identity_evidence_submission_scs_api_insert ON scs.party_identity_evidence_submission
+  AS PERMISSIVE FOR INSERT TO scs_api WITH CHECK (true);
