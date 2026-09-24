@@ -198,6 +198,14 @@ interface ScsFrameworkRegistrationDecision {
 }
 ```
 
+**Contract gap — evidence requirement derivation rules are undefined.** This contract says the
+`ScsEvidenceRequirementSpec` is generated at registration, but it does not define the rules that
+derive the specification's values from the registered regulation, scope and commodity. Until those
+rules are specified in this contract, an implementation must not invent them: the values of the
+specification are declared by the authorised registrant, and CAP-01 generates only the
+system-generated fields (`specId`, `generatedAt`, `generatedFromFrameworkVersion`). The derivation
+rules must be specified here before a production implementation.
+
 ## Provider-neutral interface
 
 ```typescript
