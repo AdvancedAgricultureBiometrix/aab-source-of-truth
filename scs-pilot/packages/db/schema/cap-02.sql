@@ -45,6 +45,10 @@
 -- and implemented in migration 006 — party_identity_evidence_submission
 -- (append-only) and party_identity_evidence.submission_id.
 --
+-- Mandate registration rules: added to the CAP-02 contract (commit 9a3e978)
+-- and implemented in migration 008 — representation_mandate.valid_until is
+-- required, and the non-empty framework, scope and consent evidence checks.
+--
 -- Relationship registration rules: added to the CAP-02 contract (commit
 -- 9a3e978) and implemented in migration 007 —
 -- supply_chain_relationship.other_relationship_type_description and the
@@ -488,7 +492,7 @@ CREATE TABLE scs.representation_mandate (
   geographic_scope                  text[]      NOT NULL,
 
   valid_from                        timestamptz NOT NULL,
-  valid_until                       timestamptz,            -- optional
+  valid_until                       timestamptz NOT NULL,   -- required (contract 9a3e978; migration 008)
 
   mandate_evidence_ids              uuid[]      NOT NULL,   -- no FK: TODO(evidence)
 
@@ -576,15 +580,25 @@ CREATE TABLE scs.representation_mandate (
 
   -- Contract rule: OTHER_EXPLICITLY_NAMED requires otherActionDescription to
   -- name the action; without it the mandate is incomplete and is rejected.
-  -- Deliberate — beyond the contract (which says "ignored otherwise"): a
-  -- description with no OTHER_EXPLICITLY_NAMED is rejected, not ignored.
-  -- Added by migration 003.
+  -- A description with no OTHER_EXPLICITLY_NAMED is rejected, not ignored:
+  -- deliberate when added by migration 003, and the contract's own rule since
+  -- commit 9a3e978 ("must be absent otherwise").
   CONSTRAINT representation_mandate_other_action_description_ck
     CHECK (CASE WHEN 'OTHER_EXPLICITLY_NAMED' = ANY (permitted_actions)
                 THEN other_action_description IS NOT NULL
                      AND btrim(other_action_description) <> ''
                 ELSE other_action_description IS NULL
-           END)
+           END),
+
+  -- Contract rules (commit 9a3e978), added by migration 008: at least one
+  -- framework and scope that is not empty; at least one consent evidence id
+  -- (evidence that the granting party agreed).
+  CONSTRAINT representation_mandate_scope_not_empty_ck
+    CHECK (cardinality(framework_association_ids) >= 1
+       AND cardinality(commodity_scope) >= 1
+       AND cardinality(geographic_scope) >= 1),
+  CONSTRAINT representation_mandate_consent_evidence_ck
+    CHECK (cardinality(mandate_evidence_ids) >= 1)
 );
 
 
@@ -599,6 +613,8 @@ CREATE INDEX supply_chain_relationship_pair_type_idx
   ON scs.supply_chain_relationship (from_party_id, to_party_id, relationship_type);
 CREATE INDEX representation_mandate_granting_idx     ON scs.representation_mandate (granting_party_id);
 CREATE INDEX representation_mandate_representative_idx ON scs.representation_mandate (representative_party_id);
+CREATE INDEX representation_mandate_pair_idx
+  ON scs.representation_mandate (granting_party_id, representative_party_id);
 CREATE INDEX party_identity_evidence_submission_party_idx
   ON scs.party_identity_evidence_submission (party_id);
 CREATE INDEX party_identity_evidence_submission_link_idx
