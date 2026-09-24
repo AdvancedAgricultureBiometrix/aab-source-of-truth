@@ -45,6 +45,11 @@
 -- and implemented in migration 006 — party_identity_evidence_submission
 -- (append-only) and party_identity_evidence.submission_id.
 --
+-- Verification assessment recording rules: added to the CAP-02 contract
+-- (commit e85c58a) and implemented in migration 010 — recorded_by,
+-- recorded_at, supersedes_assessment_id, append-only, recordable statuses and
+-- non-empty evidence.
+--
 -- Role claim registration rules: added to the CAP-02 contract (commit
 -- 9a3e978) and implemented in migration 009 —
 -- party_role_claim.other_role_description, the framework foreign key and the
@@ -255,14 +260,20 @@ CREATE TABLE scs.party_verification_assessment (
   evidence_ids                      uuid[]      NOT NULL,   -- no FK: TODO(evidence)
   limitations                       text[]      NOT NULL,
 
+  -- provenance: who recorded the assessment in SCS, and when (migration 010)
+  recorded_by                       jsonb       NOT NULL,   -- ActorReference
+  recorded_at                       timestamptz NOT NULL DEFAULT now(),
+  -- the earlier assessment of the same party this one replaces (migration 010)
+  supersedes_assessment_id          uuid,                   -- optional
+
   -- authorityBoundary — verification never implies broader authority
   boundary_does_not_confirm_sanctions_clearance       boolean NOT NULL DEFAULT true,
   boundary_does_not_confirm_beneficial_ownership      boolean NOT NULL DEFAULT true,
   boundary_does_not_grant_regulatory_eligibility      boolean NOT NULL DEFAULT true,
   boundary_does_not_imply_compliance_with_other_frameworks boolean NOT NULL DEFAULT true,
 
+  -- no updated_at: append-only for every role (migration 010)
   created_at                        timestamptz NOT NULL DEFAULT now(),
-  updated_at                        timestamptz NOT NULL DEFAULT now(),
 
   CONSTRAINT party_verification_assessment_pk PRIMARY KEY (assessment_id),
   CONSTRAINT party_verification_assessment_party_fk
@@ -295,8 +306,34 @@ CREATE TABLE scs.party_verification_assessment (
        AND btrim(verifying_authority_jurisdiction_code) <> ''),
   CONSTRAINT party_verification_assessment_expiry_after_verification_ck
     CHECK (expires_at IS NULL OR expires_at > verified_at),
-  CONSTRAINT party_verification_assessment_updated_after_created_ck
-    CHECK (updated_at >= created_at)
+
+  -- Contract rules (commit e85c58a), added by migration 010.
+  -- Only these statuses are recorded; REGISTERED_UNVERIFIED and
+  -- VERIFICATION_EXPIRED are derived when read.
+  CONSTRAINT party_verification_assessment_recordable_status_ck
+    CHECK (verification_status IN ('PARTIALLY_VERIFIED', 'VERIFIED_FOR_DECLARED_SCOPE',
+                                   'DISPUTED', 'FAIL_CLOSED')),
+  -- verification always names its evidence
+  CONSTRAINT party_verification_assessment_evidence_not_empty_ck
+    CHECK (cardinality(evidence_ids) >= 1),
+  -- verifiedAt is not in the future: not after the assessment was recorded
+  CONSTRAINT party_verification_assessment_verified_not_after_recorded_ck
+    CHECK (verified_at <= recorded_at),
+  CONSTRAINT party_verification_assessment_recorded_by_object_ck
+    CHECK (jsonb_typeof(recorded_by) = 'object'),
+  -- the target of the supersession foreign key
+  CONSTRAINT party_verification_assessment_party_uq
+    UNIQUE (assessment_id, party_id),
+  -- a superseded assessment belongs to the same party ...
+  CONSTRAINT party_verification_assessment_supersedes_fk
+    FOREIGN KEY (supersedes_assessment_id, party_id)
+    REFERENCES scs.party_verification_assessment (assessment_id, party_id)
+    ON DELETE RESTRICT ON UPDATE RESTRICT,
+  -- ... and is superseded at most once, never by itself
+  CONSTRAINT party_verification_assessment_supersedes_once_uq
+    UNIQUE (supersedes_assessment_id),
+  CONSTRAINT party_verification_assessment_not_self_superseding_ck
+    CHECK (supersedes_assessment_id IS NULL OR supersedes_assessment_id <> assessment_id)
 );
 
 
@@ -656,9 +693,6 @@ CREATE TRIGGER party_identity_set_updated_at
 CREATE TRIGGER party_identity_evidence_set_updated_at
   BEFORE UPDATE ON scs.party_identity_evidence
   FOR EACH ROW EXECUTE FUNCTION scs.set_updated_at();
-CREATE TRIGGER party_verification_assessment_set_updated_at
-  BEFORE UPDATE ON scs.party_verification_assessment
-  FOR EACH ROW EXECUTE FUNCTION scs.set_updated_at();
 CREATE TRIGGER party_role_claim_set_updated_at
   BEFORE UPDATE ON scs.party_role_claim
   FOR EACH ROW EXECUTE FUNCTION scs.set_updated_at();
@@ -677,6 +711,12 @@ CREATE TRIGGER party_identity_evidence_submission_append_only
 CREATE TRIGGER party_identity_evidence_submission_no_truncate
   BEFORE TRUNCATE ON scs.party_identity_evidence_submission
   FOR EACH STATEMENT EXECUTE FUNCTION scs.reject_modification();
+CREATE TRIGGER party_verification_assessment_append_only
+  BEFORE UPDATE OR DELETE ON scs.party_verification_assessment
+  FOR EACH ROW EXECUTE FUNCTION scs.reject_modification();
+CREATE TRIGGER party_verification_assessment_no_truncate
+  BEFORE TRUNCATE ON scs.party_verification_assessment
+  FOR EACH STATEMENT EXECUTE FUNCTION scs.reject_modification();
 
 
 COMMENT ON TABLE scs.party_identity IS
@@ -684,7 +724,7 @@ COMMENT ON TABLE scs.party_identity IS
 COMMENT ON TABLE scs.party_identity_evidence IS
   'SCS-CAP-02 ScsPartyIdentity.identityEvidence.evidenceIds, one row per evidence id.';
 COMMENT ON TABLE scs.party_verification_assessment IS
-  'SCS-CAP-02 ScsPartyVerificationAssessment. Always scoped; never implies sanctions clearance, beneficial ownership, regulatory eligibility or other-framework compliance.';
+  'SCS-CAP-02 ScsPartyVerificationAssessment. Always scoped; never implies sanctions clearance, beneficial ownership, regulatory eligibility or other-framework compliance. Append-only; supersession is recorded on the newer assessment.';
 COMMENT ON TABLE scs.party_role_claim IS
   'SCS-CAP-02 ScsPartyRoleClaim. A claim until evidenced and assessed.';
 COMMENT ON TABLE scs.supply_chain_relationship IS
