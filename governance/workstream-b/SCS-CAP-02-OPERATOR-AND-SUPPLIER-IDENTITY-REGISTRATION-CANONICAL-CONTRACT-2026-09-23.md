@@ -185,6 +185,10 @@ interface ScsPartyVerificationAssessment {
   evidenceIds: string[];
   limitations: string[];
 
+  // Who recorded this assessment in SCS, and when (set by the system)
+  recordedBy: ActorReference;
+  recordedAt: string;
+
   // Verification never implies broader authority
   authorityBoundary: {
     doesNotConfirmSanctionsClearance: true;
@@ -212,6 +216,8 @@ interface ScsPartyRoleClaim {
     | "IMPORTER"
     | "TRADER"
     | "OTHER";
+  // Required exactly when claimedRole is OTHER
+  otherRoleDescription?: string;
 
   frameworkAssociationId: string;
   frameworkVersion: string;
@@ -257,6 +263,8 @@ interface ScsSupplyChainRelationship {
     | "EXPORTS_FOR"
     | "CERTIFIES_FOR"
     | "OTHER";
+  // Required exactly when relationshipType is OTHER
+  otherRelationshipTypeDescription?: string;
 
   commodityScope: string[];
   geographicScope: string[];
@@ -326,7 +334,7 @@ interface ScsRepresentationMandate {
 
   // Present only when permittedActions includes OTHER_EXPLICITLY_NAMED.
   // Names the specific action permitted. Required if OTHER_EXPLICITLY_NAMED
-  // is used; ignored otherwise.
+  // is used; must be absent otherwise.
   otherActionDescription?: string;
 
   // Scope — explicit and version-bound
@@ -335,8 +343,10 @@ interface ScsRepresentationMandate {
   geographicScope: string[];
 
   validFrom: string;
-  validUntil?: string;
+  // Required: a mandate always expires
+  validUntil: string;
 
+  // At least one: evidence that the granting party agreed
   mandateEvidenceIds: string[];
 
   verificationStatus:
@@ -617,6 +627,390 @@ an evidence store exists, identifiers are recorded as submitted, and every decis
 `decisionReasons` states that the identifiers were not confirmed and that the evidence
 store is not yet built. This describes the current system, not the intended architecture.
 
+## Role claims, relationships and mandates: registration rules
+
+These rules apply to `addRoleClaim`, `registerRelationship` and `registerMandate`. Each
+registration is FAIL_CLOSED on any failure and writes nothing: no record, no decision, no
+receipt. When every check passes, the record is written and its decision and receipt are
+written in the same transaction.
+
+### Framework associations
+
+A framework association is a reference to a regulatory framework registered by SCS-CAP-01.
+Its identifier is that framework's `frameworkId`. Every `frameworkAssociationId` and every
+element of `frameworkAssociationIds` names a CAP-01 framework.
+
+- **The framework must exist.** Otherwise `FRAMEWORK_ASSOCIATION_NOT_FOUND`.
+- **The framework must be `ACTIVE`.** A `SUPERSEDED` or `WITHDRAWN` framework cannot be the
+  basis for a new supply-chain registration: `FRAMEWORK_NOT_ACTIVE`.
+- **At least one framework.** `frameworkAssociationIds` on a relationship or a mandate must
+  not be empty. A role claim always names exactly one framework.
+- **Framework version.** `frameworkVersion` on a role claim is set by the system to the
+  referenced framework's `regulation.regulationVersion`, until SCS-CAP-01 defines internal
+  framework versioning.
+
+### Scope within the framework
+
+`commodityScope` and `geographicScope` must not be empty. The referenced frameworks set the
+boundary; a registration cannot declare scope that its frameworks do not cover. This enforces
+the mandate boundary `doesNotReuseAuthorityOutsideDeclaredScope` and applies equally to role
+claims and relationships.
+
+- **Commodity.** Each `commodityScope` value must equal the `scope.commodityCode` of a
+  referenced framework.
+- **Geography.** Each `geographicScope` value must equal the `scope.countryOfOrigin` of a
+  referenced framework.
+- Any other value is refused with `SCOPE_OUTSIDE_FRAMEWORK`, naming each value outside scope.
+
+**Contract gap: scope across several frameworks.** With several frameworks, each value is
+checked on its own. A relationship referencing a Thai rubber framework and a Vietnamese coffee
+framework may therefore declare rubber from Vietnam. Pairing commodity and country per
+framework needs a scope structure this contract does not have.
+
+### Fields the system sets
+
+The request carries only what the submitter declares. The system sets: the record's
+identifier (`roleClaimId`, `relationshipId`, `mandateId`); `claimedAt` and `claimedBy`, or
+`createdAt` and `createdBy` (the authenticated actor and the transaction time);
+`schemaVersion`; `partyVersion` (the party's current version); the role claim's
+`frameworkVersion`; and the starting statuses below. A mandate's `authorityBoundary` flags
+are always `true`.
+
+### Starting status
+
+- A role claim, a relationship and a mandate all start as `CLAIMED_UNVERIFIED`.
+- A relationship starts with `lifecycleStatus: ACTIVE`; a mandate with
+  `revocationStatus: NOT_REVOKED`.
+- Submitting evidence identifiers does not change the status. Status changes only through a
+  separate verification assessment.
+
+### Common rules
+
+- **Authority.** Only a `COMPLIANCE_OFFICER` may register a role claim, a relationship or a
+  mandate. Otherwise `REGISTRANT_NOT_AUTHORISED`.
+- **Retired parties.** A `RETIRED` party cannot take part in a new registration:
+  `PARTY_RETIRED`. This applies to the party of a role claim, both parties of a relationship,
+  and both parties of a mandate.
+- **Validity period.** When both are given, the end (`validUntil`) must be after the start
+  (`validFrom`). Otherwise `VALIDITY_PERIOD_INVALID`.
+- **`OTHER` needs a description.** A role claim with `claimedRole: OTHER` must carry
+  `otherRoleDescription`; a relationship with `relationshipType: OTHER` must carry
+  `otherRelationshipTypeDescription`; a mandate with `OTHER_EXPLICITLY_NAMED` must carry
+  `otherActionDescription`. Otherwise `OTHER_TYPE_REQUIRES_DESCRIPTION`. A description given
+  without `OTHER` is a request error and is refused, not ignored.
+- **Conflicting records.** A registration that duplicates or overlaps an existing record is
+  refused with `CONFLICTING_RECORD`, naming the existing record. The conflict rule for each
+  record is given in its section below. Validity periods overlap unless one ends before the
+  other begins; a missing `validFrom` or `validUntil` is open-ended.
+
+### Role claim registration
+
+```typescript
+// partyId is taken from the request path
+interface ScsRoleClaimRequest {
+  claimedRole:
+    | "OPERATOR"
+    | "SUPPLIER"
+    | "AGGREGATOR"
+    | "PROCESSOR"
+    | "EXPORTER"
+    | "IMPORTER"
+    | "TRADER"
+    | "OTHER";
+  // Required exactly when claimedRole is OTHER
+  otherRoleDescription?: string;
+
+  frameworkAssociationId: string;
+  commodityScope: string[];
+  geographicScope: string[];
+
+  roleEvidenceIds: string[];
+  validFrom?: string;
+  validUntil?: string;
+  limitations: string[];
+}
+
+interface ScsRoleClaimDecision {
+  decisionId: string;
+  roleClaimId: string;
+  partyId: string;
+  partyVersion: number;
+  decision: "REGISTERED";
+
+  eligibilityChecks: {
+    registrantAuthorised: boolean;
+    partyExists: boolean;
+    partyNotRetired: boolean;
+    otherRoleDescribed: boolean;
+    frameworkExists: boolean;
+    frameworkActive: boolean;
+    scopeWithinFramework: boolean;
+    validityPeriodValid: boolean;
+    noConflictingRecord: boolean;
+  };
+
+  decisionReasons: string[];
+  decidedBy: ActorReference;
+  decidedAt: string;
+}
+```
+
+`ScsPartyRoleClaim` gains `otherRoleDescription?: string`. The path's party must exist:
+`PARTY_NOT_FOUND`. **Conflict:** a role claim for the same party, the same `claimedRole` and
+the same framework whose validity period overlaps the new one.
+
+### Relationship registration
+
+```typescript
+interface ScsRelationshipRegistrationRequest {
+  fromPartyId: string;
+  toPartyId: string;
+
+  relationshipType:
+    | "SUPPLIES_TO"
+    | "PROCESSES_FOR"
+    | "AGGREGATES_FOR"
+    | "EXPORTS_FOR"
+    | "CERTIFIES_FOR"
+    | "OTHER";
+  // Required exactly when relationshipType is OTHER
+  otherRelationshipTypeDescription?: string;
+
+  commodityScope: string[];
+  geographicScope: string[];
+  // At least one ACTIVE CAP-01 framework
+  frameworkAssociationIds: string[];
+
+  validFrom?: string;
+  validUntil?: string;
+
+  // One of the two parties: fromPartyId or toPartyId
+  claimedByPartyId: string;
+  relationshipEvidenceIds: string[];
+}
+
+interface ScsRelationshipRegistrationDecision {
+  decisionId: string;
+  relationshipId: string;
+  decision: "REGISTERED";
+
+  eligibilityChecks: {
+    registrantAuthorised: boolean;
+    fromPartyExists: boolean;
+    toPartyExists: boolean;
+    partiesNotRetired: boolean;
+    notSelfReferential: boolean;
+    claimingPartyIsAParty: boolean;
+    otherTypeDescribed: boolean;
+    frameworksExist: boolean;
+    frameworksActive: boolean;
+    scopeWithinFrameworks: boolean;
+    validityPeriodValid: boolean;
+    noConflictingRecord: boolean;
+  };
+
+  decisionReasons: string[];
+  decidedBy: ActorReference;
+  decidedAt: string;
+}
+```
+
+`ScsSupplyChainRelationship` gains `otherRelationshipTypeDescription?: string`.
+
+- `fromPartyId` and `toPartyId` must exist: `FROM_PARTY_NOT_FOUND`, `TO_PARTY_NOT_FOUND`.
+- They must differ: `SELF_REFERENTIAL_RELATIONSHIP`.
+- `claimedByPartyId` must be one of the two parties: `CLAIMING_PARTY_NOT_IN_RELATIONSHIP`.
+  A bilateral relationship is claimed by a party to it, never by a third party.
+- A registration creates a new relationship only. It cannot supersede another relationship;
+  supersession is a separate operation.
+- **Conflict:** an `ACTIVE` relationship with the same `fromPartyId`, `toPartyId` and
+  `relationshipType` that shares at least one framework and whose validity period overlaps the
+  new one. The same two parties in the opposite direction are a different relationship.
+
+**Contract gap: `representationVersion`.** The relationship record requires
+`representationVersion`, but this contract does not say what it versions. Until it does,
+the system sets it to `"1"`.
+
+### Mandate registration
+
+```typescript
+interface ScsMandateRegistrationRequest {
+  grantingPartyId: string;
+  representativePartyId: string;
+
+  permittedActions: Array<
+    | "SUBMIT_IDENTITY_EVIDENCE"
+    | "SUBMIT_PLOT_ASSOCIATION_EVIDENCE"
+    | "SUBMIT_CUSTODY_EVIDENCE"
+    | "SUBMIT_DEFORESTATION_EVIDENCE"
+    | "REQUEST_FRAMEWORK_ASSOCIATION"
+    | "OTHER_EXPLICITLY_NAMED"
+  >;
+  // Required exactly when permittedActions includes OTHER_EXPLICITLY_NAMED
+  otherActionDescription?: string;
+
+  // At least one ACTIVE CAP-01 framework
+  frameworkAssociationIds: string[];
+  commodityScope: string[];
+  geographicScope: string[];
+
+  validFrom: string;
+  // Required: a mandate always expires
+  validUntil: string;
+
+  // At least one: evidence that the granting party agreed
+  mandateEvidenceIds: string[];
+}
+
+interface ScsMandateRegistrationDecision {
+  decisionId: string;
+  mandateId: string;
+  decision: "REGISTERED";
+
+  eligibilityChecks: {
+    registrantAuthorised: boolean;
+    grantingPartyExists: boolean;
+    representativePartyExists: boolean;
+    partiesNotRetired: boolean;
+    notSelfGranted: boolean;
+    activeRelationshipExists: boolean;
+    otherActionDescribed: boolean;
+    frameworksExist: boolean;
+    frameworksActive: boolean;
+    scopeWithinFrameworks: boolean;
+    validityPeriodValid: boolean;
+    consentEvidenceProvided: boolean;
+    noConflictingRecord: boolean;
+  };
+
+  decisionReasons: string[];
+  decidedBy: ActorReference;
+  decidedAt: string;
+}
+```
+
+- **Expiry is required.** `ScsRepresentationMandate.validUntil` is required. A mandate
+  without an expiry would be a permanent grant of authority, which the authority boundary
+  prohibits.
+- **Consent evidence is required.** `mandateEvidenceIds` must contain at least one
+  identifier: evidence that the granting party agreed. Representation authority is always
+  separately evidenced. A request without it is refused.
+- **Both parties must exist**: `GRANTING_PARTY_NOT_FOUND`, `REPRESENTATIVE_PARTY_NOT_FOUND`.
+  They must differ: `SELF_GRANTED_MANDATE`.
+- **Every permitted action must be enumerated**: `MANDATE_ACTION_NOT_ENUMERATED`.
+- **A relationship must exist first.** An `ACTIVE` relationship between the granting and
+  representative parties, in either direction, must already be registered. It must not be
+  past its `validUntil`, and it must reference every framework the mandate references.
+  Otherwise `RELATIONSHIP_NOT_FOUND`. A mandate grants submission authority within a
+  governed supply-chain relationship; without one it has no governed context.
+- **Conflict:** a mandate that is `NOT_REVOKED`, with the same granting and representative
+  parties, that shares at least one framework and at least one permitted action, and whose
+  validity period overlaps the new one.
+
+## Verification assessment recording
+
+`addVerificationAssessment` records an `ScsPartyVerificationAssessment` for a party and
+returns a decision with its receipt, like every other registration.
+
+### Separation of duties
+
+Only an actor holding the `VERIFICATION_OFFICER` role may record a verification assessment.
+A `COMPLIANCE_OFFICER` who registered the party cannot also verify it. An actor who registered
+the party (its `registeredBy`) may not record an assessment for that party, even if they also
+hold `VERIFICATION_OFFICER`. Either failure is `VERIFIER_NOT_AUTHORISED`.
+
+### Provenance
+
+`ScsPartyVerificationAssessment` records who verified (`verifyingAuthority`) but not who
+recorded the assessment in SCS. Every other CAP-02 record names the actor who created it.
+The assessment gains:
+
+```typescript
+// Added to ScsPartyVerificationAssessment
+recordedBy: ActorReference;
+recordedAt: string;
+```
+
+Both are set by the system: the authenticated actor and the transaction time.
+
+### Verification request and decision
+
+```typescript
+// partyId is taken from the request path
+interface ScsVerificationAssessmentRequest {
+  verificationStatus: ScsIdentityVerificationStatus;
+
+  verificationScope: {
+    scopeDescription: string;
+    jurisdictionCode: string;
+    verifiedAttributes: string[];
+    excludedFromVerification: string[];
+  };
+
+  verifyingAuthority: {
+    authorityId: string;
+    authorityName: string;
+    authorityBasis: string;
+    jurisdictionCode: string;
+  };
+
+  verifiedAt: string;
+  expiresAt?: string;
+  evidenceIds: string[];
+  limitations: string[];
+}
+
+interface ScsVerificationAssessmentDecision {
+  decisionId: string;
+  assessmentId: string;
+  partyId: string;
+  partyVersion: number;
+  decision: "RECORDED";
+
+  eligibilityChecks: {
+    partyExists: boolean;
+    partyNotRetired: boolean;
+    verifierAuthorised: boolean;
+    verifierIndependentOfRegistrant: boolean;
+  };
+
+  decisionReasons: string[];
+  decidedBy: ActorReference;
+  decidedAt: string;
+}
+```
+
+The system sets `assessmentId`, `partyId` (from the path), `partyVersion`, `recordedBy`,
+`recordedAt` and the `authorityBoundary` flags, which are always `true`. The path's party
+must exist (`PARTY_NOT_FOUND`) and must not be `RETIRED` (`PARTY_RETIRED`).
+
+### Open gaps before verification can be implemented
+
+**Contract gap: which statuses may be recorded.** `ScsIdentityVerificationStatus` includes
+`REGISTERED_UNVERIFIED`, `VERIFICATION_EXPIRED` and `FAIL_CLOSED`, which are not meaningful
+outcomes of a newly recorded assessment. Which values an assessment may record is not
+defined.
+
+**Contract gap: the party's current verification status.** The Southeast Asia section gives
+a party `verificationStatus: REGISTERED_UNVERIFIED`, but `ScsPartyIdentity` has no such field,
+only `verificationAssessments`. How a party's current verification status is derived from
+several assessments, and whether a newer assessment supersedes an older one, is not defined.
+
+**Contract gap: effect on the party.** Whether an assessment, for example one recording
+`DISPUTED`, changes the party's `registrationStatus` is not defined.
+
+**Contract gap: evidence and dates.** Whether a verified status must cite at least one
+evidence identifier, whether cited identifiers must already be linked to the party, whether
+`verifiedAt` may be in the future, and whether an already expired assessment may be recorded
+are not defined. The code system for `jurisdictionCode` is not defined.
+
+**Contract gap: verification of role claims, relationships and mandates.** Their
+`verificationStatus` changes only through a verification assessment, but this contract defines
+verification assessments for parties only.
+
+**Current system limit: no registry of verifying authorities.** `verifyingAuthority` is
+recorded as declared; it cannot be checked against a registry, and the decision must say so.
+
 ## Provider-neutral interface
 
 ```typescript
@@ -636,15 +1030,17 @@ interface ScsPartyIdentityProvider {
   ): Promise<ScsIdentityEvidenceSubmissionDecision>;
 
   addVerificationAssessment(
-    assessment: ScsPartyVerificationAssessment
-  ): Promise<ScsPartyVerificationAssessment>;
+    partyId: string,
+    request: ScsVerificationAssessmentRequest
+  ): Promise<ScsVerificationAssessmentDecision>;
 
   addRoleClaim(
-    claim: ScsPartyRoleClaim
-  ): Promise<ScsPartyRoleClaim>;
+    partyId: string,
+    request: ScsRoleClaimRequest
+  ): Promise<ScsRoleClaimDecision>;
 
   registerRelationship(
-    relationship: ScsSupplyChainRelationship
+    request: ScsRelationshipRegistrationRequest
   ): Promise<ScsRelationshipRegistrationDecision>;
 
   getRelationship(
@@ -657,7 +1053,7 @@ interface ScsPartyIdentityProvider {
   ): Promise<ScsSupplyChainRelationship[]>;
 
   registerMandate(
-    mandate: ScsRepresentationMandate
+    request: ScsMandateRegistrationRequest
   ): Promise<ScsMandateRegistrationDecision>;
 
   revokeMandate(
@@ -701,6 +1097,15 @@ interface ScsPartyRegistrationFailure {
     | "MANDATE_ACTION_NOT_ENUMERATED"
     | "GRANTING_PARTY_NOT_FOUND"
     | "REPRESENTATIVE_PARTY_NOT_FOUND"
+    | "FRAMEWORK_NOT_ACTIVE"
+    | "SCOPE_OUTSIDE_FRAMEWORK"
+    | "VALIDITY_PERIOD_INVALID"
+    | "OTHER_TYPE_REQUIRES_DESCRIPTION"
+    | "CONFLICTING_RECORD"
+    | "CLAIMING_PARTY_NOT_IN_RELATIONSHIP"
+    | "SELF_GRANTED_MANDATE"
+    | "RELATIONSHIP_NOT_FOUND"
+    | "VERIFIER_NOT_AUTHORISED"
     | "DEPENDENCY_UNAVAILABLE";
 
   reasons: string[];
