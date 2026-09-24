@@ -12,6 +12,7 @@ import type {
   ScsPartyRegistrationRequest,
   ScsRelationshipRegistrationRequest,
   ScsRoleClaimRequest,
+  ScsVerificationAssessmentRequest,
 } from "../../types/cap-02.js";
 import { CAPABILITY_ID } from "./errors.js";
 
@@ -537,4 +538,111 @@ export async function insertRoleClaim(tx: Tx, n: NewRoleClaim): Promise<Inserted
   );
   const row = rows[0]!;
   return { roleClaimId: row.role_claim_id, claimedAt: row.claimed_at.toISOString() };
+}
+
+// ── Verification assessment recording ────────────────────────────────────────
+
+/** The transaction's timestamp (now()): the instant recorded_at will hold, read from the database clock. */
+export async function transactionTime(tx: Tx): Promise<Date> {
+  const { rows } = await withDatabaseErrors(CAPABILITY_ID, () => tx.query<{ now: Date }>("SELECT now() AS now"));
+  return rows[0]!.now;
+}
+
+export interface PartyForVerification extends PartyForEvidence {
+  /** registeredBy.actorId: the party's registrant, who may not verify it. */
+  readonly registeredByActorId: string;
+}
+
+/** The party with its registrant, or null if no party has this id. */
+export async function findPartyForVerification(tx: Tx, partyId: string): Promise<PartyForVerification | null> {
+  const { rows } = await withDatabaseErrors(CAPABILITY_ID, () =>
+    tx.query<{ party_id: string; party_version: number; registration_status: string; registered_by_actor_id: string }>(
+      `SELECT party_id, party_version, registration_status, registered_by ->> 'actorId' AS registered_by_actor_id
+         FROM scs.party_identity WHERE party_id = $1::uuid`,
+      [partyId],
+    ),
+  );
+  const r = rows[0];
+  return r === undefined
+    ? null
+    : { partyId: r.party_id, partyVersion: r.party_version, registrationStatus: r.registration_status, registeredByActorId: r.registered_by_actor_id };
+}
+
+/** The assessment's party, or null if no assessment has this id. */
+export async function findAssessmentParty(tx: Tx, assessmentId: string): Promise<string | null> {
+  const { rows } = await withDatabaseErrors(CAPABILITY_ID, () =>
+    tx.query<{ party_id: string }>(`SELECT party_id FROM scs.party_verification_assessment WHERE assessment_id = $1`, [assessmentId]),
+  );
+  return rows[0]?.party_id ?? null;
+}
+
+/** Serialise supersessions of one assessment until the transaction ends. */
+export async function lockAssessmentSupersession(tx: Tx, assessmentId: string): Promise<void> {
+  const lockName = ["scs-cap-02-supersede", assessmentId].join("\u001f");
+  await withDatabaseErrors(CAPABILITY_ID, () => tx.query("SELECT pg_advisory_xact_lock(hashtextextended($1, 0))", [lockName]));
+}
+
+/** The assessment that already supersedes `assessmentId`, if any. */
+export async function findSupersedingAssessment(tx: Tx, assessmentId: string): Promise<string | null> {
+  const { rows } = await withDatabaseErrors(CAPABILITY_ID, () =>
+    tx.query<{ assessment_id: string }>(
+      `SELECT assessment_id FROM scs.party_verification_assessment WHERE supersedes_assessment_id = $1`,
+      [assessmentId],
+    ),
+  );
+  return rows[0]?.assessment_id ?? null;
+}
+
+export interface NewAssessment {
+  readonly party: PartyForEvidence;
+  readonly request: ScsVerificationAssessmentRequest;
+  readonly recordedBy: ActorReference;
+}
+
+export interface InsertedAssessment {
+  readonly assessmentId: string;
+  /** Transaction timestamp: recordedAt = decidedAt. */
+  readonly recordedAt: string;
+}
+
+/**
+ * Insert the ScsPartyVerificationAssessment row at the party's current
+ * version; every authorityBoundary flag true (column defaults, checked by the
+ * database). The database generates assessmentId. Nothing else is touched:
+ * not the party, not the superseded assessment.
+ */
+export async function insertAssessment(tx: Tx, n: NewAssessment): Promise<InsertedAssessment> {
+  const r = n.request;
+  const { rows } = await withDatabaseErrors(CAPABILITY_ID, () =>
+    tx.query<{ assessment_id: string; recorded_at: Date }>(
+      `INSERT INTO scs.party_verification_assessment (
+         party_id, party_version, verification_status,
+         scope_description, scope_jurisdiction_code, scope_verified_attributes, scope_excluded_from_verification,
+         verifying_authority_id, verifying_authority_name, verifying_authority_basis, verifying_authority_jurisdiction_code,
+         verified_at, expires_at, evidence_ids, limitations, recorded_by, recorded_at, supersedes_assessment_id
+       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, now(), $17)
+       RETURNING assessment_id, recorded_at`,
+      [
+        n.party.partyId,
+        n.party.partyVersion,
+        r.verificationStatus,
+        r.verificationScope.scopeDescription,
+        r.verificationScope.jurisdictionCode,
+        r.verificationScope.verifiedAttributes,
+        r.verificationScope.excludedFromVerification,
+        r.verifyingAuthority.authorityId,
+        r.verifyingAuthority.authorityName,
+        r.verifyingAuthority.authorityBasis,
+        r.verifyingAuthority.jurisdictionCode,
+        r.verifiedAt,
+        r.expiresAt ?? null,
+        r.evidenceIds,
+        r.limitations,
+        JSON.stringify(n.recordedBy),
+        r.supersedesAssessmentId ?? null,
+      ],
+    ),
+  );
+  const row = rows[0]!;
+  return { assessmentId: row.assessment_id, recordedAt: row.recorded_at.toISOString() };
 }

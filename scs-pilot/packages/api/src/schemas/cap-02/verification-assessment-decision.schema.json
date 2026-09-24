@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-02:verification-assessment-decision:1",
+  "title": "ScsVerificationAssessmentDecision",
+  "description": "SCS-CAP-02 ScsVerificationAssessmentDecision (contract e85c58a). RECORDED means the assessment is on record, scoped and attributed; it never changes the party's registrationStatus. An eligibility check is true only if it was actually performed and passed.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decisionId",
+    "assessmentId",
+    "partyId",
+    "partyVersion",
+    "decision",
+    "eligibilityChecks",
+    "decisionReasons",
+    "decidedBy",
+    "decidedAt"
+  ],
+  "properties": {
+    "decisionId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "assessmentId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "partyId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "partyVersion": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "decision": {
+      "type": "string",
+      "const": "RECORDED"
+    },
+    "eligibilityChecks": {
+      "title": "ScsVerificationEligibilityChecks",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "verifierAuthorised",
+        "statusRecordable",
+        "datesValid",
+        "jurisdictionsRecognised",
+        "partyExists",
+        "partyNotRetired",
+        "verifierIndependentOfRegistrant",
+        "evidenceLinkedToParty",
+        "supersessionValid"
+      ],
+      "properties": {
+        "verifierAuthorised": {
+          "type": "boolean"
+        },
+        "statusRecordable": {
+          "type": "boolean"
+        },
+        "datesValid": {
+          "type": "boolean"
+        },
+        "jurisdictionsRecognised": {
+          "type": "boolean"
+        },
+        "partyExists": {
+          "type": "boolean"
+        },
+        "partyNotRetired": {
+          "type": "boolean"
+        },
+        "verifierIndependentOfRegistrant": {
+          "type": "boolean"
+        },
+        "evidenceLinkedToParty": {
+          "type": "boolean"
+        },
+        "supersessionValid": {
+          "type": "boolean"
+        }
+      }
+    },
+    "decisionReasons": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1000,
+        "pattern": "\\S"
+      }
+    },
+    "decidedBy": {
+      "$ref": "urn:aab:scs:schema:shared:actor-reference:1"
+    },
+    "decidedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

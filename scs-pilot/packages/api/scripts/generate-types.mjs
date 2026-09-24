@@ -57,6 +57,11 @@ const TARGETS = [
       "cap-02/role-claim-decision.schema.json",
       "cap-02/role-claim-receipt.schema.json",
       "cap-02/role-claim-response.schema.json",
+      "cap-02/verification-assessment-params.schema.json",
+      "cap-02/verification-assessment-request.schema.json",
+      "cap-02/verification-assessment-decision.schema.json",
+      "cap-02/verification-assessment-receipt.schema.json",
+      "cap-02/verification-assessment-response.schema.json",
     ],
   },
 ];

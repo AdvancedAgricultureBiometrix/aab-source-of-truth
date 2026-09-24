@@ -1,6 +1,6 @@
 # SCS-CAP-02 — Operator and Supplier Identity Registration
 
-**Status: `registerParty` (`POST /scs/v1/parties`), `submitIdentityEvidence` (`POST /scs/v1/parties/:partyId/evidence`) `registerRelationship` (`POST /scs/v1/relationships`), `registerMandate` (`POST /scs/v1/mandates`) and `addRoleClaim` (`POST /scs/v1/parties/:partyId/roles`) are implemented. Verification assessments are not built yet.**
+**Status: `registerParty` (`POST /scs/v1/parties`), `submitIdentityEvidence` (`POST /scs/v1/parties/:partyId/evidence`) `registerRelationship` (`POST /scs/v1/relationships`), `registerMandate` (`POST /scs/v1/mandates`) `addRoleClaim` (`POST /scs/v1/parties/:partyId/roles`) and `addVerificationAssessment` (`POST /scs/v1/parties/:partyId/verifications`) are implemented: every CAP-02 registration path. The contract's reads (`getParty`, `getRelationship`, `list…`) and `revokeMandate` are not built yet.**
 
 ## registerParty
 
@@ -78,6 +78,23 @@
 - **Conflict:** a claim for the same party, role and framework, not `SUPERSEDED` or `EXPIRED`, with an overlapping validity period. The status exclusion follows the relationship (ACTIVE only) and mandate (NOT_REVOKED only) rules; the contract is silent on it and records it as a gap. An advisory lock serialises claims for the same party, role and framework.
 - **Database backstops** (migration 009): `framework_association_id` has a foreign key to `scs.regulatory_framework`, and there are checks for the `OTHER` description and non-empty scope.
 - **What is written:** the claim (`CLAIMED_UNVERIFIED`) and the receipt (`ROLE_CLAIM_REGISTRATION`), in one transaction.
+
+
+## addVerificationAssessment
+
+- **Rules:** the contract's (e85c58a), checked in this order:
+  1. `VERIFICATION_OFFICER` only (`VERIFIER_NOT_AUTHORISED`).
+  2. The status must be recordable: `PARTIALLY_VERIFIED`, `VERIFIED_FOR_DECLARED_SCOPE`, `DISPUTED` or `FAIL_CLOSED`. The two derived statuses get `VERIFICATION_STATUS_NOT_RECORDABLE`.
+  3. Dates (`VALIDITY_PERIOD_INVALID`): `verifiedAt` must not be in the future, and `expiresAt` must be strictly after `verifiedAt`.
+  4. Both `jurisdictionCode`s must be ISO 3166-1 alpha-2.
+  5. The party must exist and not be RETIRED.
+  6. The actor must not be the party's registrant (`VERIFIER_NOT_AUTHORISED`).
+  7. Every cited evidence id must be linked to the party's current version (`VERIFICATION_EVIDENCE_NOT_LINKED`).
+  8. Supersession: the named assessment must belong to the same party (`SUPERSEDED_ASSESSMENT_NOT_FOUND`) and not already be superseded (`CONFLICTING_RECORD`).
+- **"Not in the future"** is checked against the database's transaction time, the instant `recorded_at` holds. The database also checks `verified_at <= recorded_at`, so clock drift between the API and the database can't turn a valid request into a 500.
+- **Append-only** (migration 010): an assessment never changes the party's `registrationStatus` or any earlier assessment. Supersession is recorded on the newer assessment (`supersedes_assessment_id`). A composite foreign key keeps it within the same party, and a unique constraint means an assessment is superseded at most once.
+- **Current verification status** is not stored. It's derived when read (not built yet).
+- **Decision reasons** state that the verifying authority is recorded as declared (no registry exists), that independence from evidence submitters isn't checked (contract gap), and that evidence content can't be confirmed while the evidence store isn't built (`TODO(evidence-store)`).
 
 
 Canonical contract: [`governance/workstream-b/SCS-CAP-02-OPERATOR-AND-SUPPLIER-IDENTITY-REGISTRATION-CANONICAL-CONTRACT-2026-09-23.md`](../../../../../../governance/workstream-b/SCS-CAP-02-OPERATOR-AND-SUPPLIER-IDENTITY-REGISTRATION-CANONICAL-CONTRACT-2026-09-23.md)

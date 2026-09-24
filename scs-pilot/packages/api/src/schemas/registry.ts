@@ -33,6 +33,11 @@ import cap02RoleClaimRequest from "./cap-02/role-claim-request.schema.json" with
 import cap02RoleClaimDecision from "./cap-02/role-claim-decision.schema.json" with { type: "json" };
 import cap02RoleClaimReceipt from "./cap-02/role-claim-receipt.schema.json" with { type: "json" };
 import cap02RoleClaimResponse from "./cap-02/role-claim-response.schema.json" with { type: "json" };
+import cap02VerificationAssessmentParams from "./cap-02/verification-assessment-params.schema.json" with { type: "json" };
+import cap02VerificationAssessmentRequest from "./cap-02/verification-assessment-request.schema.json" with { type: "json" };
+import cap02VerificationAssessmentDecision from "./cap-02/verification-assessment-decision.schema.json" with { type: "json" };
+import cap02VerificationAssessmentReceipt from "./cap-02/verification-assessment-receipt.schema.json" with { type: "json" };
+import cap02VerificationAssessmentResponse from "./cap-02/verification-assessment-response.schema.json" with { type: "json" };
 
 import { registerSchema, type JsonSchema } from "../foundation/validation.js";
 
@@ -64,6 +69,11 @@ export const SCHEMAS = {
   cap02RoleClaimDecision,
   cap02RoleClaimReceipt,
   cap02RoleClaimResponse,
+  cap02VerificationAssessmentParams,
+  cap02VerificationAssessmentRequest,
+  cap02VerificationAssessmentDecision,
+  cap02VerificationAssessmentReceipt,
+  cap02VerificationAssessmentResponse,
 } as const satisfies Record<string, JsonSchema>;
 
 for (const schema of Object.values(SCHEMAS)) registerSchema(schema);
