@@ -192,7 +192,7 @@ interface ScsSufficiencyEvaluationRequest {
   };
 
   // Which dimensions to evaluate
-  requestedAnalysis: Array
+  requestedAnalysis: Array<
     | "TEMPORAL_COVERAGE"
     | "SPATIAL_COVERAGE"
     | "REQUIREMENT_BY_REQUIREMENT"
