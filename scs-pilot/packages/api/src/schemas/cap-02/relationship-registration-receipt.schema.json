@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-02:relationship-registration-receipt:1",
+  "title": "ScsRelationshipRegistrationReceipt",
+  "description": "Immutable receipt for an SCS-CAP-02 relationship registration decision, written in the same transaction as the decision (foundation/receipts.ts). Its SHA-256 over canonical JSON is returned alongside it as receiptDigest.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "receiptId",
+    "receiptVersion",
+    "capabilityId",
+    "decisionType",
+    "subjectId",
+    "correlationId",
+    "requestDigest",
+    "idempotencyKey",
+    "issuedAt",
+    "issuedFor",
+    "decision"
+  ],
+  "properties": {
+    "receiptId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "receiptVersion": {
+      "type": "string",
+      "const": "1"
+    },
+    "capabilityId": {
+      "type": "string",
+      "const": "SCS-CAP-02"
+    },
+    "decisionType": {
+      "type": "string",
+      "const": "RELATIONSHIP_REGISTRATION"
+    },
+    "subjectId": {
+      "description": "relationshipId of the registered relationship.",
+      "type": "string",
+      "format": "uuid"
+    },
+    "correlationId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._:-]{8,128}$"
+    },
+    "requestDigest": {
+      "description": "SHA-256 (hex) of the canonical request: method, route and body.",
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "idempotencyKey": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{8,128}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "issuedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "issuedFor": {
+      "description": "The authenticated actor whose request produced this decision.",
+      "$ref": "urn:aab:scs:schema:shared:actor-reference:1"
+    },
+    "decision": {
+      "$ref": "urn:aab:scs:schema:cap-02:relationship-registration-decision:1"
+    }
+  }
+}

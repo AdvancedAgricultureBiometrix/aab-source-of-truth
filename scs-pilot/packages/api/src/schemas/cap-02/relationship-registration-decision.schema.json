@@ -1,0 +1,105 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-02:relationship-registration-decision:1",
+  "title": "ScsRelationshipRegistrationDecision",
+  "description": "SCS-CAP-02 ScsRelationshipRegistrationDecision (contract 9a3e978). REGISTERED means a governed record of a claimed relationship exists; it verifies neither party nor any commodity movement. An eligibility check is true only if it was actually performed and passed.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decisionId",
+    "relationshipId",
+    "decision",
+    "eligibilityChecks",
+    "decisionReasons",
+    "decidedBy",
+    "decidedAt"
+  ],
+  "properties": {
+    "decisionId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "relationshipId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "decision": {
+      "type": "string",
+      "const": "REGISTERED"
+    },
+    "eligibilityChecks": {
+      "title": "ScsRelationshipEligibilityChecks",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "registrantAuthorised",
+        "fromPartyExists",
+        "toPartyExists",
+        "partiesNotRetired",
+        "notSelfReferential",
+        "claimingPartyIsAParty",
+        "otherTypeDescribed",
+        "frameworksExist",
+        "frameworksActive",
+        "scopeWithinFrameworks",
+        "validityPeriodValid",
+        "noConflictingRecord"
+      ],
+      "properties": {
+        "registrantAuthorised": {
+          "type": "boolean"
+        },
+        "fromPartyExists": {
+          "type": "boolean"
+        },
+        "toPartyExists": {
+          "type": "boolean"
+        },
+        "partiesNotRetired": {
+          "type": "boolean"
+        },
+        "notSelfReferential": {
+          "type": "boolean"
+        },
+        "claimingPartyIsAParty": {
+          "type": "boolean"
+        },
+        "otherTypeDescribed": {
+          "type": "boolean"
+        },
+        "frameworksExist": {
+          "type": "boolean"
+        },
+        "frameworksActive": {
+          "type": "boolean"
+        },
+        "scopeWithinFrameworks": {
+          "type": "boolean"
+        },
+        "validityPeriodValid": {
+          "type": "boolean"
+        },
+        "noConflictingRecord": {
+          "type": "boolean"
+        }
+      }
+    },
+    "decisionReasons": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1000,
+        "pattern": "\\S"
+      }
+    },
+    "decidedBy": {
+      "$ref": "urn:aab:scs:schema:shared:actor-reference:1"
+    },
+    "decidedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

@@ -6,7 +6,11 @@
 import type { Tx } from "../../foundation/db.js";
 import { withDatabaseErrors } from "../../foundation/db-errors.js";
 import type { ActorReference } from "../../types/shared.js";
-import type { ScsIdentityEvidenceSubmissionRequest, ScsPartyRegistrationRequest } from "../../types/cap-02.js";
+import type {
+  ScsIdentityEvidenceSubmissionRequest,
+  ScsPartyRegistrationRequest,
+  ScsRelationshipRegistrationRequest,
+} from "../../types/cap-02.js";
 import { CAPABILITY_ID } from "./errors.js";
 
 /**
@@ -199,4 +203,137 @@ export async function insertEvidenceSubmission(tx: Tx, s: NewEvidenceSubmission)
   );
 
   return { submissionId: row.submission_id, submittedAt: row.submitted_at.toISOString() };
+}
+
+// ── Shared lookups: parties and CAP-01 frameworks ─────────────────────────────
+
+/** Each of `partyIds` that is registered, keyed by partyId. */
+export async function findPartiesById(tx: Tx, partyIds: readonly string[]): Promise<Map<string, PartyForEvidence>> {
+  const { rows } = await withDatabaseErrors(CAPABILITY_ID, () =>
+    tx.query<{ party_id: string; party_version: number; registration_status: string }>(
+      `SELECT party_id, party_version, registration_status FROM scs.party_identity WHERE party_id = ANY($1::uuid[])`,
+      [partyIds],
+    ),
+  );
+  return new Map(rows.map((r) => [r.party_id, { partyId: r.party_id, partyVersion: r.party_version, registrationStatus: r.registration_status }]));
+}
+
+export interface FrameworkForAssociation {
+  readonly frameworkId: string;
+  readonly status: string;
+  readonly regulationVersion: string;
+  readonly commodityCode: string;
+  readonly countryOfOrigin: string;
+}
+
+/**
+ * Each of `frameworkIds` registered by SCS-CAP-01, keyed by frameworkId: the
+ * contract's GetFramework, read from CAP-01's table (scs_api may SELECT it).
+ */
+export async function findFrameworksById(tx: Tx, frameworkIds: readonly string[]): Promise<Map<string, FrameworkForAssociation>> {
+  const { rows } = await withDatabaseErrors(CAPABILITY_ID, () =>
+    tx.query<{ framework_id: string; status: string; regulation_version: string; commodity_code: string; country_of_origin: string }>(
+      `SELECT framework_id, status, regulation_version, commodity_code, country_of_origin
+         FROM scs.regulatory_framework WHERE framework_id = ANY($1::uuid[])`,
+      [frameworkIds],
+    ),
+  );
+  return new Map(
+    rows.map((r) => [
+      r.framework_id,
+      { frameworkId: r.framework_id, status: r.status, regulationVersion: r.regulation_version, commodityCode: r.commodity_code, countryOfOrigin: r.country_of_origin },
+    ]),
+  );
+}
+
+// ── Relationship registration ────────────────────────────────────────────────
+
+/** What decides whether two relationships can conflict (the rest is compared in findConflictingRelationship). */
+export interface RelationshipConflictKey {
+  readonly fromPartyId: string;
+  readonly toPartyId: string;
+  readonly relationshipType: string;
+}
+
+/** Serialise registrations of the same from, to and type until the transaction ends. */
+export async function lockRelationshipKey(tx: Tx, key: RelationshipConflictKey): Promise<void> {
+  const lockName = ["scs-cap-02-relationship", key.fromPartyId, key.toPartyId, key.relationshipType].join("\u001f");
+  await withDatabaseErrors(CAPABILITY_ID, () => tx.query("SELECT pg_advisory_xact_lock(hashtextextended($1, 0))", [lockName]));
+}
+
+/**
+ * An ACTIVE relationship with the same from, to and type that shares at least
+ * one framework and whose validity period overlaps [validFrom, validUntil), if
+ * any. A missing bound is open-ended; a period ending exactly when the other
+ * begins does not overlap.
+ */
+export async function findConflictingRelationship(
+  tx: Tx,
+  key: RelationshipConflictKey & { readonly frameworkAssociationIds: readonly string[]; readonly validFrom: string | null; readonly validUntil: string | null },
+): Promise<string | null> {
+  const { rows } = await withDatabaseErrors(CAPABILITY_ID, () =>
+    tx.query<{ relationship_id: string }>(
+      `SELECT relationship_id
+         FROM scs.supply_chain_relationship
+        WHERE from_party_id = $1 AND to_party_id = $2 AND relationship_type = $3
+          AND lifecycle_status = 'ACTIVE'
+          AND framework_association_ids && $4::uuid[]
+          AND tstzrange(valid_from, valid_until, '[)') && tstzrange($5::timestamptz, $6::timestamptz, '[)')
+        ORDER BY created_at
+        LIMIT 1`,
+      [key.fromPartyId, key.toPartyId, key.relationshipType, key.frameworkAssociationIds, key.validFrom, key.validUntil],
+    ),
+  );
+  return rows[0]?.relationship_id ?? null;
+}
+
+export interface NewRelationship {
+  readonly request: ScsRelationshipRegistrationRequest;
+  readonly schemaVersion: string;
+  readonly representationVersion: string;
+  readonly createdBy: ActorReference;
+}
+
+export interface InsertedRelationship {
+  readonly relationshipId: string;
+  /** Transaction timestamp: claimedAt = createdAt = decidedAt. */
+  readonly createdAt: string;
+}
+
+/**
+ * Insert the ScsSupplyChainRelationship row: CLAIMED_UNVERIFIED, ACTIVE, no
+ * supersession, no verification scope. The database generates relationshipId.
+ */
+export async function insertRelationship(tx: Tx, n: NewRelationship): Promise<InsertedRelationship> {
+  const r = n.request;
+  const { rows } = await withDatabaseErrors(CAPABILITY_ID, () =>
+    tx.query<{ relationship_id: string; created_at: Date }>(
+      `INSERT INTO scs.supply_chain_relationship (
+         schema_version, from_party_id, to_party_id, relationship_type, other_relationship_type_description,
+         commodity_scope, geographic_scope, framework_association_ids, valid_from, valid_until,
+         claimed_by_party_id, claimed_at, relationship_evidence_ids,
+         verification_status, lifecycle_status, representation_version, created_by
+       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, now(), $12,
+                 'CLAIMED_UNVERIFIED', 'ACTIVE', $13, $14)
+       RETURNING relationship_id, created_at`,
+      [
+        n.schemaVersion,
+        r.fromPartyId,
+        r.toPartyId,
+        r.relationshipType,
+        r.otherRelationshipTypeDescription ?? null,
+        r.commodityScope,
+        r.geographicScope,
+        r.frameworkAssociationIds,
+        r.validFrom ?? null,
+        r.validUntil ?? null,
+        r.claimedByPartyId,
+        r.relationshipEvidenceIds,
+        n.representationVersion,
+        JSON.stringify(n.createdBy),
+      ],
+    ),
+  );
+  const row = rows[0]!;
+  return { relationshipId: row.relationship_id, createdAt: row.created_at.toISOString() };
 }

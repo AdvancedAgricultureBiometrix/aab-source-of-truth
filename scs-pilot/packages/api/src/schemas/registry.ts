@@ -20,6 +20,10 @@ import cap02IdentityEvidenceSubmissionRequest from "./cap-02/identity-evidence-s
 import cap02IdentityEvidenceSubmissionDecision from "./cap-02/identity-evidence-submission-decision.schema.json" with { type: "json" };
 import cap02IdentityEvidenceSubmissionReceipt from "./cap-02/identity-evidence-submission-receipt.schema.json" with { type: "json" };
 import cap02IdentityEvidenceSubmissionResponse from "./cap-02/identity-evidence-submission-response.schema.json" with { type: "json" };
+import cap02RelationshipRegistrationRequest from "./cap-02/relationship-registration-request.schema.json" with { type: "json" };
+import cap02RelationshipRegistrationDecision from "./cap-02/relationship-registration-decision.schema.json" with { type: "json" };
+import cap02RelationshipRegistrationReceipt from "./cap-02/relationship-registration-receipt.schema.json" with { type: "json" };
+import cap02RelationshipRegistrationResponse from "./cap-02/relationship-registration-response.schema.json" with { type: "json" };
 
 import { registerSchema, type JsonSchema } from "../foundation/validation.js";
 
@@ -38,6 +42,10 @@ export const SCHEMAS = {
   cap02IdentityEvidenceSubmissionDecision,
   cap02IdentityEvidenceSubmissionReceipt,
   cap02IdentityEvidenceSubmissionResponse,
+  cap02RelationshipRegistrationRequest,
+  cap02RelationshipRegistrationDecision,
+  cap02RelationshipRegistrationReceipt,
+  cap02RelationshipRegistrationResponse,
 } as const satisfies Record<string, JsonSchema>;
 
 for (const schema of Object.values(SCHEMAS)) registerSchema(schema);

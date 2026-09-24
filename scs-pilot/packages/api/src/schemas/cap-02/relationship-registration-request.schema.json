@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-02:relationship-registration-request:1",
+  "title": "ScsRelationshipRegistrationRequest",
+  "description": "SCS-CAP-02 ScsRelationshipRegistrationRequest (contract 9a3e978). Not in the request, because the system sets them: relationshipId, schemaVersion, claimedAt, verificationStatus (CLAIMED_UNVERIFIED), lifecycleStatus (ACTIVE), representationVersion (\"1\" until the contract defines it), createdAt and createdBy. A registration never supersedes another relationship. Rules that span fields (OTHER description, validity period, claiming party, framework scope) are checked by the capability so that the contract's failure codes are returned.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "fromPartyId",
+    "toPartyId",
+    "relationshipType",
+    "commodityScope",
+    "geographicScope",
+    "frameworkAssociationIds",
+    "claimedByPartyId",
+    "relationshipEvidenceIds"
+  ],
+  "properties": {
+    "fromPartyId": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "toPartyId": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "relationshipType": {
+      "type": "string",
+      "enum": [
+        "SUPPLIES_TO",
+        "PROCESSES_FOR",
+        "AGGREGATES_FOR",
+        "EXPORTS_FOR",
+        "CERTIFIES_FOR",
+        "OTHER"
+      ]
+    },
+    "otherRelationshipTypeDescription": {
+      "description": "Required exactly when relationshipType is OTHER.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000,
+      "pattern": "\\S"
+    },
+    "commodityScope": {
+      "description": "Each value must equal the scope.commodityCode of a referenced framework.",
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 50,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 64,
+        "pattern": "\\S"
+      }
+    },
+    "geographicScope": {
+      "description": "Each value must equal the scope.countryOfOrigin of a referenced framework.",
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 50,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 64,
+        "pattern": "\\S"
+      }
+    },
+    "frameworkAssociationIds": {
+      "description": "CAP-01 frameworkIds; at least one, each ACTIVE.",
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 50,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "format": "uuid",
+        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+      }
+    },
+    "validFrom": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "validUntil": {
+      "description": "When given with validFrom, must be after it.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "claimedByPartyId": {
+      "description": "One of the two parties: fromPartyId or toPartyId.",
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "relationshipEvidenceIds": {
+      "type": "array",
+      "maxItems": 200,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "format": "uuid",
+        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+      }
+    }
+  }
+}

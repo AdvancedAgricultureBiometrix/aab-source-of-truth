@@ -19,6 +19,13 @@
 //   { "actors": [ { "tokenSha256": "<64 hex>", "actor": { …ActorReference… } } ] }
 // Hash a token with:
 //   node -e "console.log(require('crypto').createHash('sha256').update(process.argv[1]).digest('hex'))" "<token>"
+//
+// Roles: an actor's roles are strings matching the ActorReference pattern;
+// there is no central list. Each capability names the roles it accepts as its
+// own constant (e.g. REGISTRANT_ROLE = "COMPLIANCE_OFFICER" in CAP-02).
+// TODO(role-registry): once the platform has more than a handful of roles
+// (VERIFICATION_OFFICER is next), keep one registry of recognised roles and
+// refuse an actors file that names an unknown one.
 
 import { createHash, timingSafeEqual } from "node:crypto";
 import { readFile } from "node:fs/promises";

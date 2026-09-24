@@ -44,6 +44,10 @@ const TARGETS = [
       "cap-02/identity-evidence-submission-decision.schema.json",
       "cap-02/identity-evidence-submission-receipt.schema.json",
       "cap-02/identity-evidence-submission-response.schema.json",
+      "cap-02/relationship-registration-request.schema.json",
+      "cap-02/relationship-registration-decision.schema.json",
+      "cap-02/relationship-registration-receipt.schema.json",
+      "cap-02/relationship-registration-response.schema.json",
     ],
   },
 ];

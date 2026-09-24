@@ -11,6 +11,10 @@
  *   src/schemas/cap-02/identity-evidence-submission-decision.schema.json
  *   src/schemas/cap-02/identity-evidence-submission-receipt.schema.json
  *   src/schemas/cap-02/identity-evidence-submission-response.schema.json
+ *   src/schemas/cap-02/relationship-registration-request.schema.json
+ *   src/schemas/cap-02/relationship-registration-decision.schema.json
+ *   src/schemas/cap-02/relationship-registration-receipt.schema.json
+ *   src/schemas/cap-02/relationship-registration-response.schema.json
  * To change these types, edit the schema(s) above, then run:
  *   npm run generate:types
  * npm test fails if this file differs from what the schemas generate.
@@ -205,5 +209,117 @@ export interface ScsIdentityEvidenceSubmissionReceipt {
 export interface ScsIdentityEvidenceSubmissionResponse {
   decision: ScsIdentityEvidenceSubmissionDecision;
   receipt: ScsIdentityEvidenceSubmissionReceipt;
+  receiptDigest: string;
+}
+
+/**
+ * SCS-CAP-02 ScsRelationshipRegistrationRequest (contract 9a3e978). Not in the request, because the system sets them: relationshipId, schemaVersion, claimedAt, verificationStatus (CLAIMED_UNVERIFIED), lifecycleStatus (ACTIVE), representationVersion ("1" until the contract defines it), createdAt and createdBy. A registration never supersedes another relationship. Rules that span fields (OTHER description, validity period, claiming party, framework scope) are checked by the capability so that the contract's failure codes are returned.
+ */
+export interface ScsRelationshipRegistrationRequest {
+  fromPartyId: string;
+  toPartyId: string;
+  relationshipType: "SUPPLIES_TO" | "PROCESSES_FOR" | "AGGREGATES_FOR" | "EXPORTS_FOR" | "CERTIFIES_FOR" | "OTHER";
+  /**
+   * Required exactly when relationshipType is OTHER.
+   */
+  otherRelationshipTypeDescription?: string;
+  /**
+   * Each value must equal the scope.commodityCode of a referenced framework.
+   *
+   * @minItems 1
+   * @maxItems 50
+   */
+  commodityScope: string[];
+  /**
+   * Each value must equal the scope.countryOfOrigin of a referenced framework.
+   *
+   * @minItems 1
+   * @maxItems 50
+   */
+  geographicScope: string[];
+  /**
+   * CAP-01 frameworkIds; at least one, each ACTIVE.
+   *
+   * @minItems 1
+   * @maxItems 50
+   */
+  frameworkAssociationIds: string[];
+  validFrom?: string;
+  /**
+   * When given with validFrom, must be after it.
+   */
+  validUntil?: string;
+  /**
+   * One of the two parties: fromPartyId or toPartyId.
+   */
+  claimedByPartyId: string;
+  /**
+   * @maxItems 200
+   */
+  relationshipEvidenceIds: string[];
+}
+
+/**
+ * SCS-CAP-02 ScsRelationshipRegistrationDecision (contract 9a3e978). REGISTERED means a governed record of a claimed relationship exists; it verifies neither party nor any commodity movement. An eligibility check is true only if it was actually performed and passed.
+ */
+export interface ScsRelationshipRegistrationDecision {
+  decisionId: string;
+  relationshipId: string;
+  decision: "REGISTERED";
+  eligibilityChecks: ScsRelationshipEligibilityChecks;
+  /**
+   * @maxItems 200
+   */
+  decisionReasons: string[];
+  decidedBy: ActorReference;
+  decidedAt: string;
+}
+export interface ScsRelationshipEligibilityChecks {
+  registrantAuthorised: boolean;
+  fromPartyExists: boolean;
+  toPartyExists: boolean;
+  partiesNotRetired: boolean;
+  notSelfReferential: boolean;
+  claimingPartyIsAParty: boolean;
+  otherTypeDescribed: boolean;
+  frameworksExist: boolean;
+  frameworksActive: boolean;
+  scopeWithinFrameworks: boolean;
+  validityPeriodValid: boolean;
+  noConflictingRecord: boolean;
+}
+
+/**
+ * Immutable receipt for an SCS-CAP-02 relationship registration decision, written in the same transaction as the decision (foundation/receipts.ts). Its SHA-256 over canonical JSON is returned alongside it as receiptDigest.
+ */
+export interface ScsRelationshipRegistrationReceipt {
+  receiptId: string;
+  receiptVersion: "1";
+  capabilityId: "SCS-CAP-02";
+  decisionType: "RELATIONSHIP_REGISTRATION";
+  /**
+   * relationshipId of the registered relationship.
+   */
+  subjectId: string;
+  correlationId: string;
+  /**
+   * SHA-256 (hex) of the canonical request: method, route and body.
+   */
+  requestDigest: string;
+  idempotencyKey: string | null;
+  issuedAt: string;
+  /**
+   * The authenticated actor whose request produced this decision.
+   */
+  issuedFor: ActorReference;
+  decision: ScsRelationshipRegistrationDecision;
+}
+
+/**
+ * Body of a successful POST /scs/v1/relationships (201): the registration decision, the immutable receipt that records it, and the receipt's SHA-256 over canonical JSON.
+ */
+export interface ScsRelationshipRegistrationResponse {
+  decision: ScsRelationshipRegistrationDecision;
+  receipt: ScsRelationshipRegistrationReceipt;
   receiptDigest: string;
 }
