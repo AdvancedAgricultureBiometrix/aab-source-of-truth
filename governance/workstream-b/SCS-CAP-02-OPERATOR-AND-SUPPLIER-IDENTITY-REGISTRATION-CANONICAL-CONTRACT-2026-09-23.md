@@ -324,6 +324,11 @@ interface ScsRepresentationMandate {
     | "OTHER_EXPLICITLY_NAMED"
   >;
 
+  // Present only when permittedActions includes OTHER_EXPLICITLY_NAMED.
+  // Names the specific action permitted. Required if OTHER_EXPLICITLY_NAMED
+  // is used; ignored otherwise.
+  otherActionDescription?: string;
+
   // Scope — explicit and version-bound
   frameworkAssociationIds: string[];
   commodityScope: string[];
@@ -362,6 +367,11 @@ interface ScsRepresentationMandate {
   };
 }
 ```
+
+When `OTHER_EXPLICITLY_NAMED` is included in `permittedActions`,
+`otherActionDescription` must name the specific action explicitly. A mandate
+that includes `OTHER_EXPLICITLY_NAMED` without a description is incomplete
+and must be rejected.
 
 ## Registration and relationship sequence
 
