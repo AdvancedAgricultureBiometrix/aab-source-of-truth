@@ -6,6 +6,11 @@
  *   src/schemas/cap-02/party-registration-decision.schema.json
  *   src/schemas/cap-02/party-registration-receipt.schema.json
  *   src/schemas/cap-02/party-registration-response.schema.json
+ *   src/schemas/cap-02/identity-evidence-submission-params.schema.json
+ *   src/schemas/cap-02/identity-evidence-submission-request.schema.json
+ *   src/schemas/cap-02/identity-evidence-submission-decision.schema.json
+ *   src/schemas/cap-02/identity-evidence-submission-receipt.schema.json
+ *   src/schemas/cap-02/identity-evidence-submission-response.schema.json
  * To change these types, edit the schema(s) above, then run:
  *   npm run generate:types
  * npm test fails if this file differs from what the schemas generate.
@@ -36,7 +41,7 @@ export interface ScsPartyRegistrationRequest {
   submittingOrganizationId?: string;
 }
 /**
- * What documents support this identity (ScsPartyIdentity.identityEvidence). Evidence ids are recorded, not verified.
+ * What documents support this identity (ScsPartyIdentity.identityEvidence). Evidence ids are recorded, not verified. Evidence ids are lowercase canonical UUIDs, so a duplicate within one request is always caught here.
  */
 export interface ScsPartyIdentityEvidenceInput {
   /**
@@ -113,5 +118,92 @@ export interface ScsPartyRegistrationReceipt {
 export interface ScsPartyRegistrationResponse {
   decision: ScsPartyRegistrationDecision;
   receipt: ScsPartyRegistrationReceipt;
+  receiptDigest: string;
+}
+
+/**
+ * Path parameters of POST /scs/v1/parties/:partyId/evidence.
+ */
+export interface ScsIdentityEvidenceSubmissionPathParams {
+  partyId: string;
+}
+
+/**
+ * SCS-CAP-02 ScsIdentityEvidenceSubmissionRequest: evidence submitted for an already registered party. partyId is taken from the request path. Not in the request, because the system sets them: submissionId (database-generated), partyVersion (the party's current version), submittedBy (the authenticated actor) and submittedAt. Evidence ids are lowercase canonical UUIDs, so a duplicate within one request is always caught here.
+ */
+export interface ScsIdentityEvidenceSubmissionRequest {
+  /**
+   * One to 200 identifiers, no duplicates.
+   *
+   * @minItems 1
+   * @maxItems 200
+   */
+  evidenceIds: string[];
+  /**
+   * @maxItems 200
+   */
+  evidenceLimitations: string[];
+  /**
+   * Optional; an identifier issued outside SCS.
+   */
+  submittingOrganizationId?: string;
+}
+
+/**
+ * SCS-CAP-02 ScsIdentityEvidenceSubmissionDecision, as defined in the canonical contract. RECORDED means the evidence was admitted, not verified. An eligibility check is true only if it was actually performed and passed.
+ */
+export interface ScsIdentityEvidenceSubmissionDecision {
+  decisionId: string;
+  submissionId: string;
+  partyId: string;
+  partyVersion: number;
+  decision: "RECORDED";
+  eligibilityChecks: ScsIdentityEvidenceEligibilityChecks;
+  /**
+   * @maxItems 200
+   */
+  decisionReasons: string[];
+  decidedBy: ActorReference;
+  decidedAt: string;
+}
+export interface ScsIdentityEvidenceEligibilityChecks {
+  partyExists: boolean;
+  partyNotRetired: boolean;
+  submitterAuthorised: boolean;
+  evidenceIdsNotAlreadyLinked: boolean;
+}
+
+/**
+ * Immutable receipt for an SCS-CAP-02 identity evidence submission decision, written in the same transaction as the decision (foundation/receipts.ts). Its SHA-256 over canonical JSON is returned alongside it as receiptDigest.
+ */
+export interface ScsIdentityEvidenceSubmissionReceipt {
+  receiptId: string;
+  receiptVersion: "1";
+  capabilityId: "SCS-CAP-02";
+  decisionType: "IDENTITY_EVIDENCE_SUBMISSION";
+  /**
+   * submissionId of the recorded submission.
+   */
+  subjectId: string;
+  correlationId: string;
+  /**
+   * SHA-256 (hex) of the canonical request: method, concrete path (partyId included) and body.
+   */
+  requestDigest: string;
+  idempotencyKey: string | null;
+  issuedAt: string;
+  /**
+   * The authenticated actor whose request produced this decision.
+   */
+  issuedFor: ActorReference;
+  decision: ScsIdentityEvidenceSubmissionDecision;
+}
+
+/**
+ * Body of a successful POST /scs/v1/parties/:partyId/evidence (201): the submission decision, the immutable receipt that records it, and the receipt's SHA-256 over canonical JSON.
+ */
+export interface ScsIdentityEvidenceSubmissionResponse {
+  decision: ScsIdentityEvidenceSubmissionDecision;
+  receipt: ScsIdentityEvidenceSubmissionReceipt;
   receiptDigest: string;
 }

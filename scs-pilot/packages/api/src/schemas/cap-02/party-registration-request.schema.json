@@ -36,7 +36,7 @@
     },
     "identityEvidence": {
       "title": "ScsPartyIdentityEvidenceInput",
-      "description": "What documents support this identity (ScsPartyIdentity.identityEvidence). Evidence ids are recorded, not verified.",
+      "description": "What documents support this identity (ScsPartyIdentity.identityEvidence). Evidence ids are recorded, not verified. Evidence ids are lowercase canonical UUIDs, so a duplicate within one request is always caught here.",
       "type": "object",
       "additionalProperties": false,
       "required": [
@@ -50,7 +50,8 @@
           "uniqueItems": true,
           "items": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
           }
         },
         "evidenceLimitations": {

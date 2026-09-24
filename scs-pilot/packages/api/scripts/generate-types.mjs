@@ -39,6 +39,11 @@ const TARGETS = [
       "cap-02/party-registration-decision.schema.json",
       "cap-02/party-registration-receipt.schema.json",
       "cap-02/party-registration-response.schema.json",
+      "cap-02/identity-evidence-submission-params.schema.json",
+      "cap-02/identity-evidence-submission-request.schema.json",
+      "cap-02/identity-evidence-submission-decision.schema.json",
+      "cap-02/identity-evidence-submission-receipt.schema.json",
+      "cap-02/identity-evidence-submission-response.schema.json",
     ],
   },
 ];

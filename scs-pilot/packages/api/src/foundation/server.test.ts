@@ -31,6 +31,17 @@ const echoSchema: JsonSchema = {
   properties: { n: { type: "integer" } },
 };
 
+const thingParamsSchema: JsonSchema = {
+  $id: "urn:aab:scs:schema:test:server-thing-params:1",
+  type: "object",
+  additionalProperties: false,
+  required: ["thingId"],
+  properties: { thingId: { type: "string", format: "uuid" } },
+};
+
+const THING_A = "3f2b8c1e-9d4a-4e6b-8a1c-2d3e4f5a6b7c";
+const THING_B = "7c6b5a4f-3e2d-4c1b-8a9d-e1c8b2f3a4d5";
+
 /** In-memory stand-in: every query succeeds and returns no rows (no idempotency record found). */
 const fakeDb: Database = {
   roleFacts: {} as RoleFacts,
@@ -42,6 +53,11 @@ const routes: Route<never>[] = [
   {
     method: "POST", path: "/echo", capabilityId: "SCS-CAP-01", auth: "required", transactional: true, idempotency: "required", requestSchema: echoSchema,
     handle: async (ctx) => ({ status: 201, body: { got: ctx.body, actor: ctx.actor?.actorId, digest: ctx.requestDigest } }),
+  },
+  {
+    method: "POST", path: "/things/:thingId/notes", capabilityId: "SCS-CAP-02", auth: "required", transactional: true, idempotency: "required",
+    requestSchema: echoSchema, paramsSchema: thingParamsSchema,
+    handle: async (ctx) => ({ status: 201, body: { params: ctx.params, got: ctx.body, digest: ctx.requestDigest } }),
   },
   { method: "GET", path: "/public", capabilityId: "SCS-CAP-01", auth: "none", transactional: false, idempotency: "none", handle: async () => ({ status: 200, body: { ok: true } }) },
   {
@@ -184,6 +200,50 @@ test("a handler that returns a non-2xx result is treated as a defect: 500", asyn
   assert.equal(r.json!["error"], "INTERNAL_ERROR");
 });
 
+test("path parameters: matched, URL-decoded, validated and passed to the handler", async () => {
+  const r = await call("POST", `/things/${THING_A}/notes`, { headers: authed, body: '{"n":1}' });
+  assert.equal(r.status, 201);
+  assert.deepEqual(r.json!["params"], { thingId: THING_A });
+  const encoded = await call("POST", `/things/${encodeURIComponent(THING_B)}/notes`, { headers: authed, body: '{"n":1}' });
+  assert.deepEqual(encoded.json!["params"], { thingId: THING_B });
+});
+
+test("an invalid path parameter: 400 REQUEST_VALIDATION_FAILED naming the path, attributed to the route's capability", async () => {
+  const r = await call("POST", "/things/not-a-uuid/notes", { headers: authed, body: '{"n":1}' });
+  assert.equal(r.status, 400);
+  assert.equal(r.json!["error"], "REQUEST_VALIDATION_FAILED");
+  assert.equal(r.json!["capabilityId"], "SCS-CAP-02");
+  assert.deepEqual(r.json!["reasons"], ['path /thingId: must match format "uuid"']);
+});
+
+test("path parameters are checked after authentication", async () => {
+  const r = await call("POST", "/things/not-a-uuid/notes", { headers: { "content-type": "application/json" }, body: '{"n":1}' });
+  assert.equal(r.status, 401);
+});
+
+test("a parameterised path matches only whole, non-empty segments; other methods are 405", async () => {
+  for (const path of ["/things//notes", `/things/${THING_A}`, `/things/${THING_A}/notes/extra`, `/things/${THING_A}/other`]) {
+    assert.equal((await call("POST", path, { headers: authed, body: '{"n":1}' })).status, 404, path);
+  }
+  const wrong = await call("GET", `/things/${THING_A}/notes`);
+  assert.equal(wrong.status, 405);
+  assert.equal(wrong.headers.get("allow"), "POST");
+});
+
+test("the request digest covers the concrete path: same body, different parameter → different digest", async () => {
+  const a = await call("POST", `/things/${THING_A}/notes`, { headers: authed, body: '{"n":1}' });
+  const a2 = await call("POST", `/things/${THING_A}/notes`, { headers: authed, body: '{"n":1}' });
+  const b = await call("POST", `/things/${THING_B}/notes`, { headers: authed, body: '{"n":1}' });
+  assert.equal(a.json!["digest"], a2.json!["digest"]);
+  assert.notEqual(a.json!["digest"], b.json!["digest"]);
+});
+
+test("a route without parameters keeps its digest: the fingerprint of the template itself", async () => {
+  const { requestFingerprint } = await import("./idempotency.js");
+  const r = await call("POST", "/echo", { headers: authed, body: '{"n":7}' });
+  assert.equal(r.json!["digest"], requestFingerprint("POST", "/echo", { n: 7 }));
+});
+
 test("route tables that bypass the rules are refused at construction", () => {
   const post = { method: "POST", path: "/x", capabilityId: "SCS-CAP-01", auth: "required", transactional: true, idempotency: "required", requestSchema: echoSchema, handle: async () => ({ status: 200, body: {} }) } as const;
   const refused = (route: object, db: Database | null, pattern: RegExp) =>
@@ -195,4 +255,15 @@ test("route tables that bypass the rules are refused at construction", () => {
   refused(post, null, /no database/);
   refused({ ...post, method: "GET", transactional: false }, fakeDb, /idempotency requires a transactional route/);
   assert.throws(() => createApiServer({ routes: [routes[1]!, routes[1]!], authenticator, db: fakeDb }), /duplicate route/);
+  refused({ ...post, path: "/x/:id" }, fakeDb, /must declare a paramsSchema/);
+  refused({ ...post, paramsSchema: thingParamsSchema }, fakeDb, /paramsSchema declared but the path has no parameters/);
+  refused({ ...post, path: "/x/a:id", paramsSchema: thingParamsSchema }, fakeDb, /must be a whole segment/);
+  refused({ ...post, path: "/x/:id/:id", paramsSchema: thingParamsSchema }, fakeDb, /duplicate path parameter name/);
+  assert.throws(
+    () => createApiServer({
+      routes: [{ ...post, path: "/x/:a/y", paramsSchema: thingParamsSchema }, { ...post, path: "/x/:b/y", paramsSchema: thingParamsSchema }] as unknown as Route<never>[],
+      authenticator, db: fakeDb,
+    }),
+    /parameterised paths overlap/,
+  );
 });

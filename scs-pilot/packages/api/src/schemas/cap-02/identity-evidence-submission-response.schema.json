@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-02:identity-evidence-submission-response:1",
+  "title": "ScsIdentityEvidenceSubmissionResponse",
+  "description": "Body of a successful POST /scs/v1/parties/:partyId/evidence (201): the submission decision, the immutable receipt that records it, and the receipt's SHA-256 over canonical JSON.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decision",
+    "receipt",
+    "receiptDigest"
+  ],
+  "properties": {
+    "decision": {
+      "$ref": "urn:aab:scs:schema:cap-02:identity-evidence-submission-decision:1"
+    },
+    "receipt": {
+      "$ref": "urn:aab:scs:schema:cap-02:identity-evidence-submission-receipt:1"
+    },
+    "receiptDigest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

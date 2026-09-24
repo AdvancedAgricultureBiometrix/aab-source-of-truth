@@ -359,6 +359,25 @@ test("invalid partyType → 400 from the validation layer, nothing written", asy
   assert.equal((await writes(body.partyName)).parties, 0);
 });
 
+test("evidence ids must be lowercase: an upper-case id, or the same id in two cases, → 400, nothing written", async () => {
+  const id = randomUUID();
+  for (const evidenceIds of [[id.toUpperCase()], [id, id.toUpperCase()]]) {
+    const body = request({ identityEvidence: { evidenceIds, evidenceLimitations: [] } });
+    const r = await post(body);
+    assert.equal(r.status, 400, JSON.stringify(evidenceIds));
+    assert.equal(r.json["error"], "REQUEST_VALIDATION_FAILED");
+    assert.ok((r.json["reasons"] as string[]).some((x) => /^\/identityEvidence\/evidenceIds\/\d+: must match pattern/.test(x)));
+    assert.equal((await writes(body.partyName)).parties, 0);
+  }
+});
+
+test("duplicate evidence id within the request → 400 from schema validation", async () => {
+  const id = randomUUID();
+  const r = await post(request({ identityEvidence: { evidenceIds: [id, id], evidenceLimitations: [] } }));
+  assert.equal(r.status, 400);
+  assert.ok((r.json["reasons"] as string[]).some((x) => x.startsWith("/identityEvidence/evidenceIds: must NOT have duplicate items")));
+});
+
 // ── Idempotency ──────────────────────────────────────────────────────────────
 
 test("duplicate idempotency key, same content → the same 201 response, no second write", async () => {

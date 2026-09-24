@@ -9,8 +9,13 @@
 //   1. correlation id: inbound X-Correlation-Id if valid, else a fresh UUID
 //      (correlation.ts); echoed on every response and in every log line
 //   2. route match: unknown path → 404 ROUTE_NOT_FOUND; known path, other
-//      method → 405 METHOD_NOT_ALLOWED with an Allow header
+//      method → 405 METHOD_NOT_ALLOWED with an Allow header. A path segment
+//      ":name" is a path parameter matching one non-empty segment; literal
+//      paths are matched before parameterised ones
 //   3. authentication, if the route requires it → 401 UNAUTHENTICATED
+//   3a. path parameters: validated against route.paramsSchema (mandatory for
+//      a route with parameters) → 400 REQUEST_VALIDATION_FAILED, reasons
+//      prefixed "path"
 //   4. body (POST): Content-Type must be application/json → 415; at most
 //      MAX_BODY_BYTES → 413; must parse as JSON → 400 MALFORMED_JSON
 //   5. schema validation (route.requestSchema) → 400 REQUEST_VALIDATION_FAILED
@@ -37,7 +42,7 @@ import { authenticateRequest, type ActorReference, type Authenticator } from "./
 import { canonicalJson } from "./canonical.js";
 import { CORRELATION_HEADER, log, resolveCorrelationId, runWithCorrelation } from "./correlation.js";
 import type { Database, Tx } from "./db.js";
-import { asScsFailure, platformFailure, ScsFailure, toEnvelope, type CapabilityId } from "./errors.js";
+import { asScsFailure, capabilityPlatformFailure, platformFailure, ScsFailure, toEnvelope, type CapabilityId } from "./errors.js";
 import { readIdempotencyKey, requestFingerprint, runIdempotent, type OperationResult } from "./idempotency.js";
 import { validate, type JsonSchema } from "./validation.js";
 
@@ -54,7 +59,15 @@ export interface RouteContext<TBody> {
   /** The open transaction, on transactional routes; null otherwise. */
   readonly tx: Tx | null;
   readonly idempotencyKey: string | null;
-  /** SHA-256 of the canonical {method, route, body}; recorded on receipts. */
+  /** Validated path parameters, e.g. { partyId } for /scs/v1/parties/:partyId/evidence; {} if none. */
+  readonly params: Readonly<Record<string, string>>;
+  /**
+   * SHA-256 of the canonical {method, route, body}, where route is the
+   * concrete path: the route template with its parameters filled in. So the
+   * same key and body sent to another party is a different request (an
+   * idempotency conflict, never a replay of the other party's response). For
+   * a route without parameters it is the template itself. Recorded on receipts.
+   */
   readonly requestDigest: string;
 }
 
@@ -69,6 +82,8 @@ export interface Route<TBody = unknown> {
   /** Idempotency-Key header. Mandatory ("required") on every POST route. */
   readonly idempotency: "required" | "none";
   readonly requestSchema?: JsonSchema;
+  /** Schema for the path parameters, as an object keyed by name. Required exactly when the path has parameters. */
+  readonly paramsSchema?: JsonSchema;
   handle(ctx: RouteContext<TBody>): Promise<OperationResult>;
 }
 
@@ -76,6 +91,51 @@ export interface ServerDeps {
   readonly routes: readonly Route<never>[];
   readonly authenticator: Authenticator;
   readonly db: Database | null;
+}
+
+const PARAM_SEGMENT = /^:([A-Za-z][A-Za-z0-9]*)$/;
+
+/** A route template split into segments: a string is literal, { param } a path parameter. */
+type Segment = string | { readonly param: string };
+
+function parseTemplate(path: string): Segment[] {
+  return path.split("/").slice(1).map((seg) => {
+    const m = PARAM_SEGMENT.exec(seg);
+    return m ? { param: m[1]! } : seg;
+  });
+}
+
+const paramNames = (segments: readonly Segment[]) => segments.flatMap((s) => (typeof s === "string" ? [] : [s.param]));
+
+/** The parameters of `path` if it matches the template, else null. Segments are URL-decoded. */
+function matchTemplate(segments: readonly Segment[], path: string): Record<string, string> | null {
+  const parts = path.split("/").slice(1);
+  if (parts.length !== segments.length) return null;
+  const params: Record<string, string> = {};
+  for (let i = 0; i < parts.length; i++) {
+    const seg = segments[i]!;
+    if (typeof seg === "string") {
+      if (parts[i] !== seg) return null;
+      continue;
+    }
+    if (parts[i] === "") return null;
+    try {
+      params[seg.param] = decodeURIComponent(parts[i]!);
+    } catch {
+      return null;
+    }
+  }
+  return params;
+}
+
+/** The concrete path: the template with its parameter values (encoded) filled in. */
+function fillTemplate(segments: readonly Segment[], params: Readonly<Record<string, string>>): string {
+  return "/" + segments.map((s) => (typeof s === "string" ? s : encodeURIComponent(params[s.param]!))).join("/");
+}
+
+/** True if some path could match both parameterised templates. */
+function templatesOverlap(a: readonly Segment[], b: readonly Segment[]): boolean {
+  return a.length === b.length && a.every((s, i) => typeof s !== "string" || typeof b[i] !== "string" || s === b[i]);
 }
 
 const JSON_CONTENT_TYPE = /^application\/json\s*(;\s*charset=utf-8\s*)?$/i;
@@ -98,6 +158,12 @@ function checkRoutes(routes: readonly Route<never>[], db: Database | null): void
     if (seen.has(id)) throw new Error(`duplicate route ${id}`);
     seen.add(id);
     if (!r.path.startsWith("/") || r.path.includes("?")) throw new Error(`route ${id}: path must start with / and have no query`);
+    const segments = parseTemplate(r.path);
+    if (segments.some((s) => typeof s === "string" && s.includes(":"))) throw new Error(`route ${id}: a path parameter must be a whole segment ":name"`);
+    const names = paramNames(segments);
+    if (new Set(names).size !== names.length) throw new Error(`route ${id}: duplicate path parameter name`);
+    if (names.length > 0 && r.paramsSchema === undefined) throw new Error(`route ${id}: routes with path parameters must declare a paramsSchema`);
+    if (names.length === 0 && r.paramsSchema !== undefined) throw new Error(`route ${id}: paramsSchema declared but the path has no parameters`);
     if (r.method === "POST" && r.requestSchema === undefined) throw new Error(`route ${id}: POST routes must declare a requestSchema`);
     if (r.method === "POST" && (r.auth !== "required" || !r.transactional || r.idempotency !== "required")) {
       throw new Error(`route ${id}: write routes must be authenticated, transactional and require an Idempotency-Key`);
@@ -105,6 +171,14 @@ function checkRoutes(routes: readonly Route<never>[], db: Database | null): void
     if (r.idempotency === "required" && !r.transactional) throw new Error(`route ${id}: idempotency requires a transactional route`);
     if (r.idempotency === "required" && r.auth !== "required") throw new Error(`route ${id}: idempotency keys are per actor, so auth is required`);
     if (r.transactional && db === null) throw new Error(`route ${id}: transactional route but no database`);
+  }
+  const templates = [...new Set(routes.map((r) => r.path))].filter((p) => paramNames(parseTemplate(p)).length > 0);
+  for (let i = 0; i < templates.length; i++) {
+    for (let j = i + 1; j < templates.length; j++) {
+      if (templatesOverlap(parseTemplate(templates[i]!), parseTemplate(templates[j]!))) {
+        throw new Error(`routes ${templates[i]} and ${templates[j]}: parameterised paths overlap`);
+      }
+    }
   }
 }
 
@@ -156,6 +230,21 @@ export function createApiServer(deps: ServerDeps): Server {
     methods.set(r.method, r);
     byPath.set(r.path, methods);
   }
+  const literal = new Map([...byPath].filter(([p]) => paramNames(parseTemplate(p)).length === 0));
+  const parameterised = [...byPath]
+    .filter(([p]) => paramNames(parseTemplate(p)).length > 0)
+    .map(([p, methods]) => ({ segments: parseTemplate(p), methods }));
+
+  /** The methods registered for `path`, with its parameters; literal paths first. */
+  const resolve = (path: string): { methods: Map<Method, Route<never>>; params: Record<string, string>; segments: Segment[] } | null => {
+    const exact = literal.get(path);
+    if (exact !== undefined) return { methods: exact, params: {}, segments: parseTemplate(path) };
+    for (const t of parameterised) {
+      const params = matchTemplate(t.segments, path);
+      if (params !== null) return { methods: t.methods, params, segments: t.segments };
+    }
+    return null;
+  };
 
   const server = createServer((req, res) => {
     const correlationId = resolveCorrelationId(req.headers[CORRELATION_HEADER]);
@@ -168,8 +257,9 @@ export function createApiServer(deps: ServerDeps): Server {
       let capabilityId: CapabilityId = "SCS-PLATFORM";
       let actorId: string | null = null;
       try {
-        const methods = byPath.get(path);
-        if (methods === undefined) throw platformFailure("ROUTE_NOT_FOUND", [`No route for ${path}.`]);
+        const resolved = resolve(path);
+        if (resolved === null) throw platformFailure("ROUTE_NOT_FOUND", [`No route for ${path}.`]);
+        const { methods, params, segments } = resolved;
         const route = methods.get(req.method as Method);
         if (route === undefined) {
           res.setHeader("allow", [...methods.keys()].join(", "));
@@ -179,6 +269,13 @@ export function createApiServer(deps: ServerDeps): Server {
 
         const actor = route.auth === "required" ? await authenticateRequest(req.headers, deps.authenticator) : null;
         actorId = actor?.actorId ?? null;
+
+        if (route.paramsSchema !== undefined) {
+          const checked = validate(route.capabilityId, route.paramsSchema, params);
+          if (!checked.ok) {
+            throw capabilityPlatformFailure(route.capabilityId, "REQUEST_VALIDATION_FAILED", checked.failure.reasons.map((x) => `path ${x}`));
+          }
+        }
 
         let body: unknown = undefined;
         if (route.method === "POST") {
@@ -194,8 +291,8 @@ export function createApiServer(deps: ServerDeps): Server {
         if (route.idempotency === "required" && idempotencyKey === null) {
           throw platformFailure("REQUEST_VALIDATION_FAILED", ["An Idempotency-Key header is required for this request."]);
         }
-        const requestDigest = requestFingerprint(route.method, route.path, body ?? null);
-        const context = (tx: Tx | null) => ({ correlationId, actor, body: body as never, tx, idempotencyKey, requestDigest });
+        const requestDigest = requestFingerprint(route.method, fillTemplate(segments, params), body ?? null);
+        const context = (tx: Tx | null) => ({ correlationId, actor, body: body as never, params, tx, idempotencyKey, requestDigest });
         const checkResult = (result: OperationResult): OperationResult => {
           if (!Number.isInteger(result.status) || result.status < 200 || result.status > 299) {
             throw new Error(`handler for ${route.method} ${route.path} returned status ${result.status}; failures must be thrown`);

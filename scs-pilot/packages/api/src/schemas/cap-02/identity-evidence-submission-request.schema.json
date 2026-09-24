@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-02:identity-evidence-submission-request:1",
+  "title": "ScsIdentityEvidenceSubmissionRequest",
+  "description": "SCS-CAP-02 ScsIdentityEvidenceSubmissionRequest: evidence submitted for an already registered party. partyId is taken from the request path. Not in the request, because the system sets them: submissionId (database-generated), partyVersion (the party's current version), submittedBy (the authenticated actor) and submittedAt. Evidence ids are lowercase canonical UUIDs, so a duplicate within one request is always caught here.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "evidenceIds",
+    "evidenceLimitations"
+  ],
+  "properties": {
+    "evidenceIds": {
+      "description": "One to 200 identifiers, no duplicates.",
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 200,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "format": "uuid",
+        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+      }
+    },
+    "evidenceLimitations": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1000,
+        "pattern": "\\S"
+      }
+    },
+    "submittingOrganizationId": {
+      "description": "Optional; an identifier issued outside SCS.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000,
+      "pattern": "\\S"
+    }
+  }
+}

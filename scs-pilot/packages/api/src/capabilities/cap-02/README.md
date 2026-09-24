@@ -1,6 +1,8 @@
 # SCS-CAP-02 — Operator and Supplier Identity Registration
 
-**Status: `registerParty` implemented (`POST /scs/v1/parties`), party identity only. Role claims, identity evidence, verification assessments, relationships and mandates are not built yet.**
+**Status: `registerParty` (`POST /scs/v1/parties`) and `submitIdentityEvidence` (`POST /scs/v1/parties/:partyId/evidence`) are implemented. Role claims, verification assessments, relationships and mandates are not built yet.**
+
+## registerParty
 
 - **Authority:** only `COMPLIANCE_OFFICER`. Any other actor gets `REGISTRANT_NOT_AUTHORISED` (403).
 - **Validation:** the request schema checks `partyType` against the contract's six values and requires a non-blank `partyName`. Both failures return `REQUEST_VALIDATION_FAILED` (400) from the server layer.
@@ -8,6 +10,20 @@
 - **Conflict:** checked only for `LEGAL_ENTITY`, `COOPERATIVE`, `COMMUNITY_GROUP` and `GOVERNMENT_BODY`. If a party of one of those types, not RETIRED, already has exactly the same `partyName` and `countryOfRegistration`, the result is `CONFLICTING_REGISTRATION_DETECTED` (409), naming the existing `partyId`. The match is exact: case, spacing and transliteration are not normalised. An advisory lock serialises registrations with the same key. `NATURAL_PERSON` and `OTHER` are never checked, in either direction: name and country cannot identify a person, so deduplication is left to human review. This is a contract gap, recorded in the contract.
 - **What is written:** the party row (`partyVersion` 1, `registrationStatus` REGISTERED), one evidence link per evidence id, and the immutable receipt, all in one transaction. The response is 201 `{ decision, receipt, receiptDigest }`.
 - **Eligibility checks:** each check that is performed is `true`, with an "evaluated" reason. For `NATURAL_PERSON` and `OTHER`, `noConflictingRegistrationDetected` is not performed, so it is `false`, with a NOT EVALUATED reason. The decision is always `REGISTERED` with no gaps. The contract gives no criteria for REGISTERED_WITH_GAPS, REJECTED or REQUIRES_HUMAN_REVIEW.
+
+## submitIdentityEvidence
+
+- **Governing principle:** evidence is admitted, not verified. The party record is never touched: `registrationStatus` doesn't change, no new party version is created, and no verification assessment is created or changed.
+- **Order of checks:**
+  1. Authority: only `COMPLIANCE_OFFICER` may submit; otherwise `REGISTRANT_NOT_AUTHORISED` (403). Submission under a mandate is a contract gap and is not accepted.
+  2. The party must exist; otherwise `PARTY_NOT_FOUND` (404).
+  3. The party must not be RETIRED; otherwise `PARTY_RETIRED` (422). Parties that are REGISTERED, REQUIRES_HUMAN_REVIEW or DISPUTED accept evidence.
+  4. No submitted evidence id may already be linked to the party's current version, whether at registration or by an earlier submission. Otherwise `EVIDENCE_ALREADY_LINKED` (409), naming every duplicate. An advisory lock serialises submissions for the same party.
+- **Request validation:** the schema accepts 1–200 evidence ids, as lowercase UUIDs, so any duplicate within one request is refused with 400. `partyId` in the path must be a UUID, also 400.
+- **What is written:** one `party_identity_evidence_submission` row, one evidence link per id naming that submission, and the receipt (decision type `IDENTITY_EVIDENCE_SUBMISSION`, subject = `submissionId`), all in one transaction. The response is 201 `{ decision, receipt, receiptDigest }`.
+- **Decision:** always `RECORDED`. All four checks are performed, so all four are `true`.
+- **Evidence store:** not built yet. Every decision's reasons say the ids couldn't be confirmed and that the evidence store isn't built yet. The code marks this `TODO(evidence-store)`.
+
 
 Canonical contract: [`governance/workstream-b/SCS-CAP-02-OPERATOR-AND-SUPPLIER-IDENTITY-REGISTRATION-CANONICAL-CONTRACT-2026-09-23.md`](../../../../../../governance/workstream-b/SCS-CAP-02-OPERATOR-AND-SUPPLIER-IDENTITY-REGISTRATION-CANONICAL-CONTRACT-2026-09-23.md)
 
