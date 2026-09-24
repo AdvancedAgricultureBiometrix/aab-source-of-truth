@@ -23,6 +23,10 @@
 //      (with their receipt and idempotency record); idempotent replays are
 //      marked with Idempotent-Replayed: true
 //
+// Every response body is canonical JSON (sorted keys, foundation/canonical.ts):
+// one deterministic form, so an idempotent replay — read back from jsonb,
+// which reorders keys — is byte-identical to the original response.
+//
 // Handlers return only 2xx results; every failure is thrown as an ScsFailure
 // (so a failed request always rolls back and writes nothing). Anything else
 // thrown becomes INTERNAL_ERROR with a generic reason; details go to the log.
@@ -30,6 +34,7 @@
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from "node:http";
 
 import { authenticateRequest, type ActorReference, type Authenticator } from "./auth.js";
+import { canonicalJson } from "./canonical.js";
 import { CORRELATION_HEADER, log, resolveCorrelationId, runWithCorrelation } from "./correlation.js";
 import type { Database, Tx } from "./db.js";
 import { asScsFailure, platformFailure, ScsFailure, toEnvelope, type CapabilityId } from "./errors.js";
@@ -131,7 +136,7 @@ function parseJson(raw: Buffer): unknown {
 }
 
 function send(res: ServerResponse, status: number, body: unknown, extraHeaders: Record<string, string> = {}): void {
-  const payload = JSON.stringify(body);
+  const payload = canonicalJson(body);
   res.writeHead(status, {
     "content-type": "application/json; charset=utf-8",
     "content-length": Buffer.byteLength(payload),

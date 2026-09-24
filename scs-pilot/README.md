@@ -6,7 +6,8 @@ Project structure for the Supply Chain Sovereignty pilot. **No capability logic 
 |---|---|
 | `docker-compose.yml` | Local stack: PostgreSQL 17, MinIO (S3-compatible, not yet used), and an API placeholder |
 | `.env.example` | Every environment variable, with placeholder values only |
-| `packages/api` | Node.js 24 + TypeScript API. The runtime foundation is built; no capability routes exist yet, so it answers `GET /health` and returns the canonical 404 envelope for everything else |
+| `packages/api` | Node.js 24 + TypeScript API. Serves `GET /health` and SCS-CAP-01 `POST /scs/v1/frameworks` (framework registration); everything else gets the canonical 404 envelope |
+| `packages/api/src/capabilities/` | Capability code, one folder per capability; `README.md` there sets out the pattern every capability follows, with `cap-01/` as the reference implementation |
 | `packages/api/src/foundation/` | Shared runtime used by every capability: `server.ts` (node:http routing, parsing, responses), `errors.ts` (canonical failure envelope), `correlation.ts` (correlation IDs, JSON logs), `validation.ts` (strict Ajv), `auth.ts` (bearer token → ActorReference), `db.ts` (restricted-role pool, startup guard, transactions), `receipts.ts` (immutable decision receipts), `idempotency.ts` (Idempotency-Key replay and conflict), `canonical.ts` (canonical JSON, SHA-256) |
 | `packages/api/src/schemas/` | JSON Schemas: CAP-01 registration request and receipt, and the shared ActorReference (pilot definition) |
 | `packages/api/src/types/` | TypeScript types **generated** from the schemas (`npm run generate:types`). Never edit these by hand; `npm test` fails if they drift |
@@ -27,6 +28,8 @@ cp packages/api/config/static-actors.example.json packages/api/config/static-act
 docker compose up -d
 curl http://127.0.0.1:3000/health
 ```
+
+After changing API code, run `docker compose restart api`. The container runs `tsx watch`, but file changes on a Windows host don't reach watchers inside the container, so the API won't reload by itself.
 
 The API connects only as `scs_api`, and refuses to start if its database role is a superuser, can bypass row-level security, can create roles or databases, or owns anything in the database. It also refuses to start without a valid static actors file; the example file in the repository is rejected until its placeholder hashes are replaced.
 

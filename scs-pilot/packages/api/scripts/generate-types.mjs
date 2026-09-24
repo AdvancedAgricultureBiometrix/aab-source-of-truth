@@ -17,37 +17,40 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const schemaDir = path.join(root, "src", "schemas");
 const typesDir = path.join(root, "src", "types");
 
-/** Every schema, by $id. */
-const SCHEMA_FILES = [
-  "shared/actor-reference.schema.json",
-  "cap-01/framework-registration-request.schema.json",
-  "cap-01/framework-registration-receipt.schema.json",
-];
-
-/** Output files: which schemas each contains, and which shared types it imports. */
+/**
+ * Output files and the schemas each declares. Every schema is declared in
+ * exactly one file; its type name is its "title".
+ */
 const TARGETS = [
-  { out: "shared.ts", schemas: ["shared/actor-reference.schema.json"], imports: [] },
+  { out: "shared.ts", schemas: ["shared/actor-reference.schema.json"] },
   {
     out: "cap-01.ts",
-    schemas: ["cap-01/framework-registration-request.schema.json", "cap-01/framework-registration-receipt.schema.json"],
-    imports: [{ from: "./shared.js", id: "urn:aab:scs:schema:shared:actor-reference:1", name: "ActorReference" }],
+    schemas: [
+      "cap-01/framework-registration-request.schema.json",
+      "cap-01/framework-registration-decision.schema.json",
+      "cap-01/framework-registration-receipt.schema.json",
+      "cap-01/framework-registration-response.schema.json",
+    ],
   },
 ];
 
+const SCHEMA_FILES = TARGETS.flatMap((t) => t.schemas);
+
 /**
- * In the generator's own copy of a schema, replace each $ref to an imported
- * shared schema with json-schema-to-typescript's tsType hint, so the shared
- * type is imported rather than declared again. The schema files are untouched.
+ * In the generator's own copy of a schema, replace each $ref to ANOTHER schema
+ * (by $id) with json-schema-to-typescript's tsType hint naming that schema's
+ * type. The referenced type is declared once — in its own schema's output —
+ * and imported when that is a different file. The schema files are untouched.
  */
-function useImportedTypes(node, imports) {
-  if (Array.isArray(node)) return node.map((n) => useImportedTypes(n, imports));
+function useNamedTypes(node, refs) {
+  if (Array.isArray(node)) return node.map((n) => useNamedTypes(n, refs));
   if (node === null || typeof node !== "object") return node;
-  const hit = imports.find((i) => node.$ref === i.id);
-  if (hit) {
+  if (typeof node.$ref === "string" && refs.has(node.$ref)) {
     const { $ref, ...rest } = node;
-    return { ...rest, tsType: hit.name };
+    refs.get($ref).used = true;
+    return { ...rest, tsType: refs.get($ref).name };
   }
-  return Object.fromEntries(Object.entries(node).map(([k, v]) => [k, useImportedTypes(v, imports)]));
+  return Object.fromEntries(Object.entries(node).map(([k, v]) => [k, useNamedTypes(v, refs)]));
 }
 
 function banner(sources) {
@@ -89,11 +92,30 @@ export async function generate() {
     },
   };
 
+  const home = new Map(); // $id → { name, out }
+  for (const target of TARGETS) {
+    for (const file of target.schemas) {
+      const schema = byFile.get(file);
+      if (typeof schema.title !== "string") throw new Error(`${file} has no title`);
+      home.set(schema.$id, { name: schema.title, out: target.out });
+    }
+  }
+
   const outputs = {};
   for (const target of TARGETS) {
     const parts = [];
+    const imported = new Map(); // out file → Set of names
     for (const file of target.schemas) {
-      const ts = await compile(useImportedTypes(structuredClone(byFile.get(file)), target.imports), "", {
+      const self = byFile.get(file).$id;
+      const refs = new Map([...home].filter(([id]) => id !== self).map(([id, h]) => [id, { ...h, used: false }]));
+      const prepared = useNamedTypes(structuredClone(byFile.get(file)), refs);
+      for (const r of refs.values()) {
+        if (r.used && r.out !== target.out) {
+          if (!imported.has(r.out)) imported.set(r.out, new Set());
+          imported.get(r.out).add(r.name);
+        }
+      }
+      const ts = await compile(prepared, "", {
         bannerComment: "",
         cwd: schemaDir,
         declareExternallyReferenced: true,
@@ -106,7 +128,7 @@ export async function generate() {
       });
       parts.push(ts.trim());
     }
-    const imports = target.imports.map((i) => `import type { ${i.name} } from "${i.from}";`);
+    const imports = [...imported].map(([out, names]) => `import type { ${[...names].sort().join(", ")} } from "./${out.replace(/\.ts$/, ".js")}";`);
     outputs[target.out] = [banner(target.schemas), ...(imports.length ? [imports.join("\n")] : []), ...parts].join("\n\n") + "\n";
   }
   return outputs;

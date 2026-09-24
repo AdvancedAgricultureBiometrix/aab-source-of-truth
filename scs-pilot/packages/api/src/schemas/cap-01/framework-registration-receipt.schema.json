@@ -5,70 +5,78 @@
   "description": "Immutable receipt for an SCS-CAP-01 framework registration decision, written in the same transaction as the decision (foundation/receipts.ts). Its SHA-256 over canonical JSON is returned alongside it as receiptDigest.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["receiptId", "receiptVersion", "capabilityId", "decisionType", "subjectId", "correlationId", "requestDigest", "idempotencyKey", "issuedAt", "issuedFor", "decision"],
+  "required": [
+    "receiptId",
+    "receiptVersion",
+    "capabilityId",
+    "decisionType",
+    "subjectId",
+    "correlationId",
+    "requestDigest",
+    "idempotencyKey",
+    "issuedAt",
+    "issuedFor",
+    "decision"
+  ],
   "properties": {
-    "receiptId": { "type": "string", "format": "uuid" },
-    "receiptVersion": { "type": "string", "const": "1" },
-    "capabilityId": { "type": "string", "const": "SCS-CAP-01" },
-    "decisionType": { "type": "string", "const": "FRAMEWORK_REGISTRATION" },
+    "receiptId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "receiptVersion": {
+      "type": "string",
+      "const": "1"
+    },
+    "capabilityId": {
+      "type": "string",
+      "const": "SCS-CAP-01"
+    },
+    "decisionType": {
+      "type": "string",
+      "const": "FRAMEWORK_REGISTRATION"
+    },
     "subjectId": {
       "description": "frameworkId of the registered framework; null when the decision registered nothing.",
-      "anyOf": [{ "type": "string", "format": "uuid" }, { "type": "null" }]
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "uuid"
+        },
+        {
+          "type": "null"
+        }
+      ]
     },
-    "correlationId": { "type": "string", "pattern": "^[A-Za-z0-9._:-]{8,128}$" },
+    "correlationId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._:-]{8,128}$"
+    },
     "requestDigest": {
       "description": "SHA-256 (hex) of the canonical request: method, route and body.",
       "type": "string",
       "pattern": "^[0-9a-f]{64}$"
     },
     "idempotencyKey": {
-      "anyOf": [{ "type": "string", "pattern": "^[A-Za-z0-9._:-]{8,128}$" }, { "type": "null" }]
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{8,128}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
     },
-    "issuedAt": { "type": "string", "format": "date-time" },
+    "issuedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
     "issuedFor": {
       "description": "The authenticated actor whose request produced this decision.",
       "$ref": "urn:aab:scs:schema:shared:actor-reference:1"
     },
-    "decision": { "$ref": "#/$defs/ScsFrameworkRegistrationDecision" }
-  },
-  "$defs": {
-    "ScsFrameworkRegistrationDecision": {
-      "title": "ScsFrameworkRegistrationDecision",
-      "description": "SCS-CAP-01 ScsFrameworkRegistrationDecision, as defined in the canonical contract.",
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["decisionId", "frameworkId", "decision", "eligibilityChecks", "decisionReasons", "decidedBy", "decidedAt"],
-      "properties": {
-        "decisionId": { "type": "string", "format": "uuid" },
-        "frameworkId": {
-          "description": "Identifier allocated to this registration attempt. When decision is REJECTED or REQUIRES_REVIEW no framework record exists under it.",
-          "type": "string",
-          "format": "uuid"
-        },
-        "decision": { "type": "string", "enum": ["REGISTERED", "REJECTED", "REQUIRES_REVIEW"] },
-        "eligibilityChecks": {
-          "title": "ScsFrameworkEligibilityChecks",
-          "type": "object",
-          "additionalProperties": false,
-          "required": ["regulationReferenceValid", "commodityRecognised", "countryOfOriginValid", "destinationMarketValid", "applicableLawsConfirmed", "noConflictingFrameworkExists", "registrantAuthorised"],
-          "properties": {
-            "regulationReferenceValid": { "type": "boolean" },
-            "commodityRecognised": { "type": "boolean" },
-            "countryOfOriginValid": { "type": "boolean" },
-            "destinationMarketValid": { "type": "boolean" },
-            "applicableLawsConfirmed": { "type": "boolean" },
-            "noConflictingFrameworkExists": { "type": "boolean" },
-            "registrantAuthorised": { "type": "boolean" }
-          }
-        },
-        "decisionReasons": {
-          "type": "array",
-          "maxItems": 200,
-          "items": { "type": "string", "minLength": 1, "maxLength": 1000, "pattern": "\\S" }
-        },
-        "decidedBy": { "$ref": "urn:aab:scs:schema:shared:actor-reference:1" },
-        "decidedAt": { "type": "string", "format": "date-time" }
-      }
+    "decision": {
+      "$ref": "urn:aab:scs:schema:cap-01:framework-registration-decision:1"
     }
   }
 }

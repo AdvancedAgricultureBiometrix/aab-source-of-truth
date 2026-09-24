@@ -69,6 +69,14 @@ async function call(method: string, path: string, init: { headers?: Record<strin
 }
 const authed = { authorization: `Bearer ${TOKEN}`, "content-type": "application/json", "idempotency-key": "server-test-key-0001" };
 
+test("response bodies are canonical JSON: keys sorted at every depth, no whitespace", async () => {
+  const res = await fetch(`${base}/nope`);
+  const text = await res.text();
+  const { canonicalJson } = await import("./canonical.js");
+  assert.equal(text, canonicalJson(JSON.parse(text)));
+  assert.ok(text.startsWith('{"capabilityId":'), text.slice(0, 40));
+});
+
 test("GET /health: 200, JSON, no-store, nosniff, correlation id", async () => {
   const r = await call("GET", "/health");
   assert.equal(r.status, 200);

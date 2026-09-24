@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-01:framework-registration-decision:1",
+  "title": "ScsFrameworkRegistrationDecision",
+  "description": "SCS-CAP-01 ScsFrameworkRegistrationDecision, as defined in the canonical contract. Pilot rule: an eligibility check is true only if it was actually performed and passed; checks the contract gives no evaluation rule for are recorded false and named in decisionReasons as not evaluated.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decisionId",
+    "frameworkId",
+    "decision",
+    "eligibilityChecks",
+    "decisionReasons",
+    "decidedBy",
+    "decidedAt"
+  ],
+  "properties": {
+    "decisionId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "frameworkId": {
+      "description": "Identifier allocated to this registration attempt. When decision is REJECTED or REQUIRES_REVIEW no framework record exists under it.",
+      "type": "string",
+      "format": "uuid"
+    },
+    "decision": {
+      "type": "string",
+      "enum": [
+        "REGISTERED",
+        "REJECTED",
+        "REQUIRES_REVIEW"
+      ]
+    },
+    "eligibilityChecks": {
+      "title": "ScsFrameworkEligibilityChecks",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "regulationReferenceValid",
+        "commodityRecognised",
+        "countryOfOriginValid",
+        "destinationMarketValid",
+        "applicableLawsConfirmed",
+        "noConflictingFrameworkExists",
+        "registrantAuthorised"
+      ],
+      "properties": {
+        "regulationReferenceValid": {
+          "type": "boolean"
+        },
+        "commodityRecognised": {
+          "type": "boolean"
+        },
+        "countryOfOriginValid": {
+          "type": "boolean"
+        },
+        "destinationMarketValid": {
+          "type": "boolean"
+        },
+        "applicableLawsConfirmed": {
+          "type": "boolean"
+        },
+        "noConflictingFrameworkExists": {
+          "type": "boolean"
+        },
+        "registrantAuthorised": {
+          "type": "boolean"
+        }
+      }
+    },
+    "decisionReasons": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1000,
+        "pattern": "\\S"
+      }
+    },
+    "decidedBy": {
+      "$ref": "urn:aab:scs:schema:shared:actor-reference:1"
+    },
+    "decidedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

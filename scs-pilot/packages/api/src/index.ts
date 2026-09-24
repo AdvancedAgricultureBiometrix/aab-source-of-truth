@@ -7,10 +7,10 @@
 //      is loaded and every entry validated
 //   3. listen — foundation/server.ts
 //
-// No capability is implemented yet: the route table is empty, so the API
-// answers GET /health and returns the canonical 404 envelope for everything
-// else.
+// Routes: GET /health plus every capability route in capabilities/index.ts
+// (currently SCS-CAP-01 POST /scs/v1/frameworks).
 
+import { CAPABILITY_ROUTES } from "./capabilities/index.js";
 import { StaticTokenAuthenticator } from "./foundation/auth.js";
 import { log } from "./foundation/correlation.js";
 import { connectDatabase, dbConfigFromEnv, RestrictedRoleViolation, type Database } from "./foundation/db.js";
@@ -43,7 +43,7 @@ async function main(): Promise<void> {
   }
 
   const port = Number(process.env["API_PORT"] ?? 3000);
-  const server = createApiServer({ routes: [], authenticator, db });
+  const server = createApiServer({ routes: CAPABILITY_ROUTES, authenticator, db });
   server.listen(port, () => log.info("scs-pilot-api listening", { port }));
 
   for (const signal of ["SIGINT", "SIGTERM"] as const) {
