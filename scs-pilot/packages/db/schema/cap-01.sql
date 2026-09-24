@@ -33,23 +33,23 @@
 --     definition (and columns) once its use across capabilities is clear.
 --
 -- NOT YET IMPLEMENTED — deliberately out of scope for this scaffold
---   TODO(roles): separate migration role (owns DDL) from application role
---                (DML only). Everything below is created by whoever runs it.
---                Planned for the roles/RLS migration.
---   TODO(rls):   row-level security. No RLS policies exist on this table.
---                Planned for the roles/RLS migration.
+--   Roles and RLS: done in migration 004 (schema/roles-rls.sql) — scs_api has
+--                SELECT + INSERT only; RLS is enabled with scs_api SELECT and
+--                INSERT policies.
 --   TODO(immutability): the contract says the evidence requirement
 --                specification is "generated at registration, immutable
 --                thereafter". Nothing below prevents an UPDATE of the
 --                evidence_spec_* / deforestation_* / custody_* / plot_* /
---                sufficiency_* columns. To be enforced properly together with
---                roles and RLS in the roles/RLS migration — not with an interim bodge.
+--                sufficiency_* columns by the owner. scs_api cannot
+--                UPDATE at all (migration 004), and UPDATE will never be granted
+--                on these columns — later operations get column-level grants on
+--                only the columns they change.
 --   TODO(append-only): versionHistory is "append-only, never deleted". The
 --                version_history column only checks that it is a JSON array;
 --                it does not stop elements being removed or rewritten, and it
 --                does not validate each element against ScsFrameworkVersion.
 --                Kept as JSON until the vertical proof works end to end; the
---                long-term answer is its own insert-only table (the roles/RLS migration).
+--                long-term answer is its own insert-only table (a later migration).
 -- ============================================================================
 
 CREATE SCHEMA IF NOT EXISTS scs;

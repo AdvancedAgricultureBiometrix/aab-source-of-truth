@@ -3,15 +3,18 @@
 #   cp .env.example .env      # then fill in local-only values
 #   docker compose up -d
 #
-# postgres  — applies packages/db/migrations/*.sql once, on an empty data volume
+# postgres  — on an empty data volume only: packages/db/init/ applies
+#             packages/db/migrations/*.sql in order, then sets the scs_api
+#             password from SCS_API_DB_PASSWORD
 # minio     — S3-compatible object storage; NOT yet used by any code
-# api       — placeholder Node service exposing GET /health only
+# api       — Node service; connects as the restricted role scs_api only and
+#             refuses to start if that role owns scs objects, is a superuser
+#             or can bypass row-level security
 #
 # TODO(migration-runner): replace the initdb mount with a real migration runner
 #                         that records applied migrations.
-# TODO(roles):            the api connects as the database owner. Split into a
-#                         migration role and an application role before any
-#                         capability logic is written.
+# Roles: POSTGRES_USER owns the database and runs migrations; the api uses
+#        scs_api (migration 004: SELECT + INSERT only, row-level security).
 
 name: scs-pilot
 
@@ -23,11 +26,13 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB in .env}
       POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER in .env}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      SCS_API_DB_PASSWORD: ${SCS_API_DB_PASSWORD:?set SCS_API_DB_PASSWORD in .env}
     ports:
       - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
-      - ./packages/db/migrations:/docker-entrypoint-initdb.d:ro
+      - ./packages/db/migrations:/scs/migrations:ro
+      - ./packages/db/init:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
@@ -59,7 +64,11 @@ services:
     environment:
       NODE_ENV: development
       API_PORT: ${API_PORT:-3000}
-      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      SCS_DB_HOST: postgres
+      SCS_DB_PORT: 5432
+      SCS_DB_NAME: ${POSTGRES_DB}
+      SCS_DB_USER: scs_api
+      SCS_DB_PASSWORD: ${SCS_API_DB_PASSWORD}
       S3_ENDPOINT: http://minio:9000
       S3_BUCKET: ${S3_BUCKET:-scs-evidence}
       S3_ACCESS_KEY_ID: ${MINIO_ROOT_USER}

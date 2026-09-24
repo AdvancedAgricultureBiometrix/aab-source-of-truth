@@ -47,11 +47,10 @@
 -- through their own status fields, never silently removed.
 --
 -- NOT YET IMPLEMENTED
---   TODO(roles), TODO(rls): as CAP-01 — no role separation, no row-level
---                security. RESTRICT stops a party being deleted from under its
---                records, but nothing yet stops a DELETE on the child tables
---                themselves; that needs the application role to have no
---                DELETE privilege (same future migration as CAP-01 roles).
+--   Roles and RLS: done in migration 004 (schema/roles-rls.sql). scs_api has
+--                SELECT + INSERT only — no UPDATE, DELETE or TRUNCATE — so the
+--                child tables cannot be deleted from either; RESTRICT covers
+--                the owner.
 --   TODO(actor-reference): ActorReference is referenced but never defined in
 --                CAP-02 (as in CAP-01). Stored as a jsonb object. Shared type
 --                recurring in CAP-01, CAP-02, CAP-05 and CAP-06.
