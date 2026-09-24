@@ -189,6 +189,9 @@ interface ScsPartyVerificationAssessment {
   recordedBy: ActorReference;
   recordedAt: string;
 
+  // The earlier assessment of the same party that this one replaces, if any
+  supersedesAssessmentId?: string;
+
   // Verification never implies broader authority
   authorityBoundary: {
     doesNotConfirmSanctionsClearance: true;
@@ -972,8 +975,12 @@ interface ScsVerificationAssessmentRequest {
 
   verifiedAt: string;
   expiresAt?: string;
+  // At least one, each already linked to the party's current version
   evidenceIds: string[];
   limitations: string[];
+
+  // The earlier assessment of the same party that this one replaces, if any
+  supersedesAssessmentId?: string;
 }
 
 interface ScsVerificationAssessmentDecision {
@@ -984,10 +991,15 @@ interface ScsVerificationAssessmentDecision {
   decision: "RECORDED";
 
   eligibilityChecks: {
+    verifierAuthorised: boolean;
+    statusRecordable: boolean;
+    datesValid: boolean;
+    jurisdictionsRecognised: boolean;
     partyExists: boolean;
     partyNotRetired: boolean;
-    verifierAuthorised: boolean;
     verifierIndependentOfRegistrant: boolean;
+    evidenceLinkedToParty: boolean;
+    supersessionValid: boolean;
   };
 
   decisionReasons: string[];
@@ -996,29 +1008,82 @@ interface ScsVerificationAssessmentDecision {
 }
 ```
 
-The system sets `assessmentId`, `partyId` (from the path), `partyVersion`, `recordedBy`,
-`recordedAt` and the `authorityBoundary` flags, which are always `true`. The path's party
-must exist (`PARTY_NOT_FOUND`) and must not be `RETIRED` (`PARTY_RETIRED`).
+The system sets `assessmentId`, `partyId` (from the path), `partyVersion` (the party's
+current version), `recordedBy`, `recordedAt` and the `authorityBoundary` flags, which are
+always `true`.
 
-### Open gaps before verification can be implemented
+### Assessment is not registration
 
-**Contract gap: which statuses may be recorded.** `ScsIdentityVerificationStatus` includes
-`REGISTERED_UNVERIFIED`, `VERIFICATION_EXPIRED` and `FAIL_CLOSED`, which are not meaningful
-outcomes of a newly recorded assessment. Which values an assessment may record is not
-defined.
+An assessment never changes the party's `registrationStatus`. Registration and verification
+are separate governed records: a `DISPUTED` assessment does not make the party `DISPUTED`. Any
+future operation that changes `registrationStatus` has its own authority and its own rules.
+Recording an assessment also never changes an earlier assessment; supersession is recorded on
+the new assessment, which names the one it replaces.
 
-**Contract gap: the party's current verification status.** The Southeast Asia section gives
-a party `verificationStatus: REGISTERED_UNVERIFIED`, but `ScsPartyIdentity` has no such field,
-only `verificationAssessments`. How a party's current verification status is derived from
-several assessments, and whether a newer assessment supersedes an older one, is not defined.
+### Recordable statuses
 
-**Contract gap: effect on the party.** Whether an assessment, for example one recording
-`DISPUTED`, changes the party's `registrationStatus` is not defined.
+An assessment may record only `PARTIALLY_VERIFIED`, `VERIFIED_FOR_DECLARED_SCOPE`, `DISPUTED`
+or `FAIL_CLOSED`. `FAIL_CLOSED` records that verification was attempted and the identity could
+not be verified for the declared scope. The other two values are never recorded; they are
+derived when read:
 
-**Contract gap: evidence and dates.** Whether a verified status must cite at least one
-evidence identifier, whether cited identifiers must already be linked to the party, whether
-`verifiedAt` may be in the future, and whether an already expired assessment may be recorded
-are not defined. The code system for `jurisdictionCode` is not defined.
+- `REGISTERED_UNVERIFIED` is a party with no assessment that is neither superseded nor expired.
+- `VERIFICATION_EXPIRED` is an assessment whose `expiresAt` has passed.
+
+Any other value is refused: `VERIFICATION_STATUS_NOT_RECORDABLE`.
+
+### Current verification status
+
+A party's current verification status is not stored; a stored status would drift from reality
+as assessments expire. It is derived when read. An assessment that a later assessment
+supersedes no longer counts. An assessment whose `expiresAt` has passed counts as
+`VERIFICATION_EXPIRED`. Assessments are scoped, so a party can hold several current
+assessments at once, for different scopes or jurisdictions.
+
+### Recording rules
+
+The checks run in this order. Each failure ends in `FAIL_CLOSED` and writes nothing: no
+assessment, no decision, no receipt.
+
+1. **Authority.** The actor holds `VERIFICATION_OFFICER`. Otherwise `VERIFIER_NOT_AUTHORISED`.
+2. **Recordable status.** Otherwise `VERIFICATION_STATUS_NOT_RECORDABLE`.
+3. **Dates.** `verifiedAt` is not in the future. `expiresAt`, when given, is after
+   `verifiedAt`; the same instant is a zero-length verification window and is refused.
+   Otherwise `VALIDITY_PERIOD_INVALID`. An assessment that has already expired may be recorded
+   as a historical fact, and `verifiedAt` may be earlier than the party's registration.
+4. **Jurisdictions.** Both `jurisdictionCode` fields are officially assigned ISO 3166-1
+   alpha-2 codes. Otherwise `COUNTRY_CODE_UNRECOGNISED`.
+5. **Party.** The path's party exists (`PARTY_NOT_FOUND`) and is not `RETIRED`
+   (`PARTY_RETIRED`).
+6. **Independence.** The actor is not the party's registrant (its `registeredBy`). Otherwise
+   `VERIFIER_NOT_AUTHORISED`.
+7. **Evidence.** At least one evidence identifier, and every cited identifier is already
+   linked to the party's current version, at registration or by an identity evidence
+   submission. Otherwise `VERIFICATION_EVIDENCE_NOT_LINKED`, naming every unlinked identifier.
+   Verification always names its evidence.
+8. **Supersession.** When `supersedesAssessmentId` is given, it names an assessment of the same
+   party (`SUPERSEDED_ASSESSMENT_NOT_FOUND`) that no other assessment has already superseded
+   (`CONFLICTING_RECORD`, naming the assessment that did).
+
+When every check passes, the decision is `RECORDED` and the assessment and its receipt are
+written in the same transaction. The decision states that the verifying authority is recorded
+as declared and that the cited evidence identifiers cannot be confirmed while the evidence
+store is not built.
+
+### Open gaps
+
+**Contract gap: the party-level summary.** How several current assessments of one party, with
+different scopes and statuses, combine into one summary for `getParty` is not defined. It must
+be specified before `getParty` is implemented.
+
+**Contract gap: sub-national jurisdictions.** `jurisdictionCode` accepts ISO 3166-1 alpha-2
+country codes only. Province-level jurisdictions (ISO 3166-2, for example `TH-10`) are not yet
+accepted.
+
+**Contract gap: independence from evidence submitters.** The verifier must not be the party's
+registrant. Whether the verifier must also be independent of the actors who submitted the
+cited evidence is not decided. It needs the submission history of each cited identifier and a
+defined submitting role, and is a future contract decision.
 
 **Contract gap: verification of role claims, relationships and mandates.** Their
 `verificationStatus` changes only through a verification assessment, but this contract defines
@@ -1122,6 +1187,9 @@ interface ScsPartyRegistrationFailure {
     | "SELF_GRANTED_MANDATE"
     | "RELATIONSHIP_NOT_FOUND"
     | "VERIFIER_NOT_AUTHORISED"
+    | "VERIFICATION_STATUS_NOT_RECORDABLE"
+    | "VERIFICATION_EVIDENCE_NOT_LINKED"
+    | "SUPERSEDED_ASSESSMENT_NOT_FOUND"
     | "DEPENDENCY_UNAVAILABLE";
 
   reasons: string[];
