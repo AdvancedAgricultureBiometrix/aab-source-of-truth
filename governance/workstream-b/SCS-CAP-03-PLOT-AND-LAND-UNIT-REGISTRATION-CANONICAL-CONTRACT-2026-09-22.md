@@ -576,6 +576,12 @@ checked. EUDR's exception from the polygon requirement for cattle is not modelle
 **Contract gap: tenure claim verification.** A tenure claim starts `UNVERIFIED`; no operation
 in this contract changes its verification status.
 
+**Contract gap: status naming across capabilities.** A CAP-03 tenure claim starts as
+`UNVERIFIED`, the value this contract defines. SCS-CAP-02 role claims, relationships and
+mandates start as `CLAIMED_UNVERIFIED`. Both mean "claimed, not verified". A near-duplicate
+value is not added here; the two vocabularies should be harmonised across capabilities in a
+later contract change.
+
 **Contract gap: operations after registration.** `addTenureClaim` and `associateFramework`
 take full records and return records without a decision or receipt. They must be redefined
 with request shapes and decisions before they are built. The pilot builds `registerPlot`
