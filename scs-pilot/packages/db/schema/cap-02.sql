@@ -37,6 +37,10 @@
 --     names. A too-long contract field name gets a shortened column plus a
 --     comment giving the full contract name (see representation_mandate).
 --
+-- otherActionDescription: added to the CAP-02 contract (commit 2ee4503) and
+-- implemented in migration 003 — representation_mandate.other_action_description,
+-- required exactly when OTHER_EXPLICITLY_NAMED is a permitted action.
+--
 -- Deletion: every foreign key is ON DELETE RESTRICT / ON UPDATE RESTRICT.
 -- Nothing cascades. A party with claims, assessments, evidence links,
 -- relationships or mandates cannot be deleted; those records are retired
@@ -64,11 +68,6 @@
 --                Add the foreign key when CAP-01's spec table exists.
 --   TODO(evidence): evidence ids are stored as uuid without a foreign key; the
 --                evidence records they point to are not modelled yet.
---   TODO(other-action): permitted action OTHER_EXPLICITLY_NAMED has no field
---                recording which action is named, because the CAP-02 contract
---                does not define one. The contract needs an
---                otherActionDescription field before this can be implemented;
---                until then the value is accepted but cannot be described.
 --   TODO(decisions): ScsPartyRegistrationDecision (and the relationship /
 --                mandate decisions the provider returns) are not persisted.
 -- ============================================================================
@@ -438,6 +437,10 @@ CREATE TABLE scs.representation_mandate (
   boundary_does_not_reuse_authority_outside_declared_scope     boolean NOT NULL DEFAULT true,
   boundary_does_not_extend_to_other_frameworks_or_commodities  boolean NOT NULL DEFAULT true,
 
+  -- otherActionDescription (optional) — names the action when
+  -- OTHER_EXPLICITLY_NAMED is permitted. Last column: added by migration 003.
+  other_action_description          text,
+
   CONSTRAINT representation_mandate_pk PRIMARY KEY (mandate_id),
   CONSTRAINT representation_mandate_granting_party_fk
     FOREIGN KEY (granting_party_id) REFERENCES scs.party_identity (party_id)
@@ -447,7 +450,6 @@ CREATE TABLE scs.representation_mandate (
     ON DELETE RESTRICT ON UPDATE RESTRICT,
 
   -- every element is one of the contract's enumerated actions
-  -- (OTHER_EXPLICITLY_NAMED has no describing field yet — TODO(other-action))
   -- (MANDATE_ACTION_NOT_ENUMERATED in the failure contract)
   CONSTRAINT representation_mandate_permitted_actions_enumerated_ck
     CHECK (permitted_actions <@ ARRAY['SUBMIT_IDENTITY_EVIDENCE',
@@ -497,7 +499,19 @@ CREATE TABLE scs.representation_mandate (
   CONSTRAINT representation_mandate_validity_range_ck
     CHECK (valid_until IS NULL OR valid_until > valid_from),
   CONSTRAINT representation_mandate_updated_after_created_ck
-    CHECK (updated_at >= created_at)
+    CHECK (updated_at >= created_at),
+
+  -- Contract rule: OTHER_EXPLICITLY_NAMED requires otherActionDescription to
+  -- name the action; without it the mandate is incomplete and is rejected.
+  -- Deliberate — beyond the contract (which says "ignored otherwise"): a
+  -- description with no OTHER_EXPLICITLY_NAMED is rejected, not ignored.
+  -- Added by migration 003.
+  CONSTRAINT representation_mandate_other_action_description_ck
+    CHECK (CASE WHEN 'OTHER_EXPLICITLY_NAMED' = ANY (permitted_actions)
+                THEN other_action_description IS NOT NULL
+                     AND btrim(other_action_description) <> ''
+                ELSE other_action_description IS NULL
+           END)
 );
 
 
@@ -545,3 +559,5 @@ COMMENT ON TABLE scs.supply_chain_relationship IS
   'SCS-CAP-02 ScsSupplyChainRelationship. Bilateral only; does not verify either party or prove commodity movement.';
 COMMENT ON TABLE scs.representation_mandate IS
   'SCS-CAP-02 ScsRepresentationMandate. Separate from any relationship; enumerated actions only; revocable.';
+COMMENT ON COLUMN scs.representation_mandate.other_action_description IS
+  'otherActionDescription — names the specific action; required exactly when permitted_actions includes OTHER_EXPLICITLY_NAMED.';
