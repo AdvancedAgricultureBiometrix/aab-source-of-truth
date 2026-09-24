@@ -206,6 +206,62 @@ specification are declared by the authorised registrant, and CAP-01 generates on
 system-generated fields (`specId`, `generatedAt`, `generatedFromFrameworkVersion`). The derivation
 rules must be specified here before a production implementation.
 
+## Registration outcomes, attestation and open gaps
+
+### When registration is FAIL_CLOSED, REJECTED or REQUIRES_REVIEW
+
+**Contract gap — decision rule.** This contract defines two ways a registration can fail to
+register a framework: an `ScsFrameworkRegistrationDecision` of `REJECTED` or `REQUIRES_REVIEW`,
+and an `ScsFrameworkRegistrationFailure` with `result: "FAIL_CLOSED"`. Several conditions appear in
+both, for example a conflicting framework is both the `noConflictingFrameworkExists` eligibility
+check and the `CONFLICTING_FRAMEWORK_EXISTS` error. The contract does not say which path applies.
+Until it does, this rule applies:
+
+- **FAIL_CLOSED.** Any condition in the failure contract's `error` union, including
+  `REGISTRANT_NOT_AUTHORISED`, `CONFLICTING_FRAMEWORK_EXISTS`, `DEPENDENCY_UNAVAILABLE` and
+  `EVIDENCE_SPEC_CANNOT_BE_GENERATED`, ends in `FAIL_CLOSED`. Nothing is written: no
+  framework, no decision, no receipt.
+- **REJECTED and REQUIRES_REVIEW** are reserved for eligibility-check outcomes, and they can only
+  arise once evaluation rules for those checks are specified (see below). A `REJECTED` or
+  `REQUIRES_REVIEW` decision records no framework, but it is still recorded with its receipt.
+- **Until then**, registration produces only a `REGISTERED` decision or a `FAIL_CLOSED`
+  failure.
+
+### Applicable laws attestation
+
+`registerFramework` takes a `RegisterFrameworkRequest`, which this contract references but does
+not otherwise define. It must include the registrant's attestation that the applicable national
+laws have been confirmed:
+
+```typescript
+// Added to RegisterFrameworkRequest
+applicableLawsAttested: boolean;
+```
+
+`applicableLawsAttested` is a declaration by the authorised registrant, not an independent
+confirmation. The `applicableLawsConfirmed` eligibility check may be evaluated from it: it is
+`true` only when `applicableLawsAttested` is `true`, and the decision's `decisionReasons` must
+state that it rests on the registrant's attestation. No machine can confirm that national laws
+apply to a scope; the attestation makes the human judgement explicit and attributable instead of
+implied.
+
+### Eligibility checks without evaluation rules
+
+**Contract gap — eligibility evaluation rules are undefined.** `ScsFrameworkRegistrationDecision`
+names seven eligibility checks. The contract gives evaluation rules for none of these five:
+
+- `regulationReferenceValid`
+- `commodityRecognised`
+- `countryOfOriginValid`
+- `destinationMarketValid`
+- `applicableLawsConfirmed` (it may be evaluated from `applicableLawsAttested`, as above)
+
+Until their rules are specified here, an implementation must not invent them. A check that was not
+performed is recorded as `false`, and `decisionReasons` names it explicitly as not evaluated, so it
+is clear it was not performed rather than failed. A check is never recorded as `true` unless it
+was actually performed and passed. The rules must be specified before a production
+implementation.
+
 ## Provider-neutral interface
 
 ```typescript
