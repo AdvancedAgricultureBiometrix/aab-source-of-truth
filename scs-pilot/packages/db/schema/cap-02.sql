@@ -96,8 +96,9 @@
 --                exists and is ACTIVE when the record is registered.
 --   TODO(evidence): evidence ids are stored as uuid without a foreign key; the
 --                evidence records they point to are not modelled yet.
---   TODO(decisions): ScsPartyRegistrationDecision (and the relationship /
---                mandate decisions the provider returns) are not persisted.
+--   Decisions: every CAP-02 decision is persisted inside its immutable
+--                receipt (scs.decision_receipt, platform.sql), written in the
+--                same transaction as the record it decides on.
 -- ============================================================================
 
 

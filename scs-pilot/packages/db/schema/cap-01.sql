@@ -38,18 +38,27 @@
 --                INSERT policies.
 --   TODO(immutability): the contract says the evidence requirement
 --                specification is "generated at registration, immutable
---                thereafter". Nothing below prevents an UPDATE of the
---                evidence_spec_* / deforestation_* / custody_* / plot_* /
---                sufficiency_* columns by the owner. scs_api cannot
---                UPDATE at all (migration 004), and UPDATE will never be granted
---                on these columns — later operations get column-level grants on
---                only the columns they change.
---   TODO(append-only): versionHistory is "append-only, never deleted". The
---                version_history column only checks that it is a JSON array;
---                it does not stop elements being removed or rewritten, and it
---                does not validate each element against ScsFrameworkVersion.
---                Kept as JSON until the vertical proof works end to end; the
---                long-term answer is its own insert-only table (a later migration).
+--                thereafter".
+--                * The API cannot change it: since migration 004 scs_api has
+--                  SELECT + INSERT only on this table, and UPDATE will never be
+--                  granted on the evidence_spec_* / deforestation_* / custody_*
+--                  / plot_* / sufficiency_* columns (later operations get
+--                  column-level grants on only the columns they change).
+--                * The owner still can: roles and RLS do not bind the owner.
+--                  Closing that needs a trigger that rejects UPDATE of these
+--                  columns for every role, as scs.reject_modification() does
+--                  for receipts — a later migration.
+--   TODO(append-only): versionHistory is "append-only, never deleted".
+--                * The API cannot change it: scs_api has no UPDATE on this
+--                  table (migration 004), so no element can be removed or
+--                  rewritten through the API. (No endpoint appends versions
+--                  yet either.)
+--                * The owner still can, and the column only checks that it is
+--                  a JSON array: elements are not validated against
+--                  ScsFrameworkVersion. Kept as JSON until the vertical proof
+--                  works end to end; the long-term answer is its own
+--                  insert-only table with an append-only trigger (a later
+--                  migration).
 -- ============================================================================
 
 CREATE SCHEMA IF NOT EXISTS scs;
