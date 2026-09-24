@@ -1,0 +1,267 @@
+<!doctype html>
+<!-- Generated from governance/workstream-b/SCS-CAP-03-PLOT-AND-LAND-UNIT-REGISTRATION-CANONICAL-CONTRACT-2026-09-22.md using governance/canonical-contract-template.html. Do not edit by hand; edit the markdown source and re-render. -->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SCS-CAP-03 — Plot and Land Unit Registration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,500;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+/* ── Tokens ─────────────────────────────────────────────────────────── */
+:root{
+  --green:#06271f;          /* primary accent: header band, headings, labels, badges */
+  --green-2:#0d3b2f;
+  --mint:#78ecad;           /* secondary accent: status indicators, callouts */
+  --mint-tint:#eefbf4;      /* mint at low strength, for callout fills */
+  --mint-edge:#b8ecd0;
+  --ink:#17211d;
+  --muted:#5f6d67;
+  --faint:#8a9791;
+  --rule:#dde5e1;
+  --code-bg:#f6f8f7;
+  --paper:#ffffff;
+  --mono:"JetBrains Mono",Consolas,"SFMono-Regular",monospace;
+  --sans:"Inter","Segoe UI",system-ui,sans-serif;
+  --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+}
+*{box-sizing:border-box}
+html{background:#e7ece9}
+body{margin:0;color:var(--ink);font:400 10pt/1.62 var(--sans);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+mark.ph{background:#fff4c2;color:#6b4e00;border:1px dashed #d9b300;border-radius:3px;padding:0 3px;font:600 .92em var(--mono)}
+
+/* ── Sheet ──────────────────────────────────────────────────────────── */
+.sheet{background:var(--paper);max-width:210mm;margin:22px auto;box-shadow:0 2px 26px rgba(6,39,31,.13)}
+.content{padding:10mm 19mm 16mm}
+.screen-note{max-width:210mm;margin:14px auto 0;font:9pt/1.5 var(--sans);color:var(--muted);text-align:center}
+
+/* ── Header band ───────────────────────────────────────────────────── */
+.band{background:var(--green);color:#fff;padding:13mm 19mm 11mm;position:relative}
+.band-top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:12mm}
+.brand{display:flex;align-items:center;gap:11px}
+.brand svg{width:30px;height:30px;flex:none}
+.brand b{display:block;font:700 12pt/1 var(--sans);letter-spacing:.06em}
+.brand small{display:block;margin-top:4px;font:500 6.8pt/1 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:#a9c9bb}
+.ref-code{font:600 9.5pt/1 var(--mono);letter-spacing:.05em;color:var(--mint);border:1px solid rgba(120,236,173,.55);border-radius:4px;padding:7px 10px}
+.kind{font:600 7pt/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--mint);margin:0 0 9px}
+.band h1{font:600 22pt/1.14 var(--serif);letter-spacing:-.01em;margin:0 0 14px;max-width:150mm}
+.badge{display:inline-flex;align-items:center;gap:8px;font:600 7.6pt/1 var(--mono);letter-spacing:.06em;border-radius:999px;padding:7px 12px 7px 10px}
+.badge::before{content:"";width:8px;height:8px;border-radius:50%;flex:none}
+.badge.design{background:var(--mint);color:var(--green)}
+.badge.design::before{background:var(--green)}
+.badge.proposed{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.6)}
+.badge.proposed::before{background:transparent;border:1.5px solid var(--mint)}
+.badge.admitted{background:#fff;color:var(--green)}
+.badge.admitted::before{background:var(--mint);box-shadow:0 0 0 2px var(--green)}
+
+/* ── Metadata ──────────────────────────────────────────────────────── */
+.meta{display:grid;grid-template-columns:31mm 1fr;margin:9mm 0 0;border-top:2px solid var(--green)}
+.meta dt,.meta dd{margin:0;padding:6px 0;border-bottom:1px solid var(--rule)}
+.meta dt{font:600 6.9pt/1.9 var(--sans);letter-spacing:.15em;text-transform:uppercase;color:var(--green)}
+.meta dd{font-size:9pt;color:var(--ink)}
+.meta dd.verbatim{font-size:8.8pt}
+.meta dd .unstated{color:var(--faint);font-style:italic}
+.meta dd code{font-size:8pt}
+
+/* ── Contents ──────────────────────────────────────────────────────── */
+nav.toc{margin:7mm 0 2mm;break-inside:avoid}
+nav.toc h2{all:unset;display:block;font:600 6.9pt/1 var(--sans);letter-spacing:.15em;text-transform:uppercase;color:var(--green);margin-bottom:8px}
+nav.toc ol{list-style:none;margin:0;padding:0;columns:2;column-gap:10mm;font-size:8.8pt}
+nav.toc li{padding:2.5px 0;break-inside:avoid;display:flex;gap:9px}
+nav.toc a{color:var(--ink);text-decoration:none}
+nav.toc .n{font:500 8pt var(--mono);color:var(--faint);min-width:18px}
+
+/* ── Sections & clauses ────────────────────────────────────────────── */
+section.sec{margin-top:9mm}
+.head-keep{break-inside:avoid;page-break-inside:avoid}
+.head-keep.head-only{break-after:avoid;page-break-after:avoid} /* heading directly above a long definition */
+h2.sec-h{display:flex;align-items:baseline;gap:10px;font:600 13pt/1.3 var(--serif);color:var(--green);margin:0 0 9px;padding-bottom:6px;border-bottom:1.5px solid var(--green);break-after:avoid;page-break-after:avoid}
+h2.sec-h .n{font:500 8.5pt var(--mono);color:var(--faint);letter-spacing:.02em}
+h3.sub-h{display:flex;align-items:baseline;gap:9px;font:600 8pt/1.35 var(--sans);letter-spacing:.11em;text-transform:uppercase;color:var(--green);margin:16px 0 8px;break-after:avoid;page-break-after:avoid}
+h3.sub-h .n{font:500 8pt var(--mono);color:var(--faint);letter-spacing:0;text-transform:none}
+.clause{position:relative;padding-left:11mm;margin:0 0 9px}
+.clause>.cn{position:absolute;left:0;top:0;font:500 7.4pt/2.05 var(--mono);color:var(--faint)}
+.clause>.cb{min-width:0}
+.clause p{margin:0;orphans:3;widows:3}
+.clause ul,.clause ol{margin:0;padding-left:16px}
+.clause li{margin:2px 0;break-inside:avoid}
+.clause ul li::marker{color:var(--green)}
+.clause ol li::marker{font:600 8.5pt var(--mono);color:var(--green)}
+code{font:500 8.3pt var(--mono);color:var(--green-2);background:var(--code-bg);border:1px solid #e3eae6;border-radius:3px;padding:0 3.5px}
+strong{font-weight:650;color:var(--green)}
+
+/* ── Callouts ──────────────────────────────────────────────────────── */
+.rule-callout{margin:0;border-left:3px solid var(--mint);background:var(--mint-tint);padding:11px 14px;border-radius:0 5px 5px 0;break-inside:avoid}
+.rule-callout .lbl{display:block;font:600 6.6pt/1 var(--sans);letter-spacing:.17em;text-transform:uppercase;color:var(--green);margin-bottom:6px}
+.rule-callout p{font:italic 400 10.5pt/1.55 var(--serif);color:var(--green)}
+.rule-callout strong{font-style:italic}
+.boundary{border:1px solid var(--rule);border-top:3px solid var(--green);border-radius:4px;padding:10px 14px 8px;break-inside:avoid}
+.boundary ul{list-style:none;padding:0}
+.boundary li{position:relative;padding-left:18px}
+.boundary li::before{content:"";position:absolute;left:2px;top:.62em;width:8px;height:1.5px;background:var(--green)}
+
+/* ── Tables ────────────────────────────────────────────────────────── */
+table.grid{width:100%;border-collapse:collapse;font-size:8.8pt;break-inside:avoid}
+table.grid th{text-align:left;font:600 6.8pt/1.4 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--green);border-bottom:1.5px solid var(--green);padding:5px 8px 5px 0}
+table.grid td{padding:6px 8px 6px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+table.grid td:first-child{font-weight:600;color:var(--green)}
+
+/* ── Structured definitions (from TypeScript) ──────────────────────── */
+.def{border:1px solid var(--rule);border-radius:5px;overflow:hidden;background:#fff}
+.def.short{break-inside:avoid}
+.def-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:7px 11px;background:var(--green);color:#fff;break-after:avoid}
+.def-head .dn{font:600 9pt var(--mono);letter-spacing:.01em}
+.def-head .dn .extends{font-weight:400;color:#a9c9bb}
+.def-head .dk{font:600 6.4pt/1 var(--sans);letter-spacing:.17em;text-transform:uppercase;color:var(--mint)}
+.f{display:grid;grid-template-columns:minmax(40mm,38%) 1fr;gap:12px;padding:5px 11px;border-top:1px solid #edf1ef;break-inside:avoid;page-break-inside:avoid}
+.f:first-of-type{border-top:0}
+.fn{font:500 8.4pt/1.6 var(--mono);color:var(--green);overflow-wrap:anywhere} /* renderer inserts <wbr> at camelCase humps */
+.f.flag{grid-template-columns:1fr auto}
+.fn .opt{font:500 6.2pt/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--faint);border:1px solid var(--rule);border-radius:3px;padding:2px 4px;margin-left:6px;vertical-align:1px}
+.ft{font:400 8.2pt/1.6 var(--mono);color:var(--muted);word-break:break-word}
+.ft .lit{color:var(--green);font-weight:600}
+.ft .tref{color:#2f5d8a}
+.enum{list-style:none;margin:1px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:3px 4px}
+.enum li{font:500 7.6pt/1 var(--mono);color:var(--green);background:var(--mint-tint);border:1px solid var(--mint-edge);border-radius:3px;padding:3px 5px}
+.enum-note{display:block;font:500 6.4pt/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:0 0 4px}
+.fixed{font:600 7.6pt/1 var(--mono);color:var(--green);background:var(--mint);border-radius:3px;padding:3px 6px}
+.grp{padding:6px 11px 3px;font:italic 400 8.6pt/1.45 var(--serif);color:var(--muted);border-top:1px solid #edf1ef;break-after:avoid}
+.nest{grid-column:1 / -1;margin:3px 0 2px;border-left:2px solid var(--mint-edge);padding-left:0}
+.nest .f{padding-left:12px;border-top-color:#f1f4f2}
+.nest .grp{padding-left:12px}
+.f.has-nest{grid-template-columns:1fr;gap:0;break-inside:auto;page-break-inside:auto} /* a group may break between its fields; each field stays whole */
+.f.has-nest>.fn,.f.has-nest>.enum-note{break-after:avoid;page-break-after:avoid}
+.def.provider .f{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}
+.m-sig,.m-ret{overflow-wrap:anywhere} /* renderer inserts <wbr> at camelCase humps */
+.m-sig{font:500 8.3pt/1.6 var(--mono);color:var(--green)}
+.m-sig .p{color:var(--muted);font-weight:400}
+.m-ret{font:400 8.2pt/1.6 var(--mono);color:var(--muted)}
+.m-ret::before{content:"→ ";color:var(--faint)}
+
+/* ── Verbatim blocks & diagrams ────────────────────────────────────── */
+.verbatim-block{background:var(--code-bg);border:1px solid var(--rule);border-radius:5px;break-inside:avoid}
+.verbatim-block .lbl{display:block;font:600 6.4pt/1 var(--sans);letter-spacing:.17em;text-transform:uppercase;color:var(--faint);padding:8px 11px 0}
+.verbatim-block pre{margin:0;padding:6px 11px 10px;font:400 8pt/1.55 var(--mono);color:var(--ink);white-space:pre-wrap;word-break:break-word}
+figure.diagram{margin:0;border:1px solid var(--rule);border-radius:5px;padding:12px;text-align:center;break-inside:avoid}
+figure.diagram pre.mermaid{margin:0;text-align:left;font:400 7.8pt/1.45 var(--mono);color:var(--muted);white-space:pre-wrap}
+figure.diagram pre.mermaid[data-processed]{text-align:center}
+figure.diagram svg{max-width:100%;height:auto}
+figure.diagram figcaption{font:600 6.4pt/1 var(--sans);letter-spacing:.17em;text-transform:uppercase;color:var(--faint);margin-top:9px}
+
+/* ── End matter ────────────────────────────────────────────────────── */
+.end{margin-top:12mm;padding-top:8px;border-top:1.5px solid var(--green);display:flex;justify-content:space-between;gap:14px;font:500 7pt/1.5 var(--sans);color:var(--muted)}
+.end code{font-size:7pt}
+
+/* ── Print ─────────────────────────────────────────────────────────── */
+@page{
+  size:A4;
+  margin:16mm 17mm 19mm;
+  @bottom-left{content:"SCS-CAP-03  ·  Page " counter(page) " of " counter(pages);font:600 7pt "JetBrains Mono",Consolas,monospace;color:#06271f;border-top:1px solid #06271f;padding-top:4mm;vertical-align:top;white-space:nowrap}
+  @bottom-right{content:"Adaptive Agricultural Brain — Governed Scientific Intelligence Infrastructure";font:500 6.8pt "Inter",sans-serif;color:#5f6d67;border-top:1px solid #06271f;padding-top:4mm;vertical-align:top;white-space:nowrap}
+}
+@media print{
+  html{background:#fff}
+  .screen-note{display:none}
+  .sheet{margin:0;max-width:none;box-shadow:none}
+  .band{border-radius:6px;padding:11mm 12mm 10mm}
+  .band-top{margin-bottom:10mm}
+  .content{padding:0}
+  .end{display:none}
+  nav.toc{break-after:page;page-break-after:always} /* page 1 is the cover: header, details, contents */
+  a{color:inherit;text-decoration:none}
+  mark.ph{background:none;border:0;color:inherit;padding:0}
+}
+</style>
+</head>
+<body>
+<p class="screen-note">A4 print-ready. Print → Save as PDF, paper A4, margins Default, and turn off “Headers and footers” — each page carries its own footer.</p>
+<article class="sheet">
+
+<header class="band">
+  <div class="band-top">
+    <div class="brand">
+      <svg viewBox="0 0 30 30" aria-hidden="true"><rect x="3" y="5" width="24" height="4.4" rx="2.2" fill="#78ecad"/><rect x="3" y="12.8" width="24" height="4.4" rx="2.2" fill="#ffffff"/><rect x="3" y="20.6" width="24" height="4.4" rx="2.2" fill="#ffffff"/></svg>
+      <div><b>AAB</b><small>Adaptive Agricultural Brain</small></div>
+    </div>
+    <span class="ref-code">SCS-CAP-03</span>
+  </div>
+  <p class="kind">Canonical Contract</p>
+  <h1>Plot and Land Unit Registration</h1>
+  <span class="badge design">DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED</span>
+</header>
+
+<div class="content">
+  <dl class="meta">
+    <dt>Reference</dt><dd><code>SCS-CAP-03</code></dd>
+    <dt>Status</dt><dd class="verbatim">CANONICAL CONTRACT — NOT IMPLEMENTATION</dd>
+    <dt>Version</dt><dd><span class="unstated">Not stated in source</span></dd>
+    <dt>Date</dt><dd>2026-09-22</dd>
+    <dt>Domain</dt><dd class="verbatim">Supply Chain Sovereignty (SCS)</dd><dt>Authority</dt><dd class="verbatim">DEFINES THE CONTRACT FOR SCS-CAP-03. Establishes no commissioning, production, Gate D, WP05, scientific-validity or regulatory authority. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.</dd>
+  </dl>
+
+  <nav class="toc" aria-label="Contents"><h2>Contents</h2><ol>
+    <li><span class="n">01</span><a href="#plain-english-boundary-statement">Plain-English boundary statement</a></li><li><span class="n">02</span><a href="#the-governing-principle">The governing principle</a></li><li><span class="n">03</span><a href="#why-plot-and-framework-must-be-separated">Why plot and framework must be separated</a></li><li><span class="n">04</span><a href="#what-a-gps-polygon-does-and-does-not-prove">What a GPS polygon does and does not prove</a></li><li><span class="n">05</span><a href="#domain-position">Domain position</a></li><li><span class="n">06</span><a href="#core-interfaces">Core interfaces</a></li><li><span class="n">07</span><a href="#provider-neutral-interface">Provider-neutral interface</a></li><li><span class="n">08</span><a href="#aggregator-bulk-registration-noted-not-yet-designed">Aggregator bulk registration — noted, not yet designed</a></li><li><span class="n">09</span><a href="#failure-contract">Failure contract</a></li><li><span class="n">10</span><a href="#registration-and-association-sequence">Registration and association sequence</a></li><li><span class="n">11</span><a href="#what-this-document-does-not-establish">What this document does not establish</a></li>
+  </ol></nav>
+
+<section class="sec" id="plain-english-boundary-statement"><div class="head-keep"><h2 class="sec-h"><span class="n">01</span>Plain-English boundary statement</h2><div class="clause"><span class="cn">1.1</span><div class="cb"><p>SCS-CAP-03 allows an authorised operator or aggregator to register a geographic plot as a real-world entity, with its boundary evidence, tenure claims, and framework associations recorded separately and honestly. It does not verify legal title. It does not confirm regulatory sufficiency. It does not decide between competing tenure claims. It creates a governed, versioned record of what is known about a place, who claims a relationship to it, and under which frameworks it is being assessed — with every gap and uncertainty explicitly disclosed.</p></div></div></div></section>
+<section class="sec" id="the-governing-principle"><div class="head-keep"><h2 class="sec-h"><span class="n">02</span>The governing principle</h2><div class="clause"><span class="cn">2.1</span><div class="cb"><p>A plot is a place. A tenure record describes someone's evidenced relationship to that place. A framework association describes why that place is being assessed. A sufficiency decision describes whether the evidence meets that particular framework's needs. None of those should be silently treated as the other.</p></div></div></div><div class="clause"><span class="cn">2.2</span><div class="cb"><p><code>registrationStatus: "REGISTERED"</code> means only that SCS has created a governed record of this plot. It does not mean:</p></div></div><div class="clause"><span class="cn">2.3</span><div class="cb"><ul><li>legal title verified</li><li>tenure accepted</li><li>boundary undisputed</li><li>framework compliant</li><li>commodity eligible</li></ul></div></div></section>
+<section class="sec" id="why-plot-and-framework-must-be-separated"><div class="head-keep"><h2 class="sec-h"><span class="n">03</span>Why plot and framework must be separated</h2><div class="clause"><span class="cn">3.1</span><div class="cb"><p>A single plot may simultaneously be relevant to:</p></div></div></div><div class="clause"><span class="cn">3.2</span><div class="cb"><ul><li>EUDR commodity traceability</li><li>national land-use regulation</li><li>deforestation controls</li><li>certification schemes (RSPO, Rainforest Alliance, FSC)</li><li>carbon accounting mechanisms</li><li>biodiversity safeguard frameworks</li><li>customary-rights protections</li><li>future regulatory frameworks that do not yet exist</li></ul></div></div><div class="clause"><span class="cn">3.3</span><div class="cb"><p>If the regulatory framework were embedded into plot registration, the system would either duplicate the same plot for every framework, or modify the plot's foundational identity whenever regulations change. Both approaches weaken lineage and create opportunities for contradictory plot records. The plot is a real-world geographic entity. A regulatory framework is a changing legal and evidence context. They must not share the same identity or lifecycle.</p></div></div></section>
+<section class="sec" id="what-a-gps-polygon-does-and-does-not-prove"><div class="head-keep"><h2 class="sec-h"><span class="n">04</span>What a GPS polygon does and does not prove</h2><div class="clause"><span class="cn">4.1</span><div class="cb"><p>A GPS polygon proves neither title nor control. SCS-CAP-03 keeps the following questions explicitly separate:</p></div></div></div><div class="clause"><span class="cn">4.2</span><div class="cb"><table class="grid"><thead><tr><th>Question</th><th>Example evidence</th></tr></thead><tbody><tr><td>Where is the plot believed to be?</td><td>Survey polygon, phone GPS, mapped customary boundary</td></tr><tr><td>How precise is that boundary?</td><td>Survey accuracy, device accuracy, uncertainty statement</td></tr><tr><td>Who supplied the boundary?</td><td>Land office, farmer, cooperative, community representative</td></tr><tr><td>Who claims a relationship to it?</td><td>Owner, tenant, cooperative member, customary community</td></tr><tr><td>What is the basis of that relationship?</td><td>Title, lease, permit, customary tenure, attestation</td></tr><tr><td>Has a registry verified it?</td><td>Verified, unverified, conflicting, unavailable</td></tr><tr><td>Which framework is assessing it?</td><td>EUDR or another registered SCS framework</td></tr><tr><td>Is the available evidence sufficient?</td><td>Framework-specific SCS-CAP-06 determination</td></tr></tbody></table></div></div><div class="clause"><span class="cn">4.3</span><div class="cb"><p>This prevents an informal mapped boundary from being presented as formal ownership while still allowing the real plot to enter the system and be honestly assessed.</p></div></div></section>
+<section class="sec" id="domain-position"><div class="head-keep"><h2 class="sec-h"><span class="n">05</span>Domain position</h2><div class="clause"><span class="cn">5.1</span><div class="cb"><figure class="diagram"><pre class="mermaid">graph TD
+    A[SCS-CAP-01&lt;br/&gt;Regulatory Framework Registration] --&gt;|generates evidence requirement spec| B[SCS-CAP-03&lt;br/&gt;Plot and Land Unit Registration]
+    B --&gt;|plot registered, framework associated| C[SCS-CAP-04&lt;br/&gt;Deforestation Evidence Admission]
+    B --&gt;|plot registered| D[SCS-CAP-05&lt;br/&gt;Supply Chain Custody Evidence Admission]
+    C --&gt;|evidence admitted| E[SCS-CAP-06&lt;br/&gt;Due Diligence Sufficiency Evaluation]
+    D --&gt;|evidence admitted| E
+    B --&gt;|framework association| E</pre><figcaption>Diagram</figcaption></figure></div></div></div></section>
+<section class="sec" id="core-interfaces"><div class="head-keep head-only"><h2 class="sec-h"><span class="n">06</span>Core interfaces</h2><h3 class="sub-h"><span class="n">6.1</span>Plot registration</h3></div><div class="clause"><span class="cn">6.1.1</span><div class="cb"><div class="def"><div class="def-head"><span class="dn">ScsPlotRegistration</span><span class="dk">Interface</span></div><div class="grp">Canonical identity</div><div class="f"><span class="fn">plotId</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">plotVersion</span><span class="ft"><span>number</span></span></div><div class="f"><span class="fn">schemaVersion</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">registeredAt</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">registrationStatus</span><span class="ft"><span class="enum-note">One of</span><ul class="enum"><li>&quot;REGISTERED&quot;</li><li>&quot;REQUIRES_HUMAN_REVIEW&quot;</li><li>&quot;DISPUTED&quot;</li><li>&quot;RETIRED&quot;</li></ul></span></div><div class="grp">Human-readable identifier</div><div class="f"><span class="fn">plotName<span class=opt>optional</span></span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">countryCode</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">administrativeAreas<span class=opt>optional</span></span><span class="ft"><span>string</span>[]</span></div><div class="grp">Geographic boundary</div><div class="f has-nest"><span class="fn">geometry</span><div class="nest"><div class="f"><span class="fn">geometryType</span><span class="ft"><span class="enum-note">One of</span><ul class="enum"><li>&quot;POLYGON&quot;</li><li>&quot;MULTIPOLYGON&quot;</li></ul></span></div><div class="f"><span class="fn">coordinates</span><span class="ft"><span>unknown</span></span></div><div class="f"><span class="fn">coordinate<wbr>Reference<wbr>System</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">captureMethod</span><span class="ft"><span class="enum-note">One of</span><ul class="enum"><li>&quot;FORMAL_CADASTRAL_SURVEY&quot;</li><li>&quot;GOVERNMENT_REGISTRY_GEOMETRY&quot;</li><li>&quot;PROFESSIONAL_SURVEY&quot;</li><li>&quot;PHONE_GPS&quot;</li><li>&quot;COMMUNITY_MAPPING&quot;</li><li>&quot;COOPERATIVE_MAPPING&quot;</li><li>&quot;REMOTE_SENSING_DERIVATION&quot;</li><li>&quot;OTHER&quot;</li></ul></span></div><div class="f"><span class="fn">positional<wbr>Accuracy<wbr>Metres<span class=opt>optional</span></span><span class="ft"><span>number</span></span></div><div class="f"><span class="fn">boundary<wbr>Uncertainty<wbr>Description<span class=opt>optional</span></span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">capturedAt<span class=opt>optional</span></span><span class="ft"><span>string</span></span></div></div></div><div class="grp">Identity evidence — what is known about formal registration</div><div class="f has-nest"><span class="fn">identityEvidence</span><div class="nest"><div class="f"><span class="fn">registryReference<span class=opt>optional</span></span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">registryAuthority<span class=opt>optional</span></span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">registry<wbr>Verification<wbr>Status</span><span class="ft"><span class="enum-note">One of</span><ul class="enum"><li>&quot;VERIFIED&quot;</li><li>&quot;UNVERIFIED&quot;</li><li>&quot;CONFLICTING&quot;</li><li>&quot;REGISTRY_UNAVAILABLE&quot;</li><li>&quot;NOT_APPLICABLE&quot;</li></ul></span></div><div class="f"><span class="fn">supportingEvidenceIds</span><span class="ft"><span>string</span>[]</span></div><div class="f"><span class="fn">evidenceLimitations</span><span class="ft"><span>string</span>[]</span></div></div></div><div class="grp">Known or possible overlap with other registered plots</div><div class="f"><span class="fn">overlapState</span><span class="ft"><span class="enum-note">One of</span><ul class="enum"><li>&quot;NO_KNOWN_OVERLAP&quot;</li><li>&quot;POSSIBLE_OVERLAP&quot;</li><li>&quot;CONFIRMED_OVERLAP&quot;</li><li>&quot;NOT_EVALUATED&quot;</li></ul></span></div><div class="grp">Provenance — who registered this and how</div><div class="f has-nest"><span class="fn">provenance</span><div class="nest"><div class="f"><span class="fn">submittedBy</span><span class="ft"><span class="tref">ActorReference</span></span></div><div class="f"><span class="fn">submitting<wbr>Organization<wbr>Id<span class=opt>optional</span></span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">sourceType</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">recordedAt</span><span class="ft"><span>string</span></span></div></div></div></div></div></div><div class="head-keep"><h3 class="sub-h"><span class="n">6.2</span>Tenure claim — separate from plot registration</h3><div class="clause"><span class="cn">6.2.1</span><div class="cb"><p>Tenure claims are separate records. Multiple claims may exist for the same plot. SCS-CAP-03 records them honestly without deciding which is legally correct.</p></div></div></div><div class="clause"><span class="cn">6.2.2</span><div class="cb"><div class="def"><div class="def-head"><span class="dn">ScsPlotTenureClaim</span><span class="dk">Interface</span></div><div class="f"><span class="fn">tenureClaimId</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">plotId</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">plotVersion</span><span class="ft"><span>number</span></span></div><div class="f"><span class="fn">claimantType</span><span class="ft"><span class="enum-note">One of</span><ul class="enum"><li>&quot;INDIVIDUAL&quot;</li><li>&quot;ORGANIZATION&quot;</li><li>&quot;COOPERATIVE&quot;</li><li>&quot;COMMUNITY&quot;</li><li>&quot;GOVERNMENT&quot;</li><li>&quot;OTHER&quot;</li></ul></span></div><div class="f"><span class="fn">claimantId</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">tenureBasis</span><span class="ft"><span class="enum-note">One of</span><ul class="enum"><li>&quot;FORMAL_TITLE&quot;</li><li>&quot;LEASE&quot;</li><li>&quot;PERMIT&quot;</li><li>&quot;CUSTOMARY_COLLECTIVE_RIGHT&quot;</li><li>&quot;CUSTOMARY_INDIVIDUAL_RIGHT&quot;</li><li>&quot;COMMUNITY_ATTESTATION&quot;</li><li>&quot;OCCUPANCY_OR_USE_CLAIM&quot;</li><li>&quot;UNKNOWN&quot;</li></ul></span></div><div class="f"><span class="fn">evidenceIds</span><span class="ft"><span>string</span>[]</span></div><div class="f"><span class="fn">verificationStatus</span><span class="ft"><span class="enum-note">One of</span><ul class="enum"><li>&quot;VERIFIED&quot;</li><li>&quot;PARTIALLY_VERIFIED&quot;</li><li>&quot;UNVERIFIED&quot;</li><li>&quot;CONFLICTING&quot;</li><li>&quot;AUTHORITY_UNAVAILABLE&quot;</li></ul></span></div><div class="f"><span class="fn">validFrom<span class=opt>optional</span></span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">validUntil<span class=opt>optional</span></span><span class="ft"><span>string</span></span></div><div class="grp">Explicit disclosure of what this claim does not establish</div><div class="f"><span class="fn">limitations</span><span class="ft"><span>string</span>[]</span></div><div class="f"><span class="fn">recordedAt</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">recordedBy</span><span class="ft"><span class="tref">ActorReference</span></span></div></div></div></div><div class="clause"><span class="cn">6.2.3</span><div class="cb"><p>This allows customary rights to be represented directly rather than forced into a Western title-document model. It also allows multiple or competing claims to exist without SCS silently deciding which claimant is legally correct.</p></div></div><div class="head-keep head-only"><h3 class="sub-h"><span class="n">6.3</span>Framework association — many-to-many, versioned</h3></div><div class="clause"><span class="cn">6.3.1</span><div class="cb"><div class="def"><div class="def-head"><span class="dn">ScsPlotFrameworkAssociation</span><span class="dk">Interface</span></div><div class="f"><span class="fn">associationId</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">plotId</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">frameworkId</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">frameworkVersion</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">commodityCode<span class=opt>optional</span></span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">producerOrOperatorId<span class=opt>optional</span></span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">applicabilityStatus</span><span class="ft"><span class="enum-note">One of</span><ul class="enum"><li>&quot;POTENTIALLY_APPLICABLE&quot;</li><li>&quot;APPLICABLE&quot;</li><li>&quot;NOT_APPLICABLE&quot;</li><li>&quot;REQUIRES_HUMAN_DECISION&quot;</li></ul></span></div><div class="f"><span class="fn">associatedAt</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">associatedBy</span><span class="ft"><span class="tref">ActorReference</span></span></div><div class="f"><span class="fn">associationReason</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">effectiveFrom<span class=opt>optional</span></span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">effectiveUntil<span class=opt>optional</span></span><span class="ft"><span>string</span></span></div><div class="grp">Links to the exact evidence requirement spec<br>in force at the time of association</div><div class="f"><span class="fn">evidence<wbr>Requirement<wbr>Spec<wbr>Id</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">lifecycleStatus</span><span class="ft"><span class="enum-note">One of</span><ul class="enum"><li>&quot;ACTIVE&quot;</li><li>&quot;SUPERSEDED&quot;</li><li>&quot;WITHDRAWN&quot;</li></ul></span></div></div></div></div><div class="clause"><span class="cn">6.3.2</span><div class="cb"><p>One plot may have many framework associations. One framework may apply to many plots. Each association records the exact framework version and requirement specification — so a sufficiency evaluation always knows which standard it is checking against.</p></div></div><div class="head-keep"><h3 class="sub-h"><span class="n">6.4</span>Registration request — with optional initial framework associations</h3><div class="clause"><span class="cn">6.4.1</span><div class="cb"><div class="def short"><div class="def-head"><span class="dn">RegisterPlotRequest</span><span class="dk">Interface</span></div><div class="f"><span class="fn">plot</span><span class="ft"><span class="tref">ScsPlotRegistration</span></span></div><div class="f"><span class="fn">tenureClaims<span class=opt>optional</span></span><span class="ft"><span class="tref">ScsPlotTenureClaim</span>[]</span></div><div class="grp">Optional — framework associations may be created<br>separately after registration</div><div class="f has-nest"><span class="fn">initial<wbr>Framework<wbr>Associations<span class=opt>optional</span></span><span class="enum-note" style="margin:2px 0 0">Array of objects</span><div class="nest"><div class="f"><span class="fn">frameworkId</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">frameworkVersion</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">commodityCode<span class=opt>optional</span></span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">associationReason</span><span class="ft"><span>string</span></span></div></div></div></div></div></div></div><div class="clause"><span class="cn">6.4.2</span><div class="cb"><p>If a framework association fails during registration, the plot registration still succeeds. The failed association is reported separately. This preserves the distinction between "this plot exists in SCS" and "this plot is being assessed against framework X."</p></div></div><div class="head-keep head-only"><h3 class="sub-h"><span class="n">6.5</span>Registration decision</h3></div><div class="clause"><span class="cn">6.5.1</span><div class="cb"><div class="def"><div class="def-head"><span class="dn">ScsPlotRegistrationDecision</span><span class="dk">Interface</span></div><div class="f"><span class="fn">decisionId</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">plotId</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">decision</span><span class="ft"><span class="enum-note">One of</span><ul class="enum"><li>&quot;REGISTERED&quot;</li><li>&quot;REGISTERED_WITH_GAPS&quot;</li><li>&quot;REJECTED&quot;</li><li>&quot;REQUIRES_HUMAN_REVIEW&quot;</li></ul></span></div><div class="f has-nest"><span class="fn">eligibilityChecks</span><div class="nest"><div class="f"><span class="fn">geometryValid</span><span class="ft"><span>boolean</span></span></div><div class="f"><span class="fn">countryCodeValid</span><span class="ft"><span>boolean</span></span></div><div class="f"><span class="fn">coordinate<wbr>Reference<wbr>System<wbr>Recognised</span><span class="ft"><span>boolean</span></span></div><div class="f"><span class="fn">capturMethodRecorded</span><span class="ft"><span>boolean</span></span></div><div class="f"><span class="fn">registrantAuthorised</span><span class="ft"><span>boolean</span></span></div><div class="f"><span class="fn">no<wbr>Fatal<wbr>Overlap<wbr>Detected</span><span class="ft"><span>boolean</span></span></div></div></div><div class="grp">Gaps are disclosed, not hidden</div><div class="f has-nest"><span class="fn">gaps</span><span class="enum-note" style="margin:2px 0 0">Array of objects</span><div class="nest"><div class="f"><span class="fn">gapCode</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">gapDescription</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">automaticFailure</span><span class="ft"><span>boolean</span></span></div><div class="f"><span class="fn">humanReviewRequired</span><span class="ft"><span>boolean</span></span></div></div></div><div class="f has-nest"><span class="fn">framework<wbr>Association<wbr>Results</span><span class="enum-note" style="margin:2px 0 0">Array of objects</span><div class="nest"><div class="f"><span class="fn">frameworkId</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">associationId<span class=opt>optional</span></span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">outcome</span><span class="ft"><span class="enum-note">One of</span><ul class="enum"><li>&quot;ASSOCIATED&quot;</li><li>&quot;FAILED&quot;</li><li>&quot;PENDING_HUMAN_DECISION&quot;</li></ul></span></div><div class="f"><span class="fn">reason<span class=opt>optional</span></span><span class="ft"><span>string</span></span></div></div></div><div class="f"><span class="fn">decisionReasons</span><span class="ft"><span>string</span>[]</span></div><div class="f"><span class="fn">decidedBy</span><span class="ft"><span class="tref">ActorReference</span></span></div><div class="f"><span class="fn">decidedAt</span><span class="ft"><span>string</span></span></div></div></div></div><div class="head-keep"><h3 class="sub-h"><span class="n">6.6</span>Sufficiency evaluation request and result</h3><div class="clause"><span class="cn">6.6.1</span><div class="cb"><p>Sufficiency is always contextual. SCS-CAP-06 does not ask "is this plot sufficient?" It asks "is the evidence for this plot sufficient for this commodity, under this framework version, for this declared purpose and relevant period?"</p></div></div></div><div class="clause"><span class="cn">6.6.2</span><div class="cb"><div style="display:grid;gap:10px"><div class="def short"><div class="def-head"><span class="dn">ScsPlotSufficiencyRequest</span><span class="dk">Interface</span></div><div class="f"><span class="fn">plotId</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">plotVersion</span><span class="ft"><span>number</span></span></div><div class="f"><span class="fn">framework<wbr>Association<wbr>Id</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">evidence<wbr>Requirement<wbr>Spec<wbr>Id</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">commodityCode</span><span class="ft"><span>string</span></span></div><div class="f has-nest"><span class="fn">relevantPeriod</span><div class="nest"><div class="f"><span class="fn">from<span class=opt>optional</span></span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">to<span class=opt>optional</span></span><span class="ft"><span>string</span></span></div></div></div><div class="f"><span class="fn">evidenceIds</span><span class="ft"><span>string</span>[]</span></div></div><div class="def short"><div class="def-head"><span class="dn">ScsPlotSufficiencyResult</span><span class="dk">Interface</span></div><div class="f"><span class="fn">result</span><span class="ft"><span class="enum-note">One of</span><ul class="enum"><li>&quot;SUFFICIENT&quot;</li><li>&quot;GAPS_REQUIRE_HUMAN_DECISION&quot;</li><li>&quot;INSUFFICIENT&quot;</li><li>&quot;CONFLICTING_EVIDENCE&quot;</li><li>&quot;FAIL_CLOSED&quot;</li></ul></span></div><div class="f has-nest"><span class="fn">gaps</span><span class="enum-note" style="margin:2px 0 0">Array of objects</span><div class="nest"><div class="f"><span class="fn">requirementCode</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">gapType</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">explanation</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">automaticFailure</span><span class="ft"><span>boolean</span></span></div><div class="f"><span class="fn">humanDecisionRequired</span><span class="ft"><span>boolean</span></span></div></div></div><div class="grp">This result never authorises a due diligence statement<br>A human review through SCS-CAP-09 is always required</div><div class="f flag"><span class="fn">noAutomaticApproval</span><span class="ft"><span class="fixed">true</span></span></div></div></div></div></div><div class="clause"><span class="cn">6.6.3</span><div class="cb"><p><strong>Example result for a GPS-only plot with no formal registry reference:</strong></p></div></div><div class="clause"><span class="cn">6.6.4</span><div class="cb"><div class="verbatim-block"><span class="lbl">JSON example</span><pre>{
+  "result": "GAPS_REQUIRE_HUMAN_DECISION",
+  "gaps": [
+    {
+      "requirementCode": "PLOT_REGISTRY_VERIFICATION",
+      "gapType": "FORMAL_REGISTRY_NOT_VERIFIED",
+      "explanation": "A geographic polygon is recorded, but no formal registry reference has been verified. The compliance officer must explicitly address this gap before a due diligence statement can be compiled.",
+      "automaticFailure": false,
+      "humanDecisionRequired": true
+    }
+  ],
+  "noAutomaticApproval": true
+}</pre></div></div></div></section>
+<section class="sec" id="provider-neutral-interface"><div class="head-keep"><h2 class="sec-h"><span class="n">07</span>Provider-neutral interface</h2><div class="clause"><span class="cn">7.1</span><div class="cb"><div class="def short provider"><div class="def-head"><span class="dn">ScsPlotRegistrationProvider</span><span class="dk">Provider interface</span></div><div class="f"><span class="m-sig">register<wbr>Plot<span class="p">(request: Register<wbr>Plot<wbr>Request)</span></span><span class="m-ret">Promise&lt;<wbr>Scs<wbr>Plot<wbr>Registration<wbr>Decision&gt;</span></div><div class="f"><span class="m-sig">get<wbr>Plot<span class="p">(plot<wbr>Id: string, <wbr>version?: number)</span></span><span class="m-ret">Promise&lt;<wbr>Scs<wbr>Plot<wbr>Registration&gt;</span></div><div class="f"><span class="m-sig">get<wbr>Plot<wbr>Tenure<wbr>Claims<span class="p">(plot<wbr>Id: string)</span></span><span class="m-ret">Promise&lt;<wbr>Scs<wbr>Plot<wbr>Tenure<wbr>Claim[]&gt;</span></div><div class="f"><span class="m-sig">add<wbr>Tenure<wbr>Claim<span class="p">(claim: Scs<wbr>Plot<wbr>Tenure<wbr>Claim)</span></span><span class="m-ret">Promise&lt;<wbr>Scs<wbr>Plot<wbr>Tenure<wbr>Claim&gt;</span></div><div class="f"><span class="m-sig">associate<wbr>Framework<span class="p">(plot<wbr>Id: string, <wbr>association: Omit&lt;<wbr>Scs<wbr>Plot<wbr>Framework<wbr>Association, <wbr>&quot;association<wbr>Id&quot; | &quot;associated<wbr>At&quot;&gt;)</span></span><span class="m-ret">Promise&lt;<wbr>Scs<wbr>Plot<wbr>Framework<wbr>Association&gt;</span></div><div class="f"><span class="m-sig">get<wbr>Framework<wbr>Associations<span class="p">(plot<wbr>Id: string)</span></span><span class="m-ret">Promise&lt;<wbr>Scs<wbr>Plot<wbr>Framework<wbr>Association[]&gt;</span></div><div class="f"><span class="m-sig">evaluate<wbr>Sufficiency<span class="p">(request: Scs<wbr>Plot<wbr>Sufficiency<wbr>Request)</span></span><span class="m-ret">Promise&lt;<wbr>Scs<wbr>Plot<wbr>Sufficiency<wbr>Result&gt;</span></div><div class="f"><span class="m-sig">list<wbr>Plots<span class="p">(request: List<wbr>Plots<wbr>Request)</span></span><span class="m-ret">Promise&lt;<wbr>List<wbr>Plots<wbr>Result&gt;</span></div><div class="f"><span class="m-sig">retire<wbr>Plot<span class="p">(plot<wbr>Id: string, <wbr>reason: string, <wbr>retired<wbr>By: Actor<wbr>Reference)</span></span><span class="m-ret">Promise&lt;<wbr>void&gt;</span></div></div></div></div></div></section>
+<section class="sec" id="aggregator-bulk-registration-noted-not-yet-designed"><div class="head-keep"><h2 class="sec-h"><span class="n">08</span>Aggregator bulk registration — noted, not yet designed</h2><div class="clause"><span class="cn">8.1</span><div class="cb"><p>The domain definition addendum records that in most target markets, an aggregator — a cooperative, trading company, or processing facility — manages plot data collection across hundreds or thousands of smallholder suppliers. Bulk registration workflows for aggregators are explicitly noted here so future capability design reflects this correctly. They are not in the launch scope of SCS-CAP-03 but must not be designed around when the core registration contract is implemented.</p></div></div></div></section>
+<section class="sec" id="failure-contract"><div class="head-keep"><h2 class="sec-h"><span class="n">09</span>Failure contract</h2><div class="clause"><span class="cn">9.1</span><div class="cb"><div class="def short"><div class="def-head"><span class="dn">ScsPlotRegistrationFailure</span><span class="dk">Interface</span></div><div class="f flag"><span class="fn">ok</span><span class="ft"><span class="fixed">false</span></span></div><div class="f"><span class="fn">capabilityId</span><span class="ft"><span class="lit">&quot;SCS-CAP-03&quot;</span></span></div><div class="f"><span class="fn">result</span><span class="ft"><span class="lit">&quot;FAIL_CLOSED&quot;</span></span></div><div class="f"><span class="fn">error</span><span class="ft"><span class="enum-note">One of</span><ul class="enum"><li>&quot;REGISTRANT_NOT_AUTHORISED&quot;</li><li>&quot;GEOMETRY_INVALID&quot;</li><li>&quot;COUNTRY_CODE_UNRECOGNISED&quot;</li><li>&quot;COORDINATE_REFERENCE_SYSTEM_UNSUPPORTED&quot;</li><li>&quot;FATAL_OVERLAP_DETECTED&quot;</li><li>&quot;TENURE_CLAIM_INVALID&quot;</li><li>&quot;FRAMEWORK_REFERENCE_NOT_FOUND&quot;</li><li>&quot;DEPENDENCY_UNAVAILABLE&quot;</li></ul></span></div><div class="f"><span class="fn">reasons</span><span class="ft"><span>string</span>[]</span></div><div class="f flag"><span class="fn">noWrites</span><span class="ft"><span class="fixed">true</span></span></div><div class="f flag"><span class="fn">noPlotRegistered</span><span class="ft"><span class="fixed">true</span></span></div></div></div></div></div></section>
+<section class="sec" id="registration-and-association-sequence"><div class="head-keep"><h2 class="sec-h"><span class="n">10</span>Registration and association sequence</h2><div class="clause"><span class="cn">10.1</span><div class="cb"><figure class="diagram"><pre class="mermaid">sequenceDiagram
+    participant CO as Compliance Officer
+    participant CAP03 as SCS-CAP-03
+    participant CAP01 as SCS-CAP-01
+    participant Store as Plot Store
+
+    CO-&gt;&gt;CAP03: RegisterPlotRequest (geometry + optional tenure + optional frameworks)
+    CAP03-&gt;&gt;CAP03: Validate geometry and country code
+    CAP03-&gt;&gt;CAP03: Record identity evidence and gaps
+    CAP03-&gt;&gt;Store: Write ScsPlotRegistration (REGISTERED or REGISTERED_WITH_GAPS)
+    
+    opt Initial framework associations requested
+        CAP03-&gt;&gt;CAP01: GetFramework (frameworkId, version)
+        CAP01--&gt;&gt;CAP03: ScsRegulatoryFramework + evidenceRequirementSpec
+        CAP03-&gt;&gt;Store: Write ScsPlotFrameworkAssociation
+    end
+
+    CAP03--&gt;&gt;CO: ScsPlotRegistrationDecision (plotId, gaps, association results)
+
+    Note over CO,Store: Plot exists independently of any framework.&lt;br/&gt;Additional frameworks can be associated at any time.</pre><figcaption>Diagram</figcaption></figure></div></div></div></section>
+<section class="sec" id="what-this-document-does-not-establish"><div class="head-keep"><h2 class="sec-h"><span class="n">11</span>What this document does not establish</h2><div class="clause"><span class="cn">11.1</span><div class="cb"><div class="boundary"><ul><li>It does not admit SCS-CAP-03 as a canonical capability — that requires the ten-point admission checklist</li><li>It does not implement, deploy or migrate anything</li><li>It does not verify legal title or tenure for any plot</li><li>It does not confirm that any registered plot meets the requirements of any regulatory framework — that is SCS-CAP-06's function</li><li>It does not decide between competing tenure claims — it records them honestly</li><li>It does not replace the need for operators to obtain and submit real evidence of boundary, identity and tenure through SCS-CAP-04 and SCS-CAP-05</li><li>It does not alter commissioning status, satisfy Gate D, close WP05, or grant any production or commissioning authority</li></ul></div></div></div></div></section>
+
+  <footer class="end"><span><code>SCS-CAP-03</code> · Source: <code>governance/workstream-b/SCS-CAP-03-PLOT-AND-LAND-UNIT-REGISTRATION-CANONICAL-CONTRACT-2026-09-22.md</code></span><span>Adaptive Agricultural Brain — Governed Scientific Intelligence Infrastructure</span></footer>
+</div>
+</article>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+mermaid.initialize({startOnLoad:true,securityLevel:"strict",theme:"base",fontFamily:"Inter, Segoe UI, sans-serif",
+  themeVariables:{primaryColor:"#eefbf4",primaryBorderColor:"#06271f",primaryTextColor:"#06271f",lineColor:"#3f8f6a",
+  secondaryColor:"#f6f8f7",tertiaryColor:"#ffffff",actorBkg:"#06271f",actorTextColor:"#ffffff",actorBorder:"#06271f",
+  signalColor:"#17211d",signalTextColor:"#17211d",noteBkgColor:"#eefbf4",noteBorderColor:"#78ecad",noteTextColor:"#06271f",fontSize:"12px"}});
+</script>
+</body>
+</html>
