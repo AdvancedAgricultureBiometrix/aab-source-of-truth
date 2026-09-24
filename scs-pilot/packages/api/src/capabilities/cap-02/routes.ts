@@ -2,8 +2,8 @@
 // authentication, schema validation, a mandatory Idempotency-Key and one
 // transaction around the handler (foundation/server.ts).
 //
-// Party identity, identity evidence submission, relationships and mandates
-// so far; role claims and verification assessments follow as separate routes.
+// Party identity, identity evidence submission, relationships, mandates and
+// role claims so far; verification assessments follow as a separate route.
 
 import type { Route } from "../../foundation/server.js";
 import { SCHEMAS } from "../../schemas/registry.js";
@@ -12,11 +12,13 @@ import type {
   ScsMandateRegistrationRequest,
   ScsPartyRegistrationRequest,
   ScsRelationshipRegistrationRequest,
+  ScsRoleClaimRequest,
 } from "../../types/cap-02.js";
 import { CAPABILITY_ID } from "./errors.js";
 import { registerMandate } from "./register-mandate.js";
 import { registerParty } from "./register-party.js";
 import { registerRelationship } from "./register-relationship.js";
+import { addRoleClaim } from "./register-role-claim.js";
 import { submitIdentityEvidence } from "./submit-evidence.js";
 
 export const registerPartyRoute: Route<ScsPartyRegistrationRequest> = {
@@ -64,9 +66,22 @@ export const registerMandateRoute: Route<ScsMandateRegistrationRequest> = {
   handle: registerMandate,
 };
 
+export const addRoleClaimRoute: Route<ScsRoleClaimRequest> = {
+  method: "POST",
+  path: "/scs/v1/parties/:partyId/roles",
+  capabilityId: CAPABILITY_ID,
+  auth: "required",
+  transactional: true,
+  idempotency: "required",
+  requestSchema: SCHEMAS.cap02RoleClaimRequest,
+  paramsSchema: SCHEMAS.cap02RoleClaimParams,
+  handle: addRoleClaim,
+};
+
 export const cap02Routes: readonly Route<never>[] = [
   registerPartyRoute as unknown as Route<never>,
   submitIdentityEvidenceRoute as unknown as Route<never>,
   registerRelationshipRoute as unknown as Route<never>,
   registerMandateRoute as unknown as Route<never>,
+  addRoleClaimRoute as unknown as Route<never>,
 ];

@@ -19,6 +19,11 @@
  *   src/schemas/cap-02/mandate-registration-decision.schema.json
  *   src/schemas/cap-02/mandate-registration-receipt.schema.json
  *   src/schemas/cap-02/mandate-registration-response.schema.json
+ *   src/schemas/cap-02/role-claim-params.schema.json
+ *   src/schemas/cap-02/role-claim-request.schema.json
+ *   src/schemas/cap-02/role-claim-decision.schema.json
+ *   src/schemas/cap-02/role-claim-receipt.schema.json
+ *   src/schemas/cap-02/role-claim-response.schema.json
  * To change these types, edit the schema(s) above, then run:
  *   npm run generate:types
  * npm test fails if this file differs from what the schemas generate.
@@ -450,5 +455,118 @@ export interface ScsMandateRegistrationReceipt {
 export interface ScsMandateRegistrationResponse {
   decision: ScsMandateRegistrationDecision;
   receipt: ScsMandateRegistrationReceipt;
+  receiptDigest: string;
+}
+
+/**
+ * Path parameters of POST /scs/v1/parties/:partyId/roles.
+ */
+export interface ScsRoleClaimPathParams {
+  partyId: string;
+}
+
+/**
+ * SCS-CAP-02 ScsRoleClaimRequest (contract 9a3e978). partyId is taken from the request path. Not in the request, because the system sets them: roleClaimId, partyVersion (the party's current version), frameworkVersion (the framework's regulationVersion), verificationStatus (CLAIMED_UNVERIFIED), claimedAt and claimedBy. Rules that span fields or records (OTHER description, validity period, framework and scope) are checked by the capability so that the contract's failure codes are returned.
+ */
+export interface ScsRoleClaimRequest {
+  claimedRole: "OPERATOR" | "SUPPLIER" | "AGGREGATOR" | "PROCESSOR" | "EXPORTER" | "IMPORTER" | "TRADER" | "OTHER";
+  /**
+   * Required exactly when claimedRole is OTHER.
+   */
+  otherRoleDescription?: string;
+  /**
+   * A CAP-01 frameworkId; the framework must be ACTIVE.
+   */
+  frameworkAssociationId: string;
+  /**
+   * Each value must equal the framework's scope.commodityCode.
+   *
+   * @minItems 1
+   * @maxItems 50
+   */
+  commodityScope: string[];
+  /**
+   * Each value must equal the framework's scope.countryOfOrigin.
+   *
+   * @minItems 1
+   * @maxItems 50
+   */
+  geographicScope: string[];
+  /**
+   * @maxItems 200
+   */
+  roleEvidenceIds: string[];
+  validFrom?: string;
+  /**
+   * When given with validFrom, must be after it.
+   */
+  validUntil?: string;
+  /**
+   * @maxItems 200
+   */
+  limitations: string[];
+}
+
+/**
+ * SCS-CAP-02 ScsRoleClaimDecision (contract 9a3e978). REGISTERED means a governed record of a claimed role exists; the role is not verified. An eligibility check is true only if it was actually performed and passed.
+ */
+export interface ScsRoleClaimDecision {
+  decisionId: string;
+  roleClaimId: string;
+  partyId: string;
+  partyVersion: number;
+  decision: "REGISTERED";
+  eligibilityChecks: ScsRoleClaimEligibilityChecks;
+  /**
+   * @maxItems 200
+   */
+  decisionReasons: string[];
+  decidedBy: ActorReference;
+  decidedAt: string;
+}
+export interface ScsRoleClaimEligibilityChecks {
+  registrantAuthorised: boolean;
+  partyExists: boolean;
+  partyNotRetired: boolean;
+  otherRoleDescribed: boolean;
+  frameworkExists: boolean;
+  frameworkActive: boolean;
+  scopeWithinFramework: boolean;
+  validityPeriodValid: boolean;
+  noConflictingRecord: boolean;
+}
+
+/**
+ * Immutable receipt for an SCS-CAP-02 role claim decision, written in the same transaction as the decision (foundation/receipts.ts). Its SHA-256 over canonical JSON is returned alongside it as receiptDigest.
+ */
+export interface ScsRoleClaimReceipt {
+  receiptId: string;
+  receiptVersion: "1";
+  capabilityId: "SCS-CAP-02";
+  decisionType: "ROLE_CLAIM_REGISTRATION";
+  /**
+   * roleClaimId of the registered role claim.
+   */
+  subjectId: string;
+  correlationId: string;
+  /**
+   * SHA-256 (hex) of the canonical request: method, concrete path (partyId included) and body.
+   */
+  requestDigest: string;
+  idempotencyKey: string | null;
+  issuedAt: string;
+  /**
+   * The authenticated actor whose request produced this decision.
+   */
+  issuedFor: ActorReference;
+  decision: ScsRoleClaimDecision;
+}
+
+/**
+ * Body of a successful POST /scs/v1/parties/:partyId/roles (201): the role claim decision, the immutable receipt that records it, and the receipt's SHA-256 over canonical JSON.
+ */
+export interface ScsRoleClaimResponse {
+  decision: ScsRoleClaimDecision;
+  receipt: ScsRoleClaimReceipt;
   receiptDigest: string;
 }

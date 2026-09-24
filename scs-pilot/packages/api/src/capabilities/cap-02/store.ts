@@ -11,6 +11,7 @@ import type {
   ScsMandateRegistrationRequest,
   ScsPartyRegistrationRequest,
   ScsRelationshipRegistrationRequest,
+  ScsRoleClaimRequest,
 } from "../../types/cap-02.js";
 import { CAPABILITY_ID } from "./errors.js";
 
@@ -453,4 +454,87 @@ export async function insertMandate(tx: Tx, n: NewMandate): Promise<InsertedMand
   );
   const row = rows[0]!;
   return { mandateId: row.mandate_id, createdAt: row.created_at.toISOString() };
+}
+
+// ── Role claim registration ──────────────────────────────────────────────────
+
+/** Serialise role claims for one party, role and framework until the transaction ends. */
+export async function lockRoleClaimKey(tx: Tx, partyId: string, claimedRole: string, frameworkId: string): Promise<void> {
+  const lockName = ["scs-cap-02-role-claim", partyId, claimedRole, frameworkId].join("\u001f");
+  await withDatabaseErrors(CAPABILITY_ID, () => tx.query("SELECT pg_advisory_xact_lock(hashtextextended($1, 0))", [lockName]));
+}
+
+/**
+ * A role claim for the same party, role and framework, not SUPERSEDED or
+ * EXPIRED, whose validity period overlaps [validFrom, validUntil), if any.
+ * Contract gap (recorded in 211be95): the rule names no status; like
+ * relationships (ACTIVE only) and mandates (NOT_REVOKED only), a superseded
+ * or expired claim never blocks.
+ */
+export async function findConflictingRoleClaim(
+  tx: Tx,
+  c: { readonly partyId: string; readonly claimedRole: string; readonly frameworkId: string; readonly validFrom: string | null; readonly validUntil: string | null },
+): Promise<string | null> {
+  const { rows } = await withDatabaseErrors(CAPABILITY_ID, () =>
+    tx.query<{ role_claim_id: string }>(
+      `SELECT role_claim_id
+         FROM scs.party_role_claim
+        WHERE party_id = $1 AND claimed_role = $2 AND framework_association_id = $3
+          AND verification_status NOT IN ('SUPERSEDED', 'EXPIRED')
+          AND tstzrange(valid_from, valid_until, '[)') && tstzrange($4::timestamptz, $5::timestamptz, '[)')
+        ORDER BY created_at
+        LIMIT 1`,
+      [c.partyId, c.claimedRole, c.frameworkId, c.validFrom, c.validUntil],
+    ),
+  );
+  return rows[0]?.role_claim_id ?? null;
+}
+
+export interface NewRoleClaim {
+  readonly party: PartyForEvidence;
+  readonly framework: FrameworkForAssociation;
+  readonly request: ScsRoleClaimRequest;
+  readonly claimedBy: ActorReference;
+}
+
+export interface InsertedRoleClaim {
+  readonly roleClaimId: string;
+  /** Transaction timestamp: claimedAt = decidedAt. */
+  readonly claimedAt: string;
+}
+
+/**
+ * Insert the ScsPartyRoleClaim row: the party's current version, the
+ * framework's regulationVersion as frameworkVersion, CLAIMED_UNVERIFIED. The
+ * database generates roleClaimId.
+ */
+export async function insertRoleClaim(tx: Tx, n: NewRoleClaim): Promise<InsertedRoleClaim> {
+  const r = n.request;
+  const { rows } = await withDatabaseErrors(CAPABILITY_ID, () =>
+    tx.query<{ role_claim_id: string; claimed_at: Date }>(
+      `INSERT INTO scs.party_role_claim (
+         party_id, party_version, claimed_role, other_role_description, framework_association_id, framework_version,
+         commodity_scope, geographic_scope, role_evidence_ids, verification_status, valid_from, valid_until,
+         limitations, claimed_at, claimed_by
+       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'CLAIMED_UNVERIFIED', $10, $11, $12, now(), $13)
+       RETURNING role_claim_id, claimed_at`,
+      [
+        n.party.partyId,
+        n.party.partyVersion,
+        r.claimedRole,
+        r.otherRoleDescription ?? null,
+        n.framework.frameworkId,
+        n.framework.regulationVersion,
+        r.commodityScope,
+        r.geographicScope,
+        r.roleEvidenceIds,
+        r.validFrom ?? null,
+        r.validUntil ?? null,
+        r.limitations,
+        JSON.stringify(n.claimedBy),
+      ],
+    ),
+  );
+  const row = rows[0]!;
+  return { roleClaimId: row.role_claim_id, claimedAt: row.claimed_at.toISOString() };
 }

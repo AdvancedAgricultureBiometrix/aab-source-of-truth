@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-02:role-claim-decision:1",
+  "title": "ScsRoleClaimDecision",
+  "description": "SCS-CAP-02 ScsRoleClaimDecision (contract 9a3e978). REGISTERED means a governed record of a claimed role exists; the role is not verified. An eligibility check is true only if it was actually performed and passed.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decisionId",
+    "roleClaimId",
+    "partyId",
+    "partyVersion",
+    "decision",
+    "eligibilityChecks",
+    "decisionReasons",
+    "decidedBy",
+    "decidedAt"
+  ],
+  "properties": {
+    "decisionId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "roleClaimId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "partyId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "partyVersion": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "decision": {
+      "type": "string",
+      "const": "REGISTERED"
+    },
+    "eligibilityChecks": {
+      "title": "ScsRoleClaimEligibilityChecks",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "registrantAuthorised",
+        "partyExists",
+        "partyNotRetired",
+        "otherRoleDescribed",
+        "frameworkExists",
+        "frameworkActive",
+        "scopeWithinFramework",
+        "validityPeriodValid",
+        "noConflictingRecord"
+      ],
+      "properties": {
+        "registrantAuthorised": {
+          "type": "boolean"
+        },
+        "partyExists": {
+          "type": "boolean"
+        },
+        "partyNotRetired": {
+          "type": "boolean"
+        },
+        "otherRoleDescribed": {
+          "type": "boolean"
+        },
+        "frameworkExists": {
+          "type": "boolean"
+        },
+        "frameworkActive": {
+          "type": "boolean"
+        },
+        "scopeWithinFramework": {
+          "type": "boolean"
+        },
+        "validityPeriodValid": {
+          "type": "boolean"
+        },
+        "noConflictingRecord": {
+          "type": "boolean"
+        }
+      }
+    },
+    "decisionReasons": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1000,
+        "pattern": "\\S"
+      }
+    },
+    "decidedBy": {
+      "$ref": "urn:aab:scs:schema:shared:actor-reference:1"
+    },
+    "decidedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

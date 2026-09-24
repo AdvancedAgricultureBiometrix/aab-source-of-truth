@@ -51,9 +51,13 @@ export function checkScope(frameworks: readonly FrameworkForAssociation[], commo
   if (outside.length > 0) throw cap02Failure("SCOPE_OUTSIDE_FRAMEWORK", outside);
 }
 
-/** The reason recorded for a scope check that passed, including its known limit. */
-export function scopeReason(frameworkCount: number): string {
+/**
+ * The reason recorded for a scope check that passed, including its known
+ * limit. `check` is the decision's check name (scopeWithinFrameworks, or
+ * scopeWithinFramework on a role claim).
+ */
+export function scopeReason(frameworkCount: number, check = "scopeWithinFrameworks"): string {
   return frameworkCount > 1
-    ? "scopeWithinFrameworks: evaluated — every commodity is a referenced framework's commodityCode and every country its countryOfOrigin. Values are checked one by one: with several frameworks, commodity and country are not paired per framework (contract gap)."
-    : "scopeWithinFrameworks: evaluated — every commodity is the referenced framework's commodityCode and every country its countryOfOrigin.";
+    ? `${check}: evaluated — every commodity is a referenced framework's commodityCode and every country its countryOfOrigin. Values are checked one by one: with several frameworks, commodity and country are not paired per framework (contract gap).`
+    : `${check}: evaluated — every commodity is the referenced framework's commodityCode and every country its countryOfOrigin.`;
 }

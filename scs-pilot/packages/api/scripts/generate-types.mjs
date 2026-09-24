@@ -52,6 +52,11 @@ const TARGETS = [
       "cap-02/mandate-registration-decision.schema.json",
       "cap-02/mandate-registration-receipt.schema.json",
       "cap-02/mandate-registration-response.schema.json",
+      "cap-02/role-claim-params.schema.json",
+      "cap-02/role-claim-request.schema.json",
+      "cap-02/role-claim-decision.schema.json",
+      "cap-02/role-claim-receipt.schema.json",
+      "cap-02/role-claim-response.schema.json",
     ],
   },
 ];

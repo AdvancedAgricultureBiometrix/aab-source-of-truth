@@ -1,6 +1,6 @@
 # SCS-CAP-02 — Operator and Supplier Identity Registration
 
-**Status: `registerParty` (`POST /scs/v1/parties`), `submitIdentityEvidence` (`POST /scs/v1/parties/:partyId/evidence`) `registerRelationship` (`POST /scs/v1/relationships`) and `registerMandate` (`POST /scs/v1/mandates`) are implemented. Role claims and verification assessments are not built yet.**
+**Status: `registerParty` (`POST /scs/v1/parties`), `submitIdentityEvidence` (`POST /scs/v1/parties/:partyId/evidence`) `registerRelationship` (`POST /scs/v1/relationships`), `registerMandate` (`POST /scs/v1/mandates`) and `addRoleClaim` (`POST /scs/v1/parties/:partyId/roles`) are implemented. Verification assessments are not built yet.**
 
 ## registerParty
 
@@ -61,6 +61,23 @@
 - **Relationship prerequisite:** an ACTIVE relationship between the two parties must already exist, in either direction and of any type. It must not be past its `validUntil`, and it must reference every framework of the mandate. Otherwise `RELATIONSHIP_NOT_FOUND`.
 - **Conflict:** a NOT_REVOKED mandate for the same granting and representative pair that shares a framework and a permitted action and has an overlapping validity period. An advisory lock serialises registrations for the pair.
 - **What is written:** the mandate (`CLAIMED_UNVERIFIED`, `NOT_REVOKED`, all six boundary flags `true`) and the receipt (`MANDATE_REGISTRATION`), in one transaction. The decision reasons say the consent evidence can't be confirmed, because the evidence store isn't built yet (`TODO(evidence-store)`).
+
+
+## addRoleClaim
+
+- **Rules:** the contract's (9a3e978), checked in this order:
+  1. Authority: only `COMPLIANCE_OFFICER`.
+  2. `OTHER` needs `otherRoleDescription`. A description without `OTHER` is a request error (400).
+  3. The validity period must be valid.
+  4. The party in the path must exist (`PARTY_NOT_FOUND`, 404).
+  5. It must not be RETIRED.
+  6. Its single framework must exist and be ACTIVE.
+  7. Scope must be within that framework.
+  8. No conflicting record.
+- **System-set fields:** `frameworkVersion` is the framework's `regulationVersion`. `partyVersion` is the party's current version. The request schema refuses either if the client sends it.
+- **Conflict:** a claim for the same party, role and framework, not `SUPERSEDED` or `EXPIRED`, with an overlapping validity period. The status exclusion follows the relationship (ACTIVE only) and mandate (NOT_REVOKED only) rules; the contract is silent on it and records it as a gap. An advisory lock serialises claims for the same party, role and framework.
+- **Database backstops** (migration 009): `framework_association_id` has a foreign key to `scs.regulatory_framework`, and there are checks for the `OTHER` description and non-empty scope.
+- **What is written:** the claim (`CLAIMED_UNVERIFIED`) and the receipt (`ROLE_CLAIM_REGISTRATION`), in one transaction.
 
 
 Canonical contract: [`governance/workstream-b/SCS-CAP-02-OPERATOR-AND-SUPPLIER-IDENTITY-REGISTRATION-CANONICAL-CONTRACT-2026-09-23.md`](../../../../../../governance/workstream-b/SCS-CAP-02-OPERATOR-AND-SUPPLIER-IDENTITY-REGISTRATION-CANONICAL-CONTRACT-2026-09-23.md)

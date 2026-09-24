@@ -28,6 +28,11 @@ import cap02MandateRegistrationRequest from "./cap-02/mandate-registration-reque
 import cap02MandateRegistrationDecision from "./cap-02/mandate-registration-decision.schema.json" with { type: "json" };
 import cap02MandateRegistrationReceipt from "./cap-02/mandate-registration-receipt.schema.json" with { type: "json" };
 import cap02MandateRegistrationResponse from "./cap-02/mandate-registration-response.schema.json" with { type: "json" };
+import cap02RoleClaimParams from "./cap-02/role-claim-params.schema.json" with { type: "json" };
+import cap02RoleClaimRequest from "./cap-02/role-claim-request.schema.json" with { type: "json" };
+import cap02RoleClaimDecision from "./cap-02/role-claim-decision.schema.json" with { type: "json" };
+import cap02RoleClaimReceipt from "./cap-02/role-claim-receipt.schema.json" with { type: "json" };
+import cap02RoleClaimResponse from "./cap-02/role-claim-response.schema.json" with { type: "json" };
 
 import { registerSchema, type JsonSchema } from "../foundation/validation.js";
 
@@ -54,6 +59,11 @@ export const SCHEMAS = {
   cap02MandateRegistrationDecision,
   cap02MandateRegistrationReceipt,
   cap02MandateRegistrationResponse,
+  cap02RoleClaimParams,
+  cap02RoleClaimRequest,
+  cap02RoleClaimDecision,
+  cap02RoleClaimReceipt,
+  cap02RoleClaimResponse,
 } as const satisfies Record<string, JsonSchema>;
 
 for (const schema of Object.values(SCHEMAS)) registerSchema(schema);
