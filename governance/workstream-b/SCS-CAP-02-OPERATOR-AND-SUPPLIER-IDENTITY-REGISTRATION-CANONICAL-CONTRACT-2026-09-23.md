@@ -907,6 +907,14 @@ interface ScsMandateRegistrationDecision {
   parties, that shares at least one framework and at least one permitted action, and whose
   validity period overlaps the new one.
 
+**Contract gap: a mandate that outlasts its relationship.** The prerequisite relationship
+must exist and be `ACTIVE` when the mandate is registered; a relationship whose validity has
+not yet started qualifies. This contract does not require the mandate's validity period to
+fall within the relationship's. A mandate that outlasts its governing relationship keeps
+representation authority after the supply-chain context that justified it has ended. That is
+a real governance problem, but the rule is not specified here, so it is not enforced. It must
+be specified before a production implementation.
+
 ## Verification assessment recording
 
 `addVerificationAssessment` records an `ScsPartyVerificationAssessment` for a party and
