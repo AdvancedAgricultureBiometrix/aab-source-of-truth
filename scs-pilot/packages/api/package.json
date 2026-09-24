@@ -1,0 +1,22 @@
+{
+  "name": "@aab/scs-pilot-api",
+  "version": "0.0.0",
+  "private": true,
+  "description": "SCS pilot API — scaffold only. Health check endpoint; no capability logic.",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^24.13.6",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}
