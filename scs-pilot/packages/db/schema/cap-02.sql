@@ -45,6 +45,11 @@
 -- and implemented in migration 006 — party_identity_evidence_submission
 -- (append-only) and party_identity_evidence.submission_id.
 --
+-- Relationship registration rules: added to the CAP-02 contract (commit
+-- 9a3e978) and implemented in migration 007 —
+-- supply_chain_relationship.other_relationship_type_description and the
+-- non-empty framework and scope checks.
+--
 -- otherActionDescription: added to the CAP-02 contract (commit 2ee4503) and
 -- implemented in migration 003 — representation_mandate.other_action_description,
 -- required exactly when OTHER_EXPLICITLY_NAMED is a permitted action.
@@ -383,6 +388,10 @@ CREATE TABLE scs.supply_chain_relationship (
   created_by                        jsonb       NOT NULL,   -- ActorReference
   updated_at                        timestamptz NOT NULL DEFAULT now(),
 
+  -- otherRelationshipTypeDescription (optional) — names the relationship when
+  -- relationshipType is OTHER. Last column: added by migration 007.
+  other_relationship_type_description text,
+
   CONSTRAINT supply_chain_relationship_pk PRIMARY KEY (relationship_id),
   CONSTRAINT supply_chain_relationship_from_party_fk
     FOREIGN KEY (from_party_id) REFERENCES scs.party_identity (party_id)
@@ -442,7 +451,22 @@ CREATE TABLE scs.supply_chain_relationship (
   CONSTRAINT supply_chain_relationship_validity_range_ck
     CHECK (valid_from IS NULL OR valid_until IS NULL OR valid_until > valid_from),
   CONSTRAINT supply_chain_relationship_updated_after_created_ck
-    CHECK (updated_at >= created_at)
+    CHECK (updated_at >= created_at),
+
+  -- Contract rule (commit 9a3e978): OTHER requires a description naming the
+  -- relationship; a description without OTHER is refused. Added by migration 007.
+  CONSTRAINT supply_chain_relationship_other_type_description_ck
+    CHECK (CASE WHEN relationship_type = 'OTHER'
+                THEN other_relationship_type_description IS NOT NULL
+                     AND btrim(other_relationship_type_description) <> ''
+                ELSE other_relationship_type_description IS NULL
+           END),
+  -- Contract rule (commit 9a3e978): at least one framework, and scope that
+  -- is not empty. Added by migration 007.
+  CONSTRAINT supply_chain_relationship_scope_not_empty_ck
+    CHECK (cardinality(framework_association_ids) >= 1
+       AND cardinality(commodity_scope) >= 1
+       AND cardinality(geographic_scope) >= 1)
 );
 
 
@@ -571,6 +595,8 @@ CREATE INDEX party_role_claim_party_idx              ON scs.party_role_claim (pa
 CREATE INDEX supply_chain_relationship_from_idx      ON scs.supply_chain_relationship (from_party_id);
 CREATE INDEX supply_chain_relationship_to_idx        ON scs.supply_chain_relationship (to_party_id);
 CREATE INDEX supply_chain_relationship_claimed_by_idx ON scs.supply_chain_relationship (claimed_by_party_id);
+CREATE INDEX supply_chain_relationship_pair_type_idx
+  ON scs.supply_chain_relationship (from_party_id, to_party_id, relationship_type);
 CREATE INDEX representation_mandate_granting_idx     ON scs.representation_mandate (granting_party_id);
 CREATE INDEX representation_mandate_representative_idx ON scs.representation_mandate (representative_party_id);
 CREATE INDEX party_identity_evidence_submission_party_idx
@@ -625,6 +651,8 @@ COMMENT ON COLUMN scs.representation_mandate.other_action_description IS
   'otherActionDescription — names the specific action; required exactly when permitted_actions includes OTHER_EXPLICITLY_NAMED.';
 COMMENT ON TABLE scs.party_identity_evidence_submission IS
   'SCS-CAP-02 ScsPartyIdentityEvidenceSubmission. Evidence admitted after registration, not verified; never changes the party record. Append-only for every role.';
+COMMENT ON COLUMN scs.supply_chain_relationship.other_relationship_type_description IS
+  'otherRelationshipTypeDescription — names the relationship; required exactly when relationship_type is OTHER.';
 COMMENT ON COLUMN scs.party_identity_evidence.submission_id IS
   'The ScsPartyIdentityEvidenceSubmission that linked this evidence id; NULL for evidence given at registration.';
 
