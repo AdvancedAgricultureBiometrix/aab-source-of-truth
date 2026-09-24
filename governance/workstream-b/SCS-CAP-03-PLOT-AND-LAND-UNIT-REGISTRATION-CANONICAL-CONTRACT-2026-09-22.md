@@ -73,8 +73,10 @@ interface ScsPlotRegistration {
   plotVersion: number;
   schemaVersion: string;
   registeredAt: string;
+  registeredBy: ActorReference;
   registrationStatus:
     | "REGISTERED"
+    | "REGISTERED_WITH_GAPS"
     | "REQUIRES_HUMAN_REVIEW"
     | "DISPUTED"
     | "RETIRED";
@@ -84,11 +86,16 @@ interface ScsPlotRegistration {
   countryCode: string;
   administrativeAreas?: string[];
 
-  // Geographic boundary
+  // Geographic boundary: GeoJSON (RFC 7946) in EPSG:4326
   geometry: {
-    geometryType: "POLYGON" | "MULTIPOLYGON";
+    // POINT only for a plot of 4 hectares or less (EUDR Article 2(28))
+    geometryType: "POINT" | "POLYGON" | "MULTIPOLYGON";
+    // The GeoJSON coordinates member for geometryType
     coordinates: unknown;
+    // Always "EPSG:4326"
     coordinateReferenceSystem: string;
+    // Declared; required for POLYGON and MULTIPOLYGON
+    areaHectares?: number;
     captureMethod:
       | "FORMAL_CADASTRAL_SURVEY"
       | "GOVERNMENT_REGISTRY_GEOMETRY"
@@ -118,6 +125,7 @@ interface ScsPlotRegistration {
   };
 
   // Known or possible overlap with other registered plots
+  // (NOT_EVALUATED in the pilot: no spatial database)
   overlapState:
     | "NO_KNOWN_OVERLAP"
     | "POSSIBLE_OVERLAP"
@@ -152,6 +160,7 @@ interface ScsPlotTenureClaim {
     | "GOVERNMENT"
     | "OTHER";
 
+  // A registered SCS-CAP-02 partyId
   claimantId: string;
 
   tenureBasis:
@@ -166,6 +175,7 @@ interface ScsPlotTenureClaim {
 
   evidenceIds: string[];
 
+  // Set by the system: UNVERIFIED when the claim is recorded
   verificationStatus:
     | "VERIFIED"
     | "PARTIALLY_VERIFIED"
@@ -196,9 +206,12 @@ interface ScsPlotFrameworkAssociation {
   frameworkId: string;
   frameworkVersion: string;
 
-  commodityCode?: string;
+  // Required: must equal the framework's commodityCode
+  commodityCode: string;
+  // When present, a registered SCS-CAP-02 partyId
   producerOrOperatorId?: string;
 
+  // APPLICABLE when created at registration
   applicabilityStatus:
     | "POTENTIALLY_APPLICABLE"
     | "APPLICABLE"
@@ -225,26 +238,6 @@ interface ScsPlotFrameworkAssociation {
 
 One plot may have many framework associations. One framework may apply to many plots. Each association records the exact framework version and requirement specification — so a sufficiency evaluation always knows which standard it is checking against.
 
-### Registration request — with optional initial framework associations
-
-```typescript
-interface RegisterPlotRequest {
-  plot: ScsPlotRegistration;
-  tenureClaims?: ScsPlotTenureClaim[];
-
-  // Optional — framework associations may be created
-  // separately after registration
-  initialFrameworkAssociations?: Array<{
-    frameworkId: string;
-    frameworkVersion: string;
-    commodityCode?: string;
-    associationReason: string;
-  }>;
-}
-```
-
-If a framework association fails during registration, the plot registration still succeeds. The failed association is reported separately. This preserves the distinction between "this plot exists in SCS" and "this plot is being assessed against framework X."
-
 ### Registration decision
 
 ```typescript
@@ -261,9 +254,12 @@ interface ScsPlotRegistrationDecision {
     geometryValid: boolean;
     countryCodeValid: boolean;
     coordinateReferenceSystemRecognised: boolean;
-    capturMethodRecorded: boolean;
+    captureMethodRecorded: boolean;
     registrantAuthorised: boolean;
+    // false with a NOT EVALUATED reason in the pilot
     noFatalOverlapDetected: boolean;
+    tenureClaimsValid: boolean;
+    claimantPartiesRegistered: boolean;
   };
 
   // Gaps are disclosed, not hidden
@@ -278,6 +274,13 @@ interface ScsPlotRegistrationDecision {
     frameworkId: string;
     associationId?: string;
     outcome: "ASSOCIATED" | "FAILED" | "PENDING_HUMAN_DECISION";
+    // Present when outcome is FAILED
+    failureCode?:
+      | "FRAMEWORK_REFERENCE_NOT_FOUND"
+      | "FRAMEWORK_NOT_ACTIVE"
+      | "COMMODITY_OUTSIDE_FRAMEWORK"
+      | "PRODUCER_PARTY_NOT_FOUND"
+      | "PARTY_RETIRED";
     reason?: string;
   }>;
 
@@ -288,6 +291,10 @@ interface ScsPlotRegistrationDecision {
 ```
 
 ### Sufficiency evaluation request and result
+
+These interfaces are evaluated by SCS-CAP-06, not by SCS-CAP-03; they are kept here because
+they describe what a plot's evidence is evaluated against. `evaluateSufficiency` is not part
+of the SCS-CAP-03 provider.
 
 Sufficiency is always contextual. SCS-CAP-06 does not ask "is this plot sufficient?" It asks "is the evidence for this plot sufficient for this commodity, under this framework version, for this declared purpose and relevant period?"
 
@@ -345,6 +352,241 @@ interface ScsPlotSufficiencyResult {
 }
 ```
 
+## Plot registration rules
+
+These rules define `registerPlot` for the pilot: one request registers a plot, at least one
+tenure claim, and any initial framework associations. The system sets every field the
+submitter does not declare.
+
+### Geometry
+
+A plot's location is a GeoJSON geometry (RFC 7946) in WGS 84, EPSG:4326.
+
+- **Coordinate reference system.** `coordinateReferenceSystem` must be `"EPSG:4326"`.
+  Otherwise `COORDINATE_REFERENCE_SYSTEM_UNSUPPORTED`.
+- **Geometry types.** `POINT`, `POLYGON` or `MULTIPOLYGON`. `coordinates` is the GeoJSON
+  `coordinates` member for that type. A position is `[longitude, latitude]`, optionally with
+  an altitude, which is ignored.
+- **Point or polygon (EUDR Article 2(28)).** A plot of 4 hectares or less may be a single
+  point; a larger plot must be a polygon or multipolygon. `areaHectares` is required for
+  `POLYGON` and `MULTIPOLYGON` and optional for `POINT`. A `POINT` with a declared
+  `areaHectares` above 4 is refused. A `POINT` with no declared area is accepted as the
+  registrant's representation of a plot of 4 hectares or less, and the gap is disclosed.
+- **Valid geometry.** Longitude is within −180 to 180 and latitude within −90 to 90. Every
+  polygon ring has at least 4 positions, is closed (its first and last positions are equal)
+  and does not intersect itself. Any failure, or malformed GeoJSON, is `GEOMETRY_INVALID`,
+  naming what failed.
+
+The declared `areaHectares` is recorded as declared; it is not checked against the
+geometry. TODO(postgis): the pilot stores GeoJSON and validates it in the application.
+When PostGIS is adopted, geometry validation moves to the database, area is computed, and
+overlap detection becomes real.
+
+### Overlap
+
+Overlap with other registered plots is not evaluated in the pilot: there is no spatial
+database. `overlapState` is set by the system to `NOT_EVALUATED`, and the
+`noFatalOverlapDetected` check is recorded as `false` with a reason stating it was not
+evaluated. `FATAL_OVERLAP_DETECTED` is therefore never returned by the pilot.
+
+### Fields the system sets
+
+- **Plot:** `plotId`, `plotVersion` (1), `schemaVersion`, `registeredAt`, `registeredBy` (the
+  authenticated actor), `registrationStatus`, `overlapState` (`NOT_EVALUATED`), and
+  `provenance.submittedBy` and `provenance.recordedAt`.
+- **Tenure claim:** `tenureClaimId`, `plotId`, `plotVersion`, `recordedAt`, `recordedBy`, and
+  `verificationStatus`, which always starts as `UNVERIFIED`. A tenure claim is never verified
+  by being registered; a submitted verification status is refused.
+- **Framework association:** `associationId`, `frameworkVersion` (the CAP-01 framework's
+  `regulation.regulationVersion`), `evidenceRequirementSpecId` (the framework's current
+  evidence requirement specification), `associatedAt`, `associatedBy`, `applicabilityStatus`
+  (`APPLICABLE`) and `lifecycleStatus` (`ACTIVE`).
+
+`identityEvidence.registryVerificationStatus` is declared by the registrant: whether they
+checked a formal registry, and what they found. A status other than `NOT_APPLICABLE` requires
+a `registryReference`.
+
+### Registration request
+
+```typescript
+interface RegisterPlotRequest {
+  plot: ScsPlotRegistrationInput;
+  // At least one: a plot with no tenure claim cannot be registered
+  tenureClaims: ScsPlotTenureClaimInput[];
+  // Optional: associations may also be created after registration
+  initialFrameworkAssociations?: ScsPlotFrameworkAssociationInput[];
+}
+
+interface ScsPlotRegistrationInput {
+  plotName?: string;
+  countryCode: string;
+  administrativeAreas?: string[];
+
+  geometry: {
+    geometryType: "POINT" | "POLYGON" | "MULTIPOLYGON";
+    coordinates: unknown;
+    coordinateReferenceSystem: string;
+    areaHectares?: number;
+    captureMethod:
+      | "FORMAL_CADASTRAL_SURVEY"
+      | "GOVERNMENT_REGISTRY_GEOMETRY"
+      | "PROFESSIONAL_SURVEY"
+      | "PHONE_GPS"
+      | "COMMUNITY_MAPPING"
+      | "COOPERATIVE_MAPPING"
+      | "REMOTE_SENSING_DERIVATION"
+      | "OTHER";
+    positionalAccuracyMetres?: number;
+    boundaryUncertaintyDescription?: string;
+    capturedAt?: string;
+  };
+
+  identityEvidence: {
+    registryReference?: string;
+    registryAuthority?: string;
+    registryVerificationStatus:
+      | "VERIFIED"
+      | "UNVERIFIED"
+      | "CONFLICTING"
+      | "REGISTRY_UNAVAILABLE"
+      | "NOT_APPLICABLE";
+    supportingEvidenceIds: string[];
+    evidenceLimitations: string[];
+  };
+
+  submittingOrganizationId?: string;
+  sourceType: string;
+}
+
+interface ScsPlotTenureClaimInput {
+  claimantType:
+    | "INDIVIDUAL"
+    | "ORGANIZATION"
+    | "COOPERATIVE"
+    | "COMMUNITY"
+    | "GOVERNMENT"
+    | "OTHER";
+  // A registered SCS-CAP-02 partyId, not RETIRED
+  claimantId: string;
+
+  tenureBasis:
+    | "FORMAL_TITLE"
+    | "LEASE"
+    | "PERMIT"
+    | "CUSTOMARY_COLLECTIVE_RIGHT"
+    | "CUSTOMARY_INDIVIDUAL_RIGHT"
+    | "COMMUNITY_ATTESTATION"
+    | "OCCUPANCY_OR_USE_CLAIM"
+    | "UNKNOWN";
+
+  evidenceIds: string[];
+  validFrom?: string;
+  validUntil?: string;
+  limitations: string[];
+}
+
+interface ScsPlotFrameworkAssociationInput {
+  // A registered SCS-CAP-01 frameworkId
+  frameworkId: string;
+  // Required: must equal the framework's commodityCode
+  commodityCode: string;
+  // When present, a registered SCS-CAP-02 partyId, not RETIRED
+  producerOrOperatorId?: string;
+  associationReason: string;
+}
+```
+
+The claimant type is declared by the submitter and is not derived from the claimant party's
+`partyType`: a party's role in relation to a plot may differ from what kind of party it is.
+Each framework may appear at most once in `initialFrameworkAssociations`; a repeated
+framework is a request error.
+
+### Registration checks and outcome
+
+The plot-level checks run in this order. Each failure ends in `FAIL_CLOSED` and writes
+nothing: no plot, no tenure claim, no association, no decision, no receipt.
+
+1. **Authority.** Only a `COMPLIANCE_OFFICER` may register a plot. Otherwise
+   `REGISTRANT_NOT_AUTHORISED`.
+2. **Coordinate reference system.** `COORDINATE_REFERENCE_SYSTEM_UNSUPPORTED`.
+3. **Geometry**, including the point-or-polygon rule. `GEOMETRY_INVALID`.
+4. **Country.** `countryCode` is an officially assigned ISO 3166-1 alpha-2 code. Otherwise
+   `COUNTRY_CODE_UNRECOGNISED`.
+5. **Tenure claims.** At least one. Each claim's `validUntil`, when given with `validFrom`,
+   is after it (`VALIDITY_PERIOD_INVALID`). Each `claimantId` is a registered party
+   (`CLAIMANT_PARTY_NOT_FOUND`) that is not `RETIRED` (`PARTY_RETIRED`). A structurally
+   invalid claim (a missing field or a value outside its type) is refused as a request
+   error.
+
+When every plot-level check passes, the plot and its tenure claims are written. Then each
+initial framework association is attempted on its own. An association that fails does not
+fail the registration: it is reported in `frameworkAssociationResults` with outcome `FAILED`
+and a `failureCode`, and nothing is written for it:
+
+| `failureCode` | When |
+|---|---|
+| `FRAMEWORK_REFERENCE_NOT_FOUND` | The frameworkId is not a registered SCS-CAP-01 framework |
+| `FRAMEWORK_NOT_ACTIVE` | The framework is `SUPERSEDED` or `WITHDRAWN` |
+| `COMMODITY_OUTSIDE_FRAMEWORK` | commodityCode is not the framework's `scope.commodityCode` |
+| `PRODUCER_PARTY_NOT_FOUND` | producerOrOperatorId is not a registered party |
+| `PARTY_RETIRED` | producerOrOperatorId names a `RETIRED` party |
+
+The decision is:
+
+- **`REGISTERED_WITH_GAPS`** when at least one gap is disclosed: no `registryReference`,
+  overlap not evaluated, a `POINT` with no declared area, or one or more associations
+  `FAILED`. Because overlap is never evaluated in the pilot, every pilot registration is
+  `REGISTERED_WITH_GAPS`.
+- **`REGISTERED`** only when every association succeeded and no gap is disclosed.
+
+The plot's `registrationStatus` is the same value as the decision. The decision and its
+receipt are written in the same transaction as the plot.
+
+| `gapCode` | When | `automaticFailure` | `humanReviewRequired` |
+|---|---|---|---|
+| `REGISTRY_REFERENCE_MISSING` | No `registryReference` | false | false |
+| `OVERLAP_NOT_EVALUATED` | Always, in the pilot | false | true |
+| `POINT_AREA_UNDECLARED` | A `POINT` with no `areaHectares` | false | false |
+| `FRAMEWORK_ASSOCIATION_FAILED` | Once per `FAILED` association | false | false |
+
+### Open gaps
+
+**Contract gap: `REJECTED` and `REQUIRES_HUMAN_REVIEW`.** No criteria are defined. Until they
+are, a registration that passes the plot-level checks is `REGISTERED` or
+`REGISTERED_WITH_GAPS`.
+
+**Contract gap: aggregator submission.** The boundary statement allows an "authorised operator
+or aggregator" to register plots, but only a `COMPLIANCE_OFFICER` may, until this contract
+defines how a CAP-02 representation mandate (for example `SUBMIT_PLOT_ASSOCIATION_EVIDENCE`)
+authorises submission.
+
+**Contract gap: duplicate plots.** The same geometry registered twice is not detected; there
+is no rule and no spatial comparison without PostGIS.
+
+**Contract gap: plot and framework country.** Whether an association's framework
+`countryOfOrigin` must match the plot's `countryCode` is not defined, and is not checked.
+
+**Contract gap: free-text fields.** `sourceType`, `administrativeAreas` and
+`associationReason` have no controlled vocabulary.
+
+**Contract gap: geometry details.** Polygon holes are not checked to lie inside their outer
+ring, multipolygon parts are not checked for mutual overlap, and coordinate precision is not
+checked. EUDR's exception from the polygon requirement for cattle is not modelled.
+
+**Contract gap: tenure claim verification.** A tenure claim starts `UNVERIFIED`; no operation
+in this contract changes its verification status.
+
+**Contract gap: operations after registration.** `addTenureClaim` and `associateFramework`
+take full records and return records without a decision or receipt. They must be redefined
+with request shapes and decisions before they are built. The pilot builds `registerPlot`
+only.
+
+**Current system limit: country boundaries.** Whether the geometry lies inside `countryCode`
+is not checked: there is no country boundary data. TODO(country-boundary-check).
+
+**Current system limit: no evidence store.** Evidence identifiers are recorded as submitted
+and cannot be confirmed to identify any document; every decision must say so.
+
 ## Provider-neutral interface
 
 ```typescript
@@ -375,10 +617,6 @@ interface ScsPlotRegistrationProvider {
     plotId: string
   ): Promise<ScsPlotFrameworkAssociation[]>;
 
-  evaluateSufficiency(
-    request: ScsPlotSufficiencyRequest
-  ): Promise<ScsPlotSufficiencyResult>;
-
   listPlots(
     request: ListPlotsRequest
   ): Promise<ListPlotsResult>;
@@ -403,6 +641,8 @@ interface ScsPlotRegistrationFailure {
   capabilityId: "SCS-CAP-03";
   result: "FAIL_CLOSED";
 
+  // Framework association problems are not here: they are reported per
+  // association in frameworkAssociationResults and never fail the registration
   error:
     | "REGISTRANT_NOT_AUTHORISED"
     | "GEOMETRY_INVALID"
@@ -410,7 +650,9 @@ interface ScsPlotRegistrationFailure {
     | "COORDINATE_REFERENCE_SYSTEM_UNSUPPORTED"
     | "FATAL_OVERLAP_DETECTED"
     | "TENURE_CLAIM_INVALID"
-    | "FRAMEWORK_REFERENCE_NOT_FOUND"
+    | "CLAIMANT_PARTY_NOT_FOUND"
+    | "PARTY_RETIRED"
+    | "VALIDITY_PERIOD_INVALID"
     | "DEPENDENCY_UNAVAILABLE";
 
   reasons: string[];
