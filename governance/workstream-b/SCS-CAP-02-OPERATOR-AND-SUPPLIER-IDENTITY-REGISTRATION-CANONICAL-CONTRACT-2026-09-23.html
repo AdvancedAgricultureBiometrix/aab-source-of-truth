@@ -1,0 +1,265 @@
+<!doctype html>
+<!-- Generated from governance/workstream-b/SCS-CAP-02-OPERATOR-AND-SUPPLIER-IDENTITY-REGISTRATION-CANONICAL-CONTRACT-2026-09-23.md using governance/canonical-contract-template.html. Do not edit by hand; edit the markdown source and re-render. -->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SCS-CAP-02 — Operator and Supplier Identity Registration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,500;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+/* ── Tokens ─────────────────────────────────────────────────────────── */
+:root{
+  --green:#06271f;          /* primary accent: header band, headings, labels, badges */
+  --green-2:#0d3b2f;
+  --mint:#78ecad;           /* secondary accent: status indicators, callouts */
+  --mint-tint:#eefbf4;      /* mint at low strength, for callout fills */
+  --mint-edge:#b8ecd0;
+  --ink:#17211d;
+  --muted:#5f6d67;
+  --faint:#8a9791;
+  --rule:#dde5e1;
+  --code-bg:#f6f8f7;
+  --paper:#ffffff;
+  --mono:"JetBrains Mono",Consolas,"SFMono-Regular",monospace;
+  --sans:"Inter","Segoe UI",system-ui,sans-serif;
+  --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+}
+*{box-sizing:border-box}
+html{background:#e7ece9}
+body{margin:0;color:var(--ink);font:400 10pt/1.62 var(--sans);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+mark.ph{background:#fff4c2;color:#6b4e00;border:1px dashed #d9b300;border-radius:3px;padding:0 3px;font:600 .92em var(--mono)}
+
+/* ── Sheet ──────────────────────────────────────────────────────────── */
+.sheet{background:var(--paper);max-width:210mm;margin:22px auto;box-shadow:0 2px 26px rgba(6,39,31,.13)}
+.content{padding:10mm 19mm 16mm}
+.screen-note{max-width:210mm;margin:14px auto 0;font:9pt/1.5 var(--sans);color:var(--muted);text-align:center}
+
+/* ── Header band ───────────────────────────────────────────────────── */
+.band{background:var(--green);color:#fff;padding:13mm 19mm 11mm;position:relative}
+.band-top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:12mm}
+.brand{display:flex;align-items:center;gap:11px}
+.brand svg{width:30px;height:30px;flex:none}
+.brand b{display:block;font:700 12pt/1 var(--sans);letter-spacing:.06em}
+.brand small{display:block;margin-top:4px;font:500 6.8pt/1 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:#a9c9bb}
+.ref-code{font:600 9.5pt/1 var(--mono);letter-spacing:.05em;color:var(--mint);border:1px solid rgba(120,236,173,.55);border-radius:4px;padding:7px 10px}
+.kind{font:600 7pt/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--mint);margin:0 0 9px}
+.band h1{font:600 22pt/1.14 var(--serif);letter-spacing:-.01em;margin:0 0 14px;max-width:150mm}
+.badge{display:inline-flex;align-items:center;gap:8px;font:600 7.6pt/1 var(--mono);letter-spacing:.06em;border-radius:999px;padding:7px 12px 7px 10px}
+.badge::before{content:"";width:8px;height:8px;border-radius:50%;flex:none}
+.badge.design{background:var(--mint);color:var(--green)}
+.badge.design::before{background:var(--green)}
+.badge.proposed{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.6)}
+.badge.proposed::before{background:transparent;border:1.5px solid var(--mint)}
+.badge.admitted{background:#fff;color:var(--green)}
+.badge.admitted::before{background:var(--mint);box-shadow:0 0 0 2px var(--green)}
+
+/* ── Metadata ──────────────────────────────────────────────────────── */
+.meta{display:grid;grid-template-columns:31mm 1fr;margin:9mm 0 0;border-top:2px solid var(--green)}
+.meta dt,.meta dd{margin:0;padding:6px 0;border-bottom:1px solid var(--rule)}
+.meta dt{font:600 6.9pt/1.9 var(--sans);letter-spacing:.15em;text-transform:uppercase;color:var(--green)}
+.meta dd{font-size:9pt;color:var(--ink)}
+.meta dd.verbatim{font-size:8.8pt}
+.meta dd .unstated{color:var(--faint);font-style:italic}
+.meta dd code{font-size:8pt}
+
+/* ── Contents ──────────────────────────────────────────────────────── */
+nav.toc{margin:7mm 0 2mm;break-inside:avoid}
+nav.toc h2{all:unset;display:block;font:600 6.9pt/1 var(--sans);letter-spacing:.15em;text-transform:uppercase;color:var(--green);margin-bottom:8px}
+nav.toc ol{list-style:none;margin:0;padding:0;columns:2;column-gap:10mm;font-size:8.8pt}
+nav.toc li{padding:2.5px 0;break-inside:avoid;display:flex;gap:9px}
+nav.toc a{color:var(--ink);text-decoration:none}
+nav.toc .n{font:500 8pt var(--mono);color:var(--faint);min-width:18px}
+
+/* ── Sections & clauses ────────────────────────────────────────────── */
+section.sec{margin-top:9mm}
+.head-keep{break-inside:avoid;page-break-inside:avoid}
+.head-keep.head-only{break-after:avoid;page-break-after:avoid} /* heading directly above a long definition */
+h2.sec-h{display:flex;align-items:baseline;gap:10px;font:600 13pt/1.3 var(--serif);color:var(--green);margin:0 0 9px;padding-bottom:6px;border-bottom:1.5px solid var(--green);break-after:avoid;page-break-after:avoid}
+h2.sec-h .n{font:500 8.5pt var(--mono);color:var(--faint);letter-spacing:.02em}
+h3.sub-h{display:flex;align-items:baseline;gap:9px;font:600 8pt/1.35 var(--sans);letter-spacing:.11em;text-transform:uppercase;color:var(--green);margin:16px 0 8px;break-after:avoid;page-break-after:avoid}
+h3.sub-h .n{font:500 8pt var(--mono);color:var(--faint);letter-spacing:0;text-transform:none}
+.clause{position:relative;padding-left:11mm;margin:0 0 9px}
+.clause>.cn{position:absolute;left:0;top:0;font:500 7.4pt/2.05 var(--mono);color:var(--faint)}
+.clause>.cb{min-width:0}
+.clause p{margin:0;orphans:3;widows:3}
+.clause ul,.clause ol{margin:0;padding-left:16px}
+.clause li{margin:2px 0;break-inside:avoid}
+.clause ul li::marker{color:var(--green)}
+.clause ol li::marker{font:600 8.5pt var(--mono);color:var(--green)}
+code{font:500 8.3pt var(--mono);color:var(--green-2);background:var(--code-bg);border:1px solid #e3eae6;border-radius:3px;padding:0 3.5px}
+strong{font-weight:650;color:var(--green)}
+
+/* ── Callouts ──────────────────────────────────────────────────────── */
+.rule-callout{margin:0;border-left:3px solid var(--mint);background:var(--mint-tint);padding:11px 14px;border-radius:0 5px 5px 0;break-inside:avoid}
+.rule-callout .lbl{display:block;font:600 6.6pt/1 var(--sans);letter-spacing:.17em;text-transform:uppercase;color:var(--green);margin-bottom:6px}
+.rule-callout p{font:italic 400 10.5pt/1.55 var(--serif);color:var(--green)}
+.rule-callout strong{font-style:italic}
+.boundary{border:1px solid var(--rule);border-top:3px solid var(--green);border-radius:4px;padding:10px 14px 8px;break-inside:avoid}
+.boundary ul{list-style:none;padding:0}
+.boundary li{position:relative;padding-left:18px}
+.boundary li::before{content:"";position:absolute;left:2px;top:.62em;width:8px;height:1.5px;background:var(--green)}
+
+/* ── Tables ────────────────────────────────────────────────────────── */
+table.grid{width:100%;border-collapse:collapse;font-size:8.8pt;break-inside:avoid}
+table.grid th{text-align:left;font:600 6.8pt/1.4 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--green);border-bottom:1.5px solid var(--green);padding:5px 8px 5px 0}
+table.grid td{padding:6px 8px 6px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+table.grid td:first-child{font-weight:600;color:var(--green)}
+
+/* ── Structured definitions (from TypeScript) ──────────────────────── */
+.def{border:1px solid var(--rule);border-radius:5px;overflow:hidden;background:#fff}
+.def.short{break-inside:avoid}
+.def-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:7px 11px;background:var(--green);color:#fff;break-after:avoid}
+.def-head .dn{font:600 9pt var(--mono);letter-spacing:.01em}
+.def-head .dn .extends{font-weight:400;color:#a9c9bb}
+.def-head .dk{font:600 6.4pt/1 var(--sans);letter-spacing:.17em;text-transform:uppercase;color:var(--mint)}
+.f{display:grid;grid-template-columns:minmax(40mm,38%) 1fr;gap:12px;padding:5px 11px;border-top:1px solid #edf1ef;break-inside:avoid;page-break-inside:avoid}
+.f:first-of-type{border-top:0}
+.fn{font:500 8.4pt/1.6 var(--mono);color:var(--green);overflow-wrap:anywhere} /* renderer inserts <wbr> at camelCase humps */
+.f.flag{grid-template-columns:1fr auto}
+.fn .opt{font:500 6.2pt/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--faint);border:1px solid var(--rule);border-radius:3px;padding:2px 4px;margin-left:6px;vertical-align:1px}
+.ft{font:400 8.2pt/1.6 var(--mono);color:var(--muted);word-break:break-word}
+.ft .lit{color:var(--green);font-weight:600}
+.ft .tref{color:#2f5d8a}
+.enum{list-style:none;margin:1px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:3px 4px}
+.enum li{font:500 7.6pt/1 var(--mono);color:var(--green);background:var(--mint-tint);border:1px solid var(--mint-edge);border-radius:3px;padding:3px 5px}
+.enum-note{display:block;font:500 6.4pt/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:0 0 4px}
+.fixed{font:600 7.6pt/1 var(--mono);color:var(--green);background:var(--mint);border-radius:3px;padding:3px 6px}
+.grp{padding:6px 11px 3px;font:italic 400 8.6pt/1.45 var(--serif);color:var(--muted);border-top:1px solid #edf1ef;break-after:avoid}
+.nest{grid-column:1 / -1;margin:3px 0 2px;border-left:2px solid var(--mint-edge);padding-left:0}
+.nest .f{padding-left:12px;border-top-color:#f1f4f2}
+.nest .grp{padding-left:12px}
+.f.has-nest{grid-template-columns:1fr;gap:0;break-inside:auto;page-break-inside:auto} /* a group may break between its fields; each field stays whole */
+.f.has-nest>.fn,.f.has-nest>.enum-note{break-after:avoid;page-break-after:avoid}
+.def.provider .f{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}
+.m-sig,.m-ret{overflow-wrap:anywhere} /* renderer inserts <wbr> at camelCase humps */
+.m-sig{font:500 8.3pt/1.6 var(--mono);color:var(--green)}
+.m-sig .p{color:var(--muted);font-weight:400}
+.m-ret{font:400 8.2pt/1.6 var(--mono);color:var(--muted)}
+.m-ret::before{content:"→ ";color:var(--faint)}
+
+/* ── Verbatim blocks & diagrams ────────────────────────────────────── */
+.verbatim-block{background:var(--code-bg);border:1px solid var(--rule);border-radius:5px;break-inside:avoid}
+.verbatim-block .lbl{display:block;font:600 6.4pt/1 var(--sans);letter-spacing:.17em;text-transform:uppercase;color:var(--faint);padding:8px 11px 0}
+.verbatim-block pre{margin:0;padding:6px 11px 10px;font:400 8pt/1.55 var(--mono);color:var(--ink);white-space:pre-wrap;word-break:break-word}
+figure.diagram{margin:0;border:1px solid var(--rule);border-radius:5px;padding:12px;text-align:center;break-inside:avoid}
+figure.diagram pre.mermaid{margin:0;text-align:left;font:400 7.8pt/1.45 var(--mono);color:var(--muted);white-space:pre-wrap}
+figure.diagram pre.mermaid[data-processed]{text-align:center}
+figure.diagram svg{max-width:100%;height:auto}
+figure.diagram figcaption{font:600 6.4pt/1 var(--sans);letter-spacing:.17em;text-transform:uppercase;color:var(--faint);margin-top:9px}
+
+/* ── End matter ────────────────────────────────────────────────────── */
+.end{margin-top:12mm;padding-top:8px;border-top:1.5px solid var(--green);display:flex;justify-content:space-between;gap:14px;font:500 7pt/1.5 var(--sans);color:var(--muted)}
+.end code{font-size:7pt}
+
+/* ── Print ─────────────────────────────────────────────────────────── */
+@page{
+  size:A4;
+  margin:16mm 17mm 19mm;
+  @bottom-left{content:"SCS-CAP-02  ·  Page " counter(page) " of " counter(pages);font:600 7pt "JetBrains Mono",Consolas,monospace;color:#06271f;border-top:1px solid #06271f;padding-top:4mm;vertical-align:top;white-space:nowrap}
+  @bottom-right{content:"Adaptive Agricultural Brain — Governed Scientific Intelligence Infrastructure";font:500 6.8pt "Inter",sans-serif;color:#5f6d67;border-top:1px solid #06271f;padding-top:4mm;vertical-align:top;white-space:nowrap}
+}
+@media print{
+  html{background:#fff}
+  .screen-note{display:none}
+  .sheet{margin:0;max-width:none;box-shadow:none}
+  .band{border-radius:6px;padding:11mm 12mm 10mm}
+  .band-top{margin-bottom:10mm}
+  .content{padding:0}
+  .end{display:none}
+  nav.toc{break-after:page;page-break-after:always} /* page 1 is the cover: header, details, contents */
+  a{color:inherit;text-decoration:none}
+  mark.ph{background:none;border:0;color:inherit;padding:0}
+}
+</style>
+</head>
+<body>
+<p class="screen-note">A4 print-ready. Print → Save as PDF, paper A4, margins Default, and turn off “Headers and footers” — each page carries its own footer.</p>
+<article class="sheet">
+
+<header class="band">
+  <div class="band-top">
+    <div class="brand">
+      <svg viewBox="0 0 30 30" aria-hidden="true"><rect x="3" y="5" width="24" height="4.4" rx="2.2" fill="#78ecad"/><rect x="3" y="12.8" width="24" height="4.4" rx="2.2" fill="#ffffff"/><rect x="3" y="20.6" width="24" height="4.4" rx="2.2" fill="#ffffff"/></svg>
+      <div><b>AAB</b><small>Adaptive Agricultural Brain</small></div>
+    </div>
+    <span class="ref-code">SCS-CAP-02</span>
+  </div>
+  <p class="kind">Canonical Contract</p>
+  <h1>Operator and Supplier Identity Registration</h1>
+  <span class="badge design">DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED</span>
+</header>
+
+<div class="content">
+  <dl class="meta">
+    <dt>Reference</dt><dd><code>SCS-CAP-02</code></dd>
+    <dt>Status</dt><dd class="verbatim">CANONICAL CONTRACT — NOT IMPLEMENTATION</dd>
+    <dt>Version</dt><dd><span class="unstated">Not stated in source</span></dd>
+    <dt>Date</dt><dd>2026-09-23</dd>
+    <dt>Domain</dt><dd class="verbatim">Supply Chain Sovereignty (SCS)</dd><dt>Authority</dt><dd class="verbatim">DEFINES THE CONTRACT FOR SCS-CAP-02. Establishes no commissioning, production, Gate D, WP05, scientific-validity or regulatory authority. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.</dd>
+  </dl>
+
+  <nav class="toc" aria-label="Contents"><h2>Contents</h2><ol>
+    <li><span class="n">01</span><a href="#plain-english-boundary-statement">Plain-English boundary statement</a></li><li><span class="n">02</span><a href="#the-governing-rule">The governing rule</a></li><li><span class="n">03</span><a href="#registration-must-not-silently-equal-verification">Registration must not silently equal verification</a></li><li><span class="n">04</span><a href="#the-aggregator-model-bilateral-relationships-only">The aggregator model — bilateral relationships only</a></li><li><span class="n">05</span><a href="#six-objects-kept-separate">Six objects — kept separate</a></li><li><span class="n">06</span><a href="#domain-position">Domain position</a></li><li><span class="n">07</span><a href="#core-interfaces">Core interfaces</a></li><li><span class="n">08</span><a href="#registration-and-relationship-sequence">Registration and relationship sequence</a></li><li><span class="n">09</span><a href="#registration-decision">Registration decision</a></li><li><span class="n">10</span><a href="#provider-neutral-interface">Provider-neutral interface</a></li><li><span class="n">11</span><a href="#failure-contract">Failure contract</a></li><li><span class="n">12</span><a href="#southeast-asia-operational-context">Southeast Asia operational context</a></li><li><span class="n">13</span><a href="#what-this-document-does-not-establish">What this document does not establish</a></li>
+  </ol></nav>
+
+<section class="sec" id="plain-english-boundary-statement"><div class="head-keep"><h2 class="sec-h"><span class="n">01</span>Plain-English boundary statement</h2><div class="clause"><span class="cn">1.1</span><div class="cb"><p>SCS-CAP-02 allows authorised parties to register the legal or natural persons who occupy roles in a supply chain — operators, suppliers, aggregators, processors, and exporters — along with the bilateral relationships between them and the scoped mandates that permit one party to act on another's behalf. It does not verify identity beyond the scope explicitly declared and evidenced. It does not prove that a commodity batch moved between any two parties. It does not grant regulatory eligibility, sanctions clearance, or compliance authority to any registered party.</p></div></div></div></section>
+<section class="sec" id="the-governing-rule"><div class="head-keep"><h2 class="sec-h"><span class="n">02</span>The governing rule</h2><div class="clause"><span class="cn">2.1</span><div class="cb"><blockquote class="rule-callout"><span class="lbl">Governing rule</span><p>Every supply-chain relationship is bilateral. One-to-many aggregation is a derived network view. Representation authority is a separate, scoped and revocable record. Neither relationship nor representation constitutes identity verification or proof of commodity movement.</p></blockquote></div></div></div></section>
+<section class="sec" id="registration-must-not-silently-equal-verification"><div class="head-keep"><h2 class="sec-h"><span class="n">03</span>Registration must not silently equal verification</h2><div class="clause"><span class="cn">3.1</span><div class="cb"><p><code>registrationStatus: REGISTERED</code> means only that SCS has created a governed record of this party. It does not mean:</p></div></div></div><div class="clause"><span class="cn">3.2</span><div class="cb"><ul><li>Legal identity confirmed</li><li>Sanctions clearance obtained</li><li>Beneficial ownership verified</li><li>Regulatory eligibility established</li><li>Supply-chain role confirmed</li><li>Relationship with any other party verified</li></ul></div></div><div class="clause"><span class="cn">3.3</span><div class="cb"><p>Verification always names its scope, evidence, authority, jurisdiction, and date. AAB must not imply that registering a supplier confirms legal ownership, sanctions clearance, beneficial ownership, or regulatory eligibility unless those matters were independently evidenced and explicitly recorded.</p></div></div></section>
+<section class="sec" id="the-aggregator-model-bilateral-relationships-only"><div class="head-keep"><h2 class="sec-h"><span class="n">04</span>The aggregator model — bilateral relationships only</h2><div class="clause"><span class="cn">4.1</span><div class="cb"><p>An aggregator serving 400 smallholder suppliers has 400 independently governed bilateral relationships. The one-to-many network is a derived view, not a special record that obscures its members.</p></div></div></div><div class="clause"><span class="cn">4.2</span><div class="cb"><p>Each relationship connects exactly two parties:</p></div></div><div class="clause"><span class="cn">4.3</span><div class="cb"><div class="verbatim-block"><span class="lbl">Structure</span><pre>supplierPartyId → aggregatorPartyId
+aggregatorPartyId → processorPartyId
+processorPartyId → exporterPartyId</pre></div></div></div><div class="clause"><span class="cn">4.4</span><div class="cb"><p>Registering an aggregator does not register or verify its suppliers. An aggregator's assertion that a farmer supplies it is a claim until supported by evidence and independently assessed. Terminating one supplier relationship must not affect the aggregator's other relationships.</p></div></div></section>
+<section class="sec" id="six-objects-kept-separate"><div class="head-keep"><h2 class="sec-h"><span class="n">05</span>Six objects — kept separate</h2><div class="clause"><span class="cn">5.1</span><div class="cb"><table class="grid"><thead><tr><th>Record</th><th>Purpose</th></tr></thead><tbody><tr><td>Party identity</td><td>Identifies the person or legal entity</td></tr><tr><td>Claimed role</td><td>Records operator, supplier, aggregator, processor or exporter role</td></tr><tr><td>Identity evidence</td><td>Records documents and sources supporting identity</td></tr><tr><td>Verification assessment</td><td>Records what was verified, by whom, and when</td></tr><tr><td>Supply-chain relationship</td><td>Connects two parties without merging their identities</td></tr><tr><td>Framework association</td><td>Records the framework and version under which the party participates</td></tr></tbody></table></div></div></div><div class="clause"><span class="cn">5.2</span><div class="cb"><p>These six objects must never be silently merged. A party's identity record is independent of any relationship record. A relationship record is independent of any verification assessment. One party must not alter another party's canonical identity record.</p></div></div></section>
+<section class="sec" id="domain-position"><div class="head-keep"><h2 class="sec-h"><span class="n">06</span>Domain position</h2><div class="clause"><span class="cn">6.1</span><div class="cb"><figure class="diagram"><pre class="mermaid">graph TD
+    A[SCS-CAP-01&lt;br/&gt;Regulatory Framework Registration] --&gt;|framework + version| B[SCS-CAP-02&lt;br/&gt;Operator and Supplier Identity Registration]
+    B --&gt;|registered parties + relationships| C[SCS-CAP-03&lt;br/&gt;Plot and Land Unit Registration]
+    B --&gt;|registered parties + relationships| D[SCS-CAP-05&lt;br/&gt;Supply Chain Custody Evidence Admission]
+    B --&gt;|operator identity| E[SCS-CAP-08&lt;br/&gt;Due Diligence Package Compilation]
+    C --&gt;|plot registered| D
+    D --&gt;|custody evidence| F[SCS-CAP-06&lt;br/&gt;Due Diligence Sufficiency Evaluation]</pre><figcaption>Diagram</figcaption></figure></div></div></div></section>
+<section class="sec" id="core-interfaces"><div class="head-keep head-only"><h2 class="sec-h"><span class="n">07</span>Core interfaces</h2><h3 class="sub-h"><span class="n">7.1</span>Party identity record</h3></div><div class="clause"><span class="cn">7.1.1</span><div class="cb"><div class="def"><div class="def-head"><span class="dn">ScsPartyIdentity</span><span class="dk">Interface</span></div><div class="grp">Canonical identity</div><div class="f"><span class="fn">partyId</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">partyVersion</span><span class="ft"><span>number</span></span></div><div class="f"><span class="fn">schemaVersion</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">registeredAt</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">registeredBy</span><span class="ft"><span class="tref">ActorReference</span></span></div><div class="grp">What kind of entity this is</div><div class="f"><span class="fn">partyType</span><span class="ft"><span class="enum-note">One of</span><ul class="enum"><li>&quot;NATURAL_PERSON&quot;</li><li>&quot;LEGAL_ENTITY&quot;</li><li>&quot;COOPERATIVE&quot;</li><li>&quot;COMMUNITY_GROUP&quot;</li><li>&quot;GOVERNMENT_BODY&quot;</li><li>&quot;OTHER&quot;</li></ul></span></div><div class="grp">Human-readable identifier</div><div class="f"><span class="fn">partyName</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">countryOfRegistration</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">countryOfOperation<span class=opt>optional</span></span><span class="ft"><span>string</span></span></div><div class="grp">Registration status — not verification status</div><div class="f"><span class="fn">registrationStatus</span><span class="ft"><span class="enum-note">One of</span><ul class="enum"><li>&quot;REGISTERED&quot;</li><li>&quot;REQUIRES_HUMAN_REVIEW&quot;</li><li>&quot;DISPUTED&quot;</li><li>&quot;RETIRED&quot;</li></ul></span></div><div class="grp">Identity evidence — what documents support this identity</div><div class="f has-nest"><span class="fn">identityEvidence</span><div class="nest"><div class="f"><span class="fn">evidenceIds</span><span class="ft"><span>string</span>[]</span></div><div class="f"><span class="fn">evidenceLimitations</span><span class="ft"><span>string</span>[]</span></div></div></div><div class="grp">Verification — separate from registration<br>Always scoped — never a blanket assertion</div><div class="f"><span class="fn">verification<wbr>Assessments</span><span class="ft"><span class="tref">ScsPartyVerificationAssessment</span>[]</span></div><div class="grp">Provenance</div><div class="f has-nest"><span class="fn">provenance</span><div class="nest"><div class="f"><span class="fn">submittedBy</span><span class="ft"><span class="tref">ActorReference</span></span></div><div class="f"><span class="fn">submitting<wbr>Organization<wbr>Id<span class=opt>optional</span></span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">recordedAt</span><span class="ft"><span>string</span></span></div></div></div></div></div></div><div class="head-keep"><h3 class="sub-h"><span class="n">7.2</span>Identity verification states</h3><div class="clause"><span class="cn">7.2.1</span><div class="cb"><div class="def short"><div class="def-head"><span class="dn">ScsIdentityVerificationStatus</span><span class="dk">Type</span></div><div class="f"><span class="fn">= one of</span><span class="ft"><ul class="enum"><li>&quot;REGISTERED_UNVERIFIED&quot;</li><li>&quot;PARTIALLY_VERIFIED&quot;</li><li>&quot;VERIFIED_FOR_DECLARED_SCOPE&quot;</li><li>&quot;VERIFICATION_EXPIRED&quot;</li><li>&quot;DISPUTED&quot;</li><li>&quot;FAIL_CLOSED&quot;</li></ul></span></div></div></div></div></div><div class="head-keep head-only"><h3 class="sub-h"><span class="n">7.3</span>Party verification assessment — scoped, never blanket</h3></div><div class="clause"><span class="cn">7.3.1</span><div class="cb"><div class="def"><div class="def-head"><span class="dn">ScsPartyVerificationAssessment</span><span class="dk">Interface</span></div><div class="f"><span class="fn">assessmentId</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">partyId</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">partyVersion</span><span class="ft"><span>number</span></span></div><div class="f"><span class="fn">verificationStatus</span><span class="ft"><span class="tref">ScsIdentityVerificationStatus</span></span></div><div class="grp">Verification is always scoped — what was verified</div><div class="f has-nest"><span class="fn">verificationScope</span><div class="nest"><div class="f"><span class="fn">scopeDescription</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">jurisdictionCode</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">verifiedAttributes</span><span class="ft"><span>string</span>[]</span></div><div class="grp">Explicit exclusions — what was NOT verified</div><div class="f"><span class="fn">excluded<wbr>From<wbr>Verification</span><span class="ft"><span>string</span>[]</span></div></div></div><div class="grp">Who verified and on what authority</div><div class="f has-nest"><span class="fn">verifyingAuthority</span><div class="nest"><div class="f"><span class="fn">authorityId</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">authorityName</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">authorityBasis</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">jurisdictionCode</span><span class="ft"><span>string</span></span></div></div></div><div class="f"><span class="fn">verifiedAt</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">expiresAt<span class=opt>optional</span></span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">evidenceIds</span><span class="ft"><span>string</span>[]</span></div><div class="f"><span class="fn">limitations</span><span class="ft"><span>string</span>[]</span></div><div class="grp">Verification never implies broader authority</div><div class="f has-nest"><span class="fn">authorityBoundary</span><div class="nest"><div class="f flag"><span class="fn">does<wbr>Not<wbr>Confirm<wbr>Sanctions<wbr>Clearance</span><span class="ft"><span class="fixed">true</span></span></div><div class="f flag"><span class="fn">does<wbr>Not<wbr>Confirm<wbr>Beneficial<wbr>Ownership</span><span class="ft"><span class="fixed">true</span></span></div><div class="f flag"><span class="fn">does<wbr>Not<wbr>Grant<wbr>Regulatory<wbr>Eligibility</span><span class="ft"><span class="fixed">true</span></span></div><div class="f flag"><span class="fn">does<wbr>Not<wbr>Imply<wbr>Compliance<wbr>With<wbr>Other<wbr>Frameworks</span><span class="ft"><span class="fixed">true</span></span></div></div></div></div></div></div><div class="head-keep head-only"><h3 class="sub-h"><span class="n">7.4</span>Claimed role record</h3></div><div class="clause"><span class="cn">7.4.1</span><div class="cb"><div class="def"><div class="def-head"><span class="dn">ScsPartyRoleClaim</span><span class="dk">Interface</span></div><div class="f"><span class="fn">roleClaimId</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">partyId</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">partyVersion</span><span class="ft"><span>number</span></span></div><div class="f"><span class="fn">claimedRole</span><span class="ft"><span class="enum-note">One of</span><ul class="enum"><li>&quot;OPERATOR&quot;</li><li>&quot;SUPPLIER&quot;</li><li>&quot;AGGREGATOR&quot;</li><li>&quot;PROCESSOR&quot;</li><li>&quot;EXPORTER&quot;</li><li>&quot;IMPORTER&quot;</li><li>&quot;TRADER&quot;</li><li>&quot;OTHER&quot;</li></ul></span></div><div class="f"><span class="fn">framework<wbr>Association<wbr>Id</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">frameworkVersion</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">commodityScope</span><span class="ft"><span>string</span>[]</span></div><div class="f"><span class="fn">geographicScope</span><span class="ft"><span>string</span>[]</span></div><div class="f"><span class="fn">roleEvidenceIds</span><span class="ft"><span>string</span>[]</span></div><div class="f"><span class="fn">verificationStatus</span><span class="ft"><span class="enum-note">One of</span><ul class="enum"><li>&quot;CLAIMED_UNVERIFIED&quot;</li><li>&quot;EVIDENCE_SUBMITTED&quot;</li><li>&quot;PARTIALLY_VERIFIED&quot;</li><li>&quot;VERIFIED_FOR_DECLARED_SCOPE&quot;</li><li>&quot;DISPUTED&quot;</li><li>&quot;EXPIRED&quot;</li><li>&quot;SUPERSEDED&quot;</li><li>&quot;FAIL_CLOSED&quot;</li></ul></span></div><div class="f"><span class="fn">validFrom<span class=opt>optional</span></span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">validUntil<span class=opt>optional</span></span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">limitations</span><span class="ft"><span>string</span>[]</span></div><div class="f"><span class="fn">claimedAt</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">claimedBy</span><span class="ft"><span class="tref">ActorReference</span></span></div></div></div></div><div class="head-keep head-only"><h3 class="sub-h"><span class="n">7.5</span>Bilateral supply-chain relationship record</h3></div><div class="clause"><span class="cn">7.5.1</span><div class="cb"><div class="def"><div class="def-head"><span class="dn">ScsSupplyChainRelationship</span><span class="dk">Interface</span></div><div class="f"><span class="fn">relationshipId</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">schemaVersion</span><span class="ft"><span>string</span></span></div><div class="grp">Exactly two parties — always bilateral</div><div class="f"><span class="fn">fromPartyId</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">toPartyId</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">relationshipType</span><span class="ft"><span class="enum-note">One of</span><ul class="enum"><li>&quot;SUPPLIES_TO&quot;</li><li>&quot;PROCESSES_FOR&quot;</li><li>&quot;AGGREGATES_FOR&quot;</li><li>&quot;EXPORTS_FOR&quot;</li><li>&quot;CERTIFIES_FOR&quot;</li><li>&quot;OTHER&quot;</li></ul></span></div><div class="f"><span class="fn">commodityScope</span><span class="ft"><span>string</span>[]</span></div><div class="f"><span class="fn">geographicScope</span><span class="ft"><span>string</span>[]</span></div><div class="grp">Framework association — explicit and version-bound<br>Participation under one regulation does not imply<br>participation under another</div><div class="f"><span class="fn">framework<wbr>Association<wbr>Ids</span><span class="ft"><span>string</span>[]</span></div><div class="f"><span class="fn">validFrom<span class=opt>optional</span></span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">validUntil<span class=opt>optional</span></span><span class="ft"><span>string</span></span></div><div class="grp">Who claimed this relationship and when</div><div class="f"><span class="fn">claimedByPartyId</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">claimedAt</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">relationship<wbr>Evidence<wbr>Ids</span><span class="ft"><span>string</span>[]</span></div><div class="f"><span class="fn">verificationStatus</span><span class="ft"><span class="enum-note">One of</span><ul class="enum"><li>&quot;CLAIMED_UNVERIFIED&quot;</li><li>&quot;EVIDENCE_SUBMITTED&quot;</li><li>&quot;PARTIALLY_VERIFIED&quot;</li><li>&quot;VERIFIED_FOR_DECLARED_SCOPE&quot;</li><li>&quot;DISPUTED&quot;</li><li>&quot;EXPIRED&quot;</li><li>&quot;SUPERSEDED&quot;</li><li>&quot;FAIL_CLOSED&quot;</li></ul></span></div><div class="f"><span class="fn">verificationScope<span class=opt>optional</span></span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">lifecycleStatus</span><span class="ft"><span class="enum-note">One of</span><ul class="enum"><li>&quot;ACTIVE&quot;</li><li>&quot;EXPIRED&quot;</li><li>&quot;SUPERSEDED&quot;</li><li>&quot;WITHDRAWN&quot;</li></ul></span></div><div class="grp">Immutable history — superseded relationships remain on record</div><div class="f"><span class="fn">supersedes<wbr>Relationship<wbr>Id<span class=opt>optional</span></span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">superseded<wbr>By<wbr>Relationship<wbr>Id<span class=opt>optional</span></span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">representationVersion</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">createdAt</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">createdBy</span><span class="ft"><span class="tref">ActorReference</span></span></div></div></div></div><div class="head-keep"><h3 class="sub-h"><span class="n">7.6</span>Representation mandate — separate from relationship</h3><div class="clause"><span class="cn">7.6.1</span><div class="cb"><p>An aggregator may collect or submit evidence on a smallholder's behalf, but that authority requires its own governed mandate — separate from the supply relationship, separately scoped, and revocable independently.</p></div></div></div><div class="clause"><span class="cn">7.6.2</span><div class="cb"><div class="def"><div class="def-head"><span class="dn">ScsRepresentationMandate</span><span class="dk">Interface</span></div><div class="f"><span class="fn">mandateId</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">schemaVersion</span><span class="ft"><span>string</span></span></div><div class="grp">Who grants authority and to whom</div><div class="f"><span class="fn">grantingPartyId</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">representativePartyId</span><span class="ft"><span>string</span></span></div><div class="grp">What the representative is permitted to do<br>Enumerated — not open-ended</div><div class="f"><span class="fn">permittedActions</span><span class="ft"><span class="enum-note">Array of</span><ul class="enum"><li>&quot;SUBMIT_IDENTITY_EVIDENCE&quot;</li><li>&quot;SUBMIT_PLOT_ASSOCIATION_EVIDENCE&quot;</li><li>&quot;SUBMIT_CUSTODY_EVIDENCE&quot;</li><li>&quot;SUBMIT_DEFORESTATION_EVIDENCE&quot;</li><li>&quot;REQUEST_FRAMEWORK_ASSOCIATION&quot;</li><li>&quot;OTHER_EXPLICITLY_NAMED&quot;</li></ul></span></div><div class="grp">Scope — explicit and version-bound</div><div class="f"><span class="fn">framework<wbr>Association<wbr>Ids</span><span class="ft"><span>string</span>[]</span></div><div class="f"><span class="fn">commodityScope</span><span class="ft"><span>string</span>[]</span></div><div class="f"><span class="fn">geographicScope</span><span class="ft"><span>string</span>[]</span></div><div class="f"><span class="fn">validFrom</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">validUntil<span class=opt>optional</span></span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">mandateEvidenceIds</span><span class="ft"><span>string</span>[]</span></div><div class="f"><span class="fn">verificationStatus</span><span class="ft"><span class="enum-note">One of</span><ul class="enum"><li>&quot;CLAIMED_UNVERIFIED&quot;</li><li>&quot;EVIDENCE_SUBMITTED&quot;</li><li>&quot;PARTIALLY_VERIFIED&quot;</li><li>&quot;VERIFIED_FOR_DECLARED_SCOPE&quot;</li><li>&quot;DISPUTED&quot;</li><li>&quot;EXPIRED&quot;</li><li>&quot;REVOKED&quot;</li><li>&quot;FAIL_CLOSED&quot;</li></ul></span></div><div class="f"><span class="fn">revocationStatus</span><span class="ft"><span class="enum-note">One of</span><ul class="enum"><li>&quot;NOT_REVOKED&quot;</li><li>&quot;REVOKED&quot;</li><li>&quot;EXPIRED&quot;</li></ul></span></div><div class="f"><span class="fn">revokedAt<span class=opt>optional</span></span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">revocationReason<span class=opt>optional</span></span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">createdAt</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">createdBy</span><span class="ft"><span class="tref">ActorReference</span></span></div><div class="grp">What this mandate does not permit</div><div class="f has-nest"><span class="fn">authorityBoundary</span><div class="nest"><div class="f flag"><span class="fn">does<wbr>Not<wbr>Permit<wbr>Approval<wbr>Of<wbr>Granting<wbr>Party</span><span class="ft"><span class="fixed">true</span></span></div><div class="f flag"><span class="fn">does<wbr>Not<wbr>Permit<wbr>Alteration<wbr>Of<wbr>Granting<wbr>Party<wbr>Identity</span><span class="ft"><span class="fixed">true</span></span></div><div class="f flag"><span class="fn">does<wbr>Not<wbr>Permit<wbr>Legal<wbr>Declarations<wbr>Without<wbr>Explicit<wbr>Authority</span><span class="ft"><span class="fixed">true</span></span></div><div class="f flag"><span class="fn">does<wbr>Not<wbr>Conceal<wbr>Which<wbr>Records<wbr>Were<wbr>Submitted</span><span class="ft"><span class="fixed">true</span></span></div><div class="f flag"><span class="fn">does<wbr>Not<wbr>Reuse<wbr>Authority<wbr>Outside<wbr>Declared<wbr>Scope</span><span class="ft"><span class="fixed">true</span></span></div><div class="f flag"><span class="fn">does<wbr>Not<wbr>Extend<wbr>To<wbr>Other<wbr>Frameworks<wbr>Or<wbr>Commodities</span><span class="ft"><span class="fixed">true</span></span></div></div></div></div></div></div></section>
+<section class="sec" id="registration-and-relationship-sequence"><div class="head-keep"><h2 class="sec-h"><span class="n">08</span>Registration and relationship sequence</h2><div class="clause"><span class="cn">8.1</span><div class="cb"><figure class="diagram"><pre class="mermaid">sequenceDiagram
+    participant CO as Compliance Officer
+    participant CAP02 as SCS-CAP-02
+    participant CAP01 as SCS-CAP-01
+    participant Store as Party Store
+
+    CO-&gt;&gt;CAP02: RegisterParty (partyType, name, country, evidence)
+    CAP02-&gt;&gt;CAP02: Validate party type and country code
+    CAP02-&gt;&gt;CAP02: Record identity evidence and limitations
+    CAP02-&gt;&gt;Store: Write ScsPartyIdentity (REGISTERED — not verified)
+    CAP02--&gt;&gt;CO: ScsPartyRegistrationDecision (partyId, status, gaps)
+
+    CO-&gt;&gt;CAP02: RegisterRelationship (fromPartyId, toPartyId, type, scope)
+    CAP02-&gt;&gt;CAP02: Verify both parties exist
+    CAP02-&gt;&gt;CAP01: GetFramework (frameworkAssociationId)
+    CAP01--&gt;&gt;CAP02: ScsRegulatoryFramework
+    CAP02-&gt;&gt;Store: Write ScsSupplyChainRelationship (CLAIMED_UNVERIFIED)
+    CAP02--&gt;&gt;CO: ScsRelationshipRegistrationDecision
+
+    Note over CO,Store: Registering the relationship does not&lt;br/&gt;verify either party. Registering the&lt;br/&gt;aggregator does not register its suppliers.
+
+    CO-&gt;&gt;CAP02: RegisterMandate (grantingPartyId, representativePartyId, actions)
+    CAP02-&gt;&gt;CAP02: Verify both parties exist
+    CAP02-&gt;&gt;CAP02: Validate permitted actions are enumerated
+    CAP02-&gt;&gt;Store: Write ScsRepresentationMandate (CLAIMED_UNVERIFIED)
+    CAP02--&gt;&gt;CO: ScsMandateRegistrationDecision</pre><figcaption>Diagram</figcaption></figure></div></div></div></section>
+<section class="sec" id="registration-decision"><div class="head-keep"><h2 class="sec-h"><span class="n">09</span>Registration decision</h2><div class="clause"><span class="cn">9.1</span><div class="cb"><div class="def short"><div class="def-head"><span class="dn">ScsPartyRegistrationDecision</span><span class="dk">Interface</span></div><div class="f"><span class="fn">decisionId</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">partyId</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">decision</span><span class="ft"><span class="enum-note">One of</span><ul class="enum"><li>&quot;REGISTERED&quot;</li><li>&quot;REGISTERED_WITH_GAPS&quot;</li><li>&quot;REJECTED&quot;</li><li>&quot;REQUIRES_HUMAN_REVIEW&quot;</li></ul></span></div><div class="f has-nest"><span class="fn">eligibilityChecks</span><div class="nest"><div class="f"><span class="fn">partyTypeValid</span><span class="ft"><span>boolean</span></span></div><div class="f"><span class="fn">countryCodeValid</span><span class="ft"><span>boolean</span></span></div><div class="f"><span class="fn">partyNameProvided</span><span class="ft"><span>boolean</span></span></div><div class="f"><span class="fn">registrantAuthorised</span><span class="ft"><span>boolean</span></span></div><div class="f"><span class="fn">no<wbr>Conflicting<wbr>Registration<wbr>Detected</span><span class="ft"><span>boolean</span></span></div></div></div><div class="f has-nest"><span class="fn">gaps</span><span class="enum-note" style="margin:2px 0 0">Array of objects</span><div class="nest"><div class="f"><span class="fn">gapCode</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">gapDescription</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">humanReviewRequired</span><span class="ft"><span>boolean</span></span></div></div></div><div class="f"><span class="fn">decisionReasons</span><span class="ft"><span>string</span>[]</span></div><div class="f"><span class="fn">decidedBy</span><span class="ft"><span class="tref">ActorReference</span></span></div><div class="f"><span class="fn">decidedAt</span><span class="ft"><span>string</span></span></div></div></div></div></div></section>
+<section class="sec" id="provider-neutral-interface"><div class="head-keep"><h2 class="sec-h"><span class="n">10</span>Provider-neutral interface</h2><div class="clause"><span class="cn">10.1</span><div class="cb"><div class="def short provider"><div class="def-head"><span class="dn">ScsPartyIdentityProvider</span><span class="dk">Provider interface</span></div><div class="f"><span class="m-sig">register<wbr>Party<span class="p">(request: Scs<wbr>Party<wbr>Registration<wbr>Request)</span></span><span class="m-ret">Promise&lt;<wbr>Scs<wbr>Party<wbr>Registration<wbr>Decision&gt;</span></div><div class="f"><span class="m-sig">get<wbr>Party<span class="p">(party<wbr>Id: string, <wbr>version?: number)</span></span><span class="m-ret">Promise&lt;<wbr>Scs<wbr>Party<wbr>Identity&gt;</span></div><div class="f"><span class="m-sig">add<wbr>Verification<wbr>Assessment<span class="p">(assessment: Scs<wbr>Party<wbr>Verification<wbr>Assessment)</span></span><span class="m-ret">Promise&lt;<wbr>Scs<wbr>Party<wbr>Verification<wbr>Assessment&gt;</span></div><div class="f"><span class="m-sig">add<wbr>Role<wbr>Claim<span class="p">(claim: Scs<wbr>Party<wbr>Role<wbr>Claim)</span></span><span class="m-ret">Promise&lt;<wbr>Scs<wbr>Party<wbr>Role<wbr>Claim&gt;</span></div><div class="f"><span class="m-sig">register<wbr>Relationship<span class="p">(relationship: Scs<wbr>Supply<wbr>Chain<wbr>Relationship)</span></span><span class="m-ret">Promise&lt;<wbr>Scs<wbr>Relationship<wbr>Registration<wbr>Decision&gt;</span></div><div class="f"><span class="m-sig">get<wbr>Relationship<span class="p">(relationship<wbr>Id: string)</span></span><span class="m-ret">Promise&lt;<wbr>Scs<wbr>Supply<wbr>Chain<wbr>Relationship&gt;</span></div><div class="f"><span class="m-sig">list<wbr>Relationships<wbr>For<wbr>Party<span class="p">(party<wbr>Id: string, <wbr>direction?: &quot;FROM&quot; | &quot;TO&quot; | &quot;BOTH&quot;)</span></span><span class="m-ret">Promise&lt;<wbr>Scs<wbr>Supply<wbr>Chain<wbr>Relationship[]&gt;</span></div><div class="f"><span class="m-sig">register<wbr>Mandate<span class="p">(mandate: Scs<wbr>Representation<wbr>Mandate)</span></span><span class="m-ret">Promise&lt;<wbr>Scs<wbr>Mandate<wbr>Registration<wbr>Decision&gt;</span></div><div class="f"><span class="m-sig">revoke<wbr>Mandate<span class="p">(mandate<wbr>Id: string, <wbr>reason: string, <wbr>revoked<wbr>By: Actor<wbr>Reference)</span></span><span class="m-ret">Promise&lt;<wbr>Scs<wbr>Representation<wbr>Mandate&gt;</span></div><div class="f"><span class="m-sig">list<wbr>Mandates<wbr>For<wbr>Party<span class="p">(party<wbr>Id: string, <wbr>role?: &quot;GRANTING&quot; | &quot;REPRESENTATIVE&quot;)</span></span><span class="m-ret">Promise&lt;<wbr>Scs<wbr>Representation<wbr>Mandate[]&gt;</span></div><div class="f"><span class="m-sig">list<wbr>Parties<span class="p">(request: Scs<wbr>List<wbr>Parties<wbr>Request)</span></span><span class="m-ret">Promise&lt;<wbr>Scs<wbr>List<wbr>Parties<wbr>Result&gt;</span></div></div></div></div></div></section>
+<section class="sec" id="failure-contract"><div class="head-keep"><h2 class="sec-h"><span class="n">11</span>Failure contract</h2><div class="clause"><span class="cn">11.1</span><div class="cb"><div class="def short"><div class="def-head"><span class="dn">ScsPartyRegistrationFailure</span><span class="dk">Interface</span></div><div class="f flag"><span class="fn">ok</span><span class="ft"><span class="fixed">false</span></span></div><div class="f"><span class="fn">capabilityId</span><span class="ft"><span class="lit">&quot;SCS-CAP-02&quot;</span></span></div><div class="f"><span class="fn">result</span><span class="ft"><span class="lit">&quot;FAIL_CLOSED&quot;</span></span></div><div class="f"><span class="fn">error</span><span class="ft"><span class="enum-note">One of</span><ul class="enum"><li>&quot;REGISTRANT_NOT_AUTHORISED&quot;</li><li>&quot;PARTY_TYPE_INVALID&quot;</li><li>&quot;COUNTRY_CODE_UNRECOGNISED&quot;</li><li>&quot;PARTY_NAME_MISSING&quot;</li><li>&quot;CONFLICTING_REGISTRATION_DETECTED&quot;</li><li>&quot;FRAMEWORK_ASSOCIATION_NOT_FOUND&quot;</li><li>&quot;FROM_PARTY_NOT_FOUND&quot;</li><li>&quot;TO_PARTY_NOT_FOUND&quot;</li><li>&quot;SELF_REFERENTIAL_RELATIONSHIP&quot;</li><li>&quot;MANDATE_ACTION_NOT_ENUMERATED&quot;</li><li>&quot;GRANTING_PARTY_NOT_FOUND&quot;</li><li>&quot;REPRESENTATIVE_PARTY_NOT_FOUND&quot;</li><li>&quot;DEPENDENCY_UNAVAILABLE&quot;</li></ul></span></div><div class="f"><span class="fn">reasons</span><span class="ft"><span>string</span>[]</span></div><div class="f flag"><span class="fn">noWrites</span><span class="ft"><span class="fixed">true</span></span></div><div class="f flag"><span class="fn">noPartyRegistered</span><span class="ft"><span class="fixed">true</span></span></div></div></div></div></div></section>
+<section class="sec" id="southeast-asia-operational-context"><div class="head-keep"><h2 class="sec-h"><span class="n">12</span>Southeast Asia operational context</h2><div class="clause"><span class="cn">12.1</span><div class="cb"><p>In Thailand and Vietnam, the majority of commodity production — rubber, palm oil, coffee — comes from smallholder farmers who may have:</p></div></div></div><div class="clause"><span class="cn">12.2</span><div class="cb"><ul><li>No formal legal entity registration</li><li>Traditional or customary land rights rather than registered title</li><li>Limited documentation of their supply relationships</li><li>GPS coordinates but no formal cadastral records</li></ul></div></div><div class="clause"><span class="cn">12.3</span><div class="cb"><p>SCS-CAP-02 handles this through honest gap disclosure rather than exclusion:</p></div></div><div class="clause"><span class="cn">12.4</span><div class="cb"><ul><li>A smallholder with no formal legal registration is admitted as <code>partyType: NATURAL_PERSON</code> with <code>registrationStatus: REGISTERED</code> and <code>verificationStatus: REGISTERED_UNVERIFIED</code></li><li>The gap is disclosed — not papered over</li><li>SCS-CAP-06's sufficiency evaluation determines the consequence of that gap for a specific framework's requirements</li><li>The aggregator who collects on their behalf has a separately governed mandate with explicit permitted actions and explicit expiry</li></ul></div></div><div class="clause"><span class="cn">12.5</span><div class="cb"><p>A Thai rubber cooperative managing 400 smallholder members registers 400 bilateral relationships and 400 representation mandates. Each smallholder's identity, plot registration, and evidence remain individually governed. The cooperative's submission authority is explicit, scoped, and revocable per smallholder. No smallholder's record is obscured by the cooperative's registration.</p></div></div></section>
+<section class="sec" id="what-this-document-does-not-establish"><div class="head-keep"><h2 class="sec-h"><span class="n">13</span>What this document does not establish</h2><div class="clause"><span class="cn">13.1</span><div class="cb"><div class="boundary"><ul><li>It does not admit SCS-CAP-02 as a canonical capability — that requires the ten-point admission checklist</li><li>It does not implement, deploy or migrate anything</li><li>It does not verify the legal identity, sanctions status, beneficial ownership, or regulatory eligibility of any registered party</li><li><code>REGISTERED</code> means a governed record exists — nothing more</li><li>Registering an aggregator does not register its suppliers</li><li>Registering a relationship does not verify either party</li><li>A representation mandate does not grant the representative authority to approve, alter, or make legal declarations on behalf of the granting party beyond its explicitly enumerated permitted actions</li><li>It does not alter commissioning status, satisfy Gate D, close WP05, or grant any production or commissioning authority</li></ul></div></div></div></div></section>
+
+  <footer class="end"><span><code>SCS-CAP-02</code> · Source: <code>governance/workstream-b/SCS-CAP-02-OPERATOR-AND-SUPPLIER-IDENTITY-REGISTRATION-CANONICAL-CONTRACT-2026-09-23.md</code></span><span>Adaptive Agricultural Brain — Governed Scientific Intelligence Infrastructure</span></footer>
+</div>
+</article>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+mermaid.initialize({startOnLoad:true,securityLevel:"strict",theme:"base",fontFamily:"Inter, Segoe UI, sans-serif",
+  themeVariables:{primaryColor:"#eefbf4",primaryBorderColor:"#06271f",primaryTextColor:"#06271f",lineColor:"#3f8f6a",
+  secondaryColor:"#f6f8f7",tertiaryColor:"#ffffff",actorBkg:"#06271f",actorTextColor:"#ffffff",actorBorder:"#06271f",
+  signalColor:"#17211d",signalTextColor:"#17211d",noteBkgColor:"#eefbf4",noteBorderColor:"#78ecad",noteTextColor:"#06271f",fontSize:"12px"}});
+</script>
+</body>
+</html>
