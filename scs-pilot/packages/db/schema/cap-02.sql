@@ -45,6 +45,11 @@
 -- and implemented in migration 006 — party_identity_evidence_submission
 -- (append-only) and party_identity_evidence.submission_id.
 --
+-- Role claim registration rules: added to the CAP-02 contract (commit
+-- 9a3e978) and implemented in migration 009 —
+-- party_role_claim.other_role_description, the framework foreign key and the
+-- non-empty scope check.
+--
 -- Mandate registration rules: added to the CAP-02 contract (commit 9a3e978)
 -- and implemented in migration 008 — representation_mandate.valid_until is
 -- required, and the non-empty framework, scope and consent evidence checks.
@@ -77,11 +82,13 @@
 --                cannot be joined to a historical party row. Acceptable for the
 --                pilot; full party version history is a later migration, and
 --                party_version on child rows is the breadcrumb for it.
---   TODO(framework-association): framework_association_id(s) are stored as
---                uuid without a foreign key. CAP-02 references framework
---                associations but never defines what they contain; that
---                definition belongs to CAP-01's evidence requirement spec.
---                Add the foreign key when CAP-01's spec table exists.
+--   Framework associations: a framework association is a CAP-01 frameworkId
+--                (contract 9a3e978). party_role_claim.framework_association_id
+--                has a foreign key to scs.regulatory_framework (migration 009).
+--                TODO(framework-association-arrays): the uuid[] columns on
+--                supply_chain_relationship and representation_mandate cannot
+--                carry a foreign key; the capability checks every element
+--                exists and is ACTIVE when the record is registered.
 --   TODO(evidence): evidence ids are stored as uuid without a foreign key; the
 --                evidence records they point to are not modelled yet.
 --   TODO(decisions): ScsPartyRegistrationDecision (and the relationship /
@@ -301,7 +308,7 @@ CREATE TABLE scs.party_role_claim (
 
   claimed_role                      text        NOT NULL,
 
-  framework_association_id          uuid        NOT NULL,   -- no FK: TODO(framework-association)
+  framework_association_id          uuid        NOT NULL,   -- a CAP-01 frameworkId (FK, migration 009)
   framework_version                 text        NOT NULL,
   commodity_scope                   text[]      NOT NULL,
   geographic_scope                  text[]      NOT NULL,
@@ -319,6 +326,10 @@ CREATE TABLE scs.party_role_claim (
 
   created_at                        timestamptz NOT NULL DEFAULT now(),
   updated_at                        timestamptz NOT NULL DEFAULT now(),
+
+  -- otherRoleDescription (optional) — names the role when claimedRole is
+  -- OTHER. Last column: added by migration 009.
+  other_role_description            text,
 
   CONSTRAINT party_role_claim_pk PRIMARY KEY (role_claim_id),
   CONSTRAINT party_role_claim_party_fk
@@ -349,7 +360,22 @@ CREATE TABLE scs.party_role_claim (
   CONSTRAINT party_role_claim_validity_range_ck
     CHECK (valid_from IS NULL OR valid_until IS NULL OR valid_until > valid_from),
   CONSTRAINT party_role_claim_updated_after_created_ck
-    CHECK (updated_at >= created_at)
+    CHECK (updated_at >= created_at),
+
+  -- Contract rules (commit 9a3e978), added by migration 009: a framework
+  -- association is a CAP-01 frameworkId; OTHER requires a description and a
+  -- description without OTHER is refused; scope is not empty.
+  CONSTRAINT party_role_claim_framework_fk
+    FOREIGN KEY (framework_association_id) REFERENCES scs.regulatory_framework (framework_id)
+    ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT party_role_claim_other_role_description_ck
+    CHECK (CASE WHEN claimed_role = 'OTHER'
+                THEN other_role_description IS NOT NULL
+                     AND btrim(other_role_description) <> ''
+                ELSE other_role_description IS NULL
+           END),
+  CONSTRAINT party_role_claim_scope_not_empty_ck
+    CHECK (cardinality(commodity_scope) >= 1 AND cardinality(geographic_scope) >= 1)
 );
 
 
@@ -369,7 +395,7 @@ CREATE TABLE scs.supply_chain_relationship (
 
   -- explicit and version-bound; participation under one regulation does not
   -- imply participation under another
-  framework_association_ids         uuid[]      NOT NULL,   -- no FK: TODO(framework-association)
+  framework_association_ids         uuid[]      NOT NULL,   -- no FK: TODO(framework-association-arrays)
 
   valid_from                        timestamptz,            -- optional
   valid_until                       timestamptz,            -- optional
@@ -487,7 +513,7 @@ CREATE TABLE scs.representation_mandate (
   permitted_actions                 text[]      NOT NULL,
 
   -- Scope — explicit and version-bound
-  framework_association_ids         uuid[]      NOT NULL,   -- no FK: TODO(framework-association)
+  framework_association_ids         uuid[]      NOT NULL,   -- no FK: TODO(framework-association-arrays)
   commodity_scope                   text[]      NOT NULL,
   geographic_scope                  text[]      NOT NULL,
 
@@ -606,6 +632,8 @@ CREATE TABLE scs.representation_mandate (
 CREATE INDEX party_identity_evidence_party_idx       ON scs.party_identity_evidence (party_id);
 CREATE INDEX party_verification_assessment_party_idx ON scs.party_verification_assessment (party_id);
 CREATE INDEX party_role_claim_party_idx              ON scs.party_role_claim (party_id);
+CREATE INDEX party_role_claim_conflict_idx
+  ON scs.party_role_claim (party_id, claimed_role, framework_association_id);
 CREATE INDEX supply_chain_relationship_from_idx      ON scs.supply_chain_relationship (from_party_id);
 CREATE INDEX supply_chain_relationship_to_idx        ON scs.supply_chain_relationship (to_party_id);
 CREATE INDEX supply_chain_relationship_claimed_by_idx ON scs.supply_chain_relationship (claimed_by_party_id);
@@ -667,6 +695,8 @@ COMMENT ON COLUMN scs.representation_mandate.other_action_description IS
   'otherActionDescription — names the specific action; required exactly when permitted_actions includes OTHER_EXPLICITLY_NAMED.';
 COMMENT ON TABLE scs.party_identity_evidence_submission IS
   'SCS-CAP-02 ScsPartyIdentityEvidenceSubmission. Evidence admitted after registration, not verified; never changes the party record. Append-only for every role.';
+COMMENT ON COLUMN scs.party_role_claim.other_role_description IS
+  'otherRoleDescription — names the role; required exactly when claimed_role is OTHER.';
 COMMENT ON COLUMN scs.supply_chain_relationship.other_relationship_type_description IS
   'otherRelationshipTypeDescription — names the relationship; required exactly when relationship_type is OTHER.';
 COMMENT ON COLUMN scs.party_identity_evidence.submission_id IS
