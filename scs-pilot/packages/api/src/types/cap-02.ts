@@ -15,6 +15,10 @@
  *   src/schemas/cap-02/relationship-registration-decision.schema.json
  *   src/schemas/cap-02/relationship-registration-receipt.schema.json
  *   src/schemas/cap-02/relationship-registration-response.schema.json
+ *   src/schemas/cap-02/mandate-registration-request.schema.json
+ *   src/schemas/cap-02/mandate-registration-decision.schema.json
+ *   src/schemas/cap-02/mandate-registration-receipt.schema.json
+ *   src/schemas/cap-02/mandate-registration-response.schema.json
  * To change these types, edit the schema(s) above, then run:
  *   npm run generate:types
  * npm test fails if this file differs from what the schemas generate.
@@ -321,5 +325,130 @@ export interface ScsRelationshipRegistrationReceipt {
 export interface ScsRelationshipRegistrationResponse {
   decision: ScsRelationshipRegistrationDecision;
   receipt: ScsRelationshipRegistrationReceipt;
+  receiptDigest: string;
+}
+
+/**
+ * SCS-CAP-02 ScsMandateRegistrationRequest (contract 9a3e978). Not in the request, because the system sets them: mandateId, schemaVersion, verificationStatus (CLAIMED_UNVERIFIED), revocationStatus (NOT_REVOKED), createdAt, createdBy and the authorityBoundary flags (always true). validUntil is required (a mandate always expires) and mandateEvidenceIds needs at least one id (evidence that the granting party agreed); an action outside the enumeration is refused here. Rules that span fields or records (OTHER_EXPLICITLY_NAMED description, validity period, parties, relationship prerequisite, framework scope) are checked by the capability so that the contract's failure codes are returned.
+ */
+export interface ScsMandateRegistrationRequest {
+  grantingPartyId: string;
+  representativePartyId: string;
+  /**
+   * Enumerated, never open-ended: at least one, no duplicates.
+   *
+   * @minItems 1
+   * @maxItems 6
+   */
+  permittedActions: (
+    | "SUBMIT_IDENTITY_EVIDENCE"
+    | "SUBMIT_PLOT_ASSOCIATION_EVIDENCE"
+    | "SUBMIT_CUSTODY_EVIDENCE"
+    | "SUBMIT_DEFORESTATION_EVIDENCE"
+    | "REQUEST_FRAMEWORK_ASSOCIATION"
+    | "OTHER_EXPLICITLY_NAMED"
+  )[];
+  /**
+   * Required exactly when permittedActions includes OTHER_EXPLICITLY_NAMED.
+   */
+  otherActionDescription?: string;
+  /**
+   * CAP-01 frameworkIds; at least one, each ACTIVE, each referenced by the prerequisite relationship.
+   *
+   * @minItems 1
+   * @maxItems 50
+   */
+  frameworkAssociationIds: string[];
+  /**
+   * Each value must equal the scope.commodityCode of a referenced framework.
+   *
+   * @minItems 1
+   * @maxItems 50
+   */
+  commodityScope: string[];
+  /**
+   * Each value must equal the scope.countryOfOrigin of a referenced framework.
+   *
+   * @minItems 1
+   * @maxItems 50
+   */
+  geographicScope: string[];
+  validFrom: string;
+  /**
+   * Required; must be after validFrom.
+   */
+  validUntil: string;
+  /**
+   * At least one: evidence that the granting party agreed.
+   *
+   * @minItems 1
+   * @maxItems 200
+   */
+  mandateEvidenceIds: string[];
+}
+
+/**
+ * SCS-CAP-02 ScsMandateRegistrationDecision (contract 9a3e978). REGISTERED means a governed, scoped, expiring and revocable record of representation authority exists; it verifies neither party and grants nothing beyond the enumerated actions. An eligibility check is true only if it was actually performed and passed.
+ */
+export interface ScsMandateRegistrationDecision {
+  decisionId: string;
+  mandateId: string;
+  decision: "REGISTERED";
+  eligibilityChecks: ScsMandateEligibilityChecks;
+  /**
+   * @maxItems 200
+   */
+  decisionReasons: string[];
+  decidedBy: ActorReference;
+  decidedAt: string;
+}
+export interface ScsMandateEligibilityChecks {
+  registrantAuthorised: boolean;
+  grantingPartyExists: boolean;
+  representativePartyExists: boolean;
+  partiesNotRetired: boolean;
+  notSelfGranted: boolean;
+  activeRelationshipExists: boolean;
+  otherActionDescribed: boolean;
+  frameworksExist: boolean;
+  frameworksActive: boolean;
+  scopeWithinFrameworks: boolean;
+  validityPeriodValid: boolean;
+  consentEvidenceProvided: boolean;
+  noConflictingRecord: boolean;
+}
+
+/**
+ * Immutable receipt for an SCS-CAP-02 mandate registration decision, written in the same transaction as the decision (foundation/receipts.ts). Its SHA-256 over canonical JSON is returned alongside it as receiptDigest.
+ */
+export interface ScsMandateRegistrationReceipt {
+  receiptId: string;
+  receiptVersion: "1";
+  capabilityId: "SCS-CAP-02";
+  decisionType: "MANDATE_REGISTRATION";
+  /**
+   * mandateId of the registered mandate.
+   */
+  subjectId: string;
+  correlationId: string;
+  /**
+   * SHA-256 (hex) of the canonical request: method, route and body.
+   */
+  requestDigest: string;
+  idempotencyKey: string | null;
+  issuedAt: string;
+  /**
+   * The authenticated actor whose request produced this decision.
+   */
+  issuedFor: ActorReference;
+  decision: ScsMandateRegistrationDecision;
+}
+
+/**
+ * Body of a successful POST /scs/v1/mandates (201): the registration decision, the immutable receipt that records it, and the receipt's SHA-256 over canonical JSON.
+ */
+export interface ScsMandateRegistrationResponse {
+  decision: ScsMandateRegistrationDecision;
+  receipt: ScsMandateRegistrationReceipt;
   receiptDigest: string;
 }

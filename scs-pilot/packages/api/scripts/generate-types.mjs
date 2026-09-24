@@ -48,6 +48,10 @@ const TARGETS = [
       "cap-02/relationship-registration-decision.schema.json",
       "cap-02/relationship-registration-receipt.schema.json",
       "cap-02/relationship-registration-response.schema.json",
+      "cap-02/mandate-registration-request.schema.json",
+      "cap-02/mandate-registration-decision.schema.json",
+      "cap-02/mandate-registration-receipt.schema.json",
+      "cap-02/mandate-registration-response.schema.json",
     ],
   },
 ];

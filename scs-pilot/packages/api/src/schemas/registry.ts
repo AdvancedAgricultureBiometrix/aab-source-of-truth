@@ -24,6 +24,10 @@ import cap02RelationshipRegistrationRequest from "./cap-02/relationship-registra
 import cap02RelationshipRegistrationDecision from "./cap-02/relationship-registration-decision.schema.json" with { type: "json" };
 import cap02RelationshipRegistrationReceipt from "./cap-02/relationship-registration-receipt.schema.json" with { type: "json" };
 import cap02RelationshipRegistrationResponse from "./cap-02/relationship-registration-response.schema.json" with { type: "json" };
+import cap02MandateRegistrationRequest from "./cap-02/mandate-registration-request.schema.json" with { type: "json" };
+import cap02MandateRegistrationDecision from "./cap-02/mandate-registration-decision.schema.json" with { type: "json" };
+import cap02MandateRegistrationReceipt from "./cap-02/mandate-registration-receipt.schema.json" with { type: "json" };
+import cap02MandateRegistrationResponse from "./cap-02/mandate-registration-response.schema.json" with { type: "json" };
 
 import { registerSchema, type JsonSchema } from "../foundation/validation.js";
 
@@ -46,6 +50,10 @@ export const SCHEMAS = {
   cap02RelationshipRegistrationDecision,
   cap02RelationshipRegistrationReceipt,
   cap02RelationshipRegistrationResponse,
+  cap02MandateRegistrationRequest,
+  cap02MandateRegistrationDecision,
+  cap02MandateRegistrationReceipt,
+  cap02MandateRegistrationResponse,
 } as const satisfies Record<string, JsonSchema>;
 
 for (const schema of Object.values(SCHEMAS)) registerSchema(schema);

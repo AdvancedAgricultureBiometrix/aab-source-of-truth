@@ -8,6 +8,7 @@ import { withDatabaseErrors } from "../../foundation/db-errors.js";
 import type { ActorReference } from "../../types/shared.js";
 import type {
   ScsIdentityEvidenceSubmissionRequest,
+  ScsMandateRegistrationRequest,
   ScsPartyRegistrationRequest,
   ScsRelationshipRegistrationRequest,
 } from "../../types/cap-02.js";
@@ -336,4 +337,120 @@ export async function insertRelationship(tx: Tx, n: NewRelationship): Promise<In
   );
   const row = rows[0]!;
   return { relationshipId: row.relationship_id, createdAt: row.created_at.toISOString() };
+}
+
+// ── Mandate registration ─────────────────────────────────────────────────────
+
+/**
+ * An ACTIVE relationship between the two parties, in either direction and of
+ * any type, not past its validUntil, whose frameworks include every one of
+ * `frameworkAssociationIds`, if any: the mandate's governed context.
+ */
+export async function findCoveringRelationship(
+  tx: Tx,
+  partyA: string,
+  partyB: string,
+  frameworkAssociationIds: readonly string[],
+): Promise<string | null> {
+  const { rows } = await withDatabaseErrors(CAPABILITY_ID, () =>
+    tx.query<{ relationship_id: string }>(
+      `SELECT relationship_id
+         FROM scs.supply_chain_relationship
+        WHERE ((from_party_id = $1 AND to_party_id = $2) OR (from_party_id = $2 AND to_party_id = $1))
+          AND lifecycle_status = 'ACTIVE'
+          AND (valid_until IS NULL OR valid_until > now())
+          AND framework_association_ids @> $3::uuid[]
+        ORDER BY created_at
+        LIMIT 1`,
+      [partyA, partyB, frameworkAssociationIds],
+    ),
+  );
+  return rows[0]?.relationship_id ?? null;
+}
+
+/** Serialise registrations of mandates from one granting party to one representative until the transaction ends. */
+export async function lockMandatePair(tx: Tx, grantingPartyId: string, representativePartyId: string): Promise<void> {
+  const lockName = ["scs-cap-02-mandate", grantingPartyId, representativePartyId].join("\u001f");
+  await withDatabaseErrors(CAPABILITY_ID, () => tx.query("SELECT pg_advisory_xact_lock(hashtextextended($1, 0))", [lockName]));
+}
+
+/**
+ * A NOT_REVOKED mandate from the same granting party to the same
+ * representative that shares at least one framework and at least one
+ * permitted action and whose validity period overlaps [validFrom, validUntil),
+ * if any.
+ */
+export async function findConflictingMandate(
+  tx: Tx,
+  m: {
+    readonly grantingPartyId: string;
+    readonly representativePartyId: string;
+    readonly frameworkAssociationIds: readonly string[];
+    readonly permittedActions: readonly string[];
+    readonly validFrom: string;
+    readonly validUntil: string;
+  },
+): Promise<string | null> {
+  const { rows } = await withDatabaseErrors(CAPABILITY_ID, () =>
+    tx.query<{ mandate_id: string }>(
+      `SELECT mandate_id
+         FROM scs.representation_mandate
+        WHERE granting_party_id = $1 AND representative_party_id = $2
+          AND revocation_status = 'NOT_REVOKED'
+          AND framework_association_ids && $3::uuid[]
+          AND permitted_actions && $4::text[]
+          AND tstzrange(valid_from, valid_until, '[)') && tstzrange($5::timestamptz, $6::timestamptz, '[)')
+        ORDER BY created_at
+        LIMIT 1`,
+      [m.grantingPartyId, m.representativePartyId, m.frameworkAssociationIds, m.permittedActions, m.validFrom, m.validUntil],
+    ),
+  );
+  return rows[0]?.mandate_id ?? null;
+}
+
+export interface NewMandate {
+  readonly request: ScsMandateRegistrationRequest;
+  readonly schemaVersion: string;
+  readonly createdBy: ActorReference;
+}
+
+export interface InsertedMandate {
+  readonly mandateId: string;
+  /** Transaction timestamp: createdAt = decidedAt. */
+  readonly createdAt: string;
+}
+
+/**
+ * Insert the ScsRepresentationMandate row: CLAIMED_UNVERIFIED, NOT_REVOKED,
+ * every authorityBoundary flag true (column defaults, checked by the
+ * database). The database generates mandateId.
+ */
+export async function insertMandate(tx: Tx, n: NewMandate): Promise<InsertedMandate> {
+  const r = n.request;
+  const { rows } = await withDatabaseErrors(CAPABILITY_ID, () =>
+    tx.query<{ mandate_id: string; created_at: Date }>(
+      `INSERT INTO scs.representation_mandate (
+         schema_version, granting_party_id, representative_party_id, permitted_actions, other_action_description,
+         framework_association_ids, commodity_scope, geographic_scope, valid_from, valid_until,
+         mandate_evidence_ids, verification_status, revocation_status, created_by
+       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 'CLAIMED_UNVERIFIED', 'NOT_REVOKED', $12)
+       RETURNING mandate_id, created_at`,
+      [
+        n.schemaVersion,
+        r.grantingPartyId,
+        r.representativePartyId,
+        r.permittedActions,
+        r.otherActionDescription ?? null,
+        r.frameworkAssociationIds,
+        r.commodityScope,
+        r.geographicScope,
+        r.validFrom,
+        r.validUntil,
+        r.mandateEvidenceIds,
+        JSON.stringify(n.createdBy),
+      ],
+    ),
+  );
+  const row = rows[0]!;
+  return { mandateId: row.mandate_id, createdAt: row.created_at.toISOString() };
 }

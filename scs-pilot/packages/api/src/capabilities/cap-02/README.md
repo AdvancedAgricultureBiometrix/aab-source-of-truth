@@ -1,6 +1,6 @@
 # SCS-CAP-02 — Operator and Supplier Identity Registration
 
-**Status: `registerParty` (`POST /scs/v1/parties`), `submitIdentityEvidence` (`POST /scs/v1/parties/:partyId/evidence`) and `registerRelationship` (`POST /scs/v1/relationships`) are implemented. Mandates, role claims and verification assessments are not built yet.**
+**Status: `registerParty` (`POST /scs/v1/parties`), `submitIdentityEvidence` (`POST /scs/v1/parties/:partyId/evidence`) `registerRelationship` (`POST /scs/v1/relationships`) and `registerMandate` (`POST /scs/v1/mandates`) are implemented. Role claims and verification assessments are not built yet.**
 
 ## registerParty
 
@@ -42,6 +42,25 @@
 - **Scope** is compared value by value. With several frameworks, commodity and country aren't paired per framework. That's a contract gap, and the decision's reasons disclose it.
 - **Conflict:** an ACTIVE relationship with the same from party, to party and type that shares a framework and has an overlapping validity period (`tstzrange … '[)'`: a period that ends exactly when another begins doesn't overlap). An advisory lock serialises registrations with the same from, to and type.
 - **What is written:** the relationship (`CLAIMED_UNVERIFIED`, `ACTIVE`, `representationVersion` `"1"` until the contract defines it) and the receipt (`RELATIONSHIP_REGISTRATION`), in one transaction. A registration never supersedes another relationship.
+
+
+## registerMandate
+
+- **Rules:** the contract's (9a3e978), checked in this order:
+  1. Authority: only `COMPLIANCE_OFFICER`.
+  2. `OTHER_EXPLICITLY_NAMED` needs `otherActionDescription`. A description without it is a request error (400).
+  3. The validity period must be valid.
+  4. `SELF_GRANTED_MANDATE`.
+  5. Both parties must exist.
+  6. Neither party may be RETIRED.
+  7. Every framework must exist and be ACTIVE.
+  8. Scope must be within those frameworks.
+  9. The relationship prerequisite.
+  10. No conflicting record.
+- **Enforced by the request schema** (400): `validUntil` is required, at least one consent evidence id, and every permitted action is from the enumerated list. Migration 008 backs the first two in the database.
+- **Relationship prerequisite:** an ACTIVE relationship between the two parties must already exist, in either direction and of any type. It must not be past its `validUntil`, and it must reference every framework of the mandate. Otherwise `RELATIONSHIP_NOT_FOUND`.
+- **Conflict:** a NOT_REVOKED mandate for the same granting and representative pair that shares a framework and a permitted action and has an overlapping validity period. An advisory lock serialises registrations for the pair.
+- **What is written:** the mandate (`CLAIMED_UNVERIFIED`, `NOT_REVOKED`, all six boundary flags `true`) and the receipt (`MANDATE_REGISTRATION`), in one transaction. The decision reasons say the consent evidence can't be confirmed, because the evidence store isn't built yet (`TODO(evidence-store)`).
 
 
 Canonical contract: [`governance/workstream-b/SCS-CAP-02-OPERATOR-AND-SUPPLIER-IDENTITY-REGISTRATION-CANONICAL-CONTRACT-2026-09-23.md`](../../../../../../governance/workstream-b/SCS-CAP-02-OPERATOR-AND-SUPPLIER-IDENTITY-REGISTRATION-CANONICAL-CONTRACT-2026-09-23.md)
