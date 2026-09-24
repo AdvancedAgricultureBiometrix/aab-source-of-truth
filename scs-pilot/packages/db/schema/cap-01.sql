@@ -138,6 +138,11 @@ CREATE TABLE scs.regulatory_framework (
     PRIMARY KEY (framework_id),
   CONSTRAINT regulatory_framework_evidence_spec_id_uq
     UNIQUE (evidence_spec_id),
+  -- the target of scs.plot_framework_association's (framework, spec) foreign
+  -- key: an association names a specification together with its framework.
+  -- Added by migration 011.
+  CONSTRAINT regulatory_framework_framework_spec_uq
+    UNIQUE (framework_id, evidence_spec_id),
 
   -- ── Contract enumerations ─────────────────────────────────────────────────
   CONSTRAINT regulatory_framework_status_ck
