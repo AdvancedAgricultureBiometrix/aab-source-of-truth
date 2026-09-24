@@ -29,6 +29,7 @@ Re-render after any change to a contract's markdown or to the template. Never ed
   - `// comments` become captions;
   - literal `true`/`false` boundary flags are highlighted;
   - provider methods show their parameters and return type.
+- **Lists**: `-` and `1.` lists can nest. An item indented under another item becomes a sub-list inside it, at any depth. An indented line that is not an item continues the item above it. A blank line ends the list.
 - **Other blocks**: a block that is an example value (`{ … }`) stays verbatim, labelled *Example value*. `json` and plain blocks stay verbatim. `mermaid` blocks are drawn as diagrams in the browser.
 
 ## Status badge rule
@@ -48,8 +49,17 @@ The JSON report lists anything unexpected for each file, and the exit status is 
 - every prose line of the source appears in the output text;
 - every identifier, literal value and comment word in each TypeScript block appears in the output;
 - no `{{PLACEHOLDER}}` is left unfilled;
+- every code block is closed;
 - the status maps to a badge by the rule above;
 - any TypeScript block that cannot be parsed stays as verbatim code and is **reported, never guessed**. That is how the missing `Array<` in SCS-CAP-06 was found and then fixed in the source.
+
+## Tests
+
+```bash
+python -m unittest governance/tools/test_render_canonical_contracts.py
+```
+
+The tests cover block parsing: nested lists, and inputs that once made the renderer loop forever or crash (nested and orphan indented list items, `####` lines, unclosed code blocks). Each case runs with a timeout, so a regression fails instead of hanging. After any change to the renderer, also re-render every contract and confirm that `git status` shows no `.html` changes unless a change was intended.
 
 ## Printing to PDF
 

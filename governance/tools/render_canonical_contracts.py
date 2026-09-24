@@ -423,6 +423,54 @@ def slug(text):
 
 
 BLOCK_START = re.compile(r"^(-\s|\d+\.\s|```|#|>|\|)")
+LIST_ITEM = re.compile(r"^([ \t]*)(-|\d+\.)\s+(.*)")
+
+
+def indent_of(raw):
+    return len(raw) - len(raw.lstrip(" \t"))
+
+
+def parse_list(lines, i):
+    """Parse one list whose first item is lines[i]; return ((kind, items), next index).
+
+    The list's level is the indent of its first item. An item is a string, or
+    (text, sublists) when more-indented items follow it; each sublist is a
+    (kind, items) pair parsed the same way. A more-indented line that is not an
+    item continues the current item's text. The list ends at a blank line, a
+    less-indented line, or an item of the other kind at this level. Always
+    consumes at least the first line, so the caller always makes progress.
+    """
+    n = len(lines)
+    first = LIST_ITEM.match(lines[i])
+    level, ordered = len(first.group(1)), first.group(2) != "-"
+    items = []  # [text, [sublists]]
+    while i < n:
+        raw = lines[i]
+        if not raw.strip():
+            break
+        m = LIST_ITEM.match(raw)
+        ind = indent_of(raw)
+        if m and ind == level and (m.group(2) != "-") == ordered:
+            items.append([m.group(3), []])
+            i += 1
+        elif m and ind > level and items:
+            sub, i = parse_list(lines, i)
+            items[-1][1].append(sub)
+        elif not m and ind > level and items:
+            items[-1][0] += " " + raw.strip()
+            i += 1
+        else:
+            break
+    return ("ol" if ordered else "ul", [t if not subs else (t, subs) for t, subs in items]), i
+
+
+def list_html(kind, items):
+    def item(x):
+        if isinstance(x, str):
+            return f"<li>{inline(x)}</li>"
+        text, subs = x
+        return f"<li>{inline(text)}" + "".join(list_html(k, xs) for k, xs in subs) + "</li>"
+    return f"<{kind}>" + "".join(item(x) for x in items) + f"</{kind}>"
 
 
 def parse_blocks(lines, i, report):
@@ -442,8 +490,10 @@ def parse_blocks(lines, i, report):
         elif s.startswith("```"):
             lang = s[3:].strip()
             j = i + 1
-            while not lines[j].strip().startswith("```"):
+            while j < n and not lines[j].strip().startswith("```"):
                 j += 1
+            if j == n:
+                report.append(f"code block at line {i+1} is not closed")
             blocks.append(("code", (lang, "\n".join(lines[i + 1:j]))))
             i = j + 1
         elif s.startswith(">"):
@@ -465,26 +515,14 @@ def parse_blocks(lines, i, report):
                 rows.append([c.strip() for c in lines[i].strip().strip("|").split("|")])
                 i += 1
             blocks.append(("table", rows))
-        elif re.match(r"^(-|\d+\.)\s", s):
-            ordered = not s.startswith("-")
-            items = []
-            while i < n:
-                raw = lines[i]
-                m = re.match(r"^(-|\d+\.)\s+(.*)", raw)
-                if m and (m.group(1) == "-") == (not ordered):
-                    items.append(m.group(2))
-                elif raw.startswith(("  ", "\t")) and raw.strip() and items and not re.match(r"^\s+(-|\d+\.)\s", raw):
-                    items[-1] += " " + raw.strip()
-                elif m:
-                    break
-                else:
-                    break
-                i += 1
-            if re.match(r"^\s+(-|\d+\.)\s", lines[i] if i < n else ""):
-                report.append(f"nested list at line {i+1} rendered flat")
-            blocks.append(("ol" if ordered else "ul", items))
+        elif LIST_ITEM.match(lines[i]):
+            (kind, items), i = parse_list(lines, i)
+            blocks.append((kind, items))
         else:
-            buf = []
+            # the first line is always taken, even one that looks like a block start no
+            # branch above handles (e.g. "#### x"), so the loop always makes progress
+            buf = [s]
+            i += 1
             while i < n and lines[i].strip() and not BLOCK_START.match(lines[i].strip()):
                 buf.append(lines[i].strip())
                 i += 1
@@ -496,7 +534,7 @@ def block_html(kind, payload, boundary, report, stats):
     if kind == "p":
         return f"<p>{inline(payload)}</p>"
     if kind in ("ul", "ol"):
-        body = f"<{kind}>" + "".join(f"<li>{inline(x)}</li>" for x in payload) + f"</{kind}>"
+        body = list_html(kind, payload)
         return f'<div class="boundary">{body}</div>' if boundary else body
     if kind == "quote":
         lbl = '<span class="lbl">Governing rule</span>' if stats.get("_rule_label") else ""
