@@ -436,6 +436,75 @@ interface ScsPartyRegistrationDecision {
 }
 ```
 
+## Party registration: conflicts, outcomes and open gaps
+
+### Conflicting registrations
+
+**Contract gap: the conflict definition.** This contract names the
+`noConflictingRegistrationDetected` eligibility check and the `CONFLICTING_REGISTRATION_DETECTED`
+error, but it does not say what makes two registrations conflict. It does not say:
+
+- which fields are compared;
+- whether names are normalised (case, spacing, punctuation, transliteration between scripts);
+- whether the rule depends on `partyType`.
+
+Until the contract defines it, this rule applies:
+
+- **Organisational parties.** For `LEGAL_ENTITY`, `COOPERATIVE`, `COMMUNITY_GROUP` and
+  `GOVERNMENT_BODY`, a registration conflicts when a party of one of those four types, whose
+  `registrationStatus` is anything other than `RETIRED`, has exactly the same `partyName` and
+  `countryOfRegistration`.
+- **Exact comparison.** The comparison does not normalise case, spacing, punctuation or
+  transliteration.
+- **Conflict outcome.** A conflict ends in `FAIL_CLOSED` with `CONFLICTING_REGISTRATION_DETECTED`,
+  and its reasons name the existing `partyId`. A `RETIRED` party never conflicts.
+- **Natural persons and `OTHER`.** For `NATURAL_PERSON` and `OTHER`, there is no automatic
+  conflict check, in either direction: such a registration neither conflicts with nor blocks
+  any other party. A name and a country of registration cannot establish that two registrations
+  are the same person; two smallholders in one province can share a name. Deduplication of
+  these parties is a human review concern.
+- **Recording the unperformed check.** For `NATURAL_PERSON` and `OTHER`, the check is not
+  performed, so `noConflictingRegistrationDetected` is recorded as `false`, and `decisionReasons`
+  names it as not evaluated.
+
+The conflict definition, including whether names are normalised and how natural persons are
+deduplicated, must be specified here before a production implementation.
+
+### When registration is FAIL_CLOSED, REGISTERED_WITH_GAPS, REJECTED or REQUIRES_HUMAN_REVIEW
+
+**Contract gap: no decision criteria.** `ScsPartyRegistrationDecision` defines four outcomes:
+`REGISTERED`, `REGISTERED_WITH_GAPS`, `REJECTED` and `REQUIRES_HUMAN_REVIEW`. The contract gives
+no criteria for the last three. Until it does, this rule applies:
+
+- **FAIL_CLOSED.** Any condition in the failure contract's `error` union ends in `FAIL_CLOSED`.
+  Examples are `REGISTRANT_NOT_AUTHORISED`, `COUNTRY_CODE_UNRECOGNISED`,
+  `CONFLICTING_REGISTRATION_DETECTED` and `DEPENDENCY_UNAVAILABLE`. Nothing is written: no party,
+  no decision, no receipt.
+- **Otherwise, `REGISTERED`, with an empty `gaps` list.** A registration that does not fail
+  closed always returns `REGISTERED`, even when an eligibility check was not performed. The
+  unperformed check is recorded as `false`, and `decisionReasons` names it. `REGISTERED` records
+  that a governed identity record exists; it verifies nothing.
+- **Reserved outcomes.** `REGISTERED_WITH_GAPS`, `REJECTED` and `REQUIRES_HUMAN_REVIEW` are
+  reserved until their criteria are specified here. No implementation may invent those criteria.
+
+### Country of operation
+
+**Contract gap: `countryOfOperation` validation.** The registration sequence says CAP-02 validates
+"country code", and `COUNTRY_CODE_UNRECOGNISED` is in the failure contract. The contract does not
+say which code system is used. It also does not say whether `countryOfOperation` is validated,
+or only `countryOfRegistration`.
+
+Pending clarification, the implementation has made a deliberate decision:
+
+- Both `countryOfRegistration` and `countryOfOperation` (when present) must be officially
+  assigned ISO 3166-1 alpha-2 codes, in uppercase.
+- User-assigned codes such as `XK` are not accepted.
+- Any other value ends in `FAIL_CLOSED` with `COUNTRY_CODE_UNRECOGNISED`.
+- The reason is that free text invites malformed data.
+
+The code system, and which fields it applies to, must be confirmed here before a production
+implementation.
+
 ## Provider-neutral interface
 
 ```typescript
