@@ -759,6 +759,14 @@ interface ScsRoleClaimDecision {
 `PARTY_NOT_FOUND`. **Conflict:** a role claim for the same party, the same `claimedRole` and
 the same framework whose validity period overlaps the new one.
 
+**Contract gap: which role claims can conflict.** The conflict rule above names no
+`verificationStatus`. Read literally, a `SUPERSEDED` or `EXPIRED` claim would block every new
+overlapping claim for the same role and framework for ever. Relationships conflict only while
+`ACTIVE` and mandates only while `NOT_REVOKED`. This contract is silent on role claims, so the
+implementation applies the consistent reading: a role claim whose `verificationStatus` is
+`SUPERSEDED` or `EXPIRED` does not conflict. The rule must be confirmed here before a
+production implementation.
+
 ### Relationship registration
 
 ```typescript
