@@ -505,6 +505,118 @@ Pending clarification, the implementation has made a deliberate decision:
 The code system, and which fields it applies to, must be confirmed here before a production
 implementation.
 
+## Identity evidence submission
+
+### Governing principle
+
+> Submitting identity evidence admits evidence. It does not verify identity. It
+> does not change the party's `registrationStatus`, does not create a new party
+> version, and does not create or change any verification assessment. What the
+> evidence proves is evaluated separately, by an `ScsPartyVerificationAssessment`
+> that names its scope, evidence, authority, jurisdiction and date.
+
+Evidence can be submitted after registration. At registration, evidence travels
+inside `ScsPartyRegistrationRequest.identityEvidence`. After registration, each
+submission is its own record, kept separate from the party identity record as
+the six-object rule requires.
+
+### Identity evidence submission record
+
+```typescript
+interface ScsPartyIdentityEvidenceSubmission {
+  submissionId: string;
+  partyId: string;
+  // The party version the evidence is attached to: the party's current version
+  partyVersion: number;
+
+  evidenceIds: string[];
+  evidenceLimitations: string[];
+
+  submittedBy: ActorReference;
+  submittingOrganizationId?: string;
+  submittedAt: string;
+}
+```
+
+### Submission request
+
+```typescript
+// partyId is taken from the request path, not the body
+interface ScsIdentityEvidenceSubmissionRequest {
+  // One to 200 identifiers, no duplicates
+  evidenceIds: string[];
+  evidenceLimitations: string[];
+  submittingOrganizationId?: string;
+}
+```
+
+### Submission decision
+
+```typescript
+interface ScsIdentityEvidenceSubmissionDecision {
+  decisionId: string;
+  submissionId: string;
+  partyId: string;
+  partyVersion: number;
+  decision: "RECORDED";
+
+  eligibilityChecks: {
+    partyExists: boolean;
+    partyNotRetired: boolean;
+    submitterAuthorised: boolean;
+    evidenceIdsNotAlreadyLinked: boolean;
+  };
+
+  decisionReasons: string[];
+  decidedBy: ActorReference;
+  decidedAt: string;
+}
+```
+
+### Submission rules
+
+The checks run in this order. Each failure ends in `FAIL_CLOSED` and writes nothing: no
+submission, no evidence link, no decision, no receipt.
+
+1. **Authority.** Only a `COMPLIANCE_OFFICER` may submit identity evidence. Otherwise
+   `REGISTRANT_NOT_AUTHORISED` (403).
+2. **Party exists.** The `partyId` must identify a registered party. Otherwise
+   `PARTY_NOT_FOUND` (404).
+3. **Party not retired.** A `RETIRED` party accepts no new evidence: `PARTY_RETIRED` (422).
+   Parties that are `REGISTERED`, `REQUIRES_HUMAN_REVIEW` or `DISPUTED` accept evidence,
+   because evidence may help resolve a review or a dispute.
+4. **No duplicate links.** No submitted `evidenceId` may already be linked to the party's
+   current version, whether at registration or by an earlier submission. Otherwise
+   `EVIDENCE_ALREADY_LINKED` (409), whose reasons name every duplicate id. Duplicates are
+   never skipped silently.
+
+When every check passes, the decision is `RECORDED`. The submission is recorded, each
+evidence id is linked to the party's current version, and the decision's receipt, with
+decision type `IDENTITY_EVIDENCE_SUBMISSION`, is written in the same transaction. The
+party identity record is not changed.
+
+### Open gaps
+
+**Contract gap: representative submission.** `SUBMIT_IDENTITY_EVIDENCE` is a mandate
+action, so a representative party may be able to submit evidence under a mandate. This
+contract does not say how a mandate authorises a submission. Until it does, only a
+`COMPLIANCE_OFFICER` may submit, and mandate-based submission is not accepted.
+
+**Contract gap: party versions.** This contract gives parties a `partyVersion` but does
+not say what creates a new version. Until it does, evidence attaches to the party's
+current version, and submitting evidence never creates one.
+
+**Contract gap: evidence in the party record.** `ScsPartyIdentity.identityEvidence`
+holds the evidence given at registration. This contract does not say whether reading a
+party (`getParty`) also returns evidence submitted later. That must be specified before
+`getParty` is implemented.
+
+**Current system limit: no evidence store.** The system does not yet store evidence
+documents, so a submitted `evidenceId` cannot be confirmed to identify any document. Until
+an evidence store exists, identifiers are recorded as submitted, and every decision's
+`decisionReasons` states that the identifiers were not confirmed and that the evidence
+store is not yet built. This describes the current system, not the intended architecture.
+
 ## Provider-neutral interface
 
 ```typescript
@@ -517,6 +629,11 @@ interface ScsPartyIdentityProvider {
     partyId: string,
     version?: number
   ): Promise<ScsPartyIdentity>;
+
+  submitIdentityEvidence(
+    partyId: string,
+    request: ScsIdentityEvidenceSubmissionRequest
+  ): Promise<ScsIdentityEvidenceSubmissionDecision>;
 
   addVerificationAssessment(
     assessment: ScsPartyVerificationAssessment
@@ -574,6 +691,9 @@ interface ScsPartyRegistrationFailure {
     | "COUNTRY_CODE_UNRECOGNISED"
     | "PARTY_NAME_MISSING"
     | "CONFLICTING_REGISTRATION_DETECTED"
+    | "PARTY_NOT_FOUND"
+    | "PARTY_RETIRED"
+    | "EVIDENCE_ALREADY_LINKED"
     | "FRAMEWORK_ASSOCIATION_NOT_FOUND"
     | "FROM_PARTY_NOT_FOUND"
     | "TO_PARTY_NOT_FOUND"
