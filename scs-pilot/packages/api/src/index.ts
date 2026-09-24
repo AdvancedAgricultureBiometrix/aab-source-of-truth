@@ -8,7 +8,7 @@
 //   3. listen — foundation/server.ts
 //
 // Routes: GET /health plus every capability route in capabilities/index.ts
-// (currently SCS-CAP-01 POST /scs/v1/frameworks).
+// (currently SCS-CAP-01 POST /scs/v1/frameworks and SCS-CAP-02 POST /scs/v1/parties).
 
 import { CAPABILITY_ROUTES } from "./capabilities/index.js";
 import { StaticTokenAuthenticator } from "./foundation/auth.js";

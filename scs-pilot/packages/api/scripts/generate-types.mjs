@@ -32,6 +32,15 @@ const TARGETS = [
       "cap-01/framework-registration-response.schema.json",
     ],
   },
+  {
+    out: "cap-02.ts",
+    schemas: [
+      "cap-02/party-registration-request.schema.json",
+      "cap-02/party-registration-decision.schema.json",
+      "cap-02/party-registration-receipt.schema.json",
+      "cap-02/party-registration-response.schema.json",
+    ],
+  },
 ];
 
 const SCHEMA_FILES = TARGETS.flatMap((t) => t.schemas);

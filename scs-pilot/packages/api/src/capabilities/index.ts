@@ -3,5 +3,6 @@
 
 import type { Route } from "../foundation/server.js";
 import { cap01Routes } from "./cap-01/routes.js";
+import { cap02Routes } from "./cap-02/routes.js";
 
-export const CAPABILITY_ROUTES: readonly Route<never>[] = [...cap01Routes];
+export const CAPABILITY_ROUTES: readonly Route<never>[] = [...cap01Routes, ...cap02Routes];
