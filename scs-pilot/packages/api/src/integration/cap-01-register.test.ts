@@ -59,6 +59,7 @@ after(async () => {
 /** A valid EUDR / Thai natural rubber registration. Each test uses its own regulationId so tests never collide. */
 function request(overrides: { regulationId?: string; commodityCode?: string; effectiveFrom?: string; effectiveTo?: string } = {}): ScsFrameworkRegistrationRequest {
   return {
+    applicableLawsAttested: true,
     regulation: {
       regulationId: overrides.regulationId ?? `EUDR-${randomUUID()}`,
       regulationName: "EU Deforestation Regulation",
@@ -142,7 +143,10 @@ test("valid registration → 201; framework and receipt in the database", async 
   assert.deepEqual(d.decidedBy, actors.officer);
   assert.equal(d.eligibilityChecks.registrantAuthorised, true);
   assert.equal(d.eligibilityChecks.noConflictingFrameworkExists, true);
-  for (const unrun of ["regulationReferenceValid", "commodityRecognised", "countryOfOriginValid", "destinationMarketValid", "applicableLawsConfirmed"] as const) {
+  assert.equal(d.eligibilityChecks.applicableLawsConfirmed, true, "evaluated from the registrant's attestation");
+  assert.ok(d.decisionReasons.some((x) => x.startsWith("applicableLawsConfirmed: evaluated from registrant attestation")));
+  assert.ok(!d.decisionReasons.some((x) => x.startsWith("applicableLawsConfirmed: NOT EVALUATED")));
+  for (const unrun of ["regulationReferenceValid", "commodityRecognised", "countryOfOriginValid", "destinationMarketValid"] as const) {
     assert.equal(d.eligibilityChecks[unrun], false, `${unrun} is recorded false: it was not performed`);
     assert.ok(d.decisionReasons.some((x) => x.startsWith(`${unrun}: NOT EVALUATED`)), `${unrun} has an explicit not-evaluated reason`);
   }
@@ -219,6 +223,30 @@ test("SYSTEM_ADMIN alone does not authorise registration — only the contract's
   const r = await post(request(), { who: "admin" });
   assert.equal(r.status, 403);
   assert.match((r.json["reasons"] as string[])[0]!, /requires the COMPLIANCE_OFFICER role; actor sysadmin-cap01 does not hold it/);
+});
+
+// ── Applicable laws attestation ──────────────────────────────────────────────
+
+test("applicableLawsAttested: false → 422 APPLICABLE_LAWS_UNCONFIRMED, nothing written", async () => {
+  const body = { ...request(), applicableLawsAttested: false };
+  const key = `cap01-${randomUUID()}`;
+  const r = await post(body, { key });
+  assert.equal(r.status, 422);
+  assert.equal(r.json["error"], "APPLICABLE_LAWS_UNCONFIRMED");
+  assert.equal(r.json["result"], "FAIL_CLOSED");
+  assert.equal(r.json["noFrameworkRegistered"], true);
+  assert.match((r.json["reasons"] as string[])[0]!, /^applicableLawsAttested must be true/);
+  assert.deepEqual(await writes(body.regulation.regulationId, key), { frameworks: 0, receipts: 0, idempotency: 0 });
+});
+
+test("applicableLawsAttested absent → 400 from schema validation, nothing written", async () => {
+  const { applicableLawsAttested: _omitted, ...body } = request();
+  const key = `cap01-${randomUUID()}`;
+  const r = await post(body, { key });
+  assert.equal(r.status, 400);
+  assert.equal(r.json["error"], "REQUEST_VALIDATION_FAILED");
+  assert.ok((r.json["reasons"] as string[]).includes('(root): missing required property "applicableLawsAttested"'));
+  assert.deepEqual(await writes(body.regulation.regulationId, key), { frameworks: 0, receipts: 0, idempotency: 0 });
 });
 
 // ── 5. Conflicting framework ─────────────────────────────────────────────────

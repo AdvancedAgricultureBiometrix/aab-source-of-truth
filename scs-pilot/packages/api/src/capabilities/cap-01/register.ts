@@ -11,6 +11,11 @@
 //                      contract names ("an authorised compliance officer").
 //                      Nothing else authorises registration.
 //                      → REGISTRANT_NOT_AUTHORISED (403)
+//   1a. attestation  — applicableLawsAttested must be true (the schema makes
+//                      it a required boolean). false → APPLICABLE_LAWS_UNCONFIRMED
+//                      (422). applicableLawsConfirmed is then evaluated from
+//                      the attestation: a registrant declaration, not an
+//                      independent confirmation (contract 5eb01d4)
 //   2. effective period — effectiveTo, when given, not before effectiveFrom
 //                      → REQUEST_VALIDATION_FAILED (400); checked here so the
 //                        database constraint is only ever a last line of defence
@@ -63,13 +68,13 @@ export const INITIAL_FRAMEWORK_VERSION = "1";
  * rule for. They are not performed in the pilot and are recorded as false,
  * with an explicit reason each. TODO(eligibility-rules): contract gap — the
  * rules must be specified in the contract before these can be evaluated.
+ * (applicableLawsConfirmed is evaluated, from the registrant's attestation.)
  */
 const NOT_EVALUATED: ReadonlyArray<keyof ScsFrameworkEligibilityChecks> = [
   "regulationReferenceValid",
   "commodityRecognised",
   "countryOfOriginValid",
   "destinationMarketValid",
-  "applicableLawsConfirmed",
 ];
 
 export async function registerFramework(ctx: RouteContext<ScsFrameworkRegistrationRequest>): Promise<OperationResult> {
@@ -81,6 +86,13 @@ export async function registerFramework(ctx: RouteContext<ScsFrameworkRegistrati
   if (!actor.roles.includes(REGISTRANT_ROLE)) {
     throw cap01Failure("REGISTRANT_NOT_AUTHORISED", [
       `Registering a regulatory framework requires the ${REGISTRANT_ROLE} role; actor ${actor.actorId} does not hold it.`,
+    ]);
+  }
+
+  // 1a. Attestation
+  if (request.applicableLawsAttested !== true) {
+    throw cap01Failure("APPLICABLE_LAWS_UNCONFIRMED", [
+      "applicableLawsAttested must be true: the registrant must attest that the applicable national laws for this scope have been confirmed before a framework can be registered.",
     ]);
   }
 
@@ -120,7 +132,7 @@ export async function registerFramework(ctx: RouteContext<ScsFrameworkRegistrati
     commodityRecognised: false,
     countryOfOriginValid: false,
     destinationMarketValid: false,
-    applicableLawsConfirmed: false,
+    applicableLawsConfirmed: true,
   };
   const decision: ScsFrameworkRegistrationDecision = {
     decisionId: randomUUID(),
@@ -130,6 +142,7 @@ export async function registerFramework(ctx: RouteContext<ScsFrameworkRegistrati
     decisionReasons: [
       `registrantAuthorised: evaluated — actor ${actor.actorId} holds ${REGISTRANT_ROLE}.`,
       "noConflictingFrameworkExists: evaluated — no ACTIVE framework governs the same regulation, version, commodity, country of origin and destination market for an overlapping effective period.",
+      `applicableLawsConfirmed: evaluated from registrant attestation — actor ${actor.actorId} attested applicableLawsAttested: true. This is the registrant's declaration, not an independent confirmation.`,
       ...NOT_EVALUATED.map(
         (check) =>
           `${check}: NOT EVALUATED — recorded false because the check was not performed, not because it failed. The SCS-CAP-01 contract defines no evaluation rule for it (contract gap).`,

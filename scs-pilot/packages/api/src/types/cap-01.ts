@@ -23,6 +23,10 @@ export type TextList = NonBlankText[];
  * SCS-CAP-01 registerFramework request: every ScsRegulatoryFramework field a submitter provides. Not in the request, because the system sets them: frameworkId, schemaVersion, registeredAt, registeredBy (from the authenticated actor), status (ACTIVE on registration), versionHistory (empty on registration), and the evidence specification's specId, generatedAt and generatedFromFrameworkVersion.
  */
 export interface ScsFrameworkRegistrationRequest {
+  /**
+   * The registrant's attestation that the applicable national laws for this scope have been confirmed (SCS-CAP-01 RegisterFrameworkRequest). A declaration by the authorised registrant, not an independent confirmation. Required; registration proceeds only when it is true — false is refused with APPLICABLE_LAWS_UNCONFIRMED.
+   */
+  applicableLawsAttested: boolean;
   regulation: ScsFrameworkRegulationInput;
   scope: ScsFrameworkScopeInput;
   evidenceRequirements: ScsEvidenceRequirementSpecInput;
