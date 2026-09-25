@@ -51,6 +51,11 @@ import cap05CustodyEventSubmissionRequest from "./cap-05/custody-event-submissio
 import cap05CustodyEventAdmissionDecision from "./cap-05/custody-event-admission-decision.schema.json" with { type: "json" };
 import cap05CustodyEventAdmissionReceipt from "./cap-05/custody-event-admission-receipt.schema.json" with { type: "json" };
 import cap05CustodyEventAdmissionResponse from "./cap-05/custody-event-admission-response.schema.json" with { type: "json" };
+import cap06SufficiencyEvaluationRequest from "./cap-06/sufficiency-evaluation-request.schema.json" with { type: "json" };
+import cap06SufficiencyEvaluationResult from "./cap-06/sufficiency-evaluation-result.schema.json" with { type: "json" };
+import cap06SufficiencyEvaluationReceipt from "./cap-06/sufficiency-evaluation-receipt.schema.json" with { type: "json" };
+import cap06SufficiencyEvaluationResponse from "./cap-06/sufficiency-evaluation-response.schema.json" with { type: "json" };
+import cap06SufficiencyEvaluationParams from "./cap-06/sufficiency-evaluation-params.schema.json" with { type: "json" };
 
 import { registerSchema, type JsonSchema } from "../foundation/validation.js";
 
@@ -100,6 +105,11 @@ export const SCHEMAS = {
   cap05CustodyEventAdmissionDecision,
   cap05CustodyEventAdmissionReceipt,
   cap05CustodyEventAdmissionResponse,
+  cap06SufficiencyEvaluationRequest,
+  cap06SufficiencyEvaluationResult,
+  cap06SufficiencyEvaluationReceipt,
+  cap06SufficiencyEvaluationResponse,
+  cap06SufficiencyEvaluationParams,
 } as const satisfies Record<string, JsonSchema>;
 
 for (const schema of Object.values(SCHEMAS)) registerSchema(schema);

@@ -92,6 +92,16 @@ const TARGETS = [
       "cap-05/custody-event-admission-response.schema.json",
     ],
   },
+  {
+    out: "cap-06.ts",
+    schemas: [
+      "cap-06/sufficiency-evaluation-request.schema.json",
+      "cap-06/sufficiency-evaluation-result.schema.json",
+      "cap-06/sufficiency-evaluation-receipt.schema.json",
+      "cap-06/sufficiency-evaluation-response.schema.json",
+      "cap-06/sufficiency-evaluation-params.schema.json",
+    ],
+  },
 ];
 
 const SCHEMA_FILES = TARGETS.flatMap((t) => t.schemas);

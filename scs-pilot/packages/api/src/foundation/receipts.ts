@@ -27,13 +27,19 @@ import type { ActorReference } from "./auth.js";
 
 type GovernedCapabilityId = Exclude<CapabilityId, "SCS-PLATFORM">;
 
-export interface ReceiptInput<C extends GovernedCapabilityId, D extends { decision: string }> {
+/**
+ * A decision object: its outcome is its `decision` field, or, for an SCS-CAP-06
+ * evaluation result, its `overallState`.
+ */
+export type ReceiptDecision = { decision: string } | { overallState: string };
+
+export interface ReceiptInput<C extends GovernedCapabilityId, D extends ReceiptDecision> {
   readonly capabilityId: C;
   /** e.g. "FRAMEWORK_REGISTRATION" — must equal the receipt schema's decisionType. */
   readonly decisionType: string;
   /** The record decided on (e.g. frameworkId); null when the decision created nothing. */
   readonly subjectId: string | null;
-  /** The capability's decision object, as its contract defines it. Its `decision` field is recorded. */
+  /** The capability's decision object, as its contract defines it. Its outcome (`decision`, or `overallState`) is recorded. */
   readonly decision: D;
   readonly issuedFor: ActorReference;
   readonly requestDigest: string;
@@ -47,7 +53,7 @@ export interface WrittenReceipt<R> {
   readonly receiptDigest: string;
 }
 
-export async function writeReceipt<R, C extends GovernedCapabilityId, D extends { decision: string }>(
+export async function writeReceipt<R, C extends GovernedCapabilityId, D extends ReceiptDecision>(
   tx: Tx,
   input: ReceiptInput<C, D>,
 ): Promise<WrittenReceipt<R>> {
@@ -87,7 +93,7 @@ export async function writeReceipt<R, C extends GovernedCapabilityId, D extends 
       document.receiptId,
       document.capabilityId,
       document.decisionType,
-      input.decision.decision,
+      "decision" in input.decision ? input.decision.decision : input.decision.overallState,
       document.subjectId,
       JSON.stringify(document.issuedFor),
       document.correlationId,

@@ -86,6 +86,8 @@ export interface Route<TBody = unknown> {
   readonly auth: "required" | "none";
   /** Run the handler inside one database transaction. */
   readonly transactional: boolean;
+  /** The transaction's isolation level; READ COMMITTED unless "repeatable read" (one snapshot for the whole request). */
+  readonly isolation?: "repeatable read";
   /** Idempotency-Key header. Mandatory ("required") on every POST route. */
   readonly idempotency: "required" | "none";
   readonly requestSchema?: JsonSchema;
@@ -352,11 +354,15 @@ export function createApiServer(deps: ServerDeps): Server {
             deps.db!,
             { actorId: actor.actorId, key: idempotencyKey, fingerprint: requestDigest },
             async (tx) => checkResult(await route.handle(context(tx))),
+            route.isolation === undefined ? {} : { isolation: route.isolation },
           );
           result = outcome;
           replayed = outcome.replayed;
         } else if (route.transactional) {
-          result = await deps.db!.transaction(async (tx) => checkResult(await route.handle(context(tx))));
+          result = await deps.db!.transaction(
+            async (tx) => checkResult(await route.handle(context(tx))),
+            route.isolation === undefined ? {} : { isolation: route.isolation },
+          );
         } else {
           result = checkResult(await route.handle(context(null)));
         }
