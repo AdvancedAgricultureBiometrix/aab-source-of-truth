@@ -94,6 +94,12 @@ CREATE TABLE scs.regulatory_review_decision (
   -- targets of the supersession and currency-assessment foreign keys
   CONSTRAINT regulatory_review_decision_subject_uq UNIQUE (decision_id, subject_key),
   CONSTRAINT regulatory_review_decision_successor_uq UNIQUE (decision_id, supersedes_decision_id),
+  -- the target of scs.due_diligence_package's decision foreign key: a
+  -- package's scope is the decision's own, and only a PROCEED decision can be
+  -- packaged. Added by migration 018.
+  CONSTRAINT regulatory_review_decision_package_context_uq
+    UNIQUE (decision_id, evaluation_id, operator_party_id, framework_id, framework_version, commodity_code,
+            decision_outcome),
 
   -- ── Foreign keys ──────────────────────────────────────────────────────────
   CONSTRAINT regulatory_review_decision_context_fk
