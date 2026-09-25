@@ -210,7 +210,7 @@ const insertEvidence = (evaluationId: string, kind: string, deforestation: strin
 
 test("migration 015 creates the three CAP-06 tables and the deferred plot check", async () => {
   const { rows } = await harness.admin.query<{ table_name: string }>(
-    `SELECT table_name FROM information_schema.tables WHERE table_schema = 'scs' AND table_name LIKE 'sufficiency_evaluation%' ORDER BY table_name`,
+    `SELECT table_name FROM information_schema.tables WHERE table_schema = 'scs' AND table_name IN ('sufficiency_evaluation', 'sufficiency_evaluation_evidence', 'sufficiency_evaluation_plot') ORDER BY table_name`,
   );
   assert.deepEqual(rows.map((r) => r.table_name), ["sufficiency_evaluation", "sufficiency_evaluation_evidence", "sufficiency_evaluation_plot"]);
   const trigger = await harness.admin.query(`SELECT tgdeferrable, tginitdeferred FROM pg_trigger WHERE tgname = 'sufficiency_evaluation_has_plots'`);
