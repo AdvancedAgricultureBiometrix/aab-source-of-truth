@@ -1,5 +1,10 @@
 name: Test
-on: [push, pull_request]
+# Pull requests run the suite once; main runs it again after every merge.
+# (push on every branch as well would run it twice for each push to a PR.)
+on:
+  pull_request:
+  push:
+    branches: [main]
 jobs:
   test:
     runs-on: ubuntu-latest
