@@ -11,7 +11,7 @@
 --   * scs_api: the only role the API connects as. LOGIN, and nothing else:
 --     NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS. It owns
 --     nothing. No password is set here — passwords never live in migrations;
---     packages/db/init/20-set-scs-api-password.sh sets it from
+--     the migrate service (packages/api/src/migrations) sets it from
 --     SCS_API_DB_PASSWORD. scs_api must never own objects or run migrations.
 --
 -- Privileges

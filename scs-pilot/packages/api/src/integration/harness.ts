@@ -1,19 +1,17 @@
 // Integration test harness: a throwaway PostgreSQL database with every
-// migration applied, built fresh for each test file and dropped afterwards.
+// migration applied by the migration runner, built fresh for each test file
+// and dropped afterwards.
 //
 // Needs SCS_TEST_ADMIN_DATABASE_URL: a SUPERUSER connection to a DISPOSABLE
 // PostgreSQL 17 instance (the tests create and drop databases and login roles,
 // and use SET ROLE). Never point it at a real database. If it is not set the
 // integration tests fail — they are never silently skipped.
 
-import { readdir, readFile } from "node:fs/promises";
 import { randomBytes } from "node:crypto";
-import { fileURLToPath } from "node:url";
 import pg from "pg";
 
 import type { DbConfig } from "../foundation/db.js";
-
-const MIGRATIONS_DIR = fileURLToPath(new URL("../../../db/migrations/", import.meta.url));
+import { loadMigrations, migrate } from "../migrations/runner.js";
 
 /**
  * Test files run in parallel processes, but migration 004 alters the role
@@ -22,7 +20,7 @@ const MIGRATIONS_DIR = fileURLToPath(new URL("../../../db/migrations/", import.m
  * migrated database is serialised with a session advisory lock taken on the
  * shared admin database. The tests themselves still run in parallel.
  */
-const MIGRATION_LOCK_KEY = 7_374_001; // arbitrary, fixed: "scs test migrations"
+export const MIGRATION_LOCK_KEY = 7_374_001; // arbitrary, fixed: "scs test migrations"
 
 export function adminUrl(): string {
   const url = process.env["SCS_TEST_ADMIN_DATABASE_URL"];
@@ -70,15 +68,8 @@ export async function createMigratedDatabase(): Promise<MigratedDatabase> {
     await admin.connect();
     adminConnected = true;
 
-    const files = (await readdir(MIGRATIONS_DIR)).filter((f) => f.endsWith(".sql")).sort();
-    if (files.length === 0) throw new Error(`no migrations found in ${MIGRATIONS_DIR}`);
-    for (const file of files) {
-      try {
-        await admin.query(await readFile(new URL(file, new URL("../../../db/migrations/", import.meta.url)), "utf8"));
-      } catch (err) {
-        throw new Error(`migration ${file} failed: ${(err as Error).message}`);
-      }
-    }
+    // the same runner the migrate container uses (src/migrations/runner.ts)
+    await migrate(admin, await loadMigrations());
   } catch (err) {
     // Never leave a half-built database or an open connection behind: an open
     // client would keep the test process alive instead of reporting the failure.
