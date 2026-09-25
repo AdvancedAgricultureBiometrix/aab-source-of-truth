@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-04:evidence-admission-decision:1",
+  "title": "ScsDeforestationEvidenceAdmissionDecision",
+  "description": "SCS-CAP-04 ScsDeforestationEvidenceAdmissionDecision (contract 5c6a263). Admission means the evidence is trustworthy as a record, not that its conclusion is sufficient. An admission check is true only if it was performed and passed; every limitation is recorded as a code and in prose.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decisionId",
+    "evidenceId",
+    "plotId",
+    "frameworkAssociationId",
+    "decision",
+    "admissionChecks",
+    "temporalCoverageCompleteAtAdmission",
+    "spatialCoverageCompleteAtAdmission",
+    "limitations",
+    "limitationCodes",
+    "decidedBy",
+    "decidedAt"
+  ],
+  "properties": {
+    "decisionId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "evidenceId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "plotId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "frameworkAssociationId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "decision": {
+      "type": "string",
+      "enum": [
+        "ADMITTED",
+        "ADMITTED_WITH_LIMITATIONS",
+        "QUARANTINED",
+        "REJECTED"
+      ]
+    },
+    "admissionChecks": {
+      "title": "ScsEvidenceAdmissionChecks",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceIdentifiable",
+        "attributionEstablished",
+        "objectIntegrityVerified",
+        "evidenceRelatedToClaimedPlot",
+        "temporalDatesInternallyConsistent",
+        "attestationConsistentWithAnalysis",
+        "provenanceComplete",
+        "evidenceTypeCompatibleWithRequirement",
+        "submitterAuthorised"
+      ],
+      "properties": {
+        "sourceIdentifiable": {
+          "type": "boolean"
+        },
+        "attributionEstablished": {
+          "type": "boolean"
+        },
+        "objectIntegrityVerified": {
+          "type": "boolean"
+        },
+        "evidenceRelatedToClaimedPlot": {
+          "type": "boolean"
+        },
+        "temporalDatesInternallyConsistent": {
+          "type": "boolean"
+        },
+        "attestationConsistentWithAnalysis": {
+          "type": "boolean"
+        },
+        "provenanceComplete": {
+          "type": "boolean"
+        },
+        "evidenceTypeCompatibleWithRequirement": {
+          "type": "boolean"
+        },
+        "submitterAuthorised": {
+          "type": "boolean"
+        }
+      }
+    },
+    "temporalCoverageCompleteAtAdmission": {
+      "type": "boolean"
+    },
+    "spatialCoverageCompleteAtAdmission": {
+      "type": "boolean"
+    },
+    "limitations": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1000,
+        "pattern": "\\S"
+      }
+    },
+    "limitationCodes": {
+      "type": "array",
+      "maxItems": 11,
+      "uniqueItems": true,
+      "items": {
+        "title": "ScsDeforestationEvidenceLimitationCode",
+        "type": "string",
+        "enum": [
+          "SPATIAL_COVERAGE_NOT_VERIFIED",
+          "TEMPORAL_COVERAGE_NOT_EVALUATED",
+          "INTEGRITY_UNVERIFIED",
+          "ATTESTATION_EXCEEDS_ANALYSIS",
+          "PROVENANCE_INCOMPLETE",
+          "CHAIN_OF_CUSTODY_INCOMPLETE",
+          "RESOLUTION_BELOW_REQUIREMENT",
+          "RECENCY_BELOW_REQUIREMENT",
+          "RECENCY_NOT_EVALUATED",
+          "AUTHORITY_CONFIRMATION_MISSING",
+          "SOURCE_TYPE_VOCABULARY_UNKNOWN"
+        ]
+      }
+    },
+    "rejectionReasons": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1000,
+        "pattern": "\\S"
+      }
+    },
+    "decidedBy": {
+      "$ref": "urn:aab:scs:schema:shared:actor-reference:1"
+    },
+    "decidedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

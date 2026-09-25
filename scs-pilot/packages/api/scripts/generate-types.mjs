@@ -74,6 +74,15 @@ const TARGETS = [
       "cap-03/plot-registration-response.schema.json",
     ],
   },
+  {
+    out: "cap-04.ts",
+    schemas: [
+      "cap-04/evidence-submission-request.schema.json",
+      "cap-04/evidence-admission-decision.schema.json",
+      "cap-04/evidence-admission-receipt.schema.json",
+      "cap-04/evidence-admission-response.schema.json",
+    ],
+  },
 ];
 
 const SCHEMA_FILES = TARGETS.flatMap((t) => t.schemas);

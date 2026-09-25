@@ -43,6 +43,10 @@ import cap03PlotRegistrationRequest from "./cap-03/plot-registration-request.sch
 import cap03PlotRegistrationDecision from "./cap-03/plot-registration-decision.schema.json" with { type: "json" };
 import cap03PlotRegistrationReceipt from "./cap-03/plot-registration-receipt.schema.json" with { type: "json" };
 import cap03PlotRegistrationResponse from "./cap-03/plot-registration-response.schema.json" with { type: "json" };
+import cap04EvidenceSubmissionRequest from "./cap-04/evidence-submission-request.schema.json" with { type: "json" };
+import cap04EvidenceAdmissionDecision from "./cap-04/evidence-admission-decision.schema.json" with { type: "json" };
+import cap04EvidenceAdmissionReceipt from "./cap-04/evidence-admission-receipt.schema.json" with { type: "json" };
+import cap04EvidenceAdmissionResponse from "./cap-04/evidence-admission-response.schema.json" with { type: "json" };
 
 import { registerSchema, type JsonSchema } from "../foundation/validation.js";
 
@@ -84,6 +88,10 @@ export const SCHEMAS = {
   cap03PlotRegistrationDecision,
   cap03PlotRegistrationReceipt,
   cap03PlotRegistrationResponse,
+  cap04EvidenceSubmissionRequest,
+  cap04EvidenceAdmissionDecision,
+  cap04EvidenceAdmissionReceipt,
+  cap04EvidenceAdmissionResponse,
 } as const satisfies Record<string, JsonSchema>;
 
 for (const schema of Object.values(SCHEMAS)) registerSchema(schema);
