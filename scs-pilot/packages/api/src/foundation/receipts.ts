@@ -27,14 +27,23 @@ import type { ActorReference } from "./auth.js";
 
 type GovernedCapabilityId = Exclude<CapabilityId, "SCS-PLATFORM">;
 
-export interface ReceiptInput<C extends GovernedCapabilityId, D extends { decision: string }> {
+/**
+ * A decision object: its outcome is its `decision` field, or, for an SCS-CAP-06
+ * evaluation result, its `overallState`. A record with neither (an SCS-CAP-06
+ * conflict resolution) states its outcome explicitly (ReceiptInput.outcome).
+ */
+export type ReceiptDecision = { decision: string } | { overallState: string } | object;
+
+export interface ReceiptInput<C extends GovernedCapabilityId, D extends ReceiptDecision> {
   readonly capabilityId: C;
   /** e.g. "FRAMEWORK_REGISTRATION" — must equal the receipt schema's decisionType. */
   readonly decisionType: string;
   /** The record decided on (e.g. frameworkId); null when the decision created nothing. */
   readonly subjectId: string | null;
-  /** The capability's decision object, as its contract defines it. Its `decision` field is recorded. */
+  /** The capability's decision object, as its contract defines it. Its outcome (`outcome`, else `decision`, else `overallState`) is recorded. */
   readonly decision: D;
+  /** The recorded outcome, for a decision object that has neither `decision` nor `overallState`. */
+  readonly outcome?: string;
   readonly issuedFor: ActorReference;
   readonly requestDigest: string;
   readonly idempotencyKey: string | null;
@@ -47,7 +56,15 @@ export interface WrittenReceipt<R> {
   readonly receiptDigest: string;
 }
 
-export async function writeReceipt<R, C extends GovernedCapabilityId, D extends { decision: string }>(
+function outcomeOf(input: { readonly decision: object; readonly outcome?: string }): string {
+  if (input.outcome !== undefined) return input.outcome;
+  const d = input.decision as { decision?: unknown; overallState?: unknown };
+  const outcome = typeof d.decision === "string" ? d.decision : d.overallState;
+  if (typeof outcome !== "string") throw new Error("receipt: the decision has no outcome (decision, overallState) and none was given");
+  return outcome;
+}
+
+export async function writeReceipt<R, C extends GovernedCapabilityId, D extends ReceiptDecision>(
   tx: Tx,
   input: ReceiptInput<C, D>,
 ): Promise<WrittenReceipt<R>> {
@@ -87,7 +104,7 @@ export async function writeReceipt<R, C extends GovernedCapabilityId, D extends 
       document.receiptId,
       document.capabilityId,
       document.decisionType,
-      input.decision.decision,
+      outcomeOf(input),
       document.subjectId,
       JSON.stringify(document.issuedFor),
       document.correlationId,

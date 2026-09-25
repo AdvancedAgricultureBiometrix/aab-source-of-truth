@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-06:sufficiency-evaluation-params:1",
+  "title": "ScsSufficiencyEvaluationPathParams",
+  "description": "Path parameters of GET /scs/v1/sufficiency-evaluations/:evaluationId.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "evaluationId"
+  ],
+  "properties": {
+    "evaluationId": {
+      "type": "string",
+      "format": "uuid"
+    }
+  }
+}

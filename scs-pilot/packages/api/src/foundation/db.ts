@@ -170,9 +170,18 @@ export interface Tx {
   query<R extends pg.QueryResultRow = pg.QueryResultRow>(text: string, values?: readonly unknown[]): Promise<pg.QueryResult<R>>;
 }
 
+/**
+ * Transaction options. "repeatable read" gives the whole transaction one
+ * snapshot, taken at its first statement: nothing committed after that is
+ * visible to it (SCS-CAP-06's frozen input). The default is READ COMMITTED.
+ */
+export interface TransactionOptions {
+  readonly isolation?: "repeatable read";
+}
+
 export interface Database {
   readonly roleFacts: RoleFacts;
-  transaction<T>(fn: (tx: Tx) => Promise<T>): Promise<T>;
+  transaction<T>(fn: (tx: Tx) => Promise<T>, options?: TransactionOptions): Promise<T>;
   close(): Promise<void>;
 }
 
@@ -219,12 +228,12 @@ export async function connectDatabase(config: DbConfig): Promise<Database> {
 
   return {
     roleFacts: facts,
-    transaction: (fn) => runTransaction(pool, fn),
+    transaction: (fn, options) => runTransaction(pool, fn, options),
     close: () => pool.end(),
   };
 }
 
-async function runTransaction<T>(pool: pg.Pool, fn: (tx: Tx) => Promise<T>): Promise<T> {
+async function runTransaction<T>(pool: pg.Pool, fn: (tx: Tx) => Promise<T>, options: TransactionOptions = {}): Promise<T> {
   let client: pg.PoolClient;
   try {
     client = await pool.connect();
@@ -235,7 +244,7 @@ async function runTransaction<T>(pool: pg.Pool, fn: (tx: Tx) => Promise<T>): Pro
 
   const tx: Tx = { query: (text, values) => client.query(text, values === undefined ? undefined : [...values]) };
   try {
-    await client.query("BEGIN");
+    await client.query(options.isolation === "repeatable read" ? "BEGIN ISOLATION LEVEL REPEATABLE READ" : "BEGIN");
     const result = await fn(tx);
     await client.query("COMMIT");
     client.release();

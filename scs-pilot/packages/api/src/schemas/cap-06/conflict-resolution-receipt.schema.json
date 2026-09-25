@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-06:conflict-resolution-receipt:1",
+  "title": "ScsConflictResolutionReceipt",
+  "description": "Immutable receipt for an SCS-CAP-06 conflict resolution, written in the same transaction as the resolution (foundation/receipts.ts). Its SHA-256 over canonical JSON is returned alongside it as receiptDigest.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "receiptId",
+    "receiptVersion",
+    "capabilityId",
+    "decisionType",
+    "subjectId",
+    "correlationId",
+    "requestDigest",
+    "idempotencyKey",
+    "issuedAt",
+    "issuedFor",
+    "decision"
+  ],
+  "properties": {
+    "receiptId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "receiptVersion": {
+      "type": "string",
+      "const": "1"
+    },
+    "capabilityId": {
+      "type": "string",
+      "const": "SCS-CAP-06"
+    },
+    "decisionType": {
+      "type": "string",
+      "const": "CONFLICT_RESOLUTION"
+    },
+    "subjectId": {
+      "description": "resolutionId of the recorded resolution.",
+      "type": "string",
+      "format": "uuid"
+    },
+    "correlationId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._:-]{8,128}$"
+    },
+    "requestDigest": {
+      "description": "SHA-256 (hex) of the canonical request: method, route and body.",
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "idempotencyKey": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{8,128}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "issuedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "issuedFor": {
+      "description": "The authenticated actor whose request produced this decision.",
+      "$ref": "urn:aab:scs:schema:shared:actor-reference:1"
+    },
+    "decision": {
+      "$ref": "urn:aab:scs:schema:cap-06:conflict-resolution-record:1"
+    }
+  }
+}

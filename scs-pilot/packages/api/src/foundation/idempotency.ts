@@ -24,7 +24,7 @@ import type { IncomingHttpHeaders } from "node:http";
 
 import { digest } from "./canonical.js";
 import { requireCorrelationId } from "./correlation.js";
-import type { Database, Tx } from "./db.js";
+import type { Database, Tx, TransactionOptions } from "./db.js";
 import { platformFailure } from "./errors.js";
 
 export const IDEMPOTENCY_HEADER = "idempotency-key";
@@ -91,6 +91,7 @@ export async function runIdempotent(
   db: Database,
   scope: Scope,
   operation: (tx: Tx) => Promise<OperationResult>,
+  options: TransactionOptions = {},
 ): Promise<IdempotentResult> {
   try {
     return await db.transaction(async (tx) => {
@@ -107,7 +108,7 @@ export async function runIdempotent(
         );
       }
       return { ...result, replayed: false };
-    });
+    }, options);
   } catch (err) {
     if (!isKeyRace(err)) throw err;
     // A concurrent request with the same key committed first; everything this

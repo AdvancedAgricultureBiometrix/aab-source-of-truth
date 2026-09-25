@@ -1,0 +1,181 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-06:sufficiency-evaluation-request:1",
+  "title": "ScsSufficiencyEvaluationSubmission",
+  "description": "SCS-CAP-06 ScsSufficiencyEvaluationSubmission (contract 0fd8c25, 876fc80). The system sets requestId, requestedBy, requestedAt, the referenceDate (the specification's referenceCutoffDate) and every result field. The evidence scope is the system's: a list given here must match it exactly. requestedAnalysis is recorded but never narrows the evaluation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "subject",
+    "framework",
+    "evaluationPeriod",
+    "evidenceScope",
+    "requestedAnalysis"
+  ],
+  "properties": {
+    "subject": {
+      "title": "ScsSufficiencyEvaluationSubject",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "plotIds",
+        "commodityCode"
+      ],
+      "properties": {
+        "plotIds": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 500,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          }
+        },
+        "plotVersions": {
+          "description": "Each plot's version, which must be its current version.",
+          "type": "object",
+          "maxProperties": 500,
+          "propertyNames": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 1
+          }
+        },
+        "commodityCode": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "relevantProductCode": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "batchIdentifiers": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 100,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000,
+            "pattern": "\\S"
+          }
+        },
+        "operatorPartyId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        }
+      }
+    },
+    "framework": {
+      "title": "ScsSufficiencyEvaluationFramework",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "frameworkId",
+        "frameworkVersion",
+        "evidenceRequirementSpecId"
+      ],
+      "properties": {
+        "frameworkId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "frameworkVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "evidenceRequirementSpecId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        }
+      }
+    },
+    "evaluationPeriod": {
+      "title": "ScsSufficiencyEvaluationPeriodInput",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evaluationEndDate",
+        "assessmentType"
+      ],
+      "properties": {
+        "evaluationEndDate": {
+          "description": "The due diligence date: after the cut-off, not in the future.",
+          "type": "string",
+          "format": "date"
+        },
+        "assessmentType": {
+          "type": "string",
+          "enum": [
+            "DEFORESTATION",
+            "FOREST_DEGRADATION",
+            "BOTH"
+          ]
+        }
+      }
+    },
+    "evidenceScope": {
+      "title": "ScsSufficiencyEvidenceScopeInput",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "includeQuarantinedEvidence"
+      ],
+      "properties": {
+        "admittedEvidenceIds": {
+          "type": "array",
+          "maxItems": 5000,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          }
+        },
+        "includeQuarantinedEvidence": {
+          "type": "boolean",
+          "const": false
+        }
+      }
+    },
+    "requestedAnalysis": {
+      "type": "array",
+      "maxItems": 7,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "TEMPORAL_COVERAGE",
+          "SPATIAL_COVERAGE",
+          "REQUIREMENT_BY_REQUIREMENT",
+          "CONFLICT_DETECTION",
+          "GAP_IDENTIFICATION",
+          "PROVENANCE_AND_AUTHORITY",
+          "CUSTODY_CHAIN"
+        ]
+      }
+    },
+    "previousEvaluationId": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    }
+  }
+}

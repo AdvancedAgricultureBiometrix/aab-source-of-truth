@@ -1,6 +1,6 @@
 # SCS-CAP-03 — Plot and Land Unit Registration
 
-**Status: `registerPlot` (`POST /scs/v1/plots`) is implemented for the pilot (contract 2151321). `addTenureClaim` and `associateFramework` need their contract redefined before they are built. The reads (`getPlot`, `listPlots` and so on) and `retirePlot` are deferred. `MINIMUM_VERTICAL_SLICE_PROVEN` is not claimed for CAP-03. A plot registration capability that cannot detect overlaps and produces only `REGISTERED_WITH_GAPS` is not a proven slice. This requires PostGIS and CAP-06 evaluation.**
+**Status: `registerPlot` (`POST /scs/v1/plots`) is implemented for the pilot (contract 2151321). `addTenureClaim` and `associateFramework` need their contract redefined before they are built. The reads (`getPlot`, `listPlots` and so on) and `retirePlot` are deferred. `MINIMUM_VERTICAL_SLICE_PROVEN` for CAP-03, on the adopted standard: a slice is proven when its records feed an SCS-CAP-06 evaluation that runs end to end, honestly, over real admitted evidence, not when they reach a best-case outcome. Registered plots now do (`integration/cap-06-evaluate-sufficiency.test.ts`, "end to end over real admitted CAP-04 and CAP-05 records"). The limit remains and is disclosed in every evaluation: overlap is not detected, every pilot plot is `REGISTERED_WITH_GAPS`, and the evaluation reports `OVERLAP_NOT_EVALUATED` for human decision (TODO(postgis)).**
 
 - **Plot-level checks.** Each is FAIL_CLOSED and writes nothing:
   1. Authority: only `COMPLIANCE_OFFICER`.

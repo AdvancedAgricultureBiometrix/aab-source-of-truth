@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-06:conflict-resolution-record:1",
+  "title": "ScsConflictResolutionRecord",
+  "description": "SCS-CAP-06 ScsConflictResolutionRecord (contract e0b7634): a human resolution of one conflict key, recorded once and never changed. CAP-06 never creates one.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "resolutionId",
+    "conflictKey",
+    "evaluationId",
+    "comparedEvidenceIds",
+    "provenanceAndMethodsConsidered",
+    "resolutionReason",
+    "additionalEvidenceObtained",
+    "additionalEvidenceIds",
+    "remainingLimitations",
+    "authorityBasis",
+    "reEvaluationRequired",
+    "reviewer",
+    "resolvedAt"
+  ],
+  "properties": {
+    "resolutionId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "conflictKey": {
+      "description": "requirementCode:evidenceAId:evidenceBId, the ids in sorted order.",
+      "type": "string",
+      "pattern": "^[A-Z]+(-[A-Z]+)+:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "evaluationId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "comparedEvidenceIds": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 2,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      }
+    },
+    "provenanceAndMethodsConsidered": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 10000,
+      "pattern": "\\S"
+    },
+    "resolutionReason": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 10000,
+      "pattern": "\\S"
+    },
+    "inapplicableEvidenceId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "additionalEvidenceObtained": {
+      "type": "boolean"
+    },
+    "additionalEvidenceIds": {
+      "type": "array",
+      "maxItems": 100,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      }
+    },
+    "remainingLimitations": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1000,
+        "pattern": "\\S"
+      }
+    },
+    "authorityBasis": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000,
+      "pattern": "\\S"
+    },
+    "reEvaluationRequired": {
+      "type": "boolean"
+    },
+    "reviewer": {
+      "$ref": "urn:aab:scs:schema:shared:actor-reference:1"
+    },
+    "resolvedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

@@ -1,0 +1,1203 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-06:sufficiency-evaluation-result:1",
+  "title": "ScsSufficiencyEvaluationResult",
+  "description": "SCS-CAP-06 ScsSufficiencyEvaluationResult (contract 0fd8c25, 876fc80, e0b7634). Advisory only: SUFFICIENT means sufficient under the evaluated specification, never legally compliant. A recorded result is never FAIL_CLOSED.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "evaluationId",
+    "requestId",
+    "evaluatedAt",
+    "evaluatorVersion",
+    "requestedBy",
+    "requestedAt",
+    "frameworkId",
+    "frameworkVersion",
+    "evidenceRequirementSpecId",
+    "plotIds",
+    "commodityCode",
+    "batchIdentifiers",
+    "evaluationPeriod",
+    "requestedAnalysis",
+    "evidenceCutoffAt",
+    "evaluatedEvidence",
+    "overallState",
+    "hasEvidenceGaps",
+    "hasMaterialUnresolvedConflicts",
+    "hasFailClosedConditions",
+    "requirementEvaluations",
+    "temporalCoverage",
+    "spatialCoverage",
+    "allGaps",
+    "allConflicts",
+    "evaluationExplanation",
+    "nextSteps",
+    "authorityBoundary"
+  ],
+  "$defs": {
+    "gap": {
+      "title": "ScsEvidenceGap",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "gapId",
+        "requirementCode",
+        "gapType",
+        "subject",
+        "automaticFailure",
+        "humanDecisionRequired",
+        "explanation"
+      ],
+      "properties": {
+        "gapId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "requirementCode": {
+          "type": "string",
+          "enum": [
+            "DEF-TEMPORAL-COVERAGE",
+            "DEF-SPATIAL-COVERAGE",
+            "DEF-SOURCE-TYPE",
+            "DEF-RESOLUTION",
+            "DEF-RECENCY",
+            "DEF-INTEGRITY",
+            "DEF-AUTHORITY-CONFIRMATION",
+            "PLOT-REGISTERED",
+            "PLOT-GEOLOCATION",
+            "PLOT-LAND-REGISTRY",
+            "PLOT-OWNERSHIP-VERIFIED",
+            "PLOT-IDENTIFIER-TYPE",
+            "CUSTODY-CHAIN-CONTINUITY",
+            "CUSTODY-DOCUMENT-TYPES",
+            "CUSTODY-TRACEABILITY-DEPTH"
+          ]
+        },
+        "gapType": {
+          "type": "string",
+          "enum": [
+            "TEMPORAL_INTERVAL_MISSING",
+            "SPATIAL_AREA_NOT_COVERED",
+            "REGISTRY_VERIFICATION_ABSENT",
+            "TENURE_VERIFICATION_ABSENT",
+            "ATTESTATION_ABSENT",
+            "ATTESTATION_WITHOUT_ANALYSIS",
+            "PROVENANCE_INCOMPLETE",
+            "EVIDENCE_TYPE_NOT_PROVIDED",
+            "AUTHORITY_CONFIRMATION_ABSENT",
+            "RESOLUTION_BELOW_REQUIREMENT",
+            "RECENCY_BELOW_REQUIREMENT",
+            "EVIDENCE_ABSENT",
+            "SPATIAL_COVERAGE_NOT_EVALUATED",
+            "OVERLAP_NOT_EVALUATED",
+            "COVERAGE_TYPE_NOT_EVALUATED",
+            "INTEGRITY_UNVERIFIED",
+            "PARTY_UNVERIFIED",
+            "PLOT_IDENTIFIER_TYPE_NOT_MET",
+            "PLOT_IDENTIFIER_TYPE_UNRECOGNISED",
+            "CUSTODY_CHAIN_BROKEN",
+            "CUSTODY_DOCUMENT_TYPE_MISSING",
+            "CUSTODY_STANDARD_NOT_EVALUATED",
+            "TRACEABILITY_DEPTH_NOT_EVALUATED",
+            "OTHER"
+          ]
+        },
+        "subject": {
+          "$ref": "#/$defs/subjectRef"
+        },
+        "uncoveredPeriod": {
+          "title": "ScsUncoveredPeriod",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "start",
+            "end",
+            "reason"
+          ],
+          "properties": {
+            "start": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "end": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "reason": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 20000
+            }
+          }
+        },
+        "uncoveredAreaReference": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "uncoveredAreaPercent": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "automaticFailure": {
+          "type": "boolean"
+        },
+        "humanDecisionRequired": {
+          "type": "boolean"
+        },
+        "explanation": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 20000
+        }
+      }
+    },
+    "conflict": {
+      "title": "ScsEvidenceConflict",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "conflictId",
+        "conflictKey",
+        "requirementCode",
+        "subject",
+        "evidenceAId",
+        "evidenceBId",
+        "propositionA",
+        "propositionB",
+        "materiality",
+        "conflictType",
+        "explanation",
+        "resolutionStatus"
+      ],
+      "properties": {
+        "conflictId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "conflictKey": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "requirementCode": {
+          "type": "string",
+          "enum": [
+            "DEF-TEMPORAL-COVERAGE",
+            "DEF-SPATIAL-COVERAGE",
+            "DEF-SOURCE-TYPE",
+            "DEF-RESOLUTION",
+            "DEF-RECENCY",
+            "DEF-INTEGRITY",
+            "DEF-AUTHORITY-CONFIRMATION",
+            "PLOT-REGISTERED",
+            "PLOT-GEOLOCATION",
+            "PLOT-LAND-REGISTRY",
+            "PLOT-OWNERSHIP-VERIFIED",
+            "PLOT-IDENTIFIER-TYPE",
+            "CUSTODY-CHAIN-CONTINUITY",
+            "CUSTODY-DOCUMENT-TYPES",
+            "CUSTODY-TRACEABILITY-DEPTH"
+          ]
+        },
+        "subject": {
+          "$ref": "#/$defs/subjectRef"
+        },
+        "evidenceAId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "evidenceBId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "propositionA": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 20000
+        },
+        "propositionB": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 20000
+        },
+        "temporalOverlap": {
+          "title": "ScsPeriod",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "start",
+            "end"
+          ],
+          "properties": {
+            "start": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "end": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        },
+        "spatialOverlapReference": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "materiality": {
+          "type": "string",
+          "enum": [
+            "NONE",
+            "APPARENT_BUT_COMPATIBLE",
+            "NON_MATERIAL",
+            "MATERIAL_RESOLVED",
+            "MATERIAL_UNRESOLVED"
+          ]
+        },
+        "conflictType": {
+          "type": "string",
+          "enum": [
+            "OPPOSING_FINDINGS",
+            "INCOMPATIBLE_TEMPORAL_CLAIMS",
+            "INCOMPATIBLE_SPATIAL_CLAIMS",
+            "PROVENANCE_CONFLICT",
+            "METHOD_CONFLICT",
+            "AUTHORITY_CONFLICT",
+            "PLOT_VERSION_CONFLICT",
+            "QUANTITY_CONFLICT",
+            "OTHER"
+          ]
+        },
+        "explanation": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 20000
+        },
+        "resolutionStatus": {
+          "type": "string",
+          "enum": [
+            "UNRESOLVED",
+            "RESOLVED",
+            "REQUIRES_ADDITIONAL_EVIDENCE",
+            "REQUIRES_AUTHORITY_CONFIRMATION"
+          ]
+        },
+        "resolutionDecisionId": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    },
+    "subjectRef": {
+      "title": "ScsEvidenceSubjectReference",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "subjectType"
+      ],
+      "properties": {
+        "plotId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "subjectType": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "subjectReference": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        }
+      }
+    }
+  },
+  "properties": {
+    "evaluationId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "requestId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "evaluatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "evaluatorVersion": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000,
+      "pattern": "\\S"
+    },
+    "requestedBy": {
+      "$ref": "urn:aab:scs:schema:shared:actor-reference:1"
+    },
+    "requestedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "frameworkId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "frameworkVersion": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000,
+      "pattern": "\\S"
+    },
+    "evidenceRequirementSpecId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000,
+      "pattern": "\\S"
+    },
+    "plotIds": {
+      "type": "array",
+      "maxItems": 10000,
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      }
+    },
+    "commodityCode": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000,
+      "pattern": "\\S"
+    },
+    "batchIdentifiers": {
+      "type": "array",
+      "maxItems": 10000,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1000,
+        "pattern": "\\S"
+      }
+    },
+    "operatorPartyId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "evaluationPeriod": {
+      "title": "ScsEvaluationPeriod",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "referenceDate",
+        "evaluationEndDate",
+        "assessmentType"
+      ],
+      "properties": {
+        "referenceDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "evaluationEndDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "assessmentType": {
+          "type": "string",
+          "enum": [
+            "DEFORESTATION",
+            "FOREST_DEGRADATION",
+            "BOTH"
+          ]
+        }
+      }
+    },
+    "requestedAnalysis": {
+      "type": "array",
+      "maxItems": 7,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "TEMPORAL_COVERAGE",
+          "SPATIAL_COVERAGE",
+          "REQUIREMENT_BY_REQUIREMENT",
+          "CONFLICT_DETECTION",
+          "GAP_IDENTIFICATION",
+          "PROVENANCE_AND_AUTHORITY",
+          "CUSTODY_CHAIN"
+        ]
+      }
+    },
+    "evidenceCutoffAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "evaluatedEvidence": {
+      "title": "ScsEvaluatedEvidence",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "deforestationEvidenceIds",
+        "custodyEventIds",
+        "manifest",
+        "appliedResolutionIds"
+      ],
+      "properties": {
+        "deforestationEvidenceIds": {
+          "type": "array",
+          "maxItems": 10000,
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "custodyEventIds": {
+          "type": "array",
+          "maxItems": 10000,
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "manifest": {
+          "type": "array",
+          "maxItems": 10000,
+          "items": {
+            "title": "ScsEvidenceManifestEntry",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "evidenceId",
+              "version",
+              "contentDigest",
+              "admittedAt"
+            ],
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "DEFORESTATION",
+                  "CUSTODY"
+                ]
+              },
+              "evidenceId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "version": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "contentDigest": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "admittedAt": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        },
+        "appliedResolutionIds": {
+          "description": "The conflict resolutions this evaluation applied: part of its frozen input.",
+          "type": "array",
+          "maxItems": 1000,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      }
+    },
+    "previousEvaluationId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "overallState": {
+      "type": "string",
+      "enum": [
+        "SUFFICIENT",
+        "GAPS_REQUIRE_HUMAN_DECISION",
+        "INSUFFICIENT",
+        "CONFLICTING_EVIDENCE",
+        "FAIL_CLOSED"
+      ]
+    },
+    "hasEvidenceGaps": {
+      "type": "boolean"
+    },
+    "hasMaterialUnresolvedConflicts": {
+      "type": "boolean"
+    },
+    "hasFailClosedConditions": {
+      "type": "boolean"
+    },
+    "requirementEvaluations": {
+      "type": "array",
+      "maxItems": 10000,
+      "items": {
+        "title": "ScsRequirementEvaluation",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "requirementCode",
+          "evidenceRequirementSpecId",
+          "state",
+          "supportingEvidenceIds",
+          "conflictingEvidenceIds",
+          "gaps",
+          "conflicts",
+          "evaluationExplanation",
+          "humanDecisionRequired",
+          "noComplianceDetermination"
+        ],
+        "properties": {
+          "requirementCode": {
+            "type": "string",
+            "enum": [
+              "DEF-TEMPORAL-COVERAGE",
+              "DEF-SPATIAL-COVERAGE",
+              "DEF-SOURCE-TYPE",
+              "DEF-RESOLUTION",
+              "DEF-RECENCY",
+              "DEF-INTEGRITY",
+              "DEF-AUTHORITY-CONFIRMATION",
+              "PLOT-REGISTERED",
+              "PLOT-GEOLOCATION",
+              "PLOT-LAND-REGISTRY",
+              "PLOT-OWNERSHIP-VERIFIED",
+              "PLOT-IDENTIFIER-TYPE",
+              "CUSTODY-CHAIN-CONTINUITY",
+              "CUSTODY-DOCUMENT-TYPES",
+              "CUSTODY-TRACEABILITY-DEPTH"
+            ]
+          },
+          "evidenceRequirementSpecId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000,
+            "pattern": "\\S"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "SATISFIED",
+              "PARTIALLY_SATISFIED",
+              "GAP_REQUIRES_HUMAN_DECISION",
+              "UNSATISFIED",
+              "CONFLICTING_EVIDENCE",
+              "NOT_APPLICABLE",
+              "FAIL_CLOSED"
+            ]
+          },
+          "supportingEvidenceIds": {
+            "type": "array",
+            "maxItems": 10000,
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "conflictingEvidenceIds": {
+            "type": "array",
+            "maxItems": 10000,
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "gaps": {
+            "type": "array",
+            "maxItems": 10000,
+            "items": {
+              "$ref": "#/$defs/gap"
+            }
+          },
+          "conflicts": {
+            "type": "array",
+            "maxItems": 10000,
+            "items": {
+              "$ref": "#/$defs/conflict"
+            }
+          },
+          "evaluationExplanation": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 20000
+          },
+          "humanDecisionRequired": {
+            "type": "boolean"
+          },
+          "noComplianceDetermination": {
+            "type": "boolean",
+            "const": true
+          }
+        }
+      }
+    },
+    "temporalCoverage": {
+      "type": "array",
+      "maxItems": 10000,
+      "items": {
+        "title": "ScsTemporalCoverageEvaluation",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "plotId",
+          "requiredPeriod",
+          "supportedIntervals",
+          "uncoveredIntervals",
+          "conflictingIntervals",
+          "attestationExceedingAnalysis",
+          "coverageNote"
+        ],
+        "properties": {
+          "plotId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "requiredPeriod": {
+            "title": "ScsRequiredPeriod",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "start",
+              "end",
+              "assessmentType"
+            ],
+            "properties": {
+              "start": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "end": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "assessmentType": {
+                "type": "string",
+                "enum": [
+                  "DEFORESTATION",
+                  "FOREST_DEGRADATION",
+                  "BOTH"
+                ]
+              }
+            }
+          },
+          "supportedIntervals": {
+            "type": "array",
+            "maxItems": 10000,
+            "items": {
+              "title": "ScsSupportedInterval",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "start",
+                "end",
+                "evidenceIds",
+                "coverageQuality",
+                "supportType"
+              ],
+              "properties": {
+                "start": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "end": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "evidenceIds": {
+                  "type": "array",
+                  "maxItems": 10000,
+                  "items": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "coverageQuality": {
+                  "type": "string",
+                  "enum": [
+                    "HIGH",
+                    "MEDIUM",
+                    "LOW",
+                    "UNASSESSED"
+                  ]
+                },
+                "supportType": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1000,
+                  "pattern": "\\S"
+                }
+              }
+            }
+          },
+          "uncoveredIntervals": {
+            "type": "array",
+            "maxItems": 10000,
+            "items": {
+              "title": "ScsUncoveredInterval",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "start",
+                "end",
+                "reason",
+                "gapId"
+              ],
+              "properties": {
+                "start": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "end": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "reason": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 20000
+                },
+                "gapId": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          },
+          "conflictingIntervals": {
+            "type": "array",
+            "maxItems": 10000,
+            "items": {
+              "title": "ScsConflictingInterval",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "start",
+                "end",
+                "conflictId",
+                "explanation"
+              ],
+              "properties": {
+                "start": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "end": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "conflictId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "explanation": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 20000
+                }
+              }
+            }
+          },
+          "attestationExceedingAnalysis": {
+            "type": "array",
+            "maxItems": 10000,
+            "items": {
+              "title": "ScsAttestationExceedingAnalysis",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "evidenceId",
+                "attestedStart",
+                "attestedEnd",
+                "analysisStart",
+                "analysisEnd",
+                "explanation"
+              ],
+              "properties": {
+                "evidenceId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "attestedStart": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "attestedEnd": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "analysisStart": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "analysisEnd": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "explanation": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 20000
+                }
+              }
+            }
+          },
+          "coverageNote": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 20000
+          }
+        }
+      }
+    },
+    "spatialCoverage": {
+      "type": "array",
+      "maxItems": 10000,
+      "items": {
+        "title": "ScsSpatialCoverageEvaluation",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "plotId",
+          "plotVersion",
+          "registeredGeometryReference",
+          "uncoveredAreaReferences",
+          "excludedAreaReferences",
+          "spatialConflictReferences",
+          "coverageAssessment",
+          "plotGeometryChangedSinceEvidence"
+        ],
+        "properties": {
+          "plotId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "plotVersion": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "registeredGeometryReference": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000,
+            "pattern": "\\S"
+          },
+          "coveredAreaPercent": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "uncoveredAreaPercent": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "uncoveredAreaReferences": {
+            "type": "array",
+            "maxItems": 10000,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1000,
+              "pattern": "\\S"
+            }
+          },
+          "excludedAreaReferences": {
+            "type": "array",
+            "maxItems": 10000,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1000,
+              "pattern": "\\S"
+            }
+          },
+          "spatialConflictReferences": {
+            "type": "array",
+            "maxItems": 10000,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1000,
+              "pattern": "\\S"
+            }
+          },
+          "coverageAssessment": {
+            "type": "string",
+            "enum": [
+              "FULL",
+              "SUBSTANTIAL",
+              "PARTIAL",
+              "MINIMAL",
+              "NONE",
+              "NOT_EVALUATED"
+            ]
+          },
+          "plotGeometryChangedSinceEvidence": {
+            "type": "boolean"
+          },
+          "geometryChangeNote": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 20000
+          }
+        }
+      }
+    },
+    "custodyChain": {
+      "type": "array",
+      "maxItems": 10000,
+      "items": {
+        "title": "ScsCustodyChainEvaluation",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "batchIdentifier",
+          "operatorPartyId",
+          "requiredDepth",
+          "eventIds",
+          "chainAssessment",
+          "breaks",
+          "documentTypesPresent",
+          "documentTypesMissing",
+          "conflictIds"
+        ],
+        "properties": {
+          "batchIdentifier": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000,
+            "pattern": "\\S"
+          },
+          "operatorPartyId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "requiredDepth": {
+            "type": "string",
+            "enum": [
+              "FIRST_SUPPLIER",
+              "FULL_CHAIN",
+              "RISK_PROPORTIONATE"
+            ]
+          },
+          "eventIds": {
+            "type": "array",
+            "maxItems": 10000,
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "chainAssessment": {
+            "type": "string",
+            "enum": [
+              "CONTINUOUS",
+              "BROKEN",
+              "NOT_EVALUATED"
+            ]
+          },
+          "breaks": {
+            "type": "array",
+            "maxItems": 10000,
+            "items": {
+              "title": "ScsCustodyChainBreak",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "explanation",
+                "gapId"
+              ],
+              "properties": {
+                "afterEventId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "beforeEventId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "explanation": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 20000
+                },
+                "gapId": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          },
+          "documentTypesPresent": {
+            "type": "array",
+            "maxItems": 10000,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1000,
+              "pattern": "\\S"
+            }
+          },
+          "documentTypesMissing": {
+            "type": "array",
+            "maxItems": 10000,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1000,
+              "pattern": "\\S"
+            }
+          },
+          "conflictIds": {
+            "type": "array",
+            "maxItems": 10000,
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        }
+      }
+    },
+    "allGaps": {
+      "type": "array",
+      "maxItems": 10000,
+      "items": {
+        "$ref": "#/$defs/gap"
+      }
+    },
+    "allConflicts": {
+      "type": "array",
+      "maxItems": 10000,
+      "items": {
+        "$ref": "#/$defs/conflict"
+      }
+    },
+    "evaluationExplanation": {
+      "type": "array",
+      "maxItems": 10000,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 20000
+      }
+    },
+    "nextSteps": {
+      "type": "array",
+      "maxItems": 10000,
+      "items": {
+        "title": "ScsNextStep",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "priority",
+          "stepType",
+          "requirementCode",
+          "explanation"
+        ],
+        "properties": {
+          "priority": {
+            "type": "string",
+            "enum": [
+              "BLOCKING",
+              "SIGNIFICANT",
+              "ADVISORY"
+            ]
+          },
+          "stepType": {
+            "type": "string",
+            "enum": [
+              "OBTAIN_TEMPORAL_EVIDENCE",
+              "OBTAIN_SPATIAL_EVIDENCE",
+              "RESOLVE_CONFLICT",
+              "HUMAN_DECISION_REQUIRED",
+              "OBTAIN_REGISTRY_VERIFICATION",
+              "CHALLENGE_ATTESTATION",
+              "OBTAIN_CUSTODY_EVIDENCE",
+              "OTHER"
+            ]
+          },
+          "requirementCode": {
+            "type": "string",
+            "enum": [
+              "DEF-TEMPORAL-COVERAGE",
+              "DEF-SPATIAL-COVERAGE",
+              "DEF-SOURCE-TYPE",
+              "DEF-RESOLUTION",
+              "DEF-RECENCY",
+              "DEF-INTEGRITY",
+              "DEF-AUTHORITY-CONFIRMATION",
+              "PLOT-REGISTERED",
+              "PLOT-GEOLOCATION",
+              "PLOT-LAND-REGISTRY",
+              "PLOT-OWNERSHIP-VERIFIED",
+              "PLOT-IDENTIFIER-TYPE",
+              "CUSTODY-CHAIN-CONTINUITY",
+              "CUSTODY-DOCUMENT-TYPES",
+              "CUSTODY-TRACEABILITY-DEPTH"
+            ]
+          },
+          "explanation": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 20000
+          }
+        }
+      }
+    },
+    "authorityBoundary": {
+      "title": "ScsSufficiencyAuthorityBoundary",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "advisoryOnly",
+        "noComplianceDetermination",
+        "noDueDiligenceStatementAuthority",
+        "noRegulatoryPromotionAuthority",
+        "sufficientMeansEvidenceSufficient",
+        "sufficientDoesNotMeanLegallyCompliant"
+      ],
+      "properties": {
+        "advisoryOnly": {
+          "type": "boolean",
+          "const": true
+        },
+        "noComplianceDetermination": {
+          "type": "boolean",
+          "const": true
+        },
+        "noDueDiligenceStatementAuthority": {
+          "type": "boolean",
+          "const": true
+        },
+        "noRegulatoryPromotionAuthority": {
+          "type": "boolean",
+          "const": true
+        },
+        "sufficientMeansEvidenceSufficient": {
+          "type": "boolean",
+          "const": true
+        },
+        "sufficientDoesNotMeanLegallyCompliant": {
+          "type": "boolean",
+          "const": true
+        }
+      }
+    }
+  }
+}
