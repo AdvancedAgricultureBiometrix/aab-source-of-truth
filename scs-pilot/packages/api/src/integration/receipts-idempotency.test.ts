@@ -135,6 +135,21 @@ test("receipts can never be changed: scs_api lacks the privilege; the owner is s
   }
 });
 
+test("a receipt's document must carry its own receiptId: a missing one is refused, not passed as NULL (migration 019)", async () => {
+  const insert = (receipt: Record<string, unknown>, receiptId: string) =>
+    harness.admin.query(
+      `INSERT INTO scs.decision_receipt (receipt_id, capability_id, decision_type, decision, subject_id, actor, correlation_id, idempotency_key,
+         request_digest, receipt, receipt_digest, issued_at)
+       VALUES ($1, 'SCS-CAP-01', 'FRAMEWORK_REGISTRATION', 'REGISTERED', NULL, $2, 'receipt-test-0019', NULL, $3, $4, $3, now())`,
+      [receiptId, JSON.stringify(actor), DIGEST, JSON.stringify(receipt)],
+    );
+  const id = randomUUID();
+  await assert.rejects(insert({}, id), /decision_receipt_receipt_id_matches_ck/, "no receiptId");
+  await assert.rejects(insert({ receiptId: null }, id), /decision_receipt_receipt_id_matches_ck/, "a null receiptId");
+  await assert.rejects(insert({ receiptId: randomUUID() }, id), /decision_receipt_receipt_id_matches_ck/, "another receipt's id");
+  await insert({ receiptId: id }, id);
+});
+
 test("writeReceipt outside a request context refuses to run", async () => {
   await assert.rejects(api.transaction((tx) => receiptFor(tx, decision())), /No correlation context/);
 });

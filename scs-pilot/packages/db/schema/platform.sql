@@ -74,8 +74,10 @@ CREATE TABLE scs.decision_receipt (
     CHECK (request_digest ~ '^[0-9a-f]{64}$' AND receipt_digest ~ '^[0-9a-f]{64}$'),
   CONSTRAINT decision_receipt_json_shape_ck
     CHECK (jsonb_typeof(actor) = 'object' AND jsonb_typeof(receipt) = 'object'),
+  -- IS NOT DISTINCT FROM, not =: a receipt with no receiptId gives NULL, and a
+  -- CHECK passes on NULL. Replaced by migration 019.
   CONSTRAINT decision_receipt_receipt_id_matches_ck
-    CHECK (receipt ->> 'receiptId' = receipt_id::text)
+    CHECK (receipt ->> 'receiptId' IS NOT DISTINCT FROM receipt_id::text)
 );
 
 CREATE INDEX decision_receipt_subject_idx ON scs.decision_receipt (capability_id, subject_id);
