@@ -135,8 +135,9 @@ interface ScsCustodyEventRecord {
     batchVersion?: number;
   };
 
-  // Quantity — what moved or changed
-  quantity: {
+  // Quantity — what moved or changed. Absent only for CERTIFICATION and
+  // INSPECTION events, which need not concern a quantity
+  quantity?: {
     amount: number;
     unit: ScsCustodyQuantityUnit;
     // Required when unit is OTHER; absent otherwise
@@ -405,6 +406,9 @@ interface ScsCustodyEventAdmissionDecision {
 
   limitations: string[];
   limitationCodes: ScsCustodyEventLimitationCode[];
+  // How admission checks were decided where that is not self-evident
+  // (for example a check that does not apply). Never a limitation
+  decisionReasons: string[];
   rejectionReasons?: string[];
 
   decidedBy: ActorReference;
@@ -519,7 +523,11 @@ prefix or product hierarchy is matched.
 
 ### Quantity and units
 
-- The quantity is required; its absence is refused by the request schema.
+- **Required, except for certifications and inspections.** For every event type except
+  `CERTIFICATION` and `INSPECTION`, the quantity is required; its absence is refused by the
+  request schema. A `CERTIFICATION` or `INSPECTION` event may omit it: a facility certification
+  has no quantity, and requiring one would force a meaningless value. An omitted quantity on
+  those two types is neither a failure nor a limitation.
 - `amount` is greater than 0 (`INTERNAL_INCONSISTENCY`).
 - Units are a closed vocabulary. `OTHER` requires a description, the same pattern as
   `OTHER_EXPLICITLY_NAMED` in SCS-CAP-02:
@@ -670,9 +678,10 @@ interface ScsCustodyEventSubmissionRequest {
     partyRoleAtEvent: ScsCustodyEventRecord["destinationParty"]["partyRoleAtEvent"];
   };
 
-  // As in the record
+  // As in the record. quantity may be omitted only for CERTIFICATION and
+  // INSPECTION
   commodity: ScsCustodyEventRecord["commodity"];
-  quantity: ScsCustodyEventRecord["quantity"];
+  quantity?: ScsCustodyEventRecord["quantity"];
   eventLocation: ScsCustodyEventRecord["eventLocation"];
   eventTime: ScsCustodyEventRecord["eventTime"];
   transformation?: ScsCustodyEventRecord["transformation"];
@@ -710,14 +719,18 @@ commodity; the parties; the supporting document and integrity. The admission che
 decision record the outcome of each:
 
 - `submitterAuthorised`, `sourcePartyIdentifiable`, `destinationPartyIdentifiable`,
-  `commodityCodeRecognised`, `batchIdentifierPresent`, `eventTypeValid`, `quantityRecorded`,
+  `commodityCodeRecognised`, `batchIdentifierPresent`, `eventTypeValid`,
   `eventTimeRecorded` and `supportingDocumentPresent` are `true` whenever an event is admitted.
+- `quantityRecorded` is `true` when a quantity is recorded. It is `false` only for a
+  `CERTIFICATION` or `INSPECTION` event without one, and `decisionReasons` then states that a
+  quantity does not apply to that event type.
 - `documentIntegrityVerified` is `true` only when `integrityStatus` is `VERIFIED`.
 - `internallyConsistent` is `false` when `QUANTITY_GAIN_UNEXPLAINED` is recorded: the material
   checks passed, but an inconsistency remains unexplained.
 
 The decision carries `limitationCodes`, the codes recorded, alongside the human-readable
-`limitations`, and the fixed `authorityBoundary`.
+`limitations`; `decisionReasons`, which is never a limitation; and the fixed
+`authorityBoundary`.
 
 ### Deferred operations
 
