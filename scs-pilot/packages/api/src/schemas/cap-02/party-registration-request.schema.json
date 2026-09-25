@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-02:party-registration-request:1",
+  "title": "ScsPartyRegistrationRequest",
+  "description": "SCS-CAP-02 party identity registration request: every ScsPartyIdentity field a submitter provides. Not in the request, because the system sets them: partyId (database-generated), partyVersion (1 on registration), schemaVersion, registeredAt, registeredBy and provenance.submittedBy (the authenticated actor), provenance.recordedAt, registrationStatus (REGISTERED on registration) and verificationAssessments (recorded separately; registration is not verification). Country codes are checked by the capability against ISO 3166-1 alpha-2, so an unrecognised code is refused with the contract's COUNTRY_CODE_UNRECOGNISED rather than a schema error.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "partyType",
+    "partyName",
+    "countryOfRegistration",
+    "identityEvidence"
+  ],
+  "properties": {
+    "partyType": {
+      "type": "string",
+      "enum": [
+        "NATURAL_PERSON",
+        "LEGAL_ENTITY",
+        "COOPERATIVE",
+        "COMMUNITY_GROUP",
+        "GOVERNMENT_BODY",
+        "OTHER"
+      ]
+    },
+    "partyName": {
+      "$ref": "#/$defs/nonBlankText"
+    },
+    "countryOfRegistration": {
+      "description": "ISO 3166-1 alpha-2, uppercase (checked by the capability).",
+      "$ref": "#/$defs/nonBlankText"
+    },
+    "countryOfOperation": {
+      "description": "ISO 3166-1 alpha-2, uppercase (checked by the capability). Optional.",
+      "$ref": "#/$defs/nonBlankText"
+    },
+    "identityEvidence": {
+      "title": "ScsPartyIdentityEvidenceInput",
+      "description": "What documents support this identity (ScsPartyIdentity.identityEvidence). Evidence ids are recorded, not verified. Evidence ids are lowercase canonical UUIDs, so a duplicate within one request is always caught here.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidenceIds",
+        "evidenceLimitations"
+      ],
+      "properties": {
+        "evidenceIds": {
+          "type": "array",
+          "maxItems": 200,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          }
+        },
+        "evidenceLimitations": {
+          "type": "array",
+          "maxItems": 200,
+          "items": {
+            "$ref": "#/$defs/nonBlankText"
+          }
+        }
+      }
+    },
+    "submittingOrganizationId": {
+      "description": "ScsPartyIdentity.provenance.submittingOrganizationId. Optional.",
+      "$ref": "#/$defs/nonBlankText"
+    }
+  },
+  "$defs": {
+    "nonBlankText": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000,
+      "pattern": "\\S"
+    }
+  }
+}

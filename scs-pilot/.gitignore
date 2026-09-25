@@ -1,0 +1,5 @@
+.env
+packages/api/config/static-actors.json
+node_modules/
+dist/
+*.log

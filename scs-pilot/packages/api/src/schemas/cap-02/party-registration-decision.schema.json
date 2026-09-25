@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-02:party-registration-decision:1",
+  "title": "ScsPartyRegistrationDecision",
+  "description": "SCS-CAP-02 ScsPartyRegistrationDecision, as defined in the canonical contract. An eligibility check is true only if it was actually performed and passed.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decisionId",
+    "partyId",
+    "decision",
+    "eligibilityChecks",
+    "gaps",
+    "decisionReasons",
+    "decidedBy",
+    "decidedAt"
+  ],
+  "properties": {
+    "decisionId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "partyId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "decision": {
+      "type": "string",
+      "enum": [
+        "REGISTERED",
+        "REGISTERED_WITH_GAPS",
+        "REJECTED",
+        "REQUIRES_HUMAN_REVIEW"
+      ]
+    },
+    "eligibilityChecks": {
+      "title": "ScsPartyEligibilityChecks",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "partyTypeValid",
+        "countryCodeValid",
+        "partyNameProvided",
+        "registrantAuthorised",
+        "noConflictingRegistrationDetected"
+      ],
+      "properties": {
+        "partyTypeValid": {
+          "type": "boolean"
+        },
+        "countryCodeValid": {
+          "type": "boolean"
+        },
+        "partyNameProvided": {
+          "type": "boolean"
+        },
+        "registrantAuthorised": {
+          "type": "boolean"
+        },
+        "noConflictingRegistrationDetected": {
+          "type": "boolean"
+        }
+      }
+    },
+    "gaps": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "title": "ScsPartyRegistrationGap",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "gapCode",
+          "gapDescription",
+          "humanReviewRequired"
+        ],
+        "properties": {
+          "gapCode": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000,
+            "pattern": "\\S"
+          },
+          "gapDescription": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000,
+            "pattern": "\\S"
+          },
+          "humanReviewRequired": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "decisionReasons": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1000,
+        "pattern": "\\S"
+      }
+    },
+    "decidedBy": {
+      "$ref": "urn:aab:scs:schema:shared:actor-reference:1"
+    },
+    "decidedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

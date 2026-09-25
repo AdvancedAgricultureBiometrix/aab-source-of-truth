@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-02:mandate-registration-decision:1",
+  "title": "ScsMandateRegistrationDecision",
+  "description": "SCS-CAP-02 ScsMandateRegistrationDecision (contract 9a3e978). REGISTERED means a governed, scoped, expiring and revocable record of representation authority exists; it verifies neither party and grants nothing beyond the enumerated actions. An eligibility check is true only if it was actually performed and passed.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decisionId",
+    "mandateId",
+    "decision",
+    "eligibilityChecks",
+    "decisionReasons",
+    "decidedBy",
+    "decidedAt"
+  ],
+  "properties": {
+    "decisionId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "mandateId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "decision": {
+      "type": "string",
+      "const": "REGISTERED"
+    },
+    "eligibilityChecks": {
+      "title": "ScsMandateEligibilityChecks",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "registrantAuthorised",
+        "grantingPartyExists",
+        "representativePartyExists",
+        "partiesNotRetired",
+        "notSelfGranted",
+        "activeRelationshipExists",
+        "otherActionDescribed",
+        "frameworksExist",
+        "frameworksActive",
+        "scopeWithinFrameworks",
+        "validityPeriodValid",
+        "consentEvidenceProvided",
+        "noConflictingRecord"
+      ],
+      "properties": {
+        "registrantAuthorised": {
+          "type": "boolean"
+        },
+        "grantingPartyExists": {
+          "type": "boolean"
+        },
+        "representativePartyExists": {
+          "type": "boolean"
+        },
+        "partiesNotRetired": {
+          "type": "boolean"
+        },
+        "notSelfGranted": {
+          "type": "boolean"
+        },
+        "activeRelationshipExists": {
+          "type": "boolean"
+        },
+        "otherActionDescribed": {
+          "type": "boolean"
+        },
+        "frameworksExist": {
+          "type": "boolean"
+        },
+        "frameworksActive": {
+          "type": "boolean"
+        },
+        "scopeWithinFrameworks": {
+          "type": "boolean"
+        },
+        "validityPeriodValid": {
+          "type": "boolean"
+        },
+        "consentEvidenceProvided": {
+          "type": "boolean"
+        },
+        "noConflictingRecord": {
+          "type": "boolean"
+        }
+      }
+    },
+    "decisionReasons": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1000,
+        "pattern": "\\S"
+      }
+    },
+    "decidedBy": {
+      "$ref": "urn:aab:scs:schema:shared:actor-reference:1"
+    },
+    "decidedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

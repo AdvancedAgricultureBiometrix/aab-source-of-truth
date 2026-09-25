@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-02:identity-evidence-submission-params:1",
+  "title": "ScsIdentityEvidenceSubmissionPathParams",
+  "description": "Path parameters of POST /scs/v1/parties/:partyId/evidence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "partyId"
+  ],
+  "properties": {
+    "partyId": {
+      "type": "string",
+      "format": "uuid"
+    }
+  }
+}

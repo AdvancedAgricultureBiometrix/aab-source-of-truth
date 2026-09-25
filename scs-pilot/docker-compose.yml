@@ -1,0 +1,91 @@
+# SCS pilot — local development stack (scaffold)
+#
+#   cp .env.example .env      # then fill in local-only values
+#   docker compose up -d
+#
+# postgres  — on an empty data volume only: packages/db/init/ applies
+#             packages/db/migrations/*.sql in order, then sets the scs_api
+#             password from SCS_API_DB_PASSWORD
+# minio     — S3-compatible object storage; NOT yet used by any code
+# api       — Node service; connects as the restricted role scs_api only and
+#             refuses to start if that role owns scs objects, is a superuser
+#             or can bypass row-level security
+#
+# TODO(migration-runner): replace the initdb mount with a real migration runner
+#                         that records applied migrations.
+# Roles: POSTGRES_USER owns the database and runs migrations; the api uses
+#        scs_api (migration 004: SELECT + INSERT only, row-level security).
+
+name: scs-pilot
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB in .env}
+      POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      SCS_API_DB_PASSWORD: ${SCS_API_DB_PASSWORD:?set SCS_API_DB_PASSWORD in .env}
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./packages/db/migrations:/scs/migrations:ro
+      - ./packages/db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  minio:
+    image: quay.io/minio/minio:latest
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?set MINIO_ROOT_USER in .env}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?set MINIO_ROOT_PASSWORD in .env}
+    ports:
+      - "127.0.0.1:${MINIO_API_PORT:-9000}:9000"
+      - "127.0.0.1:${MINIO_CONSOLE_PORT:-9001}:9001"
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:9000/minio/health/live || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+
+  api:
+    image: node:24-alpine
+    working_dir: /app
+    command: sh -c "npm install --no-audit --no-fund && npm run dev"
+    environment:
+      NODE_ENV: development
+      API_PORT: ${API_PORT:-3000}
+      SCS_DB_HOST: postgres
+      SCS_DB_PORT: 5432
+      SCS_DB_NAME: ${POSTGRES_DB}
+      SCS_DB_USER: scs_api
+      SCS_DB_PASSWORD: ${SCS_API_DB_PASSWORD}
+      SCS_AUTH_STATIC_ACTORS_FILE: /app/config/static-actors.json
+      S3_ENDPOINT: http://minio:9000
+      S3_BUCKET: ${S3_BUCKET:-scs-evidence}
+      S3_ACCESS_KEY_ID: ${MINIO_ROOT_USER}
+      S3_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD}
+    ports:
+      - "127.0.0.1:${API_PORT:-3000}:${API_PORT:-3000}"
+    volumes:
+      - ./packages/api:/app
+      - api-node-modules:/app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+
+volumes:
+  postgres-data:
+  minio-data:
+  api-node-modules:

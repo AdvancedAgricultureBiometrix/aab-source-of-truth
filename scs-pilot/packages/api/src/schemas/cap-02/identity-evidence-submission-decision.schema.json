@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-02:identity-evidence-submission-decision:1",
+  "title": "ScsIdentityEvidenceSubmissionDecision",
+  "description": "SCS-CAP-02 ScsIdentityEvidenceSubmissionDecision, as defined in the canonical contract. RECORDED means the evidence was admitted, not verified. An eligibility check is true only if it was actually performed and passed.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decisionId",
+    "submissionId",
+    "partyId",
+    "partyVersion",
+    "decision",
+    "eligibilityChecks",
+    "decisionReasons",
+    "decidedBy",
+    "decidedAt"
+  ],
+  "properties": {
+    "decisionId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "submissionId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "partyId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "partyVersion": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "decision": {
+      "type": "string",
+      "const": "RECORDED"
+    },
+    "eligibilityChecks": {
+      "title": "ScsIdentityEvidenceEligibilityChecks",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "partyExists",
+        "partyNotRetired",
+        "submitterAuthorised",
+        "evidenceIdsNotAlreadyLinked"
+      ],
+      "properties": {
+        "partyExists": {
+          "type": "boolean"
+        },
+        "partyNotRetired": {
+          "type": "boolean"
+        },
+        "submitterAuthorised": {
+          "type": "boolean"
+        },
+        "evidenceIdsNotAlreadyLinked": {
+          "type": "boolean"
+        }
+      }
+    },
+    "decisionReasons": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1000,
+        "pattern": "\\S"
+      }
+    },
+    "decidedBy": {
+      "$ref": "urn:aab:scs:schema:shared:actor-reference:1"
+    },
+    "decidedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}
