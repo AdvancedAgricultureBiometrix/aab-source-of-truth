@@ -220,6 +220,11 @@ CREATE TABLE scs.plot_framework_association (
   updated_at                        timestamptz NOT NULL DEFAULT now(),
 
   CONSTRAINT plot_framework_association_pk PRIMARY KEY (association_id),
+  -- the target of scs.deforestation_evidence_record's (association, plot,
+  -- specification) foreign key: evidence names an association together with
+  -- its plot and the specification recorded on it. Added by migration 013.
+  CONSTRAINT plot_framework_association_plot_spec_uq
+    UNIQUE (association_id, plot_id, evidence_requirement_spec_id),
   CONSTRAINT plot_framework_association_plot_fk
     FOREIGN KEY (plot_id) REFERENCES scs.plot (plot_id)
     ON DELETE RESTRICT ON UPDATE RESTRICT,
