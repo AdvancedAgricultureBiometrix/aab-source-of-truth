@@ -494,6 +494,8 @@ interface ScsSufficiencyEvaluationResult {
       contentDigest: string;
       admittedAt: string;
     }>;
+    // The conflict resolutions this evaluation applied: part of its input
+    appliedResolutionIds: string[];
   };
 
   // The evaluation this one follows, for a re-evaluation
@@ -802,7 +804,9 @@ Coverage is evaluated per plot over the required period, from `referenceDate` to
   analysis period falls after `referenceDate`, not contradicted by other evidence, makes
   `DEF-TEMPORAL-COVERAGE` `UNSATISFIED`, so the result is at best `INSUFFICIENT`, never
   `SUFFICIENT`. The explanation names the finding, and the next step is
-  `HUMAN_DECISION_REQUIRED`. When other evidence contradicts it, it is a conflict (below).
+  `HUMAN_DECISION_REQUIRED`. When other evidence contradicts it, it is a conflict (below). A
+  resolution of that conflict never removes the finding unless it names the adverse item
+  inapplicable (see "Conflict resolution records").
 - **Quality.** `coverageQuality` follows the claim's `confidence` (`HIGH`, `MEDIUM`, `LOW`;
   `NOT_STATED` is `UNASSESSED`), and is at most `LOW` when the method's `qualityStatus` is
   `LIMITED`.
@@ -928,16 +932,69 @@ interface ScsConflictResolutionRecord {
 }
 ```
 
-- **Role.** Only an actor holding `CONFLICT_RESOLVER` may submit a resolution
-  (`RESOLVER_NOT_AUTHORISED`). It is separate from `COMPLIANCE_OFFICER` and
-  `VERIFICATION_OFFICER`: the separation of duties SCS-CAP-02 applies to verification.
-- **Checks.** The conflict must have been reported under that key in that evaluation
-  (`CONFLICT_NOT_FOUND`), and every field above must be given (`RESOLUTION_INCOMPLETE`).
-- **Effect.** A later evaluation finding the same `conflictKey` records it as
-  `MATERIAL_RESOLVED`, with `resolutionDecisionId` naming the resolution, and the remaining
-  limitations are reported.
-- **Build order.** `submitConflictResolution` is built after `evaluateSufficiency`. Until it
-  exists, every material conflict is `UNRESOLVED`.
+```typescript
+interface ScsConflictResolutionSubmission {
+  conflictKey: string;
+  evaluationId: string;
+  comparedEvidenceIds: string[];
+  provenanceAndMethodsConsidered: string;
+  resolutionReason: string;
+  inapplicableEvidenceId?: string;
+  additionalEvidenceObtained: boolean;
+  additionalEvidenceIds: string[];
+  remainingLimitations: string[];
+  authorityBasis: string;
+  reEvaluationRequired: boolean;
+}
+```
+
+The system sets `resolutionId`, `reviewer` (the submitting actor) and `resolvedAt`. The
+resolution and its receipt (`CONFLICT_RESOLUTION`) are written in one transaction, and the
+resolution is never changed.
+
+**Checks,** in this order. Each failure ends in `FAIL_CLOSED` and writes nothing:
+
+1. **Role.** The actor holds `CONFLICT_RESOLVER` (`RESOLVER_NOT_AUTHORISED`). It is separate from
+   `COMPLIANCE_OFFICER` and `VERIFICATION_OFFICER`: the separation of duties SCS-CAP-02 applies
+   to verification.
+2. **The conflict.** `evaluationId` names a recorded evaluation (`EVALUATION_NOT_FOUND`) that
+   reported a conflict under `conflictKey` (`CONFLICT_NOT_FOUND`).
+3. **Independence.** The actor is not the submitter of either evidence item in conflict
+   (`RESOLVER_NOT_AUTHORISED`): the same principle as SCS-CAP-02's rule that a verifier is not
+   the party's registrant.
+4. **Once only.** No resolution is already recorded for `conflictKey`
+   (`CONFLICT_ALREADY_RESOLVED`). Revising a resolution is not defined (see "Open gaps").
+5. **Consistency** (`RESOLUTION_INCOMPLETE`, naming every problem): every field is given;
+   `comparedEvidenceIds` is exactly the conflict's two evidence items; `inapplicableEvidenceId`,
+   when given, is one of them; every `additionalEvidenceIds` entry is an admitted SCS-CAP-04
+   record or SCS-CAP-05 event; and `additionalEvidenceObtained` is `true` exactly when
+   `additionalEvidenceIds` is not empty.
+
+**Effect on a later evaluation.** A resolution is read in the evaluation's snapshot and applies
+to any later evaluation that finds the same `conflictKey`: the key identifies the same two
+evidence items and the same requirement.
+
+- The conflict is reported as `MATERIAL_RESOLVED`, with `resolutionStatus` `RESOLVED` and
+  `resolutionDecisionId` naming the resolution. It no longer makes the requirement
+  `CONFLICTING_EVIDENCE`.
+- **An inapplicable source.** When the resolution names an `inapplicableEvidenceId`, that item
+  is set aside for that requirement only. It stays in the frozen manifest and in every other
+  requirement's evaluation. The other item is evaluated normally: if it reports an adverse
+  finding, the requirement is `UNSATISFIED`.
+- **No inapplicable source.** When the resolution names neither item inapplicable, the conflict
+  is resolved but both items stand. An adverse claim is still an adverse finding, and the
+  requirement is `UNSATISFIED`. A human reconciling two sources cannot make detected
+  deforestation disappear.
+- **Remaining limitations** are reported in the conflict's `explanation` and in the evaluation's
+  `evaluationExplanation`. They are not gaps.
+- **Disclosure.** Every resolution applied is disclosed in the evaluation's
+  `evaluationExplanation`, naming the resolution and the evaluation in which the conflict was
+  originally found, and is listed in `evaluatedEvidence.appliedResolutionIds`. A resolution
+  never enters an evaluation silently.
+
+**Re-evaluation stays manual.** Recording a resolution never triggers an evaluation.
+`reEvaluationRequired` is recorded as given; the next evaluation of the subject, normally a
+re-evaluation citing `previousEvaluationId`, applies the resolution.
 
 ### The frozen input
 
@@ -948,12 +1005,13 @@ what it read:
    framework and specification, the plots and the custody subject.
 2. One repeatable-read transaction is opened. `evidenceCutoffAt` is its start time. Nothing
    admitted after the snapshot is taken can affect the evaluation.
-3. The framework, the specification, the plots and all evidence in scope are read in that
-   snapshot.
+3. The framework, the specification, the plots, all evidence in scope and every conflict
+   resolution recorded for a conflict key are read in that snapshot.
 4. The `subject_key` is computed, and an earlier evaluation of the same subject and period is
    noted (not blocked).
 5. The manifest is built: every evidence item's kind, identifier, version, content digest and
-   admission time.
+   admission time, and the identifiers of the conflict resolutions the evaluation applies
+   (`appliedResolutionIds`).
 6. The evaluation runs over the manifest only, with no further reads. Given the same manifest,
    it produces the same requirement evaluations, gaps, conflicts and next steps: gap and
    conflict identifiers are derived from their content, not generated at random.
@@ -999,6 +1057,10 @@ gaps is not defined. It does not relax `SUFFICIENT`.
 
 **Contract gap: custody standards.** `chainOfCustodyStandards` names standards no custody event
 records; matching them needs a field in SCS-CAP-05.
+
+**Contract gap: revising a resolution.** A conflict key can be resolved once. How a resolution
+is corrected or withdrawn (for example by a superseding resolution, as SCS-CAP-02 supersedes
+verification assessments) is not defined.
 
 **Contract gap: distinct failure codes.** A `commodityCode` that is not the framework's is
 refused as `FRAMEWORK_VERSION_NOT_RESOLVED`, naming the mismatch, because no closer code exists.
@@ -1078,6 +1140,7 @@ interface ScsSufficiencyEvaluationFailure {
     | "PREVIOUS_EVALUATION_NOT_SAME_SUBJECT"
     // submitConflictResolution only
     | "CONFLICT_NOT_FOUND"
+    | "CONFLICT_ALREADY_RESOLVED"
     | "RESOLVER_NOT_AUTHORISED"
     | "RESOLUTION_INCOMPLETE"
     | "DEPENDENCY_UNAVAILABLE";
