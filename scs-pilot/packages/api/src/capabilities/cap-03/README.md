@@ -1,6 +1,6 @@
 # SCS-CAP-03 — Plot and Land Unit Registration
 
-**Status: `registerPlot` (`POST /scs/v1/plots`) is implemented for the pilot (contract 2151321). `addTenureClaim` and `associateFramework` need their contract redefined before they are built. The reads (`getPlot`, `listPlots` and so on) and `retirePlot` are deferred.**
+**Status: `registerPlot` (`POST /scs/v1/plots`) is implemented for the pilot (contract 2151321). `addTenureClaim` and `associateFramework` need their contract redefined before they are built. The reads (`getPlot`, `listPlots` and so on) and `retirePlot` are deferred. `MINIMUM_VERTICAL_SLICE_PROVEN` is not claimed for CAP-03. A plot registration capability that cannot detect overlaps and produces only `REGISTERED_WITH_GAPS` is not a proven slice. This requires PostGIS and CAP-06 evaluation.**
 
 - **Plot-level checks.** Each is FAIL_CLOSED and writes nothing:
   1. Authority: only `COMPLIANCE_OFFICER`.

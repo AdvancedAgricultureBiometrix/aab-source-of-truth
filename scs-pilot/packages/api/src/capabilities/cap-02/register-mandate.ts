@@ -34,8 +34,9 @@
 //                          are true, each with an "evaluated" reason
 //  13. receipt           — MANDATE_REGISTRATION, same transaction; 201
 //
-// The consent evidence is required but, with no evidence store yet, cannot be
-// confirmed to show that the granting party agreed; the decision says so.
+// The consent evidence is required but, its ids not being linked to the SCS
+// evidence object store, cannot be confirmed to show that the granting party
+// agreed; the decision says so.
 
 import { randomUUID } from "node:crypto";
 
@@ -180,8 +181,8 @@ export async function registerMandate(ctx: RouteContext<ScsMandateRegistrationRe
       `consentEvidenceProvided: evaluated — ${consentCount} consent evidence id(s) provided. Their content is not verified: see below.`,
       "noConflictingRecord: evaluated — no NOT_REVOKED mandate for this pair shares a framework and a permitted action and overlaps this validity period.",
       `Registration is not verification: REGISTERED records a claimed mandate (verificationStatus CLAIMED_UNVERIFIED) permitting only ${permittedActions.join(", ")}. It verifies neither party and permits no approval, alteration of the granting party's identity, or legal declaration on its behalf.`,
-      // TODO(evidence-store): replace this disclosure with a real existence check once the evidence store is built.
-      `Evidence ids not confirmed: the evidence store is not yet built, so the ${consentCount} consent evidence id(s) cannot be confirmed to identify any document, or to show that the granting party agreed. They are recorded as submitted.`,
+      // TODO(evidence-id-model): evidence ids predate the SCS-PLATFORM-01 object store (contract gap); replace this disclosure with an existence check once ids cite stored objects.
+      `Evidence ids not confirmed: the ${consentCount} cited consent evidence id(s) are not linked to the SCS evidence object store; the store identifies files by SHA-256 digest, so these ids cannot be confirmed against it. Nothing confirms that the granting party agreed. They are recorded as submitted.`,
     ],
     decidedBy: actor,
     decidedAt: inserted.createdAt,

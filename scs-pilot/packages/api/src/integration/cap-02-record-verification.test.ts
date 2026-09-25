@@ -150,7 +150,7 @@ test("each recordable status → 201; recorded by the verifier; registrationStat
     }
     assert.ok(d.decisionReasons.includes("Assessment is not registration: the party's registrationStatus is unchanged (REGISTERED); no earlier assessment is changed."));
     assert.ok(d.decisionReasons.some((x) => x.startsWith("Verifying authority recorded as declared") && x.includes("none exists")));
-    assert.ok(d.decisionReasons.some((x) => x.startsWith("Evidence ids not confirmed: the evidence store is not yet built")));
+    assert.ok(d.decisionReasons.some((x) => x.startsWith("Evidence ids not confirmed: ") && x.includes("are not linked to the SCS evidence object store; the store identifies files by SHA-256 digest")));
     assert.ok(d.decisionReasons.some((x) => x.includes("Independence from the actors who submitted the cited evidence is not checked (contract gap)")));
 
     const row = (await harness.admin.query(`SELECT * FROM scs.party_verification_assessment WHERE assessment_id = $1`, [d.assessmentId])).rows[0] as Record<string, unknown>;

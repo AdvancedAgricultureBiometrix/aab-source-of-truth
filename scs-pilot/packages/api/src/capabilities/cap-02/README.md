@@ -24,7 +24,7 @@
 - **Request validation:** the schema accepts 1–200 evidence ids, as lowercase UUIDs, so any duplicate within one request is refused with 400. `partyId` in the path must be a UUID, also 400.
 - **What is written:** one `party_identity_evidence_submission` row, one evidence link per id naming that submission, and the receipt (decision type `IDENTITY_EVIDENCE_SUBMISSION`, subject = `submissionId`), all in one transaction. The response is 201 `{ decision, receipt, receiptDigest }`.
 - **Decision:** always `RECORDED`. All four checks are performed, so all four are `true`.
-- **Evidence store:** not built yet. Every decision's reasons say the ids couldn't be confirmed and that the evidence store isn't built yet. The code marks this `TODO(evidence-store)`.
+- **Evidence ids:** CAP-02's evidence ids are uuids and predate the SCS evidence object store (SCS-PLATFORM-01), which identifies files by SHA-256 digest. So every decision's reasons say the cited ids are not linked to the object store and cannot be confirmed against it. Aligning the two needs a contract change and a migration (contract gap). The code marks this `TODO(evidence-id-model)`.
 
 
 ## registerRelationship
@@ -62,7 +62,7 @@
 - **Enforced by the request schema** (400): `validUntil` is required, at least one consent evidence id, and every permitted action is from the enumerated list. Migration 008 backs the first two in the database.
 - **Relationship prerequisite:** an ACTIVE relationship between the two parties must already exist, in either direction and of any type. It must not be past its `validUntil`, and it must reference every framework of the mandate. Otherwise `RELATIONSHIP_NOT_FOUND`.
 - **Conflict:** a NOT_REVOKED mandate for the same granting and representative pair that shares a framework and a permitted action and has an overlapping validity period. An advisory lock serialises registrations for the pair.
-- **What is written:** the mandate (`CLAIMED_UNVERIFIED`, `NOT_REVOKED`, all six boundary flags `true`) and the receipt (`MANDATE_REGISTRATION`), in one transaction. The decision reasons say the consent evidence can't be confirmed, because the evidence store isn't built yet (`TODO(evidence-store)`).
+- **What is written:** the mandate (`CLAIMED_UNVERIFIED`, `NOT_REVOKED`, all six boundary flags `true`) and the receipt (`MANDATE_REGISTRATION`), in one transaction. The decision reasons say the consent evidence can't be confirmed against the object store (`TODO(evidence-id-model)`).
 
 
 ## addRoleClaim
@@ -96,7 +96,7 @@
 - **"Not in the future"** is checked against the database's transaction time, the instant `recorded_at` holds. The database also checks `verified_at <= recorded_at`, so clock drift between the API and the database can't turn a valid request into a 500.
 - **Append-only** (migration 010): an assessment never changes the party's `registrationStatus` or any earlier assessment. Supersession is recorded on the newer assessment (`supersedes_assessment_id`). A composite foreign key keeps it within the same party, and a unique constraint means an assessment is superseded at most once.
 - **Current verification status** is not stored. It's derived when read (not built yet).
-- **Decision reasons** state that the verifying authority is recorded as declared (no registry exists), that independence from evidence submitters isn't checked (contract gap), and that evidence content can't be confirmed while the evidence store isn't built (`TODO(evidence-store)`).
+- **Decision reasons** state that the verifying authority is recorded as declared (no registry exists), that independence from evidence submitters isn't checked (contract gap), and that the cited evidence can't be confirmed against the object store (`TODO(evidence-id-model)`).
 
 
 Canonical contract: [`governance/workstream-b/SCS-CAP-02-OPERATOR-AND-SUPPLIER-IDENTITY-REGISTRATION-CANONICAL-CONTRACT-2026-09-23.md`](../../../../../../governance/workstream-b/SCS-CAP-02-OPERATOR-AND-SUPPLIER-IDENTITY-REGISTRATION-CANONICAL-CONTRACT-2026-09-23.md)

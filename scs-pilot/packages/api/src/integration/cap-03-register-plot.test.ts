@@ -196,7 +196,7 @@ test("valid POLYGON → 201 REGISTERED_WITH_GAPS; plot, tenure claim and associa
     assert.ok(d.decisionReasons.some((x) => x.startsWith(`${check}: evaluated`)), `${check} has an evaluated reason`);
   }
   assert.ok(d.decisionReasons.some((x) => x.startsWith("Registration is not verification")));
-  assert.ok(d.decisionReasons.some((x) => x.startsWith("Evidence ids not confirmed: the evidence store is not yet built")));
+  assert.ok(d.decisionReasons.some((x) => x.startsWith("Evidence ids not confirmed: ") && x.includes("are not linked to the SCS evidence object store; the store identifies files by SHA-256 digest")));
   assert.equal(d.frameworkAssociationResults.length, 1);
   assert.equal(d.frameworkAssociationResults[0]!.outcome, "ASSOCIATED");
 

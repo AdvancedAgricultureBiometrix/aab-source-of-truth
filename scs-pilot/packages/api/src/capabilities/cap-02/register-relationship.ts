@@ -181,8 +181,8 @@ export async function registerRelationship(ctx: RouteContext<ScsRelationshipRegi
         : "validityPeriodValid: evaluated — the validity period is open-ended on at least one side.",
       "noConflictingRecord: evaluated — no ACTIVE relationship with the same from, to and type shares a framework and overlaps this validity period.",
       "Registration is not verification: REGISTERED records a claimed relationship (verificationStatus CLAIMED_UNVERIFIED). It verifies neither party and proves no commodity movement.",
-      // TODO(evidence-store): replace this disclosure with a real existence check once the evidence store is built.
-      `Evidence ids not confirmed: the evidence store is not yet built, so the ${evidenceCount} relationship evidence id(s) cannot be confirmed to identify any document. They are recorded as submitted.`,
+      // TODO(evidence-id-model): evidence ids predate the SCS-PLATFORM-01 object store (contract gap); replace this disclosure with an existence check once ids cite stored objects.
+      `Evidence ids not confirmed: the ${evidenceCount} cited relationship evidence id(s) are not linked to the SCS evidence object store; the store identifies files by SHA-256 digest, so these ids cannot be confirmed against it. They are recorded as submitted.`,
     ],
     decidedBy: actor,
     decidedAt: inserted.createdAt,

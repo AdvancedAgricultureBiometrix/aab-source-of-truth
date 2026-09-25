@@ -219,8 +219,8 @@ export async function registerPlot(ctx: RouteContext<RegisterPlotRequest>): Prom
       `Framework associations: ${evaluated.length - failedCount} associated, ${failedCount} failed. A failed association does not fail the plot registration.`,
       `Area recorded as declared: ${geometry.areaHectares === undefined ? "no area was declared" : `${geometry.areaHectares} ha`}; it is not computed from, or checked against, the geometry.`,
       "Registration is not verification: REGISTERED_WITH_GAPS or REGISTERED records that SCS has a governed record of this place. Legal title, tenure, boundary, framework compliance and commodity eligibility are not verified.",
-      // TODO(evidence-store): replace this disclosure with a real existence check once the evidence store is built.
-      `Evidence ids not confirmed: the evidence store is not yet built, so the ${evidenceCount} plot and tenure evidence id(s) cannot be confirmed to identify any document. They are recorded as submitted.`,
+      // TODO(evidence-id-model): evidence ids predate the SCS-PLATFORM-01 object store (contract gap); replace this disclosure with an existence check once ids cite stored objects.
+      `Evidence ids not confirmed: the ${evidenceCount} cited plot and tenure evidence id(s) are not linked to the SCS evidence object store; the store identifies files by SHA-256 digest, so these ids cannot be confirmed against it. They are recorded as submitted.`,
     ],
     decidedBy: actor,
     decidedAt: inserted.registeredAt,

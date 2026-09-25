@@ -590,8 +590,12 @@ only.
 **Current system limit: country boundaries.** Whether the geometry lies inside `countryCode`
 is not checked: there is no country boundary data. TODO(country-boundary-check).
 
-**Current system limit: no evidence store.** Evidence identifiers are recorded as submitted
-and cannot be confirmed to identify any document; every decision must say so.
+**Contract gap: the evidence id model.** `supportingEvidenceIds` and the tenure claims'
+`evidenceIds` are uuids, and predate the SCS evidence object store (SCS-PLATFORM-01), which
+identifies files by their SHA-256 digest. They are not linked to the store and cannot be
+confirmed against it. Aligning them requires a contract change and a migration. Until then,
+identifiers are recorded as submitted, and every decision must say that they cannot be
+confirmed against the store.
 
 ## Provider-neutral interface
 

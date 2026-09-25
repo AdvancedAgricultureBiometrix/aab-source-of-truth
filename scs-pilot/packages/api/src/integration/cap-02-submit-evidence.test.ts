@@ -146,8 +146,8 @@ test("valid submission → 201; submission row, evidence links with submission_i
   }
   assert.ok(d.decisionReasons.some((x) => x.startsWith("Evidence admitted, not verified") && x.includes("registrationStatus is unchanged (REGISTERED)")));
   assert.ok(
-    d.decisionReasons.some((x) => x.startsWith("Evidence ids not confirmed: the evidence store is not yet built")),
-    "discloses that the evidence store is not yet built",
+    d.decisionReasons.some((x) => x.startsWith("Evidence ids not confirmed: ") && x.includes("are not linked to the SCS evidence object store; the store identifies files by SHA-256 digest")),
+    "discloses that the cited evidence ids are not linked to the object store",
   );
 
   const sub = (await harness.admin.query(`SELECT * FROM scs.party_identity_evidence_submission WHERE submission_id = $1`, [d.submissionId])).rows[0] as Record<string, unknown>;

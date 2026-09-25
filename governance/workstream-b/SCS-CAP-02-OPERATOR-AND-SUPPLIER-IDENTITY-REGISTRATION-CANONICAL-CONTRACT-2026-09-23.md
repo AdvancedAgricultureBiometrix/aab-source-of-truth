@@ -624,11 +624,13 @@ holds the evidence given at registration. This contract does not say whether rea
 party (`getParty`) also returns evidence submitted later. That must be specified before
 `getParty` is implemented.
 
-**Current system limit: no evidence store.** The system does not yet store evidence
-documents, so a submitted `evidenceId` cannot be confirmed to identify any document. Until
-an evidence store exists, identifiers are recorded as submitted, and every decision's
-`decisionReasons` states that the identifiers were not confirmed and that the evidence
-store is not yet built. This describes the current system, not the intended architecture.
+**Contract gap: the evidence id model.** The evidence identifiers in this contract are
+uuids, and predate the SCS evidence object store (SCS-PLATFORM-01), which identifies files
+by their SHA-256 digest. They are not linked to the store and cannot be confirmed against
+it. Aligning them, so that evidence cites stored objects as SCS-CAP-04 and SCS-CAP-05 do,
+requires a contract change and a migration. Until then, identifiers are recorded as
+submitted, and every decision's `decisionReasons` states that the cited evidence ids are
+not linked to the SCS evidence object store and cannot be confirmed against it.
 
 ## Role claims, relationships and mandates: registration rules
 
