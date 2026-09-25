@@ -82,6 +82,9 @@ export const PLATFORM_ERRORS = {
   IDEMPOTENCY_KEY_CONFLICT: 409,
   DEPENDENCY_UNAVAILABLE: 503,
   INTERNAL_ERROR: 500,
+  // SCS-PLATFORM-01 evidence object store (raw-body upload route)
+  EVIDENCE_OBJECT_TOO_LARGE: 413,
+  EVIDENCE_OBJECT_TYPE_UNSUPPORTED: 415,
 } as const;
 
 export type PlatformErrorCode = keyof typeof PLATFORM_ERRORS;

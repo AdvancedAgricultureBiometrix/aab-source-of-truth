@@ -19,6 +19,12 @@
 //   4. body (POST): Content-Type must be application/json → 415; at most
 //      MAX_BODY_BYTES → 413; must parse as JSON → 400 MALFORMED_JSON
 //   5. schema validation (route.requestSchema) → 400 REQUEST_VALIDATION_FAILED
+//   4'/5'. a raw-body route (route.rawBody, e.g. an evidence file upload)
+//      instead: the Content-Type's media type must be one the route accepts
+//      (route.rawBody.unsupportedType), the body at most rawBody.maxBytes
+//      (route.rawBody.tooLarge, checked while streaming) and not empty (400
+//      REQUEST_VALIDATION_FAILED). The handler receives the bytes and media
+//      type; the request fingerprint covers their SHA-256, not the bytes.
 //   6. idempotency key → 400 if missing or malformed. Every write route
 //      (POST) must be authenticated, transactional and require an
 //      Idempotency-Key: a route table that declares otherwise is refused at
@@ -36,13 +42,14 @@
 // (so a failed request always rolls back and writes nothing). Anything else
 // thrown becomes INTERNAL_ERROR with a generic reason; details go to the log.
 
+import { createHash } from "node:crypto";
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from "node:http";
 
 import { authenticateRequest, type ActorReference, type Authenticator } from "./auth.js";
 import { canonicalJson } from "./canonical.js";
 import { CORRELATION_HEADER, log, resolveCorrelationId, runWithCorrelation } from "./correlation.js";
 import type { Database, Tx } from "./db.js";
-import { asScsFailure, capabilityPlatformFailure, platformFailure, ScsFailure, toEnvelope, type CapabilityId } from "./errors.js";
+import { asScsFailure, capabilityPlatformFailure, platformFailure, ScsFailure, toEnvelope, type CapabilityId, type PlatformErrorCode } from "./errors.js";
 import { readIdempotencyKey, requestFingerprint, runIdempotent, type OperationResult } from "./idempotency.js";
 import { validate, type JsonSchema } from "./validation.js";
 
@@ -82,6 +89,8 @@ export interface Route<TBody = unknown> {
   /** Idempotency-Key header. Mandatory ("required") on every POST route. */
   readonly idempotency: "required" | "none";
   readonly requestSchema?: JsonSchema;
+  /** A POST route whose body is a file, not JSON. Exclusive with requestSchema. */
+  readonly rawBody?: RawBodySpec;
   /** Schema for the path parameters, as an object keyed by name. Required exactly when the path has parameters. */
   readonly paramsSchema?: JsonSchema;
   handle(ctx: RouteContext<TBody>): Promise<OperationResult>;
@@ -138,6 +147,21 @@ function templatesOverlap(a: readonly Segment[], b: readonly Segment[]): boolean
   return a.length === b.length && a.every((s, i) => typeof s !== "string" || typeof b[i] !== "string" || s === b[i]);
 }
 
+/** How a raw-body route accepts its body, and which platform codes refuse it. */
+export interface RawBodySpec {
+  readonly maxBytes: number;
+  /** Accepted media types, lowercase; parameters (e.g. "; charset=…") are ignored. */
+  readonly mediaTypes: readonly string[];
+  readonly tooLarge: PlatformErrorCode;
+  readonly unsupportedType: PlatformErrorCode;
+}
+
+/** The body a raw-body route's handler receives. */
+export interface RawBody {
+  readonly bytes: Buffer;
+  readonly mediaType: string;
+}
+
 const JSON_CONTENT_TYPE = /^application\/json\s*(;\s*charset=utf-8\s*)?$/i;
 
 export const healthRoute: Route<undefined> = {
@@ -164,7 +188,11 @@ function checkRoutes(routes: readonly Route<never>[], db: Database | null): void
     if (new Set(names).size !== names.length) throw new Error(`route ${id}: duplicate path parameter name`);
     if (names.length > 0 && r.paramsSchema === undefined) throw new Error(`route ${id}: routes with path parameters must declare a paramsSchema`);
     if (names.length === 0 && r.paramsSchema !== undefined) throw new Error(`route ${id}: paramsSchema declared but the path has no parameters`);
-    if (r.method === "POST" && r.requestSchema === undefined) throw new Error(`route ${id}: POST routes must declare a requestSchema`);
+    if (r.rawBody !== undefined && r.method !== "POST") throw new Error(`route ${id}: only a POST route can take a raw body`);
+    if (r.rawBody !== undefined && r.requestSchema !== undefined) throw new Error(`route ${id}: a raw-body route has no requestSchema`);
+    if (r.method === "POST" && r.requestSchema === undefined && r.rawBody === undefined) {
+      throw new Error(`route ${id}: POST routes must declare a requestSchema (or a rawBody)`);
+    }
     if (r.method === "POST" && (r.auth !== "required" || !r.transactional || r.idempotency !== "required")) {
       throw new Error(`route ${id}: write routes must be authenticated, transactional and require an Idempotency-Key`);
     }
@@ -182,21 +210,24 @@ function checkRoutes(routes: readonly Route<never>[], db: Database | null): void
   }
 }
 
-async function readBody(req: IncomingMessage): Promise<Buffer> {
+/** Read the whole body, refusing it (with `tooLarge`) as soon as it exceeds `maxBytes`. */
+async function readBody(req: IncomingMessage, maxBytes = MAX_BODY_BYTES, tooLarge: PlatformErrorCode = "PAYLOAD_TOO_LARGE"): Promise<Buffer> {
+  const refuse = () => platformFailure(tooLarge, [`The request body must be at most ${maxBytes} bytes.`]);
   const declared = Number(req.headers["content-length"] ?? NaN);
-  if (Number.isFinite(declared) && declared > MAX_BODY_BYTES) {
-    throw platformFailure("PAYLOAD_TOO_LARGE", [`The request body must be at most ${MAX_BODY_BYTES} bytes.`]);
-  }
+  if (Number.isFinite(declared) && declared > maxBytes) throw refuse();
   const chunks: Buffer[] = [];
   let size = 0;
   for await (const chunk of req) {
     size += (chunk as Buffer).length;
-    if (size > MAX_BODY_BYTES) {
-      throw platformFailure("PAYLOAD_TOO_LARGE", [`The request body must be at most ${MAX_BODY_BYTES} bytes.`]);
-    }
+    if (size > maxBytes) throw refuse();
     chunks.push(chunk as Buffer);
   }
   return Buffer.concat(chunks);
+}
+
+/** The media type of a Content-Type header: lowercase, parameters removed. */
+function mediaTypeOf(header: string | undefined): string {
+  return (header ?? "").split(";")[0]!.trim().toLowerCase();
 }
 
 function parseJson(raw: Buffer): unknown {
@@ -278,20 +309,34 @@ export function createApiServer(deps: ServerDeps): Server {
         }
 
         let body: unknown = undefined;
-        if (route.method === "POST") {
+        let fingerprintBody: unknown = null;
+        if (route.rawBody !== undefined) {
+          const spec = route.rawBody;
+          const mediaType = mediaTypeOf(req.headers["content-type"]);
+          if (!spec.mediaTypes.includes(mediaType)) {
+            throw platformFailure(spec.unsupportedType, [
+              `Content-Type "${mediaType || "(none)"}" is not accepted; accepted media types: ${spec.mediaTypes.join(", ")}.`,
+            ]);
+          }
+          const bytes = await readBody(req, spec.maxBytes, spec.tooLarge);
+          if (bytes.length === 0) throw platformFailure("REQUEST_VALIDATION_FAILED", ["The request body is empty; a file is required."]);
+          body = { bytes, mediaType } satisfies RawBody;
+          fingerprintBody = { mediaType, sha256: createHash("sha256").update(bytes).digest("hex"), sizeBytes: bytes.length };
+        } else if (route.method === "POST") {
           if (!JSON_CONTENT_TYPE.test(req.headers["content-type"] ?? "")) {
             throw platformFailure("UNSUPPORTED_MEDIA_TYPE", ["Content-Type must be application/json."]);
           }
           body = parseJson(await readBody(req));
           const checked = validate(route.capabilityId, route.requestSchema!, body);
           if (!checked.ok) throw checked.failure;
+          fingerprintBody = body;
         }
 
         const idempotencyKey = route.idempotency === "required" ? readIdempotencyKey(req.headers) : null;
         if (route.idempotency === "required" && idempotencyKey === null) {
           throw platformFailure("REQUEST_VALIDATION_FAILED", ["An Idempotency-Key header is required for this request."]);
         }
-        const requestDigest = requestFingerprint(route.method, fillTemplate(segments, params), body ?? null);
+        const requestDigest = requestFingerprint(route.method, fillTemplate(segments, params), fingerprintBody);
         const context = (tx: Tx | null) => ({ correlationId, actor, body: body as never, params, tx, idempotencyKey, requestDigest });
         const checkResult = (result: OperationResult): OperationResult => {
           if (!Number.isInteger(result.status) || result.status < 200 || result.status > 299) {
