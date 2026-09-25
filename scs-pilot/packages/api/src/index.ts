@@ -5,16 +5,20 @@
 //      refuses owner, superuser, BYPASSRLS and other elevated roles
 //   2. authentication — the static actors file (SCS_AUTH_STATIC_ACTORS_FILE)
 //      is loaded and every entry validated
-//   3. listen — foundation/server.ts
+//   3. evidence object store (SCS-PLATFORM-01): configuration from S3_*, and
+//      the bucket created if missing — an unreachable store stops startup
+//   4. listen — foundation/server.ts
 //
-// Routes: GET /health plus every capability route in capabilities/index.ts
-// (currently SCS-CAP-01 POST /scs/v1/frameworks and SCS-CAP-02 POST /scs/v1/parties).
+// Routes: GET /health, POST /scs/v1/evidence-objects (platform/evidence-objects)
+// and every capability route in capabilities/index.ts.
 
 import { CAPABILITY_ROUTES } from "./capabilities/index.js";
 import { StaticTokenAuthenticator } from "./foundation/auth.js";
 import { log } from "./foundation/correlation.js";
 import { connectDatabase, dbConfigFromEnv, RestrictedRoleViolation, type Database } from "./foundation/db.js";
 import { createApiServer } from "./foundation/server.js";
+import { objectStoreConfigFromEnv, S3ObjectStore } from "./platform/evidence-objects/object-store.js";
+import { evidenceObjectRoutes } from "./platform/evidence-objects/routes.js";
 
 async function main(): Promise<void> {
   let db: Database;
@@ -42,8 +46,19 @@ async function main(): Promise<void> {
     return;
   }
 
+  let objectStore: S3ObjectStore;
+  try {
+    objectStore = new S3ObjectStore(objectStoreConfigFromEnv());
+    await objectStore.ensureBucket();
+  } catch (err) {
+    log.error("startup failed: the evidence object store is not configured or unreachable", { err });
+    await db.close();
+    process.exitCode = 1;
+    return;
+  }
+
   const port = Number(process.env["API_PORT"] ?? 3000);
-  const server = createApiServer({ routes: CAPABILITY_ROUTES, authenticator, db });
+  const server = createApiServer({ routes: [...evidenceObjectRoutes(objectStore), ...CAPABILITY_ROUTES], authenticator, db });
   server.listen(port, () => log.info("scs-pilot-api listening", { port }));
 
   for (const signal of ["SIGINT", "SIGTERM"] as const) {

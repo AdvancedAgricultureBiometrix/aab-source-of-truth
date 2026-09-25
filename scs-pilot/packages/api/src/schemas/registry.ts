@@ -7,6 +7,7 @@
 // files (npm run generate:types) — never hand-written.
 
 import actorReference from "./shared/actor-reference.schema.json" with { type: "json" };
+import platformEvidenceObject from "./platform/evidence-object.schema.json" with { type: "json" };
 import cap01FrameworkRegistrationRequest from "./cap-01/framework-registration-request.schema.json" with { type: "json" };
 import cap01FrameworkRegistrationDecision from "./cap-01/framework-registration-decision.schema.json" with { type: "json" };
 import cap01FrameworkRegistrationReceipt from "./cap-01/framework-registration-receipt.schema.json" with { type: "json" };
@@ -47,6 +48,7 @@ import { registerSchema, type JsonSchema } from "../foundation/validation.js";
 
 export const SCHEMAS = {
   actorReference,
+  platformEvidenceObject,
   cap01FrameworkRegistrationRequest,
   cap01FrameworkRegistrationDecision,
   cap01FrameworkRegistrationReceipt,

@@ -27,9 +27,24 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+      # MinIO for the evidence object store tests. Started as a step, not a
+      # service container: a service cannot be given a command ("server /data").
+      - name: Start MinIO
+        run: |
+          docker run -d --name minio -p 9000:9000 -e MINIO_ROOT_USER=minioadmin -e MINIO_ROOT_PASSWORD=minioadmin quay.io/minio/minio:latest server /data
+          for i in $(seq 1 30); do
+            curl -fsS http://localhost:9000/minio/health/live && exit 0
+            sleep 2
+          done
+          echo "MinIO did not become healthy" >&2
+          docker logs minio >&2
+          exit 1
       - run: npm ci
         working-directory: scs-pilot/packages/api
       - run: npm test
         working-directory: scs-pilot/packages/api
         env:
           SCS_TEST_ADMIN_DATABASE_URL: postgres://postgres:postgres@localhost:5432/scs_test
+          SCS_TEST_S3_ENDPOINT: http://localhost:9000
+          SCS_TEST_S3_ACCESS_KEY_ID: minioadmin
+          SCS_TEST_S3_SECRET_ACCESS_KEY: minioadmin

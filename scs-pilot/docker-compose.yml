@@ -9,7 +9,9 @@
 #             each one (scs_migration.applied_migration), then sets the scs_api
 #             password from SCS_API_DB_PASSWORD. Idempotent; exits non-zero on
 #             any failure, and the api does not start (src/migrations/runner.ts)
-# minio     — S3-compatible object storage; NOT yet used by any code
+# minio     — S3-compatible object storage: the evidence object store
+#             (SCS-PLATFORM-01). The api stores evidence files there under
+#             their SHA-256, never overwriting; it creates the bucket at startup
 # api       — Node service; connects as the restricted role scs_api only and
 #             refuses to start if that role owns scs objects, is a superuser
 #             or can bypass row-level security

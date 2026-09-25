@@ -23,6 +23,7 @@ const typesDir = path.join(root, "src", "types");
  */
 const TARGETS = [
   { out: "shared.ts", schemas: ["shared/actor-reference.schema.json"] },
+  { out: "platform.ts", schemas: ["platform/evidence-object.schema.json"] },
   {
     out: "cap-01.ts",
     schemas: [
