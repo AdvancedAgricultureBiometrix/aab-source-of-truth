@@ -645,6 +645,17 @@ Evaluation cannot reach SUFFICIENT because:
 
 This makes the system defensible when a due diligence statement is challenged — the institution can demonstrate exactly what the evaluation found, why it found it, and what evidence was missing.
 
+## Open gaps
+
+**Contract gap: custody-chain evaluation.** SCS-CAP-05 admits custody events and leaves the
+evaluation of the chain to CAP-06: whether the admitted events form a sufficiently continuous
+chain from source plots to operator, with consistent quantities, recorded transformations and
+disclosed contradictions (SCS-CAP-05, "Custody chain sufficiency request — for CAP-06"). This
+contract does not yet define that evaluation. `ScsSufficiencyEvaluationRequest` is plot-centred:
+its `subject` names no batch and no operator, and `requestedAnalysis` has no custody-chain
+dimension. A custody-chain analysis dimension, with the batch and operator in the request
+subject, must be defined before CAP-06 is built.
+
 ## What this document does not establish
 
 - It does not admit SCS-CAP-06 as a canonical capability — that requires the ten-point admission checklist

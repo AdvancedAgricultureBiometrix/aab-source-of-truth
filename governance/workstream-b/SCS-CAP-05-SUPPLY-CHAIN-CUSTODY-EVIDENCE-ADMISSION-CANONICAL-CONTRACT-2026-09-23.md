@@ -75,7 +75,10 @@ interface ScsCustodyEventRecord {
   eventVersion: number;
   schemaVersion: string;
 
-  // What framework and evidence requirement this event relates to
+  // What framework and evidence requirement this event relates to.
+  // frameworkAssociationId names an SCS-CAP-01 framework (its frameworkId),
+  // as in SCS-CAP-02 — not an SCS-CAP-03 plot association: a custody event
+  // concerns a batch, not a plot
   frameworkAssociationId: string;
   evidenceRequirementSpecId: string;
 
@@ -135,7 +138,9 @@ interface ScsCustodyEventRecord {
   // Quantity — what moved or changed
   quantity: {
     amount: number;
-    unit: string;
+    unit: ScsCustodyQuantityUnit;
+    // Required when unit is OTHER; absent otherwise
+    unitDescription?: string;
     measurementMethod?: string;
     measurementUncertainty?: string;
   };
@@ -154,7 +159,10 @@ interface ScsCustodyEventRecord {
   };
 
   eventTime: {
+    // The local calendar date at the event location. Required even when
+    // timePrecision is UNKNOWN: the date anchors the event in time
     eventDate: string;
+    // A full ISO 8601 timestamp in UTC, not a time of day
     eventTimeUTC?: string;
     timePrecision:
       | "EXACT"
@@ -174,9 +182,13 @@ interface ScsCustodyEventRecord {
       | "PACKAGING"
       | "OTHER";
     inputQuantity: number;
-    inputUnit: string;
+    inputUnit: ScsCustodyQuantityUnit;
+    // Required when inputUnit is OTHER; absent otherwise
+    inputUnitDescription?: string;
     outputQuantity: number;
-    outputUnit: string;
+    outputUnit: ScsCustodyQuantityUnit;
+    // Required when outputUnit is OTHER; absent otherwise
+    outputUnitDescription?: string;
     conversionRatioDescription?: string;
   };
 
@@ -202,6 +214,7 @@ interface ScsCustodyEventRecord {
     issuingAuthority?: string;
     documentDate?: string;
     contentDigest: string;
+    // FAILED is never recorded: a failed integrity check writes nothing
     integrityStatus:
       | "VERIFIED"
       | "UNVERIFIED"
@@ -230,6 +243,7 @@ interface ScsCustodyEventRecord {
       | "QUARANTINED"
       | "REJECTED";
     limitations: string[];
+    limitationCodes: ScsCustodyEventLimitationCode[];
     admittedBy: ActorReference;
     admittedAt: string;
   };
@@ -390,6 +404,7 @@ interface ScsCustodyEventAdmissionDecision {
   };
 
   limitations: string[];
+  limitationCodes: ScsCustodyEventLimitationCode[];
   rejectionReasons?: string[];
 
   decidedBy: ActorReference;
@@ -424,6 +439,333 @@ CAP-05 admits with limitations when:
 - Quantity precision is uncertain
 - Event timing is approximate
 - Predecessor or successor events are referenced but not yet admitted
+
+## Admission rules for the pilot
+
+These rules define `submitCustodyEvent` for the pilot. Every condition in the failure contract
+ends in `FAIL_CLOSED` and writes nothing. Everything else is admitted, with each shortfall
+recorded as a limitation, never silently dropped.
+
+### Outcomes
+
+- **`ADMITTED` or `ADMITTED_WITH_LIMITATIONS`** are the only admission outcomes. The decision
+  is `ADMITTED_WITH_LIMITATIONS` whenever at least one limitation code is recorded, and
+  `ADMITTED` otherwise.
+- **A plain `ADMITTED` is reachable, and must stay reachable.** A fully documented event
+  between verified parties, with a stored and verified document, carries no forced limitation.
+- **`QUARANTINED`** is reached only through a later `quarantineCustodyEvent` operation, never
+  at admission. Quarantine will be recorded as a separate event; the admitted record is never
+  changed.
+- **`REJECTED`** is reserved until its criteria are defined. A condition that would reject is
+  a `FAIL_CLOSED` failure instead.
+
+### Framework
+
+A custody event concerns a commodity batch, which may come from many plots or, downstream, from
+no known plot. It is therefore keyed to an SCS-CAP-01 framework, not to an SCS-CAP-03 plot
+framework association.
+
+- `frameworkAssociationId` names an SCS-CAP-01 framework by its `frameworkId`, as in
+  SCS-CAP-02. The framework must be registered (`FRAMEWORK_ASSOCIATION_NOT_FOUND`) and
+  `ACTIVE` (`FRAMEWORK_NOT_ACTIVE`).
+- `evidenceRequirementSpecId` is the framework's current evidence requirement specification,
+  set by the system.
+- **The custody specification is recorded, not applied.** CAP-05 records the specification
+  identifier only. `requiredDocumentTypes`, `chainOfCustodyStandards` and `traceabilityDepth`
+  describe what a chain must contain, and are evaluated by SCS-CAP-06.
+
+### Fields the system sets
+
+`eventId`, `eventVersion` (1 until a revision operation exists), `schemaVersion`,
+`evidenceRequirementSpecId` (from the framework, never from the client), `sourceParty.partyVersion`
+and `destinationParty.partyVersion` (each party's current SCS-CAP-02 version at admission),
+`supportingDocument.integrityStatus`, `provenance.submittedBy`, `provenance.submittedAt` and the
+whole `admission` block.
+
+### Authority and mandates
+
+- Only a `COMPLIANCE_OFFICER` may submit a custody event. Otherwise `SUBMITTER_NOT_AUTHORISED`.
+  The actor's role is what authorises the submission, not a mandate.
+- A cited mandate (`sourceParty.actingUnderMandateId` or `provenance.submissionMandateId`) is
+  checked but never refuses the event. It must:
+  - be a registered SCS-CAP-02 representation mandate;
+  - be in force: `revocationStatus` `NOT_REVOKED`, and the event date within `validFrom` to
+    `validUntil`;
+  - permit `SUBMIT_CUSTODY_EVIDENCE`;
+  - name the source party as its `grantingPartyId`, the party it acts for.
+
+  A cited mandate that fails any of these is recorded as cited, and the limitation
+  `MANDATE_NOT_VALID` is recorded, naming each failed condition.
+
+### Parties
+
+- **Identifiable.** `sourceParty.partyId` and `destinationParty.partyId` must each be a
+  registered SCS-CAP-02 party (`SOURCE_PARTY_NOT_IDENTIFIABLE`,
+  `DESTINATION_PARTY_NOT_IDENTIFIABLE`) that is not `RETIRED` (`PARTY_RETIRED`).
+- **Unverified.** A party with no current SCS-CAP-02 verification assessment whose status is
+  `VERIFIED_FOR_DECLARED_SCOPE` is unverified: the limitation `PARTY_UNVERIFIED` is recorded,
+  naming the party. An assessment counts only while it is not superseded and not expired
+  (SCS-CAP-02, "Current verification status"). Any scope counts.
+- **Same party on both sides.** The source and destination may be the same party only for
+  `WEIGHING`, `INSPECTION` and `PROCESSING`, as a deliberate exception: these events happen at
+  one party's premises without a change of custody. For `PURCHASE`, `TRANSFER`, `EXPORT` and
+  `IMPORT` they must differ (`INTERNAL_INCONSISTENCY`).
+
+### Commodity
+
+`commodity.commodityCode` must equal the framework's `commodityCode`. Otherwise
+`COMMODITY_CODE_UNRECOGNISED`, which in the pilot means "outside the framework". No code
+prefix or product hierarchy is matched.
+
+### Quantity and units
+
+- The quantity is required; its absence is refused by the request schema.
+- `amount` is greater than 0 (`INTERNAL_INCONSISTENCY`).
+- Units are a closed vocabulary. `OTHER` requires a description, the same pattern as
+  `OTHER_EXPLICITLY_NAMED` in SCS-CAP-02:
+
+```typescript
+type ScsCustodyQuantityUnit =
+  | "KG"
+  | "TONNE"
+  | "LITRE"
+  | "M3"
+  | "BALE"
+  | "SACK"
+  | "UNIT"
+  | "OTHER";
+```
+
+- CAP-05 never compares or converts units across events. That is SCS-CAP-06's concern.
+- **Precision.** When `measurementUncertainty` is stated, or no `measurementMethod` is given,
+  the limitation `QUANTITY_PRECISION_UNCERTAIN` is recorded.
+
+### Supporting document and integrity
+
+The document itself may be stored in the SCS evidence object store (SCS-PLATFORM-01), which
+computes its SHA-256.
+
+- **Always required:** `documentReference`, `documentType` and `contentDigest`. Their absence
+  is refused by the request schema.
+- **Cited object.** The submission may cite a stored object by its `objectId`. The object
+  must exist in the store (`EVIDENCE_OBJECT_NOT_FOUND`), and the declared `contentDigest`
+  must equal the stored digest (`DOCUMENT_INTEGRITY_FAILED`). When both hold,
+  `integrityStatus` is `VERIFIED`.
+- **No cited object.** `integrityStatus` is `UNVERIFIED`: nothing SCS holds can confirm the
+  declared digest. The limitation `INTEGRITY_UNVERIFIED` is recorded. This keeps informal
+  records admissible, such as handwritten ledgers, with that limitation disclosed.
+- `integrityStatus: FAILED` is never recorded: a failed integrity check writes nothing.
+- **Altered documents.** "The document has been altered without recorded lineage" is detected
+  only as a digest mismatch (`DOCUMENT_INTEGRITY_FAILED`). See "Open gaps".
+
+### Internal consistency
+
+**Material inconsistencies** fail with `INTERNAL_INCONSISTENCY`, naming each one:
+
+- `transformation` is present if and only if `eventType` is `TRANSFORMATION` or `PROCESSING`;
+- `splitFromEventId` is present if and only if `eventType` is `SPLIT`;
+- `consolidatedFromEventIds` has at least two identifiers if and only if `eventType` is
+  `CONSOLIDATION`;
+- `timePrecision` `EXACT` requires `eventTimeUTC`;
+- `eventTimeUTC` is consistent with `eventDate`: because `eventDate` is the local date at the
+  event location, `eventTimeUTC` must fall within the span of that date in some time zone
+  from UTC−12:00 to UTC+14:00, that is from `eventDate` 00:00 UTC minus 14 hours to
+  `eventDate` 00:00 UTC plus 36 hours;
+- no date is in the future: timestamps are not after the current time (the database clock),
+  and a date (`eventDate`, `documentDate`) is not after the current UTC date plus one day,
+  the latest calendar date anywhere;
+- `documentDate` is not after the submission;
+- `eventLocation.countryCode` is an officially assigned ISO 3166-1 alpha-2 code;
+- coordinates, when given, have latitude −90 to 90 and longitude −180 to 180;
+- `quantity.amount` and the transformation quantities are greater than 0;
+- a unit of `OTHER` has its description, and a description is given only for `OTHER`;
+- the source and destination differ for `PURCHASE`, `TRANSFER`, `EXPORT` and `IMPORT`;
+- no linked event identifier names the event itself (it cannot: the system generates
+  `eventId`).
+
+**Non-material inconsistencies** are limitations:
+
+- a transformation whose output exceeds its input in the same unit (not `OTHER`), with no
+  `conversionRatioDescription` explaining it: `QUANTITY_GAIN_UNEXPLAINED`;
+- contradictions declared by the submitter in `contradictions`: `CONTRADICTION_DECLARED`. The
+  contradictions are kept verbatim.
+
+`uncertainties` and `knownGaps` are recorded verbatim as the submitter's disclosure.
+
+### Event time
+
+When `timePrecision` is `APPROXIMATE` or `UNKNOWN`, the limitation `EVENT_TIME_APPROXIMATE`
+is recorded.
+
+### Source plots
+
+- **Registered.** Each of `commodity.sourcePlotIds` should name a registered SCS-CAP-03 plot.
+  Each cited identifier is recorded as cited, and linked to the plot when it is registered. An
+  identifier that names no registered plot is the limitation `SOURCE_PLOT_NOT_REGISTERED`,
+  naming it.
+- **Retired.** A plot that is `RETIRED` is the limitation `SOURCE_PLOT_RETIRED`, not a failure:
+  the commodity may have been harvested before the plot was retired.
+- **Incomplete.** `sourcePlotIdsComplete: false`, or no source plots at all, is the limitation
+  `SOURCE_PLOTS_INCOMPLETE`.
+
+### Linked events
+
+- **Predecessors, split-from and consolidated-from.** Each of `predecessorEventIds`,
+  `splitFromEventId` and `consolidatedFromEventIds` should name an admitted custody event. Each
+  cited identifier is recorded as cited, and linked to the event when it is admitted. An
+  identifier that names no admitted event is the limitation `LINKED_EVENT_NOT_ADMITTED`,
+  naming it. Admission proceeds: events are often recorded out of order.
+- **Other framework or batch.** A linked event may belong to a different framework or batch:
+  custody events that cross frameworks are an operational reality in commodity chains. The link
+  is kept, and the limitation `LINKED_EVENT_OUT_OF_SCOPE` is recorded, naming the event and how
+  it differs.
+- **Successors.** `successorEventIds` are recorded as declared and never resolved at admission:
+  a successor is normally submitted later. SCS-CAP-06 derives successors from later events'
+  predecessors.
+
+### Chain of custody
+
+`provenance.chainOfCustodyComplete` is recorded as declared. When it is `false`, the limitation
+`CHAIN_OF_CUSTODY_INCOMPLETE` is recorded.
+
+### Limitation codes
+
+A limitation code is not a failure. It is recorded with the event and in the decision, and
+makes the decision `ADMITTED_WITH_LIMITATIONS`.
+
+```typescript
+type ScsCustodyEventLimitationCode =
+  | "PARTY_UNVERIFIED"
+  | "SOURCE_PLOTS_INCOMPLETE"
+  | "SOURCE_PLOT_NOT_REGISTERED"
+  | "SOURCE_PLOT_RETIRED"
+  | "QUANTITY_PRECISION_UNCERTAIN"
+  | "EVENT_TIME_APPROXIMATE"
+  | "LINKED_EVENT_NOT_ADMITTED"
+  | "LINKED_EVENT_OUT_OF_SCOPE"
+  | "INTEGRITY_UNVERIFIED"
+  | "CHAIN_OF_CUSTODY_INCOMPLETE"
+  | "MANDATE_NOT_VALID"
+  | "QUANTITY_GAIN_UNEXPLAINED"
+  | "CONTRADICTION_DECLARED";
+```
+
+### Submission request
+
+```typescript
+interface ScsCustodyEventSubmissionRequest {
+  // An SCS-CAP-01 frameworkId
+  frameworkAssociationId: string;
+
+  eventType: ScsCustodyEventRecord["eventType"];
+
+  // As in the record, without partyVersion (set by the system)
+  sourceParty: {
+    partyId: string;
+    partyRoleAtEvent: ScsCustodyEventRecord["sourceParty"]["partyRoleAtEvent"];
+    actingUnderMandateId?: string;
+  };
+  destinationParty: {
+    partyId: string;
+    partyRoleAtEvent: ScsCustodyEventRecord["destinationParty"]["partyRoleAtEvent"];
+  };
+
+  // As in the record
+  commodity: ScsCustodyEventRecord["commodity"];
+  quantity: ScsCustodyEventRecord["quantity"];
+  eventLocation: ScsCustodyEventRecord["eventLocation"];
+  eventTime: ScsCustodyEventRecord["eventTime"];
+  transformation?: ScsCustodyEventRecord["transformation"];
+
+  predecessorEventIds: string[];
+  successorEventIds: string[];
+  splitFromEventId?: string;
+  consolidatedFromEventIds?: string[];
+
+  supportingDocument: {
+    // The SCS-PLATFORM-01 objectId of the stored document, when one is cited
+    objectId?: string;
+    documentId: string;
+    documentType: ScsCustodyEventRecord["supportingDocument"]["documentType"];
+    documentReference: string;
+    issuingAuthority?: string;
+    documentDate?: string;
+    // Lowercase hexadecimal SHA-256 of the document
+    contentDigest: string;
+  };
+
+  submissionMandateId?: string;
+  chainOfCustodyComplete: boolean;
+
+  uncertainties: string[];
+  contradictions: string[];
+  knownGaps: string[];
+}
+```
+
+### Checks and the decision
+
+The failure checks run in this order: authority; internal consistency; the framework; the
+commodity; the parties; the supporting document and integrity. The admission checks in the
+decision record the outcome of each:
+
+- `submitterAuthorised`, `sourcePartyIdentifiable`, `destinationPartyIdentifiable`,
+  `commodityCodeRecognised`, `batchIdentifierPresent`, `eventTypeValid`, `quantityRecorded`,
+  `eventTimeRecorded` and `supportingDocumentPresent` are `true` whenever an event is admitted.
+- `documentIntegrityVerified` is `true` only when `integrityStatus` is `VERIFIED`.
+- `internallyConsistent` is `false` when `QUANTITY_GAIN_UNEXPLAINED` is recorded: the material
+  checks passed, but an inconsistency remains unexplained.
+
+The decision carries `limitationCodes`, the codes recorded, alongside the human-readable
+`limitations`, and the fixed `authorityBoundary`.
+
+### Deferred operations
+
+- **`submitTransformationRecord`** is deferred. `ScsCustodyTransformationRecord` overlaps the
+  event's own `transformation`; it returns a record rather than a decision; it needs its output
+  events to exist before it can be written, which is circular when the transformation is itself
+  an event; and who sets `reconciliationStatus` is undefined. It must be redefined before it is
+  built. The pilot records transformations only through the event's `transformation`.
+- **Reads** (`getCustodyEvent`, `listCustodyEventsForBatch`, `listCustodyEventsForParty`) and
+  **`quarantineCustodyEvent`** are deferred. SCS-CAP-06 reads the admitted events directly.
+
+### Open gaps
+
+**Contract gap: submission under a mandate.** An SCS-CAP-02 mandate may permit
+`SUBMIT_CUSTODY_EVIDENCE`, but an authenticated actor is not linked to a CAP-02 party:
+`ActorReference` has no `partyId`. Until that link exists, only a `COMPLIANCE_OFFICER` may
+submit, and a cited mandate is checked and recorded but never authorises the submission.
+
+**Contract gap: two mandate fields.** The record carries `sourceParty.actingUnderMandateId` and
+`provenance.submissionMandateId`. What distinguishes them is not defined. Both are checked in
+the same way.
+
+**Contract gap: mandate scope.** Whether a cited mandate's `frameworkAssociationIds`,
+`commodityScope` and `geographicScope` must cover the event is not defined, and is not checked.
+
+**Contract gap: producer role.** `sourceParty.partyRoleAtEvent` has no producer role. A
+smallholder selling their own harvest is recorded as `SUPPLIER`.
+
+**Contract gap: processed products.** A processed product under a raw-commodity framework (for
+example a rubber product under a natural rubber framework) is refused as
+`COMMODITY_CODE_UNRECOGNISED`, because only an exact commodity code match is accepted. How
+product codes relate to a framework's commodity is not defined.
+
+**Contract gap: altered documents.** No document lineage model exists, so an alteration is
+detected only as a mismatch between the declared digest and a stored object. A document with
+no stored object cannot be checked for alteration (`INTEGRITY_UNVERIFIED`).
+
+**Contract gap: batch and facility registries.** `batchIdentifier`, `batchVersion` and
+`facilityId` identify things no SCS capability registers. They are recorded as given.
+
+**Contract gap: chain sufficiency.** `ScsCustodyChainSufficiencyRequest` describes SCS-CAP-06's
+evaluation. It is not part of the CAP-05 provider, and no `evaluateChainSufficiency` operation
+belongs to CAP-05. SCS-CAP-06 does not yet define a custody-chain evaluation (see its "Open
+gaps").
+
+**Contract gap: party verification summary.** "Unverified" rests on SCS-CAP-02 assessments,
+whose party-level summary is itself an SCS-CAP-02 contract gap. The pilot counts any current
+`VERIFIED_FOR_DECLARED_SCOPE` assessment, in any scope.
 
 ## Provider-neutral interface
 
@@ -468,16 +810,26 @@ interface ScsCustodyEventAdmissionFailure {
   capabilityId: "SCS-CAP-05";
   result: "FAIL_CLOSED";
 
+  // Every shortfall that is not listed here is a limitation code, not a
+  // failure: see "Admission rules for the pilot"
   error:
     | "SUBMITTER_NOT_AUTHORISED"
     | "SOURCE_PARTY_NOT_IDENTIFIABLE"
     | "DESTINATION_PARTY_NOT_IDENTIFIABLE"
+    // A registered party that is RETIRED
+    | "PARTY_RETIRED"
+    // The event's commodityCode is not its framework's commodityCode
     | "COMMODITY_CODE_UNRECOGNISED"
     | "QUANTITY_NOT_RECORDED"
     | "SUPPORTING_DOCUMENT_ABSENT"
+    // A cited stored object is not in the SCS evidence object store
+    | "EVIDENCE_OBJECT_NOT_FOUND"
     | "DOCUMENT_INTEGRITY_FAILED"
     | "INTERNAL_INCONSISTENCY"
+    // The SCS-CAP-01 framework is not registered
     | "FRAMEWORK_ASSOCIATION_NOT_FOUND"
+    // The SCS-CAP-01 framework is not ACTIVE
+    | "FRAMEWORK_NOT_ACTIVE"
     | "DEPENDENCY_UNAVAILABLE";
 
   reasons: string[];
