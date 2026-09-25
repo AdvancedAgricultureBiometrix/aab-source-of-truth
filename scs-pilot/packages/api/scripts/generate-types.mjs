@@ -64,6 +64,15 @@ const TARGETS = [
       "cap-02/verification-assessment-response.schema.json",
     ],
   },
+  {
+    out: "cap-03.ts",
+    schemas: [
+      "cap-03/plot-registration-request.schema.json",
+      "cap-03/plot-registration-decision.schema.json",
+      "cap-03/plot-registration-receipt.schema.json",
+      "cap-03/plot-registration-response.schema.json",
+    ],
+  },
 ];
 
 const SCHEMA_FILES = TARGETS.flatMap((t) => t.schemas);

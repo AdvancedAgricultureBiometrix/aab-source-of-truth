@@ -1,0 +1,305 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-03:plot-registration-request:1",
+  "title": "RegisterPlotRequest",
+  "description": "SCS-CAP-03 RegisterPlotRequest (contract 2151321). Declared fields only: the system sets plotId, plotVersion, schemaVersion, registeredAt, registeredBy, registrationStatus, overlapState (NOT_EVALUATED) and provenance.submittedBy/recordedAt; on tenure claims tenureClaimId, plotId, plotVersion, recordedAt, recordedBy and verificationStatus (UNVERIFIED); on associations associationId, frameworkVersion, evidenceRequirementSpecId, associatedAt, associatedBy, applicabilityStatus (APPLICABLE) and lifecycleStatus (ACTIVE). Geometry validity, the coordinate reference system, the country code and cross-field rules are checked by the capability so that the contract's failure codes are returned.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "plot",
+    "tenureClaims"
+  ],
+  "properties": {
+    "plot": {
+      "title": "ScsPlotRegistrationInput",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "countryCode",
+        "geometry",
+        "identityEvidence",
+        "sourceType"
+      ],
+      "properties": {
+        "plotName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "countryCode": {
+          "description": "ISO 3166-1 alpha-2, uppercase (checked by the capability).",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "administrativeAreas": {
+          "description": "Free text: no code system is defined (contract gap).",
+          "type": "array",
+          "maxItems": 200,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000,
+            "pattern": "\\S"
+          }
+        },
+        "geometry": {
+          "title": "ScsPlotGeometryInput",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "geometryType",
+            "coordinates",
+            "coordinateReferenceSystem",
+            "captureMethod"
+          ],
+          "properties": {
+            "geometryType": {
+              "type": "string",
+              "enum": [
+                "POINT",
+                "POLYGON",
+                "MULTIPOLYGON"
+              ]
+            },
+            "coordinates": {
+              "description": "The GeoJSON (RFC 7946) coordinates member for geometryType; validated by the capability.",
+              "type": "array"
+            },
+            "coordinateReferenceSystem": {
+              "description": "Must be EPSG:4326 (checked by the capability).",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1000,
+              "pattern": "\\S"
+            },
+            "areaHectares": {
+              "description": "Declared, not computed. Required for POLYGON and MULTIPOLYGON; for a POINT, at most 4.",
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "captureMethod": {
+              "type": "string",
+              "enum": [
+                "FORMAL_CADASTRAL_SURVEY",
+                "GOVERNMENT_REGISTRY_GEOMETRY",
+                "PROFESSIONAL_SURVEY",
+                "PHONE_GPS",
+                "COMMUNITY_MAPPING",
+                "COOPERATIVE_MAPPING",
+                "REMOTE_SENSING_DERIVATION",
+                "OTHER"
+              ]
+            },
+            "positionalAccuracyMetres": {
+              "type": "number",
+              "minimum": 0
+            },
+            "boundaryUncertaintyDescription": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1000,
+              "pattern": "\\S"
+            },
+            "capturedAt": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        },
+        "identityEvidence": {
+          "title": "ScsPlotIdentityEvidenceInput",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "registryVerificationStatus",
+            "supportingEvidenceIds",
+            "evidenceLimitations"
+          ],
+          "properties": {
+            "registryReference": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1000,
+              "pattern": "\\S"
+            },
+            "registryAuthority": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1000,
+              "pattern": "\\S"
+            },
+            "registryVerificationStatus": {
+              "description": "Declared by the registrant. Other than NOT_APPLICABLE requires registryReference.",
+              "type": "string",
+              "enum": [
+                "VERIFIED",
+                "UNVERIFIED",
+                "CONFLICTING",
+                "REGISTRY_UNAVAILABLE",
+                "NOT_APPLICABLE"
+              ]
+            },
+            "supportingEvidenceIds": {
+              "type": "array",
+              "maxItems": 200,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+              }
+            },
+            "evidenceLimitations": {
+              "type": "array",
+              "maxItems": 200,
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "pattern": "\\S"
+              }
+            }
+          }
+        },
+        "submittingOrganizationId": {
+          "description": "Optional; an identifier issued outside SCS.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "sourceType": {
+          "description": "Free text: no code system is defined (contract gap).",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        }
+      }
+    },
+    "tenureClaims": {
+      "description": "At least one: a plot with no tenure claim cannot be registered.",
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 50,
+      "items": {
+        "title": "ScsPlotTenureClaimInput",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "claimantType",
+          "claimantId",
+          "tenureBasis",
+          "evidenceIds",
+          "limitations"
+        ],
+        "properties": {
+          "claimantType": {
+            "description": "Declared; not derived from the party's partyType.",
+            "type": "string",
+            "enum": [
+              "INDIVIDUAL",
+              "ORGANIZATION",
+              "COOPERATIVE",
+              "COMMUNITY",
+              "GOVERNMENT",
+              "OTHER"
+            ]
+          },
+          "claimantId": {
+            "description": "A registered SCS-CAP-02 partyId, not RETIRED.",
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "tenureBasis": {
+            "type": "string",
+            "enum": [
+              "FORMAL_TITLE",
+              "LEASE",
+              "PERMIT",
+              "CUSTOMARY_COLLECTIVE_RIGHT",
+              "CUSTOMARY_INDIVIDUAL_RIGHT",
+              "COMMUNITY_ATTESTATION",
+              "OCCUPANCY_OR_USE_CLAIM",
+              "UNKNOWN"
+            ]
+          },
+          "evidenceIds": {
+            "type": "array",
+            "maxItems": 200,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+            }
+          },
+          "validFrom": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "validUntil": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "limitations": {
+            "type": "array",
+            "maxItems": 200,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1000,
+              "pattern": "\\S"
+            }
+          }
+        }
+      }
+    },
+    "initialFrameworkAssociations": {
+      "description": "Optional. Each framework at most once. A failed association never fails the registration.",
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "title": "ScsPlotFrameworkAssociationInput",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "frameworkId",
+          "commodityCode",
+          "associationReason"
+        ],
+        "properties": {
+          "frameworkId": {
+            "description": "A registered SCS-CAP-01 frameworkId.",
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "commodityCode": {
+            "description": "Must equal the framework's scope.commodityCode.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "pattern": "\\S"
+          },
+          "producerOrOperatorId": {
+            "description": "When present, a registered SCS-CAP-02 partyId, not RETIRED.",
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          },
+          "associationReason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000,
+            "pattern": "\\S"
+          }
+        }
+      }
+    }
+  }
+}

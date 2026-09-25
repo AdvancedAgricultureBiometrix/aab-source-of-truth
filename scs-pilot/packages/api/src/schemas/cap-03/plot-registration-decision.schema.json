@@ -1,0 +1,181 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-03:plot-registration-decision:1",
+  "title": "ScsPlotRegistrationDecision",
+  "description": "SCS-CAP-03 ScsPlotRegistrationDecision (contract 2151321). An eligibility check is true only if it was actually performed and passed: in the pilot noFatalOverlapDetected is false, NOT EVALUATED. REGISTERED verifies no title, tenure, boundary, compliance or eligibility.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decisionId",
+    "plotId",
+    "decision",
+    "eligibilityChecks",
+    "gaps",
+    "frameworkAssociationResults",
+    "decisionReasons",
+    "decidedBy",
+    "decidedAt"
+  ],
+  "properties": {
+    "decisionId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "plotId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "decision": {
+      "type": "string",
+      "enum": [
+        "REGISTERED",
+        "REGISTERED_WITH_GAPS",
+        "REJECTED",
+        "REQUIRES_HUMAN_REVIEW"
+      ]
+    },
+    "eligibilityChecks": {
+      "title": "ScsPlotEligibilityChecks",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "geometryValid",
+        "countryCodeValid",
+        "coordinateReferenceSystemRecognised",
+        "captureMethodRecorded",
+        "registrantAuthorised",
+        "noFatalOverlapDetected",
+        "tenureClaimsValid",
+        "claimantPartiesRegistered"
+      ],
+      "properties": {
+        "geometryValid": {
+          "type": "boolean"
+        },
+        "countryCodeValid": {
+          "type": "boolean"
+        },
+        "coordinateReferenceSystemRecognised": {
+          "type": "boolean"
+        },
+        "captureMethodRecorded": {
+          "type": "boolean"
+        },
+        "registrantAuthorised": {
+          "type": "boolean"
+        },
+        "noFatalOverlapDetected": {
+          "type": "boolean"
+        },
+        "tenureClaimsValid": {
+          "type": "boolean"
+        },
+        "claimantPartiesRegistered": {
+          "type": "boolean"
+        }
+      }
+    },
+    "gaps": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "title": "ScsPlotRegistrationGap",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "gapCode",
+          "gapDescription",
+          "automaticFailure",
+          "humanReviewRequired"
+        ],
+        "properties": {
+          "gapCode": {
+            "type": "string",
+            "enum": [
+              "REGISTRY_REFERENCE_MISSING",
+              "OVERLAP_NOT_EVALUATED",
+              "POINT_AREA_UNDECLARED",
+              "FRAMEWORK_ASSOCIATION_FAILED"
+            ]
+          },
+          "gapDescription": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000,
+            "pattern": "\\S"
+          },
+          "automaticFailure": {
+            "type": "boolean"
+          },
+          "humanReviewRequired": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "frameworkAssociationResults": {
+      "type": "array",
+      "maxItems": 20,
+      "items": {
+        "title": "ScsPlotFrameworkAssociationResult",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "frameworkId",
+          "outcome"
+        ],
+        "properties": {
+          "frameworkId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "associationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "outcome": {
+            "type": "string",
+            "enum": [
+              "ASSOCIATED",
+              "FAILED",
+              "PENDING_HUMAN_DECISION"
+            ]
+          },
+          "failureCode": {
+            "type": "string",
+            "enum": [
+              "FRAMEWORK_REFERENCE_NOT_FOUND",
+              "FRAMEWORK_NOT_ACTIVE",
+              "COMMODITY_OUTSIDE_FRAMEWORK",
+              "PRODUCER_PARTY_NOT_FOUND",
+              "PARTY_RETIRED"
+            ]
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000,
+            "pattern": "\\S"
+          }
+        }
+      }
+    },
+    "decisionReasons": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1000,
+        "pattern": "\\S"
+      }
+    },
+    "decidedBy": {
+      "$ref": "urn:aab:scs:schema:shared:actor-reference:1"
+    },
+    "decidedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}
