@@ -32,11 +32,13 @@ const TOKENS = {
   officer: "cap06-officer-token-0123456789abcdefgh",
   verifier: "cap06-verifier-token-0123456789abcdefg",
   viewer: "cap06-viewer-token-0123456789abcdefghij",
+  reviewer: "cap06-reviewer-token-0123456789abcdefg",
 };
 const actors = {
   officer: { actorId: "officer-cap06", actorType: "HUMAN", roles: ["COMPLIANCE_OFFICER"], authenticationMethod: "STATIC_TOKEN" },
   verifier: { actorId: "verifier-cap06", actorType: "HUMAN", roles: ["VERIFICATION_OFFICER"], authenticationMethod: "STATIC_TOKEN" },
   viewer: { actorId: "viewer-cap06", actorType: "HUMAN", roles: ["VIEWER"], authenticationMethod: "STATIC_TOKEN" },
+  reviewer: { actorId: "reviewer-cap06", actorType: "HUMAN", roles: ["REGULATORY_REVIEWER"], authenticationMethod: "STATIC_TOKEN" },
 } as const;
 
 const EVALUATIONS = "/scs/v1/sufficiency-evaluations";
@@ -400,9 +402,18 @@ test("getEvaluationResult returns the recorded result exactly; an unknown id →
   assert.deepEqual(r.json["reasons"], [`No sufficiency evaluation is recorded with evaluationId ${missing}.`]);
 });
 
+test("a REGULATORY_REVIEWER may read an evaluation (to review it under SCS-CAP-09), but not request one", async () => {
+  const s = await coveredSubject(defOnly);
+  const d = await evaluateOk(evaluationRequest(defOnly, [s.plot.plotId]));
+  const got = await call("GET", `${EVALUATIONS}/${d.evaluationId}`, undefined, { who: "reviewer" });
+  assert.equal(got.status, 200, got.text);
+  assert.deepEqual(got.json, d);
+  await assertRefused(evaluationRequest(defOnly, [s.plot.plotId]), 403, "REQUESTOR_NOT_AUTHORISED", { who: "reviewer" });
+});
+
 // ── Failures ─────────────────────────────────────────────────────────────────
 
-test("actor without COMPLIANCE_OFFICER → 403 REQUESTOR_NOT_AUTHORISED, for evaluating and for reading", async () => {
+test("actor without COMPLIANCE_OFFICER → 403 REQUESTOR_NOT_AUTHORISED, for evaluating; nor REGULATORY_REVIEWER, for reading", async () => {
   const s = await coveredSubject(defOnly);
   for (const who of ["viewer", "verifier"] as const) {
     await assertRefused(evaluationRequest(defOnly, [s.plot.plotId]), 403, "REQUESTOR_NOT_AUTHORISED", { who });
