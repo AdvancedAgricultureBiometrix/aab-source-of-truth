@@ -130,6 +130,50 @@ interface ScsRendition {
   maintenance, transitive dependencies, known vulnerabilities, determinism). The chosen
   library and version are recorded in this contract's implementation notes when adopted.
 
+## The pilot renderer
+
+The dependency audit compared pdf-lib 1.17.1 and pdfkit 0.20.2. pdf-lib, and the font package
+it needs, have not been maintained since 2022, which disqualifies them for governed document
+production. pdfkit is adopted.
+
+- **Library.** pdfkit **0.20.2**, pinned exactly (no range). A new pdfkit version is a new
+  renderer version: it produces new renditions and never replaces existing ones.
+- **No stream compression.** pdfkit compresses with the runtime's zlib, whose output is not
+  guaranteed to be the same across runtime versions and platforms. The pilot renderer turns
+  compression off, so the bytes depend only on the renderer, its fonts and the record. Files are
+  larger as a result.
+- **Fonts.** Two families, stored in the repository at `packages/api/assets/fonts/` with their
+  SIL Open Font License 1.1 texts. The renderer refuses to render if a font's SHA-256 differs
+  from the one recorded here. All are the static, unhinted TrueType files of the official
+  releases (hinting only affects screen rasterisation):
+
+| File | Family and release | Source | Bytes | SHA-256 |
+|---|---|---|---|---|
+| `NotoSans-Regular.ttf` | Noto Sans v2.015 | github.com/notofonts/latin-greek-cyrillic, release `NotoSans-v2.015` | 431364 | `f3961a9cde016d41a4879aecda1474d3a36d6bf54fa0e4643de029cc2248b0e8` |
+| `NotoSans-Bold.ttf` | Noto Sans v2.015 | as above | 432376 | `87cb2d84472a7d66da659ee47b6cdb9552326e8c128245231f191b6ac72529d9` |
+| `NotoSansThai-Regular.ttf` | Noto Sans Thai v2.002 | github.com/notofonts/thai, release `NotoSansThai-v2.002` | 20960 | `d4303fe9c63ebb72759ca8b6d2040c8ae81689f7d08d7b91c656154382b49313` |
+| `NotoSansThai-Bold.ttf` | Noto Sans Thai v2.002 | as above | 20600 | `5227602d7f9108252cfb7d75d6f7b2a26bdb2fc2fa89a702f9063758fb2f86c7` |
+
+- **Scripts.** Noto Sans covers Latin, Latin Extended (including Vietnamese), Greek and
+  Cyrillic. Thai is not in Noto Sans; it is published as Noto Sans Thai. The renderer splits
+  text into runs by script and sets each Thai run (U+0E00–U+0E7F) in Noto Sans Thai. Text in
+  any other script not covered is refused rather than rendered as missing glyphs.
+- **Thai SARA AM.** The font draws SARA AM (U+0E33) as two glyphs, and a PDF reader then
+  extracts it as SARA AM followed by an extra SARA AA. The renderer therefore writes SARA AM
+  as its compatibility decomposition (U+0E4D U+0E32), which looks the same and extracts
+  correctly: extracted text equals the record's text under NFKC normalisation.
+- **Text extraction for tests.** pdfjs-dist **6.3.289** (Apache-2.0), a development
+  dependency only, without its optional native canvas package. Completeness tests compare
+  under NFKC, and leave out the page footers, which a reader can place between the two halves
+  of an entry that breaks across a page.
+- **Cross-platform stability.** A test renders a fixed record and compares the SHA-256 of the
+  output with a stored expected value, on every platform that runs the tests, CI (Linux)
+  included. A different digest on any platform is a critical failure: a rendition's recorded
+  digest must not depend on where it was rendered.
+- **`rendererVersion`** records the library and version, the font releases and the template
+  and its version, for example
+  `pdfkit@0.20.2;noto-sans@2.015;noto-sans-thai@2.002;scs-cap08-package@1`.
+
 ## Failure contract
 
 ```typescript
@@ -157,10 +201,20 @@ SCS-CAP-08: `RENDITION_FAILED`), and that operation records nothing.
 
 ## Open gaps
 
-**Contract gap: the library.** No PDF library is chosen; the dependency audit comes first.
+**Contract gap: Thai line breaking.** Thai is written without spaces between words. The pilot
+renderer has no dictionary-based word breaking, so a Thai run longer than a line is broken at
+the line's edge, which may fall inside a word. The text is complete and extracts correctly;
+only the break position may be wrong.
+
+**Contract gap: other scripts.** Only the scripts listed under "The pilot renderer" can be
+rendered. Records containing other scripts cannot be rendered until a font covering them is
+added and recorded here.
 
 **Contract gap: archival and accessibility standards.** Conformance to PDF/A (archival) or
-PDF/UA (accessibility) is not claimed. Whether either is required is not decided.
+PDF/UA (accessibility) is not claimed, and no rendition is presented as conforming. pdfkit has
+options for both, but their output has not been checked with a validator. If a regulatory
+authority or auditor requires either, it becomes a formal requirement with a tested
+implementation.
 
 **Contract gap: languages.** Renditions are in English only.
 
