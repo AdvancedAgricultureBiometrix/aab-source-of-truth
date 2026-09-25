@@ -262,6 +262,15 @@ is clear it was not performed rather than failed. A check is never recorded as `
 was actually performed and passed. The rules must be specified before a production
 implementation.
 
+### Accepted source types (constraint from SCS-CAP-04)
+
+`deforestationEvidence.acceptedSourceTypes` must use the `evidenceType` values of SCS-CAP-04
+(`SATELLITE_IMAGE`, `REMOTE_SENSING_ANALYSIS`, `LAND_COVER_DATA_PRODUCT`,
+`FORESTRY_AUTHORITY_CERTIFICATE`, `GOVERNMENT_RECORD`, `FIELD_VERIFICATION`,
+`EXPERT_ASSESSMENT`, `OTHER`). Registration does not refuse other values: SCS-CAP-04 ignores
+them when it checks compatibility and records the limitation `SOURCE_TYPE_VOCABULARY_UNKNOWN`
+on the evidence it admits.
+
 ## Provider-neutral interface
 
 ```typescript
