@@ -1,6 +1,8 @@
 # SCS-CAP-02 — Operator and Supplier Identity Registration
 
-**Status: `registerParty` (`POST /scs/v1/parties`), `submitIdentityEvidence` (`POST /scs/v1/parties/:partyId/evidence`) `registerRelationship` (`POST /scs/v1/relationships`), `registerMandate` (`POST /scs/v1/mandates`) `addRoleClaim` (`POST /scs/v1/parties/:partyId/roles`) and `addVerificationAssessment` (`POST /scs/v1/parties/:partyId/verifications`) are implemented: every CAP-02 registration path. The contract's reads (`getParty`, `getRelationship`, `list…`) and `revokeMandate` are not built yet.**
+**Status: `registerParty` (`POST /scs/v1/parties`), `submitIdentityEvidence` (`POST /scs/v1/parties/:partyId/evidence`), `registerRelationship` (`POST /scs/v1/relationships`), `registerMandate` (`POST /scs/v1/mandates`), `addRoleClaim` (`POST /scs/v1/parties/:partyId/roles`) and `addVerificationAssessment` (`POST /scs/v1/parties/:partyId/verifications`) are implemented: every CAP-02 registration path. The contract's reads (`getParty`, `getRelationship`, `list…`) and `revokeMandate` are not built yet.**
+
+**Vertical proof: `MINIMUM_VERTICAL_SLICE_PROVEN`** as of commit `748aaba` (2026-09-25): all six registration paths (parties, identity evidence, relationships, mandates, role claims and verification assessments) have been proven end to end over real HTTP against PostgreSQL, connected as the restricted `scs_api` role, each with its decision and immutable receipt written in one transaction. This is a record of implementation proof only. SCS-CAP-02 remains `PROPOSED_NOT_ADMITTED`, and its reads and `revokeMandate` are not built.
 
 ## registerParty
 

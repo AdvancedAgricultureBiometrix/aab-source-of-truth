@@ -2,6 +2,8 @@
 
 **Status: `registerFramework` implemented (`POST /scs/v1/frameworks`); no other CAP-01 operation yet.** This folder is the reference implementation of the capability pattern (see `../README.md`).
 
+**Vertical proof: `MINIMUM_VERTICAL_SLICE_PROVEN`** as of commit `da62ec3` (2026-09-24): `registerFramework` has been proven end to end over real HTTP against PostgreSQL, connected as the restricted `scs_api` role, with its decision and immutable receipt written in one transaction. This is a record of implementation proof only. SCS-CAP-01 remains `PROPOSED_NOT_ADMITTED`.
+
 - **Authority:** only `COMPLIANCE_OFFICER`, the role the contract names. Otherwise `REGISTRANT_NOT_AUTHORISED` (403).
 - **Conflict:** an ACTIVE framework with the same `regulationId`, `regulationVersion`, `commodityCode`, `countryOfOrigin` and `destinationMarket` and an overlapping effective period gives `CONFLICTING_FRAMEWORK_EXISTS` (409), naming the existing `frameworkId`. Registrations of one scope are serialised by an advisory lock.
 - **What is written:** the framework row (status ACTIVE, empty `versionHistory`) and the immutable receipt, in one transaction. The response is 201 `{ decision, receipt, receiptDigest }`.
