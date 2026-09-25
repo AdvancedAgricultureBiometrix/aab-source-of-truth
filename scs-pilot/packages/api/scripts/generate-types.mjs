@@ -100,6 +100,10 @@ const TARGETS = [
       "cap-06/sufficiency-evaluation-receipt.schema.json",
       "cap-06/sufficiency-evaluation-response.schema.json",
       "cap-06/sufficiency-evaluation-params.schema.json",
+      "cap-06/conflict-resolution-request.schema.json",
+      "cap-06/conflict-resolution-record.schema.json",
+      "cap-06/conflict-resolution-receipt.schema.json",
+      "cap-06/conflict-resolution-response.schema.json",
     ],
   },
 ];

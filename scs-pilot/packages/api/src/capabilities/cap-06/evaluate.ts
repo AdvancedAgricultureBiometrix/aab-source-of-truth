@@ -6,6 +6,13 @@
 // are derived from their content, so the same input always gives the same
 // requirement evaluations, gaps, conflicts and next steps.
 //
+// Conflict resolutions are part of the input (contract e0b7634). A conflict
+// found under a resolved key is MATERIAL_RESOLVED; an item the resolution
+// names inapplicable is set aside for that requirement only (for the custody
+// chain: for the chain), and everything else is evaluated normally — so an
+// adverse finding that is not itself set aside still makes the requirement
+// UNSATISFIED.
+//
 // Intervals are half-open: start inclusive, end exclusive. The required
 // period runs from referenceDate 00:00 UTC to the day after
 // evaluationEndDate, 00:00 UTC.
@@ -22,7 +29,7 @@ import type {
   ScsSufficiencyEvaluationResult,
   ScsTemporalCoverageEvaluation,
 } from "../../types/cap-06.js";
-import type { CustodyInput, DeforestationInput, FrameworkSpec, PlotInput } from "./store.js";
+import type { CustodyInput, DeforestationInput, FrameworkSpec, PlotInput, ResolutionInput } from "./store.js";
 
 export type RequirementCode = ScsRequirementEvaluation["requirementCode"];
 type GapType = ScsEvidenceGap["gapType"];
@@ -71,6 +78,17 @@ export interface EvaluationInput {
   readonly assessmentType: AssessmentType;
   readonly batchIdentifiers: readonly string[];
   readonly operatorPartyId: string | null;
+  /** Recorded conflict resolutions whose items are in scope; those whose key is found are applied. */
+  readonly resolutions: readonly ResolutionInput[];
+}
+
+/** A resolution this evaluation applied, for its disclosure. */
+export interface AppliedResolution {
+  readonly resolutionId: string;
+  readonly conflictKey: string;
+  readonly originEvaluationId: string;
+  readonly inapplicableEvidenceId: string | null;
+  readonly remainingLimitations: readonly string[];
 }
 
 export interface EvaluationOutcome {
@@ -86,6 +104,8 @@ export interface EvaluationOutcome {
   readonly nextSteps: ScsNextStep[];
   /** Numbered explanation of the findings (the handler adds the header). */
   readonly findings: string[];
+  /** The resolutions applied, in conflict-key order. */
+  readonly appliedResolutions: AppliedResolution[];
 }
 
 // ── helpers ─────────────────────────────────────────────────────────────────
@@ -191,15 +211,32 @@ export function evaluate(input: EvaluationInput): EvaluationOutcome {
     return g;
   };
 
-  const conflict = (c: Omit<ScsEvidenceConflict, "conflictId" | "conflictKey" | "materiality" | "resolutionStatus">): ScsEvidenceConflict => {
+  type ConflictCandidate = Omit<ScsEvidenceConflict, "conflictId" | "conflictKey" | "materiality" | "resolutionStatus">;
+  const keyOf = (c: Pick<ConflictCandidate, "requirementCode" | "evidenceAId" | "evidenceBId">) => {
     const [a, b] = [c.evidenceAId, c.evidenceBId].sort();
-    const conflictKey = `${c.requirementCode}:${a}:${b}`;
+    return `${c.requirementCode}:${a}:${b}`;
+  };
+  const resolutionByKey = new Map(input.resolutions.map((r) => [r.conflictKey, r]));
+  const applied = new Map<string, ResolutionInput>();
+  const conflict = (c: ConflictCandidate): ScsEvidenceConflict => {
+    const conflictKey = keyOf(c);
+    const r = resolutionByKey.get(conflictKey);
+    if (r !== undefined) applied.set(conflictKey, r);
     const full: ScsEvidenceConflict = {
       conflictId: contentUuid(`conflict:${conflictKey}:${c.conflictType}:${c.propositionA}:${c.propositionB}`),
       conflictKey,
       ...c,
-      materiality: "MATERIAL_UNRESOLVED",
-      resolutionStatus: "UNRESOLVED",
+      ...(r === undefined
+        ? { materiality: "MATERIAL_UNRESOLVED" as const, resolutionStatus: "UNRESOLVED" as const }
+        : {
+            explanation:
+              `${c.explanation} Resolved by ${r.resolutionId}, recorded ${r.resolvedAt} for the conflict first found in evaluation ${r.evaluationId}` +
+              `${r.inapplicableEvidenceId === null ? "; neither item was found inapplicable, so both stand" : `; ${r.inapplicableEvidenceId} was found inapplicable and is set aside for ${c.requirementCode}`}.` +
+              (r.remainingLimitations.length > 0 ? ` Remaining limitations: ${r.remainingLimitations.join("; ")}` : ""),
+            materiality: "MATERIAL_RESOLVED" as const,
+            resolutionStatus: "RESOLVED" as const,
+            resolutionDecisionId: r.resolutionId,
+          }),
     };
     const list = conflicts.get(c.requirementCode) ?? [];
     if (!list.some((x) => x.conflictId === full.conflictId)) list.push(full);
@@ -212,8 +249,7 @@ export function evaluate(input: EvaluationInput): EvaluationOutcome {
 
   // ── Deforestation: conflicts and adverse findings first (they decide applicability) ──
   const recordsOf = (plotId: string) => input.deforestation.filter((r) => r.plotId === plotId);
-  const defConflicts: Array<Omit<ScsEvidenceConflict, "conflictId" | "conflictKey" | "materiality" | "resolutionStatus">> = [];
-  const inConflict = new Set<string>();
+  const defCandidates: ConflictCandidate[] = [];
   for (const p of plots) {
     const rs = recordsOf(p.plotId);
     for (let i = 0; i < rs.length; i++) {
@@ -230,7 +266,7 @@ export function evaluate(input: EvaluationInput): EvaluationOutcome {
         if (!((aNone && bAdv) || (aAdv && bNone))) continue;
         const overlap = clip([ms(a.analysisStart), ms(a.analysisEnd)], [ms(b.analysisStart), ms(b.analysisEnd)]);
         if (overlap === null || !boxesIntersect(a.coverageBox, b.coverageBox)) continue;
-        defConflicts.push({
+        defCandidates.push({
           requirementCode: "DEF-TEMPORAL-COVERAGE",
           subject: plotSubject(p.plotId),
           evidenceAId: a.evidenceId,
@@ -242,13 +278,21 @@ export function evaluate(input: EvaluationInput): EvaluationOutcome {
           conflictType: "OPPOSING_FINDINGS",
           explanation: `Evidence ${a.evidenceId} and ${b.evidenceId} make opposing ${t} claims about plot ${p.plotId} for overlapping analysis periods, with the same detection target.`,
         });
-        inConflict.add(a.evidenceId).add(b.evidenceId);
       }
     }
   }
+  // items a resolution found inapplicable: set aside for DEF-TEMPORAL-COVERAGE
+  const setAsideDef = new Set(
+    defCandidates.map((c) => resolutionByKey.get(keyOf(c))?.inapplicableEvidenceId ?? null).filter((id): id is string => id !== null),
+  );
+  // a resolved conflict is reported as resolved; an unresolved one only if neither item is set aside
+  const defConflicts = defCandidates.filter(
+    (c) => resolutionByKey.has(keyOf(c)) || (!setAsideDef.has(c.evidenceAId) && !setAsideDef.has(c.evidenceBId)),
+  );
+  const inConflict = new Set(defConflicts.filter((c) => !resolutionByKey.has(keyOf(c))).flatMap((c) => [c.evidenceAId, c.evidenceBId]));
   const adverseRecords = input.deforestation.filter((r) => {
     const t = targetOfClaim(r.claimType);
-    if (t === null || !targets.includes(t) || !adverseClaims(t).includes(r.claimType) || inConflict.has(r.evidenceId)) return false;
+    if (t === null || !targets.includes(t) || !adverseClaims(t).includes(r.claimType) || inConflict.has(r.evidenceId) || setAsideDef.has(r.evidenceId)) return false;
     const end = r.claimEnd ?? r.analysisEnd ?? r.acquisitionEnd ?? r.acquisitionInstant;
     return end === null || ms(end) > required[0];
   });
@@ -283,7 +327,10 @@ export function evaluate(input: EvaluationInput): EvaluationOutcome {
       const list = adverse.get("DEF-TEMPORAL-COVERAGE") ?? [];
       list.push(
         `Adverse finding: evidence ${r.evidenceId} reports ${r.claimType} for plot ${r.plotId}` +
-          `${r.claimStart !== null || r.claimEnd !== null ? ` (claimed period ${r.claimStart ?? "…"} to ${r.claimEnd ?? "…"})` : ""}, after the cut-off ${input.referenceDate}, and no admitted evidence contradicts it.`,
+          `${r.claimStart !== null || r.claimEnd !== null ? ` (claimed period ${r.claimStart ?? "…"} to ${r.claimEnd ?? "…"})` : ""}, after the cut-off ${input.referenceDate}, ` +
+          (defConflicts.some((c) => resolutionByKey.has(keyOf(c)) && (c.evidenceAId === r.evidenceId || c.evidenceBId === r.evidenceId))
+            ? "and a recorded resolution did not find it inapplicable: a human reconciling two sources cannot make detected deforestation disappear."
+            : "and no admitted evidence contradicts it."),
       );
       adverse.set("DEF-TEMPORAL-COVERAGE", list);
     }
@@ -299,6 +346,7 @@ export function evaluate(input: EvaluationInput): EvaluationOutcome {
     for (const t of targets) {
       const pieces: Interval[] = [];
       for (const r of rs) {
+        if (setAsideDef.has(r.evidenceId)) continue; // found inapplicable by a recorded resolution
         if (r.coverageMode === "POINT_IN_TIME" || r.analysisStart === null || r.analysisEnd === null) continue;
         if (r.detectionTarget !== t || r.claimType !== noneClaim(t)) continue;
         const own = subtract([[ms(r.analysisStart), ms(r.analysisEnd)]], r.knownGaps.map((g) => [ms(g.start), ms(g.end)] as Interval))
@@ -475,8 +523,44 @@ export function evaluate(input: EvaluationInput): EvaluationOutcome {
       gap("CUSTODY-CHAIN-CONTINUITY", "CUSTODY_STANDARD_NOT_EVALUATED", { subjectType: "SPECIFICATION", subjectReference: `scs:evidence-spec/${specId}` },
         `The specification names chain-of-custody standards (${f.chainOfCustodyStandards.join(", ")}), which no custody event records, so they are not evaluated.`);
     }
+    // custody conflicts, over every event of the subject's batches: declared
+    // contradictions (an event against itself) and quantity conflicts
+    const custodyCandidates: Array<{ batch: string; c: ConflictCandidate }> = [];
+    for (const batch of input.batchIdentifiers) {
+      const all = input.custody.filter((e) => e.batchIdentifier === batch);
+      const byId = new Map(all.map((e) => [e.eventId, e]));
+      const batchSubject = { subjectType: "BATCH", subjectReference: `scs:batch/${batch}` };
+      for (const next of all) {
+        for (const l of next.links) {
+          const prev = l.type === "SUCCESSOR" || l.linkedId === null ? undefined : byId.get(l.linkedId);
+          if (
+            prev !== undefined && prev.quantityAmount !== null && next.quantityAmount !== null && prev.quantityUnit === next.quantityUnit &&
+            prev.quantityUnit !== "OTHER" && next.quantityAmount > prev.quantityAmount && !["TRANSFORMATION", "PROCESSING", "CONSOLIDATION"].includes(next.eventType)
+          ) {
+            custodyCandidates.push({ batch, c: {
+              requirementCode: "CUSTODY-CHAIN-CONTINUITY", subject: batchSubject, evidenceAId: prev.eventId, evidenceBId: next.eventId,
+              propositionA: `${prev.quantityAmount} ${prev.quantityUnit} (event ${prev.eventId}).`, propositionB: `${next.quantityAmount} ${next.quantityUnit} (event ${next.eventId}).`,
+              conflictType: "QUANTITY_CONFLICT",
+              explanation: `Event ${next.eventId} records more (${next.quantityAmount} ${next.quantityUnit}) than its predecessor ${prev.eventId} (${prev.quantityAmount} ${prev.quantityUnit}), with no transformation or consolidation between them.`,
+            } });
+          }
+        }
+        for (const text of next.contradictions) {
+          custodyCandidates.push({ batch, c: {
+            requirementCode: "CUSTODY-CHAIN-CONTINUITY", subject: batchSubject, evidenceAId: next.eventId, evidenceBId: next.eventId,
+            propositionA: `Event ${next.eventId} as recorded (${next.eventType}).`, propositionB: `Declared contradiction: ${text}`, conflictType: "OTHER",
+            explanation: `Event ${next.eventId} was admitted with a declared contradiction: ${text}`,
+          } });
+        }
+      }
+    }
+    // events a resolution found inapplicable leave the chain
+    const setAsideCustody = on("CUSTODY-CHAIN-CONTINUITY")
+      ? new Set(custodyCandidates.map(({ c }) => resolutionByKey.get(keyOf(c))?.inapplicableEvidenceId ?? null).filter((id): id is string => id !== null))
+      : new Set<string>();
     custodyChain = input.batchIdentifiers.map((batch) => {
-      const events = input.custody.filter((e) => e.batchIdentifier === batch);
+      const setAside = input.custody.filter((e) => e.batchIdentifier === batch && setAsideCustody.has(e.eventId));
+      const events = input.custody.filter((e) => e.batchIdentifier === batch && !setAsideCustody.has(e.eventId));
       const byId = new Map(events.map((e) => [e.eventId, e]));
       const batchSubject = { subjectType: "BATCH", subjectReference: `scs:batch/${batch}` };
       const breaks: ScsCustodyChainEvaluation["breaks"] = [];
@@ -485,6 +569,14 @@ export function evaluate(input: EvaluationInput): EvaluationOutcome {
       for (const e of events) {
         for (const l of e.links) {
           if (l.type === "SUCCESSOR") continue;
+          if (l.linkedId !== null && setAsideCustody.has(l.linkedId)) {
+            if (on("CUSTODY-CHAIN-CONTINUITY")) {
+              const g = gap("CUSTODY-CHAIN-CONTINUITY", "CUSTODY_CHAIN_BROKEN", batchSubject,
+                `Event ${e.eventId} cites ${l.linkedId} (${l.type}), which a recorded resolution found inapplicable: it cannot support the chain.`);
+              breaks.push({ afterEventId: l.linkedId, beforeEventId: e.eventId, explanation: g.explanation, gapId: g.gapId });
+            }
+            continue;
+          }
           if (l.linkedId === null) {
             if (on("CUSTODY-CHAIN-CONTINUITY")) {
               const g = gap("CUSTODY-CHAIN-CONTINUITY", "CUSTODY_CHAIN_BROKEN", batchSubject,
@@ -504,30 +596,17 @@ export function evaluate(input: EvaluationInput): EvaluationOutcome {
             `Event ${next.eventId} starts from party ${next.sourcePartyId}, but its predecessor ${prev.eventId} delivered to party ${prev.destinationPartyId}.`);
           breaks.push({ afterEventId: prev.eventId, beforeEventId: next.eventId, explanation: g.explanation, gapId: g.gapId });
         }
-        if (
-          on("CUSTODY-CHAIN-CONTINUITY") && prev.quantityAmount !== null && next.quantityAmount !== null && prev.quantityUnit === next.quantityUnit &&
-          prev.quantityUnit !== "OTHER" && next.quantityAmount > prev.quantityAmount && !["TRANSFORMATION", "PROCESSING", "CONSOLIDATION"].includes(next.eventType)
-        ) {
-          const c = conflict({
-            requirementCode: "CUSTODY-CHAIN-CONTINUITY", subject: batchSubject, evidenceAId: prev.eventId, evidenceBId: next.eventId,
-            propositionA: `${prev.quantityAmount} ${prev.quantityUnit} (event ${prev.eventId}).`, propositionB: `${next.quantityAmount} ${next.quantityUnit} (event ${next.eventId}).`,
-            conflictType: "QUANTITY_CONFLICT",
-            explanation: `Event ${next.eventId} records more (${next.quantityAmount} ${next.quantityUnit}) than its predecessor ${prev.eventId} (${prev.quantityAmount} ${prev.quantityUnit}), with no transformation or consolidation between them.`,
-          });
-          conflictIds.push(c.conflictId);
-        }
       }
       if (on("CUSTODY-CHAIN-CONTINUITY")) {
+        // resolved conflicts are reported as resolved; unresolved ones only if neither event is set aside
+        for (const { c } of custodyCandidates.filter((x) => x.batch === batch)) {
+          if (resolutionByKey.has(keyOf(c)) || (!setAsideCustody.has(c.evidenceAId) && !setAsideCustody.has(c.evidenceBId))) conflictIds.push(conflict(c).conflictId);
+        }
+        for (const e of setAside) {
+          findings.push(`Custody event ${e.eventId} of batch ${batch} was found inapplicable by a recorded resolution and is set aside from the chain.`);
+        }
         for (const e of events) {
           support("CUSTODY-CHAIN-CONTINUITY", e.eventId);
-          for (const text of e.contradictions) {
-            const c = conflict({
-              requirementCode: "CUSTODY-CHAIN-CONTINUITY", subject: batchSubject, evidenceAId: e.eventId, evidenceBId: e.eventId,
-              propositionA: `Event ${e.eventId} as recorded (${e.eventType}).`, propositionB: `Declared contradiction: ${text}`, conflictType: "OTHER",
-              explanation: `Event ${e.eventId} was admitted with a declared contradiction: ${text}`,
-            });
-            conflictIds.push(c.conflictId);
-          }
           for (const party of [e.sourcePartyId, e.destinationPartyId]) {
             if (!verified.has(party)) {
               gap("CUSTODY-CHAIN-CONTINUITY", "PARTY_UNVERIFIED", { subjectType: "PARTY", subjectReference: `scs:party/${party}` },
@@ -597,10 +676,11 @@ export function evaluate(input: EvaluationInput): EvaluationOutcome {
     const why = applies.get(code) ?? null;
     const gs = gaps.get(code) ?? [];
     const cs = conflicts.get(code) ?? [];
+    const open = cs.filter((c) => c.resolutionStatus === "UNRESOLVED");
     const adv = adverse.get(code) ?? [];
     const state: ScsRequirementEvaluation["state"] =
       why === null ? "NOT_APPLICABLE"
-      : cs.length > 0 ? "CONFLICTING_EVIDENCE"
+      : open.length > 0 ? "CONFLICTING_EVIDENCE"
       : adv.length > 0 || gs.some((g) => g.automaticFailure) ? "UNSATISFIED"
       : gs.length > 0 ? "GAP_REQUIRES_HUMAN_DECISION"
       : "SATISFIED";
@@ -609,7 +689,8 @@ export function evaluate(input: EvaluationInput): EvaluationOutcome {
       : [
           `applies because ${why}.`,
           ...adv,
-          ...(cs.length > 0 ? [`${cs.length} material unresolved conflict(s).`] : []),
+          ...(open.length > 0 ? [`${open.length} material unresolved conflict(s).`] : []),
+          ...(cs.length > open.length ? [`${cs.length - open.length} conflict(s) resolved by a recorded human resolution.`] : []),
           ...(gs.length > 0 ? [`${gs.filter((g) => g.automaticFailure).length} missing-evidence gap(s), ${gs.filter((g) => g.humanDecisionRequired).length} verification gap(s).`] : []),
         ].join(" ");
     return {
@@ -617,16 +698,17 @@ export function evaluate(input: EvaluationInput): EvaluationOutcome {
       evidenceRequirementSpecId: specId,
       state,
       supportingEvidenceIds: [...(supporting.get(code) ?? [])].sort(),
-      conflictingEvidenceIds: [...new Set(cs.flatMap((c) => [c.evidenceAId, c.evidenceBId]))].sort(),
+      conflictingEvidenceIds: [...new Set(open.flatMap((c) => [c.evidenceAId, c.evidenceBId]))].sort(),
       gaps: gs,
       conflicts: cs,
       evaluationExplanation: `${code} is ${state}: ${detail}`,
-      humanDecisionRequired: state === "GAP_REQUIRES_HUMAN_DECISION" || adv.length > 0 || cs.length > 0,
+      humanDecisionRequired: state === "GAP_REQUIRES_HUMAN_DECISION" || adv.length > 0 || open.length > 0,
       noComplianceDetermination: true,
     };
   });
   const allGaps = requirementEvaluations.flatMap((r) => r.gaps);
   const allConflicts = requirementEvaluations.flatMap((r) => r.conflicts);
+  const unresolved = allConflicts.filter((c) => c.resolutionStatus === "UNRESOLVED");
   const states = requirementEvaluations.map((r) => r.state);
   const overallState: EvaluationOutcome["overallState"] = states.includes("CONFLICTING_EVIDENCE")
     ? "CONFLICTING_EVIDENCE"
@@ -643,7 +725,7 @@ export function evaluate(input: EvaluationInput): EvaluationOutcome {
     if (!steps.has(key)) steps.set(key, { priority, stepType, requirementCode, explanation });
   };
   for (const r of requirementEvaluations) {
-    for (const c of r.conflicts) step("BLOCKING", "RESOLVE_CONFLICT", r.requirementCode, `Resolve the conflict ${c.conflictKey} through a recorded human resolution.`);
+    for (const c of r.conflicts.filter((x) => x.resolutionStatus === "UNRESOLVED")) step("BLOCKING", "RESOLVE_CONFLICT", r.requirementCode, `Resolve the conflict ${c.conflictKey} through a recorded human resolution.`);
     if ((adverse.get(r.requirementCode) ?? []).length > 0) {
       step("BLOCKING", "HUMAN_DECISION_REQUIRED", r.requirementCode, "Admitted evidence reports deforestation or degradation after the cut-off; a human must examine the finding.");
     }
@@ -669,12 +751,15 @@ export function evaluate(input: EvaluationInput): EvaluationOutcome {
   for (const r of requirementEvaluations.filter((x) => x.state !== "SATISFIED" && x.state !== "NOT_APPLICABLE")) findings.push(r.evaluationExplanation);
   for (const g of allGaps.filter((x) => x.gapType === "TEMPORAL_INTERVAL_MISSING")) findings.push(`${g.explanation} Human review cannot remove this missing-evidence fact.`);
   for (const text of adverse.get("DEF-TEMPORAL-COVERAGE") ?? []) findings.push(text);
-  for (const c of allConflicts) findings.push(`Conflict ${c.conflictKey}: ${c.explanation}`);
+  for (const c of unresolved) findings.push(`Conflict ${c.conflictKey}: ${c.explanation}`);
+  const appliedResolutions: AppliedResolution[] = [...applied.values()]
+    .sort((a, b) => a.conflictKey.localeCompare(b.conflictKey))
+    .map((r) => ({ resolutionId: r.resolutionId, conflictKey: r.conflictKey, originEvaluationId: r.evaluationId, inapplicableEvidenceId: r.inapplicableEvidenceId, remainingLimitations: r.remainingLimitations }));
 
   return {
     overallState,
     hasEvidenceGaps: allGaps.length > 0,
-    hasMaterialUnresolvedConflicts: allConflicts.length > 0,
+    hasMaterialUnresolvedConflicts: unresolved.length > 0,
     requirementEvaluations,
     temporalCoverage,
     spatialCoverage,
@@ -683,5 +768,6 @@ export function evaluate(input: EvaluationInput): EvaluationOutcome {
     allConflicts,
     nextSteps,
     findings,
+    appliedResolutions,
   };
 }

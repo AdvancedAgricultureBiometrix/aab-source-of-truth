@@ -56,6 +56,10 @@ import cap06SufficiencyEvaluationResult from "./cap-06/sufficiency-evaluation-re
 import cap06SufficiencyEvaluationReceipt from "./cap-06/sufficiency-evaluation-receipt.schema.json" with { type: "json" };
 import cap06SufficiencyEvaluationResponse from "./cap-06/sufficiency-evaluation-response.schema.json" with { type: "json" };
 import cap06SufficiencyEvaluationParams from "./cap-06/sufficiency-evaluation-params.schema.json" with { type: "json" };
+import cap06ConflictResolutionRequest from "./cap-06/conflict-resolution-request.schema.json" with { type: "json" };
+import cap06ConflictResolutionRecord from "./cap-06/conflict-resolution-record.schema.json" with { type: "json" };
+import cap06ConflictResolutionReceipt from "./cap-06/conflict-resolution-receipt.schema.json" with { type: "json" };
+import cap06ConflictResolutionResponse from "./cap-06/conflict-resolution-response.schema.json" with { type: "json" };
 
 import { registerSchema, type JsonSchema } from "../foundation/validation.js";
 
@@ -110,6 +114,10 @@ export const SCHEMAS = {
   cap06SufficiencyEvaluationReceipt,
   cap06SufficiencyEvaluationResponse,
   cap06SufficiencyEvaluationParams,
+  cap06ConflictResolutionRequest,
+  cap06ConflictResolutionRecord,
+  cap06ConflictResolutionReceipt,
+  cap06ConflictResolutionResponse,
 } as const satisfies Record<string, JsonSchema>;
 
 for (const schema of Object.values(SCHEMAS)) registerSchema(schema);

@@ -1,6 +1,6 @@
 # SCS-CAP-06 — Due Diligence Sufficiency Evaluation
 
-**Status: `evaluateSufficiency` (`POST /scs/v1/sufficiency-evaluations`) and `getEvaluationResult` (`GET /scs/v1/sufficiency-evaluations/:evaluationId`) are implemented for the pilot (contract 0fd8c25 and 876fc80, "Evaluation rules for the pilot" and "The frozen input"). They cover the deforestation, plot, provenance and custody-chain dimensions. `submitConflictResolution` is not built yet, so every material conflict stays `UNRESOLVED`. `listEvaluationsForPlot` is deferred. `MINIMUM_VERTICAL_SLICE_PROVEN` (see below).**
+**Status: `evaluateSufficiency` (`POST /scs/v1/sufficiency-evaluations`) and `getEvaluationResult` (`GET /scs/v1/sufficiency-evaluations/:evaluationId`) are implemented for the pilot (contract 0fd8c25 and 876fc80, "Evaluation rules for the pilot" and "The frozen input"). They cover the deforestation, plot, provenance and custody-chain dimensions. `submitConflictResolution` (`POST /scs/v1/conflict-resolutions`) records a human resolution (contract e0b7634), which later evaluations apply. `listEvaluationsForPlot` is deferred. `MINIMUM_VERTICAL_SLICE_PROVEN` (see below).**
 
 - **The frozen input.** The route runs in one REPEATABLE READ transaction, so every read, including the idempotency lookup, sees one snapshot taken at `evidenceCutoffAt`. Nothing admitted after it can affect the result.
   - The manifest records every evaluated item's kind, identifier, version, content digest and admission time. It is the authoritative input.
@@ -45,7 +45,24 @@ This is what the `implementation/scs-vertical-proof` branch was built to prove. 
 - **The receipt is written atomically:** "receipt write fails → 500; the evaluation, its plots and its evidence rows are all absent".
 - **`getEvaluationResult` returns the result correctly:** "getEvaluationResult returns the recorded result exactly".
 
-SCS-CAP-03, SCS-CAP-04 and SCS-CAP-05 are re-assessed on the same standard, since their admitted records now feed an honest evaluation. That re-assessment is recorded in their READMEs when SCS-CAP-06 is complete (after `submitConflictResolution`).
+SCS-CAP-03, SCS-CAP-04 and SCS-CAP-05 are re-assessed on the same standard, since their admitted records now feed an honest evaluation. That re-assessment is recorded in their READMEs.
+
+## Conflict resolutions
+
+A conflict is resolved only by a human holding `CONFLICT_RESOLVER` (separate from `COMPLIANCE_OFFICER` and `VERIFICATION_OFFICER`) who did not submit either item in conflict. Each conflict key is resolved once, and the resolution is never changed; revising a resolution is a contract gap. The checks, in order:
+
+1. the role;
+2. the evaluation and the conflict under that key (a database trigger also requires the conflict to have been reported);
+3. independence from both items' submitters;
+4. once only;
+5. consistency: the compared items, the item found inapplicable, and the additional evidence.
+
+Recording a resolution never triggers an evaluation. The next evaluation reads resolutions in its snapshot and applies those whose key it finds:
+
+- **The conflict** becomes `MATERIAL_RESOLVED` and no longer makes its requirement conflicting.
+- **An item found inapplicable** is set aside for that requirement only; for a custody conflict, it leaves the chain, and an event that cites it shows a break. It stays in the frozen manifest.
+- **Everything else is evaluated normally.** An adverse finding that was not found inapplicable still makes the requirement `UNSATISFIED`: a human reconciling two sources cannot make detected deforestation disappear.
+- **Disclosure.** Every applied resolution is listed in `appliedResolutionIds`, part of the frozen input. It is disclosed in the explanation, naming the resolution and the evaluation where the conflict was first found, with its remaining limitations.
 
 ## Honest outcome and open items
 
@@ -54,7 +71,6 @@ SCS-CAP-03, SCS-CAP-04 and SCS-CAP-05 are re-assessed on the same standard, sinc
   - `EVIDENCE_INTEGRITY_FAILED`: stored files are not re-hashed;
   - `QUARANTINED_EVIDENCE_IN_SCOPE`: no quarantine operation exists;
   - `ACCESS_SCOPE_INVALID`: no tenants (`TODO(tenant-scope)`);
-  - the conflict-resolution codes, until `submitConflictResolution` is built.
 - **Test infrastructure gap.** No lifecycle endpoints exist yet. Tests set a SUPERSEDED framework by SQL as the owner.
 - **Contract gaps** (contract "Open gaps"):
   - undetected change between observations is not quantified;

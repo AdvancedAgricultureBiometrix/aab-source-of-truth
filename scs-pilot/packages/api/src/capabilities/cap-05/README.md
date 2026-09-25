@@ -1,6 +1,6 @@
 # SCS-CAP-05 — Supply Chain Custody Evidence Admission
 
-**Status: `submitCustodyEvent` (`POST /scs/v1/custody-events`) is implemented for the pilot (contract 7b4fc02 and 9845179, "Admission rules for the pilot"). `submitTransformationRecord` must be redefined before it is built. The reads and `quarantineCustodyEvent` are deferred. `MINIMUM_VERTICAL_SLICE_PROVEN` is not yet claimed for CAP-05: an admitted event proves nothing about a chain until SCS-CAP-06 evaluates the chain.**
+**Status: `submitCustodyEvent` (`POST /scs/v1/custody-events`) is implemented for the pilot (contract 7b4fc02 and 9845179, "Admission rules for the pilot"). `submitTransformationRecord` must be redefined before it is built. The reads and `quarantineCustodyEvent` are deferred. `MINIMUM_VERTICAL_SLICE_PROVEN` for CAP-05, on the adopted standard: admitted custody events feed an SCS-CAP-06 custody-chain evaluation that runs end to end, honestly, and reproducibly (`integration/cap-06-evaluate-sufficiency.test.ts`, "end to end over real admitted CAP-04 and CAP-05 records").**
 
 - **Failure checks,** in the contract's order. Each is FAIL_CLOSED and writes nothing:
   1. Authority: only `COMPLIANCE_OFFICER` (`SUBMITTER_NOT_AUTHORISED`). A mandate never authorises the submission.

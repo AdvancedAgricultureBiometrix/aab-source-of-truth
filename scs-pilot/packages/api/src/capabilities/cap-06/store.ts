@@ -332,6 +332,111 @@ export async function findAdmittedIds(tx: Tx, ids: readonly string[]): Promise<S
   return new Set(rows.map((r) => r.id));
 }
 
+// ── Conflict resolutions ────────────────────────────────────────────────────
+
+export interface ResolutionInput {
+  readonly resolutionId: string;
+  readonly conflictKey: string;
+  /** The evaluation in which the conflict was first found. */
+  readonly evaluationId: string;
+  readonly inapplicableEvidenceId: string | null;
+  readonly remainingLimitations: readonly string[];
+  readonly resolvedAt: string;
+}
+
+/** Every recorded resolution whose two items are both among `evidenceIds`, in key order. */
+export async function findResolutions(tx: Tx, evidenceIds: readonly string[]): Promise<ResolutionInput[]> {
+  if (evidenceIds.length === 0) return [];
+  const rows = await q<{
+    resolution_id: string; conflict_key: string; evaluation_id: string; inapplicable_evidence_id: string | null; remaining_limitations: string[]; resolved_at: Date;
+  }>(
+    tx,
+    `SELECT resolution_id, conflict_key, evaluation_id, inapplicable_evidence_id, remaining_limitations, resolved_at FROM scs.conflict_resolution
+      WHERE evidence_a_id = ANY($1::uuid[]) AND evidence_b_id = ANY($1::uuid[]) ORDER BY conflict_key`,
+    [evidenceIds],
+  );
+  return rows.map((r) => ({
+    resolutionId: r.resolution_id, conflictKey: r.conflict_key, evaluationId: r.evaluation_id, inapplicableEvidenceId: r.inapplicable_evidence_id,
+    remainingLimitations: r.remaining_limitations, resolvedAt: r.resolved_at.toISOString(),
+  }));
+}
+
+/** Serialise resolutions of the same conflict key until the transaction ends. */
+export async function lockConflictKey(tx: Tx, conflictKey: string): Promise<void> {
+  await q(tx, "SELECT pg_advisory_xact_lock(hashtextextended($1, 0))", [`scs-conflict-resolution\u001f${conflictKey}`]);
+}
+
+export interface ReportedConflict {
+  readonly requirementCode: string;
+  readonly evidenceAId: string;
+  readonly evidenceBId: string;
+}
+
+/** The evaluation's conflict under `conflictKey`: null when there is no such evaluation; { conflict: null } when it reported none under that key. */
+export async function findReportedConflict(tx: Tx, evaluationId: string, conflictKey: string): Promise<{ conflict: ReportedConflict | null } | null> {
+  const rows = await q<{ conflict: ReportedConflict | null }>(
+    tx,
+    `SELECT (SELECT c FROM jsonb_array_elements(e.result -> 'allConflicts') AS c WHERE c ->> 'conflictKey' = $2 LIMIT 1) AS conflict
+       FROM scs.sufficiency_evaluation e WHERE e.evaluation_id = $1`,
+    [evaluationId, conflictKey],
+  );
+  return rows[0] === undefined ? null : { conflict: rows[0].conflict };
+}
+
+/** The actorId that submitted each of `ids`, whether an SCS-CAP-04 record or an SCS-CAP-05 event. */
+export async function findSubmitters(tx: Tx, ids: readonly string[]): Promise<Map<string, string>> {
+  const rows = await q<{ id: string; actor_id: string }>(
+    tx,
+    `SELECT evidence_id AS id, submitted_by ->> 'actorId' AS actor_id FROM scs.deforestation_evidence_record WHERE evidence_id = ANY($1::uuid[])
+     UNION ALL SELECT event_id, submitted_by ->> 'actorId' FROM scs.custody_event WHERE event_id = ANY($1::uuid[])`,
+    [ids],
+  );
+  return new Map(rows.map((r) => [r.id, r.actor_id]));
+}
+
+/** The resolution already recorded for `conflictKey`, if any. */
+export async function findResolutionForKey(tx: Tx, conflictKey: string): Promise<string | null> {
+  const rows = await q<{ resolution_id: string }>(tx, `SELECT resolution_id FROM scs.conflict_resolution WHERE conflict_key = $1`, [conflictKey]);
+  return rows[0]?.resolution_id ?? null;
+}
+
+export interface NewResolution {
+  readonly conflictKey: string;
+  readonly requirementCode: string;
+  readonly evidenceAId: string;
+  readonly evidenceBId: string;
+  readonly evaluationId: string;
+  readonly comparedEvidenceIds: readonly string[];
+  readonly provenanceAndMethodsConsidered: string;
+  readonly resolutionReason: string;
+  readonly inapplicableEvidenceId: string | null;
+  readonly additionalEvidenceObtained: boolean;
+  readonly additionalEvidenceIds: readonly string[];
+  readonly remainingLimitations: readonly string[];
+  readonly reviewer: ActorReference;
+  readonly authorityBasis: string;
+  readonly reEvaluationRequired: boolean;
+}
+
+/** Insert the resolution; the database generates resolutionId. resolvedAt is the transaction time. */
+export async function insertResolution(tx: Tx, r: NewResolution): Promise<{ resolutionId: string; resolvedAt: string }> {
+  const rows = await q<{ resolution_id: string; resolved_at: Date }>(
+    tx,
+    `INSERT INTO scs.conflict_resolution (
+       conflict_key, requirement_code, evidence_a_id, evidence_b_id, evaluation_id, compared_evidence_ids, provenance_and_methods_considered,
+       resolution_reason, inapplicable_evidence_id, additional_evidence_obtained, additional_evidence_ids, remaining_limitations, reviewer,
+       authority_basis, resolved_at, re_evaluation_required
+     ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, now(), $15)
+     RETURNING resolution_id, resolved_at`,
+    [
+      r.conflictKey, r.requirementCode, r.evidenceAId, r.evidenceBId, r.evaluationId, r.comparedEvidenceIds, r.provenanceAndMethodsConsidered,
+      r.resolutionReason, r.inapplicableEvidenceId, r.additionalEvidenceObtained, r.additionalEvidenceIds, r.remainingLimitations, JSON.stringify(r.reviewer),
+      r.authorityBasis, r.reEvaluationRequired,
+    ],
+  );
+  return { resolutionId: rows[0]!.resolution_id, resolvedAt: rows[0]!.resolved_at.toISOString() };
+}
+
 // ── Evaluations ─────────────────────────────────────────────────────────────
 
 export async function findEvaluationSubject(tx: Tx, evaluationId: string): Promise<{ subjectKey: string } | null> {
@@ -389,6 +494,9 @@ export async function insertEvaluation(
   );
   for (const p of e.plots) {
     await q(tx, `INSERT INTO scs.sufficiency_evaluation_plot (evaluation_id, plot_id, plot_version) VALUES ($1, $2, $3)`, [r.evaluationId, p.plotId, p.plotVersion]);
+  }
+  for (const resolutionId of r.evaluatedEvidence.appliedResolutionIds) {
+    await q(tx, `INSERT INTO scs.sufficiency_evaluation_resolution (evaluation_id, resolution_id) VALUES ($1, $2)`, [r.evaluationId, resolutionId]);
   }
   for (const m of r.evaluatedEvidence.manifest) {
     await q(

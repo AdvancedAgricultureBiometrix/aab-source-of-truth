@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:aab:scs:schema:cap-06:sufficiency-evaluation-result:1",
   "title": "ScsSufficiencyEvaluationResult",
-  "description": "SCS-CAP-06 ScsSufficiencyEvaluationResult (contract 0fd8c25, 876fc80). Advisory only: SUFFICIENT means sufficient under the evaluated specification, never legally compliant. A recorded result is never FAIL_CLOSED.",
+  "description": "SCS-CAP-06 ScsSufficiencyEvaluationResult (contract 0fd8c25, 876fc80, e0b7634). Advisory only: SUFFICIENT means sufficient under the evaluated specification, never legally compliant. A recorded result is never FAIL_CLOSED.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -447,7 +447,8 @@
       "required": [
         "deforestationEvidenceIds",
         "custodyEventIds",
-        "manifest"
+        "manifest",
+        "appliedResolutionIds"
       ],
       "properties": {
         "deforestationEvidenceIds": {
@@ -505,6 +506,16 @@
                 "format": "date-time"
               }
             }
+          }
+        },
+        "appliedResolutionIds": {
+          "description": "The conflict resolutions this evaluation applied: part of its frozen input.",
+          "type": "array",
+          "maxItems": 1000,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "format": "uuid"
           }
         }
       }

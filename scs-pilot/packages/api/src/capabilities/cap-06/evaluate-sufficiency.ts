@@ -21,8 +21,12 @@
 //                      the same subject (EVALUATION_NOT_FOUND,
 //                      PREVIOUS_EVALUATION_NOT_SAME_SUBJECT); a repeated
 //                      evaluation is noted, never blocked
-//   6. manifest      — kind, id, version, content digest, admission time
-//   7. evaluation    — evaluate.ts, a pure function: no further reads
+//   6. manifest      — kind, id, version, content digest, admission time; the
+//                      conflict resolutions recorded for items in scope are
+//                      read in the same snapshot (contract e0b7634)
+//   7. evaluation    — evaluate.ts, a pure function: no further reads. The
+//                      resolutions it applies are the evaluation's
+//                      appliedResolutionIds, each disclosed in its explanation
 //   8. writes        — the evaluation, its plots, its evidence rows and the
 //                      receipt (SUFFICIENCY_EVALUATION), then commit
 //
@@ -53,6 +57,7 @@ import {
   findParty,
   findPlots,
   findRepeatedEvaluation,
+  findResolutions,
   findVerifiedParties,
   insertEvaluation,
   transactionStart,
@@ -193,6 +198,7 @@ export async function evaluateSufficiency(ctx: RouteContext<ScsSufficiencyEvalua
     ]),
   ].sort();
   const verified = [...(await findVerifiedParties(tx, partyIds))].sort();
+  const resolutions = await findResolutions(tx, [...scope]);
 
   // 7. Evaluation over the frozen input only
   const orderedPlots = [...subject.plotIds].sort().map((id) => plots.get(id)!);
@@ -207,6 +213,7 @@ export async function evaluateSufficiency(ctx: RouteContext<ScsSufficiencyEvalua
     assessmentType: period.assessmentType,
     batchIdentifiers: batches,
     operatorPartyId: operator,
+    resolutions,
   });
 
   const omitted = ["TEMPORAL_COVERAGE", "SPATIAL_COVERAGE", "REQUIREMENT_BY_REQUIREMENT", "CONFLICT_DETECTION", "GAP_IDENTIFICATION", "PROVENANCE_AND_AUTHORITY", "CUSTODY_CHAIN"].filter(
@@ -224,6 +231,12 @@ export async function evaluateSufficiency(ctx: RouteContext<ScsSufficiencyEvalua
     `Every dimension was evaluated. requestedAnalysis is recorded as asked${omitted.length > 0 ? ` (it omits ${omitted.join(", ")})` : ""}, but it never narrows the evaluation.`,
     ...(repeated === null ? [] : [`An evaluation of this subject for the same period and assessment type already exists (${repeated.evaluationId}, evaluated at ${repeated.evaluatedAt}); this evaluation is recorded as well.`]),
     ...(req.previousEvaluationId === undefined ? [] : [`This is a re-evaluation of ${req.previousEvaluationId}, which is unchanged.`]),
+    ...outcome.appliedResolutions.map(
+      (r) =>
+        `Applied conflict resolution ${r.resolutionId} to conflict ${r.conflictKey}, first found in evaluation ${r.originEvaluationId}: ` +
+        (r.inapplicableEvidenceId === null ? "neither item was found inapplicable, so both stand." : `${r.inapplicableEvidenceId} was found inapplicable and is set aside for that requirement.`) +
+        (r.remainingLimitations.length > 0 ? ` Remaining limitations: ${r.remainingLimitations.join("; ")}` : ""),
+    ),
     "This result is advisory only: SUFFICIENT would mean sufficient under the evaluated specification, never legally compliant. Human review through SCS-CAP-09 is always required.",
   ];
 
@@ -250,6 +263,7 @@ export async function evaluateSufficiency(ctx: RouteContext<ScsSufficiencyEvalua
       deforestationEvidenceIds: deforestation.map((r) => r.evidenceId),
       custodyEventIds: custody.map((e) => e.eventId),
       manifest,
+      appliedResolutionIds: outcome.appliedResolutions.map((r) => r.resolutionId),
     },
     ...(req.previousEvaluationId === undefined ? {} : { previousEvaluationId: req.previousEvaluationId }),
     overallState: outcome.overallState,

@@ -1,6 +1,6 @@
 # SCS-CAP-04 — Deforestation Evidence Admission
 
-**Status: `submitEvidence` (`POST /scs/v1/deforestation-evidence`) is implemented for the pilot (contract 5c6a263, "Admission rules for the pilot"). `quarantineEvidence` is not yet specified as a request and decision. The reads are deferred. `MINIMUM_VERTICAL_SLICE_PROVEN` is not yet claimed for CAP-04: admitted evidence proves nothing until SCS-CAP-06 evaluates it.**
+**Status: `submitEvidence` (`POST /scs/v1/deforestation-evidence`) is implemented for the pilot (contract 5c6a263, "Admission rules for the pilot"). `quarantineEvidence` is not yet specified as a request and decision. The reads are deferred. `MINIMUM_VERTICAL_SLICE_PROVEN` for CAP-04, on the adopted standard: admitted deforestation evidence feeds an SCS-CAP-06 evaluation that runs end to end, honestly, and reproducibly (`integration/cap-06-evaluate-sufficiency.test.ts`, "end to end over real admitted CAP-04 and CAP-05 records"). Spatial coverage is still not verified (TODO(postgis)), which the evaluation discloses.**
 
 - **Failure checks,** in the contract's order. Each is FAIL_CLOSED and writes nothing:
   1. Authority: only `COMPLIANCE_OFFICER` (`SUBMITTER_NOT_AUTHORISED`).

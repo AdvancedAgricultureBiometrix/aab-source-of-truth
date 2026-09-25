@@ -12,8 +12,9 @@
 //                                  admission (contract gap)
 //   QUARANTINED_EVIDENCE_IN_SCOPE — no quarantine operation exists yet
 //   ACCESS_SCOPE_INVALID         — no tenants in the pilot (TODO(tenant-scope))
-//   CONFLICT_NOT_FOUND, RESOLVER_NOT_AUTHORISED, RESOLUTION_INCOMPLETE —
-//                                  submitConflictResolution is not built yet
+// A missing field of a conflict resolution is refused by the request schema
+// (REQUEST_VALIDATION_FAILED); RESOLUTION_INCOMPLETE covers the cross-field
+// checks (compared items, inapplicable item, additional evidence).
 
 import { ScsFailure } from "../../foundation/errors.js";
 
@@ -36,6 +37,7 @@ export const CAP06_FAILURES = {
   EVALUATION_NOT_FOUND: 404,
   PREVIOUS_EVALUATION_NOT_SAME_SUBJECT: 422,
   CONFLICT_NOT_FOUND: 404,
+  CONFLICT_ALREADY_RESOLVED: 409,
   RESOLVER_NOT_AUTHORISED: 403,
   RESOLUTION_INCOMPLETE: 400,
   DEPENDENCY_UNAVAILABLE: 503,

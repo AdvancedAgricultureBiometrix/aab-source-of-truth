@@ -7,6 +7,10 @@
  *   src/schemas/cap-06/sufficiency-evaluation-receipt.schema.json
  *   src/schemas/cap-06/sufficiency-evaluation-response.schema.json
  *   src/schemas/cap-06/sufficiency-evaluation-params.schema.json
+ *   src/schemas/cap-06/conflict-resolution-request.schema.json
+ *   src/schemas/cap-06/conflict-resolution-record.schema.json
+ *   src/schemas/cap-06/conflict-resolution-receipt.schema.json
+ *   src/schemas/cap-06/conflict-resolution-response.schema.json
  * To change these types, edit the schema(s) above, then run:
  *   npm run generate:types
  * npm test fails if this file differs from what the schemas generate.
@@ -78,7 +82,7 @@ export interface ScsSufficiencyEvidenceScopeInput {
 }
 
 /**
- * SCS-CAP-06 ScsSufficiencyEvaluationResult (contract 0fd8c25, 876fc80). Advisory only: SUFFICIENT means sufficient under the evaluated specification, never legally compliant. A recorded result is never FAIL_CLOSED.
+ * SCS-CAP-06 ScsSufficiencyEvaluationResult (contract 0fd8c25, 876fc80, e0b7634). Advisory only: SUFFICIENT means sufficient under the evaluated specification, never legally compliant. A recorded result is never FAIL_CLOSED.
  */
 export interface ScsSufficiencyEvaluationResult {
   evaluationId: string;
@@ -172,6 +176,12 @@ export interface ScsEvaluatedEvidence {
    * @maxItems 10000
    */
   manifest: ScsEvidenceManifestEntry[];
+  /**
+   * The conflict resolutions this evaluation applied: part of its frozen input.
+   *
+   * @maxItems 1000
+   */
+  appliedResolutionIds: string[];
 }
 export interface ScsEvidenceManifestEntry {
   kind: "DEFORESTATION" | "CUSTODY";
@@ -520,4 +530,102 @@ export interface ScsSufficiencyEvaluationResponse {
  */
 export interface ScsSufficiencyEvaluationPathParams {
   evaluationId: string;
+}
+
+/**
+ * SCS-CAP-06 ScsConflictResolutionSubmission (contract e0b7634). The system sets resolutionId, reviewer (the submitting actor) and resolvedAt. Every field but inapplicableEvidenceId is required here; the cross-field checks are the capability's (RESOLUTION_INCOMPLETE).
+ */
+export interface ScsConflictResolutionSubmission {
+  /**
+   * requirementCode:evidenceAId:evidenceBId, the ids in sorted order.
+   */
+  conflictKey: string;
+  evaluationId: string;
+  /**
+   * @minItems 1
+   * @maxItems 2
+   */
+  comparedEvidenceIds: string[];
+  provenanceAndMethodsConsidered: string;
+  resolutionReason: string;
+  inapplicableEvidenceId?: string;
+  additionalEvidenceObtained: boolean;
+  /**
+   * @maxItems 100
+   */
+  additionalEvidenceIds: string[];
+  /**
+   * @maxItems 100
+   */
+  remainingLimitations: string[];
+  authorityBasis: string;
+  reEvaluationRequired: boolean;
+}
+
+/**
+ * SCS-CAP-06 ScsConflictResolutionRecord (contract e0b7634): a human resolution of one conflict key, recorded once and never changed. CAP-06 never creates one.
+ */
+export interface ScsConflictResolutionRecord {
+  resolutionId: string;
+  /**
+   * requirementCode:evidenceAId:evidenceBId, the ids in sorted order.
+   */
+  conflictKey: string;
+  evaluationId: string;
+  /**
+   * @minItems 1
+   * @maxItems 2
+   */
+  comparedEvidenceIds: string[];
+  provenanceAndMethodsConsidered: string;
+  resolutionReason: string;
+  inapplicableEvidenceId?: string;
+  additionalEvidenceObtained: boolean;
+  /**
+   * @maxItems 100
+   */
+  additionalEvidenceIds: string[];
+  /**
+   * @maxItems 100
+   */
+  remainingLimitations: string[];
+  authorityBasis: string;
+  reEvaluationRequired: boolean;
+  reviewer: ActorReference;
+  resolvedAt: string;
+}
+
+/**
+ * Immutable receipt for an SCS-CAP-06 conflict resolution, written in the same transaction as the resolution (foundation/receipts.ts). Its SHA-256 over canonical JSON is returned alongside it as receiptDigest.
+ */
+export interface ScsConflictResolutionReceipt {
+  receiptId: string;
+  receiptVersion: "1";
+  capabilityId: "SCS-CAP-06";
+  decisionType: "CONFLICT_RESOLUTION";
+  /**
+   * resolutionId of the recorded resolution.
+   */
+  subjectId: string;
+  correlationId: string;
+  /**
+   * SHA-256 (hex) of the canonical request: method, route and body.
+   */
+  requestDigest: string;
+  idempotencyKey: string | null;
+  issuedAt: string;
+  /**
+   * The authenticated actor whose request produced this decision.
+   */
+  issuedFor: ActorReference;
+  decision: ScsConflictResolutionRecord;
+}
+
+/**
+ * Body of a successful POST /scs/v1/conflict-resolutions (201): the resolution record (as decision), the immutable receipt that records it, and the receipt's SHA-256 over canonical JSON.
+ */
+export interface ScsConflictResolutionResponse {
+  decision: ScsConflictResolutionRecord;
+  receipt: ScsConflictResolutionReceipt;
+  receiptDigest: string;
 }
