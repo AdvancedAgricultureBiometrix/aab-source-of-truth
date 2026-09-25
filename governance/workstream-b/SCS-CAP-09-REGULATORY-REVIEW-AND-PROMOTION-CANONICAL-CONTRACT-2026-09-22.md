@@ -150,7 +150,7 @@ sequenceDiagram
     CAP09->>CAP09: Validate decision completeness
     CAP09->>CAP09: Record outcome, reasoning, timestamp, reviewer identity
     CAP09->>CAP09: Bind decision immutably to evaluationId
-    CAP09->>Store: Write ScsRegulatoryReviewDecision (currencyStatus: CURRENT)
+    CAP09->>Store: Write ScsRegulatoryReviewDecision (currency derived when decided)
     CAP09-->>CO: ScsReviewDecisionRecord
 
     Note over CO,Store: Decision is permanent from this moment.<br/>currencyStatus changes only when the<br/>evidence landscape changes after this point.
@@ -310,6 +310,8 @@ The earlier decision's `currencyStatus` is updated to `SUPERSEDED`. Its
 interface ScsDecisionCurrencyAssessment {
   decisionId: string;
   assessedAt: string;
+  // Who requested the assessment: every recorded assessment is attributable
+  assessedBy: ActorReference;
   currencyStatus: ScsDecisionCurrencyStatus;
 
   // What was checked
@@ -472,7 +474,7 @@ whenever the decision is read (`getDecision`) or assessed (`assessCurrency`). On
 | Change | Checked how | Pilot |
 |---|---|---|
 | `NEW_EVIDENCE_ADMITTED` | an admitted record in the evaluation's scope that is not in its manifest (a set comparison, correct under concurrency) | checked |
-| `CONFLICT_RESOLUTION_ADDED_OR_WITHDRAWN` | a conflict resolution for items in scope that the evaluation did not apply | checked for added; none can be withdrawn |
+| `CONFLICT_RESOLUTION_ADDED_OR_WITHDRAWN` | a conflict resolution for a conflict the evaluation reported that the evaluation did not apply (see "The conflict-resolution check") | checked for added; none can be withdrawn |
 | `CAP06_EVALUATION_SUPERSEDED` | a later evaluation of the same subject | checked |
 | `EVIDENCE_WITHDRAWN_OR_QUARANTINED`, `EVIDENCE_RECLASSIFIED`, `PLOT_IDENTITY_CHANGED`, `PLOT_BOUNDARY_CHANGED`, `TENURE_RECORD_CHANGED`, `REGISTRY_VERIFICATION_CHANGED`, `FRAMEWORK_VERSION_CHANGED`, `EVIDENCE_INTEGRITY_CHALLENGED` | no operation can cause them yet | `UNCHANGED`, with a note saying so |
 
@@ -486,6 +488,19 @@ whenever the decision is read (`getDecision`) or assessed (`assessCurrency`). On
 
 Currency is advisory. It never revokes a decision. SCS-CAP-08 compiles only from a `CURRENT`
 decision.
+
+**A decision stale from the start.** Currency is derived when the decision is recorded, too. A
+decision may therefore be recorded as `POTENTIALLY_STALE` when evidence was admitted after the
+evaluation but before the decision. This is disclosed in the decision and its receipt
+(`stalenessReasons`), never a refusal: the reviewer decided on what they reviewed, and the
+staleness is a fact about the landscape now, not an invalidation of the review. Refusing it
+would let any evidence admitted while a reviewer deliberates block the decision indefinitely.
+
+**Reading and assessing.** A `REGULATORY_REVIEWER` or a `COMPLIANCE_OFFICER` may read a decision
+(`getDecision`) or record a currency assessment (`assessCurrency`); any other actor is
+`REVIEWER_NOT_AUTHORISED`. An unknown decision is `DECISION_NOT_FOUND`. Every recorded assessment
+names the actor who requested it (`assessedBy`). An assessment is not a decision, so it has no
+receipt.
 
 ### Submission request
 
@@ -536,6 +551,19 @@ recorded as declared.
 **Contract gap: staleness triggers with no operation.** Evidence withdrawal, quarantine and
 reclassification, plot and tenure changes, framework version changes and integrity challenges
 have no operation yet, so they cannot occur and are reported as unchanged.
+
+**Contract gap: an unavailable check.** A check is `UNAVAILABLE` when it cannot be performed.
+In the pilot every check reads the same database in one snapshot, and a failed read fails the
+whole request (`DEPENDENCY_UNAVAILABLE`), so no check is reported as `UNAVAILABLE` and
+`FAIL_CLOSED` currency is not produced. It is recorded, not produced.
+
+**Decision: the conflict-resolution check.** `CONFLICT_RESOLUTION_ADDED_OR_WITHDRAWN` reports
+a conflict resolution recorded for a conflict the evaluation reported, which the evaluation did
+not apply. SCS-CAP-06 applies every resolution visible to it for a conflict it reports, so such
+a resolution was recorded after the evaluation. A resolution for items in scope whose conflict
+the evaluation did not report is not reported: it could not have changed the result, and
+reporting it would be dishonest. This is a deliberate interpretation, not an open question. The
+check is a set comparison, so it is correct under concurrency.
 
 **Contract gap: package inputs.** `ScsPackageCompilationInputs` is not defined; SCS-CAP-08
 defines it.
@@ -606,6 +634,8 @@ interface ScsRegulatoryReviewFailure {
     // reviewerOrganizationId is not a registered, non-retired party
     | "REVIEWER_ORGANIZATION_NOT_FOUND"
     | "EVALUATION_NOT_FOUND"
+    // getDecision or assessCurrency: no decision is recorded with that id
+    | "DECISION_NOT_FOUND"
     | "EVALUATION_ALREADY_SUPERSEDED"
     // The stored result no longer matches its receipt (tampering or corruption)
     | "EVALUATION_INTEGRITY_FAILED"
