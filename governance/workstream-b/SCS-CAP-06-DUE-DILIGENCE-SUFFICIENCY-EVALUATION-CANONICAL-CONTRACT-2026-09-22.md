@@ -480,10 +480,20 @@ interface ScsSufficiencyEvaluationResult {
     assessmentType: string;
   };
 
-  // The frozen input: exactly the admitted records evaluated
+  // The frozen input: exactly the admitted records evaluated. The
+  // evaluation reads its evidence in one snapshot taken at evidenceCutoffAt;
+  // the manifest, not the cut-off time, is the authoritative input
+  evidenceCutoffAt: string;
   evaluatedEvidence: {
     deforestationEvidenceIds: string[];
     custodyEventIds: string[];
+    manifest: Array<{
+      kind: "DEFORESTATION" | "CUSTODY";
+      evidenceId: string;
+      version: number;
+      contentDigest: string;
+      admittedAt: string;
+    }>;
   };
 
   // The evaluation this one follows, for a re-evaluation
@@ -642,7 +652,10 @@ its outcome, with every gap and conflict disclosed.
   `evaluationId`, `evaluatedAt` and `evaluatorVersion` (the constant `scs-cap06-pilot-1`).
 - `requestReEvaluation` is an ordinary evaluation that cites `previousEvaluationId`. It
   produces a new evaluation and never changes the earlier one. The cited evaluation must exist
-  and concern the same subject (below).
+  (`EVALUATION_NOT_FOUND`) and concern the same subject (`PREVIOUS_EVALUATION_NOT_SAME_SUBJECT`).
+- **Repeated evaluations.** When an evaluation of the same subject for the same period and
+  assessment type already exists, the new evaluation is still recorded; its explanation names
+  the earlier one. Repetition is disclosed, never blocked.
 
 ### Framework and specification
 
@@ -926,12 +939,34 @@ interface ScsConflictResolutionRecord {
 - **Build order.** `submitConflictResolution` is built after `evaluateSufficiency`. Until it
   exists, every material conflict is `UNRESOLVED`.
 
+### The frozen input
+
+An evaluation reads everything it evaluates in one consistent snapshot, and then evaluates only
+what it read:
+
+1. The requester's authority is checked, and the request is validated: the period, the
+   framework and specification, the plots and the custody subject.
+2. One repeatable-read transaction is opened. `evidenceCutoffAt` is its start time. Nothing
+   admitted after the snapshot is taken can affect the evaluation.
+3. The framework, the specification, the plots and all evidence in scope are read in that
+   snapshot.
+4. The `subject_key` is computed, and an earlier evaluation of the same subject and period is
+   noted (not blocked).
+5. The manifest is built: every evidence item's kind, identifier, version, content digest and
+   admission time.
+6. The evaluation runs over the manifest only, with no further reads. Given the same manifest,
+   it produces the same requirement evaluations, gaps, conflicts and next steps: gap and
+   conflict identifiers are derived from their content, not generated at random.
+7. The result, its plots, its evidence rows and its receipt are written, and the transaction
+   commits.
+
 ### Persistence
 
 - An evaluation is recorded immutably, with its full result, the plots it covers and the
   frozen evidence it evaluated, and its receipt (`SUFFICIENCY_EVALUATION`) is written in the
   same transaction.
-- `getEvaluationResult` returns a recorded evaluation exactly as recorded.
+- `getEvaluationResult` returns a recorded evaluation exactly as recorded, to a
+  `COMPLIANCE_OFFICER`. An unknown identifier is `EVALUATION_NOT_FOUND`.
   `listEvaluationsForPlot` returns a plot's evaluations, most recent first.
 
 ### Submission request
@@ -1037,6 +1072,10 @@ interface ScsSufficiencyEvaluationFailure {
     // or an operator that is not a registered party
     | "BATCH_NOT_FOUND"
     | "OPERATOR_PARTY_NOT_FOUND"
+    // getEvaluationResult, or a previousEvaluationId that names no evaluation
+    | "EVALUATION_NOT_FOUND"
+    // A previousEvaluationId that names an evaluation of another subject
+    | "PREVIOUS_EVALUATION_NOT_SAME_SUBJECT"
     // submitConflictResolution only
     | "CONFLICT_NOT_FOUND"
     | "RESOLVER_NOT_AUTHORISED"
