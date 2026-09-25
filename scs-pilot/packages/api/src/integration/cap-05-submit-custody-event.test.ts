@@ -3,7 +3,7 @@
 // connected as a restricted member of scs_api. Parties, verifications,
 // relationships, mandates, frameworks and plots are registered through their
 // own endpoints. Stored documents are inserted as SCS-PLATFORM-01 rows
-// directly: CAP-05 reads the row, never the object store, so no MinIO is
+// directly: CAP-05 reads the row, never the object store, so no object store is
 // needed here. Lifecycle states no endpoint can reach yet (a RETIRED plot or
 // party, a SUPERSEDED framework, a REVOKED mandate) are set by SQL as the
 // owner.

@@ -7,7 +7,7 @@ on:
     branches: [main]
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     services:
       postgres:
         image: postgres:17-alpine
@@ -27,17 +27,20 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      # MinIO for the evidence object store tests. Started as a step, not a
-      # service container: a service cannot be given a command ("server /data").
-      - name: Start MinIO
+      # SeaweedFS (S3-compatible) for the evidence object store tests, pinned
+      # to a release tag, the same as docker-compose.yml. Started as a step,
+      # not a service container: a service cannot be given a command. The S3
+      # identity is a throwaway one for this job.
+      - name: Start SeaweedFS
         run: |
-          docker run -d --name minio -p 9000:9000 -e MINIO_ROOT_USER=minioadmin -e MINIO_ROOT_PASSWORD=minioadmin quay.io/minio/minio:latest server /data
+          docker run -d --name seaweedfs -p 8333:8333 --entrypoint sh chrislusf/seaweedfs:4.47 -c \
+            'printf "{\"identities\":[{\"name\":\"scs-ci\",\"credentials\":[{\"accessKey\":\"scs-ci\",\"secretKey\":\"scs-ci-secret-key\"}],\"actions\":[\"Admin\",\"Read\",\"Write\",\"List\",\"Tagging\"]}]}" > /tmp/s3.json && exec weed server -dir=/data -s3 -s3.port=8333 -s3.config=/tmp/s3.json -master.volumeSizeLimitMB=64'
           for i in $(seq 1 30); do
-            curl -fsS http://localhost:9000/minio/health/live && exit 0
+            curl -fsS http://localhost:8333/healthz && exit 0
             sleep 2
           done
-          echo "MinIO did not become healthy" >&2
-          docker logs minio >&2
+          echo "SeaweedFS did not become healthy" >&2
+          docker logs seaweedfs >&2
           exit 1
       - run: npm ci
         working-directory: scs-pilot/packages/api
@@ -45,6 +48,6 @@ jobs:
         working-directory: scs-pilot/packages/api
         env:
           SCS_TEST_ADMIN_DATABASE_URL: postgres://postgres:postgres@localhost:5432/scs_test
-          SCS_TEST_S3_ENDPOINT: http://localhost:9000
-          SCS_TEST_S3_ACCESS_KEY_ID: minioadmin
-          SCS_TEST_S3_SECRET_ACCESS_KEY: minioadmin
+          SCS_TEST_S3_ENDPOINT: http://localhost:8333
+          SCS_TEST_S3_ACCESS_KEY_ID: scs-ci
+          SCS_TEST_S3_SECRET_ACCESS_KEY: scs-ci-secret-key

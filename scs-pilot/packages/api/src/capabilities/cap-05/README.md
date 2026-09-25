@@ -31,7 +31,7 @@
 ## Open items
 
 - **Chain sufficiency belongs to SCS-CAP-06.** CAP-05 records events, never chains. CAP-06's contract must first define a custody-chain dimension, with the batch and operator in its request subject.
-- **`TODO(object-store-credentials)`** (see `platform/evidence-objects/object-store.ts`). The pilot stack gives the API the MinIO root credentials. Before any real data is stored, the API needs a dedicated user that can only put and read objects, and object locking must be enabled.
+- **`TODO(object-store-credentials)`** (see `platform/evidence-objects/object-store.ts`). The pilot stack gives the API an S3 identity with admin rights on the SeaweedFS store. Before any real data is stored, the API needs a dedicated identity that can only put and read objects, with object locking or an equivalent retention guarantee.
 - **Test infrastructure gap.** No lifecycle endpoints exist yet: no party or plot retirement, no framework supersession, no mandate revocation. So `cap-05-submit-custody-event.test.ts` sets those states directly with SQL as the database owner. When those endpoints exist, the tests should use them instead.
 - **Contract gaps** (contract "Open gaps"):
   - the actor-to-party link, which would let a mandate authorise a submission;

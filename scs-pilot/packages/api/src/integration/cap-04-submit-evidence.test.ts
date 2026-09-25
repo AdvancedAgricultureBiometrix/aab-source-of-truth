@@ -3,7 +3,7 @@
 // migration), the API connected as a restricted member of scs_api. Parties,
 // frameworks and plots are registered through their own endpoints. Stored
 // evidence objects are inserted as SCS-PLATFORM-01 rows directly: CAP-04
-// reads the row, never the object store, so no MinIO is needed here.
+// reads the row, never the object store, so no object store is needed here.
 
 import { after, before, test } from "node:test";
 import assert from "node:assert/strict";

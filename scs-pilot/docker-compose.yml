@@ -9,9 +9,13 @@
 #             each one (scs_migration.applied_migration), then sets the scs_api
 #             password from SCS_API_DB_PASSWORD. Idempotent; exits non-zero on
 #             any failure, and the api does not start (src/migrations/runner.ts)
-# minio     — S3-compatible object storage: the evidence object store
+# seaweedfs — S3-compatible object storage: the evidence object store
 #             (SCS-PLATFORM-01). The api stores evidence files there under
-#             their SHA-256, never overwriting; it creates the bucket at startup
+#             their SHA-256, never overwriting (conditional PUT, If-None-Match);
+#             it creates the bucket at startup. Pinned to a release tag: an
+#             unpinned "latest" image is how the MinIO image broke. Its S3
+#             identity file is written from .env at container start, so no
+#             credentials are committed
 # api       — Node service; connects as the restricted role scs_api only and
 #             refuses to start if that role owns scs objects, is a superuser
 #             or can bypass row-level security
@@ -66,20 +70,24 @@ services:
       postgres:
         condition: service_healthy
 
-  minio:
-    image: quay.io/minio/minio:latest
+  seaweedfs:
+    image: chrislusf/seaweedfs:4.47
     restart: unless-stopped
-    command: server /data --console-address ":9001"
+    entrypoint: ["sh", "-c"]
+    command:
+      - >-
+        printf '{"identities":[{"name":"scs-api","credentials":[{"accessKey":"%s","secretKey":"%s"}],"actions":["Admin","Read","Write","List","Tagging"]}]}'
+        "$$S3_ACCESS_KEY_ID" "$$S3_SECRET_ACCESS_KEY" > /tmp/s3.json
+        && exec weed server -dir=/data -s3 -s3.port=8333 -s3.config=/tmp/s3.json -master.volumeSizeLimitMB=64
     environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?set MINIO_ROOT_USER in .env}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?set MINIO_ROOT_PASSWORD in .env}
+      S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID:?set S3_ACCESS_KEY_ID in .env}
+      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY:?set S3_SECRET_ACCESS_KEY in .env}
     ports:
-      - "127.0.0.1:${MINIO_API_PORT:-9000}:9000"
-      - "127.0.0.1:${MINIO_CONSOLE_PORT:-9001}:9001"
+      - "127.0.0.1:${S3_PORT:-9000}:8333"
     volumes:
-      - minio-data:/data
+      - seaweedfs-data:/data
     healthcheck:
-      test: ["CMD-SHELL", "curl -fsS http://localhost:9000/minio/health/live || exit 1"]
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8333/healthz || exit 1"]
       interval: 10s
       timeout: 3s
       retries: 10
@@ -97,10 +105,10 @@ services:
       SCS_DB_USER: scs_api
       SCS_DB_PASSWORD: ${SCS_API_DB_PASSWORD}
       SCS_AUTH_STATIC_ACTORS_FILE: /app/config/static-actors.json
-      S3_ENDPOINT: http://minio:9000
+      S3_ENDPOINT: http://seaweedfs:8333
       S3_BUCKET: ${S3_BUCKET:-scs-evidence}
-      S3_ACCESS_KEY_ID: ${MINIO_ROOT_USER}
-      S3_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD}
+      S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID}
+      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY}
     ports:
       - "127.0.0.1:${API_PORT:-3000}:${API_PORT:-3000}"
     volumes:
@@ -109,10 +117,10 @@ services:
     depends_on:
       migrate:
         condition: service_completed_successfully
-      minio:
+      seaweedfs:
         condition: service_healthy
 
 volumes:
   postgres-data:
-  minio-data:
+  seaweedfs-data:
   api-node-modules:

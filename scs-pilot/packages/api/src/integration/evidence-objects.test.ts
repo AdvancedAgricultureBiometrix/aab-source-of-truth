@@ -1,6 +1,6 @@
 // SCS-PLATFORM-01 POST /scs/v1/evidence-objects, end to end: real HTTP, real
 // PostgreSQL (the API as a restricted member of scs_api) and a real
-// S3-compatible object store (MinIO), in a throwaway bucket.
+// S3-compatible object store (SeaweedFS in the pilot), in a throwaway bucket.
 //
 // Needs SCS_TEST_S3_ENDPOINT, SCS_TEST_S3_ACCESS_KEY_ID and
 // SCS_TEST_S3_SECRET_ACCESS_KEY for a DISPOSABLE object store (the tests
@@ -37,7 +37,7 @@ function s3TestConfig(bucket: string): ObjectStoreConfig {
   const need = (name: string) => {
     const v = process.env[name];
     if (v === undefined || v.trim() === "") {
-      throw new Error(`${name} is not set. The evidence object tests need a DISPOSABLE S3-compatible store (MinIO), e.g. SCS_TEST_S3_ENDPOINT=http://127.0.0.1:9000.`);
+      throw new Error(`${name} is not set. The evidence object tests need a DISPOSABLE S3-compatible store (SeaweedFS), e.g. SCS_TEST_S3_ENDPOINT=http://127.0.0.1:9000.`);
     }
     return v;
   };

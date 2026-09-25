@@ -1,5 +1,6 @@
 // SCS-PLATFORM-01 object store client: where evidence file bytes live
-// (MinIO in the pilot stack; any S3-compatible store).
+// (SeaweedFS in the pilot stack; any S3-compatible store that honours
+// conditional writes).
 //
 // Objects are stored under their SHA-256 and never overwritten: every write
 // is conditional (If-None-Match: *), so an existing object is left exactly as
@@ -8,10 +9,10 @@
 // Any failure to reach the store is DEPENDENCY_UNAVAILABLE (503), so the
 // upload fails closed and writes nothing to the database.
 //
-// TODO(object-store-credentials): the pilot stack gives the api the MinIO
-// root credentials. A dedicated user allowed only to create the bucket and
-// put/head objects (no delete) is the production answer, together with
-// bucket object locking.
+// TODO(object-store-credentials): the pilot stack gives the api an S3
+// identity with admin rights on the store. A dedicated identity allowed only
+// to create the bucket and put/head objects (no delete) is the production
+// answer, together with object locking or an equivalent retention guarantee.
 
 import { CreateBucketCommand, HeadBucketCommand, HeadObjectCommand, PutObjectCommand, S3Client, S3ServiceException } from "@aws-sdk/client-s3";
 
