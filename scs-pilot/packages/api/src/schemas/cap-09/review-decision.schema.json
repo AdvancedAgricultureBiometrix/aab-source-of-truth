@@ -1,0 +1,397 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-09:review-decision:1",
+  "title": "ScsRegulatoryReviewDecision",
+  "description": "SCS-CAP-09 ScsRegulatoryReviewDecision (contract ff6d3b8, a816101): a permanent, attributable human decision bound to the exact evaluation reviewed. It authorises a workflow step only. The currency fields are derived when the decision is read; the decision itself is never changed.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decisionId",
+    "schemaVersion",
+    "evaluationId",
+    "evaluationSnapshotDigest",
+    "frameworkId",
+    "frameworkVersion",
+    "evidenceRequirementSpecId",
+    "commodityCode",
+    "operatorId",
+    "plotIds",
+    "decisionOutcome",
+    "reviewReasoning",
+    "reviewer",
+    "decidedAt",
+    "recordValidity",
+    "currencyStatus",
+    "currencyLastAssessedAt",
+    "decisionReasons",
+    "authorityBoundary"
+  ],
+  "properties": {
+    "decisionId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "schemaVersion": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000,
+      "pattern": "\\S"
+    },
+    "evaluationId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "evaluationSnapshotDigest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "frameworkId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "frameworkVersion": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000,
+      "pattern": "\\S"
+    },
+    "evidenceRequirementSpecId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000,
+      "pattern": "\\S"
+    },
+    "commodityCode": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000,
+      "pattern": "\\S"
+    },
+    "operatorId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "plotIds": {
+      "type": "array",
+      "maxItems": 500,
+      "items": {
+        "type": "string",
+        "format": "uuid"
+      }
+    },
+    "decisionOutcome": {
+      "type": "string",
+      "enum": [
+        "PROCEED_TO_PACKAGE_COMPILATION",
+        "DO_NOT_PROCEED",
+        "REQUIRES_FURTHER_EVIDENCE",
+        "REQUIRES_SPECIALIST_REVIEW",
+        "REVIEW_ABORTED_FAIL_CLOSED"
+      ]
+    },
+    "reviewReasoning": {
+      "title": "ScsReviewReasoning",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evaluationSummaryAssessed",
+        "gapsConsidered",
+        "conflictsConsidered",
+        "limitationsAcknowledged",
+        "basisForOutcome"
+      ],
+      "properties": {
+        "evaluationSummaryAssessed": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10000
+        },
+        "gapsConsidered": {
+          "type": "array",
+          "maxItems": 1000,
+          "items": {
+            "title": "ScsReviewReasoningGap",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "gapId",
+              "assessment"
+            ],
+            "properties": {
+              "gapId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "assessment": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 10000
+              }
+            }
+          }
+        },
+        "conflictsConsidered": {
+          "type": "array",
+          "maxItems": 1000,
+          "items": {
+            "title": "ScsReviewReasoningConflict",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "conflictKey",
+              "assessment"
+            ],
+            "properties": {
+              "conflictKey": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "assessment": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 10000
+              }
+            }
+          }
+        },
+        "limitationsAcknowledged": {
+          "type": "array",
+          "maxItems": 200,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 10000
+          }
+        },
+        "basisForOutcome": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10000
+        },
+        "remainingConcerns": {
+          "type": "array",
+          "maxItems": 200,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 10000
+          }
+        },
+        "conditionsIfAny": {
+          "type": "array",
+          "maxItems": 200,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 10000
+          }
+        }
+      }
+    },
+    "reviewer": {
+      "title": "ScsReviewer",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reviewerId",
+        "reviewerName",
+        "reviewerOrganizationId",
+        "reviewerRoleReference",
+        "authorityBasis",
+        "authorityVerifiedAt"
+      ],
+      "properties": {
+        "reviewerId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "reviewerName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "reviewerOrganizationId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "reviewerRoleReference": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "authorityBasis": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "authorityVerifiedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "decidedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "recordValidity": {
+      "type": "string",
+      "enum": [
+        "VALID",
+        "PROCEDURALLY_INVALID",
+        "UNDER_CHALLENGE",
+        "SUPERSEDED_BY_CORRECTION"
+      ]
+    },
+    "currencyStatus": {
+      "type": "string",
+      "enum": [
+        "CURRENT",
+        "POTENTIALLY_STALE",
+        "SUPERSEDED",
+        "FAIL_CLOSED"
+      ]
+    },
+    "currencyLastAssessedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "stalenessReasons": {
+      "type": "array",
+      "maxItems": 1000,
+      "items": {
+        "title": "ScsStalenessReason",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "changeType",
+          "changedAt",
+          "changedEntityId",
+          "explanation"
+        ],
+        "properties": {
+          "changeType": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000,
+            "pattern": "\\S"
+          },
+          "changedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "changedEntityId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000,
+            "pattern": "\\S"
+          },
+          "explanation": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 10000
+          }
+        }
+      }
+    },
+    "supersededByDecisionId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "supersededAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "supersedes": {
+      "title": "ScsSupersedes",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "priorDecisionId",
+        "priorEvaluationId",
+        "priorDecisionOutcome",
+        "priorDecidedAt",
+        "supersessionReason"
+      ],
+      "properties": {
+        "priorDecisionId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "priorEvaluationId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "priorDecisionOutcome": {
+          "type": "string",
+          "enum": [
+            "PROCEED_TO_PACKAGE_COMPILATION",
+            "DO_NOT_PROCEED",
+            "REQUIRES_FURTHER_EVIDENCE",
+            "REQUIRES_SPECIALIST_REVIEW",
+            "REVIEW_ABORTED_FAIL_CLOSED"
+          ]
+        },
+        "priorDecidedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "supersessionReason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        }
+      }
+    },
+    "decisionReasons": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 10000
+      }
+    },
+    "authorityBoundary": {
+      "title": "ScsReviewAuthorityBoundary",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorisesWorkflowStepOnly",
+        "noComplianceDetermination",
+        "noRegulatorySubmissionAuthority",
+        "doesNotSubstituteForRegulatoryAcceptance",
+        "legalResponsibilityRemainsWithOperator"
+      ],
+      "properties": {
+        "authorisesWorkflowStepOnly": {
+          "type": "boolean",
+          "const": true
+        },
+        "noComplianceDetermination": {
+          "type": "boolean",
+          "const": true
+        },
+        "noRegulatorySubmissionAuthority": {
+          "type": "boolean",
+          "const": true
+        },
+        "doesNotSubstituteForRegulatoryAcceptance": {
+          "type": "boolean",
+          "const": true
+        },
+        "legalResponsibilityRemainsWithOperator": {
+          "type": "boolean",
+          "const": true
+        }
+      }
+    }
+  }
+}

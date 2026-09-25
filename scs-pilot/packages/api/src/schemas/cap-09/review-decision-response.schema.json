@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-09:review-decision-response:1",
+  "title": "ScsReviewDecisionResponse",
+  "description": "Body of a successful POST /scs/v1/review-decisions (201): the decision, the immutable receipt that records it, and the receipt's SHA-256 over canonical JSON.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decision",
+    "receipt",
+    "receiptDigest"
+  ],
+  "properties": {
+    "decision": {
+      "$ref": "urn:aab:scs:schema:cap-09:review-decision:1"
+    },
+    "receipt": {
+      "$ref": "urn:aab:scs:schema:cap-09:review-decision-receipt:1"
+    },
+    "receiptDigest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

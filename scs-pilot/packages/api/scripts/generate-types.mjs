@@ -106,6 +106,18 @@ const TARGETS = [
       "cap-06/conflict-resolution-response.schema.json",
     ],
   },
+  {
+    out: "cap-09.ts",
+    schemas: [
+      "cap-09/review-decision-request.schema.json",
+      "cap-09/review-decision.schema.json",
+      "cap-09/review-decision-receipt.schema.json",
+      "cap-09/review-decision-response.schema.json",
+      "cap-09/currency-assessment.schema.json",
+      "cap-09/review-decision-params.schema.json",
+      "cap-09/currency-assessment-request.schema.json",
+    ],
+  },
 ];
 
 const SCHEMA_FILES = TARGETS.flatMap((t) => t.schemas);

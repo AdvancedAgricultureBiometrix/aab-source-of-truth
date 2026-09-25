@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-09:review-decision-params:1",
+  "title": "ScsReviewDecisionPathParams",
+  "description": "Path parameters of GET /scs/v1/review-decisions/:decisionId and POST /scs/v1/review-decisions/:decisionId/currency-assessments.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decisionId"
+  ],
+  "properties": {
+    "decisionId": {
+      "type": "string",
+      "format": "uuid"
+    }
+  }
+}

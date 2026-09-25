@@ -60,6 +60,13 @@ import cap06ConflictResolutionRequest from "./cap-06/conflict-resolution-request
 import cap06ConflictResolutionRecord from "./cap-06/conflict-resolution-record.schema.json" with { type: "json" };
 import cap06ConflictResolutionReceipt from "./cap-06/conflict-resolution-receipt.schema.json" with { type: "json" };
 import cap06ConflictResolutionResponse from "./cap-06/conflict-resolution-response.schema.json" with { type: "json" };
+import cap09ReviewDecisionRequest from "./cap-09/review-decision-request.schema.json" with { type: "json" };
+import cap09ReviewDecision from "./cap-09/review-decision.schema.json" with { type: "json" };
+import cap09ReviewDecisionReceipt from "./cap-09/review-decision-receipt.schema.json" with { type: "json" };
+import cap09ReviewDecisionResponse from "./cap-09/review-decision-response.schema.json" with { type: "json" };
+import cap09CurrencyAssessment from "./cap-09/currency-assessment.schema.json" with { type: "json" };
+import cap09ReviewDecisionParams from "./cap-09/review-decision-params.schema.json" with { type: "json" };
+import cap09CurrencyAssessmentRequest from "./cap-09/currency-assessment-request.schema.json" with { type: "json" };
 
 import { registerSchema, type JsonSchema } from "../foundation/validation.js";
 
@@ -118,6 +125,13 @@ export const SCHEMAS = {
   cap06ConflictResolutionRecord,
   cap06ConflictResolutionReceipt,
   cap06ConflictResolutionResponse,
+  cap09ReviewDecisionRequest,
+  cap09ReviewDecision,
+  cap09ReviewDecisionReceipt,
+  cap09ReviewDecisionResponse,
+  cap09CurrencyAssessment,
+  cap09ReviewDecisionParams,
+  cap09CurrencyAssessmentRequest,
 } as const satisfies Record<string, JsonSchema>;
 
 for (const schema of Object.values(SCHEMAS)) registerSchema(schema);

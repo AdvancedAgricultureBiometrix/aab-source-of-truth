@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-09:currency-assessment-request:1",
+  "title": "ScsCurrencyAssessmentRequest",
+  "description": "Body of POST /scs/v1/review-decisions/:decisionId/currency-assessments: empty. The assessment is derived by the system.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {}
+}

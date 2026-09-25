@@ -1,0 +1,221 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-09:review-decision-request:1",
+  "title": "ScsReviewDecisionSubmission",
+  "description": "SCS-CAP-09 ScsReviewDecisionSubmission (contract ff6d3b8, a816101). The system sets decisionId, schemaVersion, decidedAt, the frozen context, reviewer.reviewerId, reviewer.authorityVerifiedAt, recordValidity, decisionReasons and authorityBoundary; currency is derived. Reasoning text may not be blank (checked by the capability: REASONING_INCOMPLETE).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "evaluationId",
+    "evaluationSnapshotDigest",
+    "frameworkId",
+    "frameworkVersion",
+    "commodityCode",
+    "operatorId",
+    "decisionOutcome",
+    "reviewReasoning",
+    "reviewer"
+  ],
+  "properties": {
+    "evaluationId": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "evaluationSnapshotDigest": {
+      "description": "SHA-256 of the canonical JSON of the evaluation result reviewed.",
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "frameworkId": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "frameworkVersion": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000,
+      "pattern": "\\S"
+    },
+    "commodityCode": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000,
+      "pattern": "\\S"
+    },
+    "operatorId": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "decisionOutcome": {
+      "type": "string",
+      "enum": [
+        "PROCEED_TO_PACKAGE_COMPILATION",
+        "DO_NOT_PROCEED",
+        "REQUIRES_FURTHER_EVIDENCE",
+        "REQUIRES_SPECIALIST_REVIEW"
+      ]
+    },
+    "reviewReasoning": {
+      "title": "ScsReviewReasoningInput",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evaluationSummaryAssessed",
+        "gapsConsidered",
+        "conflictsConsidered",
+        "limitationsAcknowledged",
+        "basisForOutcome"
+      ],
+      "properties": {
+        "evaluationSummaryAssessed": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10000
+        },
+        "gapsConsidered": {
+          "type": "array",
+          "maxItems": 1000,
+          "items": {
+            "title": "ScsReviewReasoningInputGap",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "gapId",
+              "assessment"
+            ],
+            "properties": {
+              "gapId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+              },
+              "assessment": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 10000
+              }
+            }
+          }
+        },
+        "conflictsConsidered": {
+          "type": "array",
+          "maxItems": 1000,
+          "items": {
+            "title": "ScsReviewReasoningInputConflict",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "conflictKey",
+              "assessment"
+            ],
+            "properties": {
+              "conflictKey": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "assessment": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 10000
+              }
+            }
+          }
+        },
+        "limitationsAcknowledged": {
+          "type": "array",
+          "maxItems": 200,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 10000
+          }
+        },
+        "basisForOutcome": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10000
+        },
+        "remainingConcerns": {
+          "type": "array",
+          "maxItems": 200,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 10000
+          }
+        },
+        "conditionsIfAny": {
+          "type": "array",
+          "maxItems": 200,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 10000
+          }
+        }
+      }
+    },
+    "reviewer": {
+      "title": "ScsReviewerInput",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reviewerName",
+        "reviewerOrganizationId",
+        "reviewerRoleReference",
+        "authorityBasis"
+      ],
+      "properties": {
+        "reviewerName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "reviewerOrganizationId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "reviewerRoleReference": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "authorityBasis": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        }
+      }
+    },
+    "supersedes": {
+      "title": "ScsSupersedesInput",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "priorDecisionId",
+        "supersessionReason"
+      ],
+      "properties": {
+        "priorDecisionId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "supersessionReason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        }
+      }
+    }
+  }
+}
