@@ -219,6 +219,8 @@ interface ScsDueDiligencePackageEnvelope {
 // same packageDigest
 interface ScsDueDiligencePackage {
   schemaVersion: string;
+  // From the request, when given
+  packageTitle?: string;
 
   // What the package was compiled from
   compilationBasis: {
@@ -320,8 +322,9 @@ interface ScsDueDiligencePackage {
         reason: string;
       }>;
     };
-    // In the pilot intersectionWithPlot is NOT_EVALUATED (no spatial database)
-    // and plotCoveragePercent is absent
+    // intersectionWithPlot is as SCS-CAP-04 recorded it: NOT_VERIFIED in the
+    // pilot (no spatial database). plotCoveragePercent, which SCS-CAP-04
+    // records only as declared, is absent
     spatialCoverage: {
       intersectionWithPlot: string;
       plotCoveragePercent?: number;
@@ -492,6 +495,8 @@ interface ScsPackageCompilationDecision {
 
   compiledAt: string;
   compiledBy: ActorReference;
+  // The envelope's compiledByServiceIdentity, bound here by the receipt
+  compiledByServiceIdentity: string;
   packageDigest: string;
 
   // The rendition made at compilation (SCS-PLATFORM-02)
@@ -638,8 +643,9 @@ request.
   - overlap not evaluated, always (no spatial database);
   - the plot's recorded evidence limitations;
   - every evaluation gap whose subject is the plot.
-- **Section 4:** the SCS-CAP-04 records in the manifest. `intersectionWithPlot` is
-  `NOT_EVALUATED`, and the claim is exactly as the source stated it.
+- **Section 4:** the SCS-CAP-04 records in the manifest. `intersectionWithPlot` is as
+  SCS-CAP-04 recorded it (`NOT_VERIFIED` in the pilot), the declared `plotCoveragePercent` is
+  left out, and the claim is exactly as the source stated it.
 - **Section 4b:** the SCS-CAP-05 events in the manifest, with their links and contradictions.
 - **Section 5:** the evaluation result in full, with its snapshot digest and receipt digest.
 - **Section 6:** the decision in full as recorded, without its derived currency fields,
@@ -716,8 +722,9 @@ outcomes.
 
   Records and decisions are append-only, so in the pilot only tampering can produce the first
   three.
-- **Endpoints:** `POST /scs/v1/due-diligence-packages` (`requestCompilation`, `201` with the
-  package envelope, the compilation record, the receipt and its digest),
+- **Endpoints:** `POST /scs/v1/due-diligence-packages` (`requestCompilation`, `201` with
+  `{ decision, package, receipt, receiptDigest }`: the compilation record, the package envelope,
+  the receipt and its digest),
   `GET /scs/v1/due-diligence-packages/:packageId` and
   `GET /scs/v1/due-diligence-packages/:packageId/integrity`.
 
@@ -789,8 +796,8 @@ should be kept for audit, in a separate append-only log, is not decided.
 
 **Contract gap: languages.** Packages and renditions are in English only.
 
-**Contract gap: plot coverage.** `intersectionWithPlot` is `NOT_EVALUATED` until a spatial
-database exists (SCS-CAP-03, SCS-CAP-06).
+**Contract gap: plot coverage.** `intersectionWithPlot` is `NOT_VERIFIED` until a spatial
+database exists (SCS-CAP-03, SCS-CAP-04, SCS-CAP-06).
 
 ## Provider-neutral interface
 
