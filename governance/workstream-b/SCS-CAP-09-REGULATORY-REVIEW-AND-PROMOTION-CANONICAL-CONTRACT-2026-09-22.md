@@ -109,7 +109,11 @@ that satisfies all of the following:
 - `currencyStatus` is `CURRENT`
 - The referenced CAP-06 evaluation ID exactly matches the package inputs
 - The referenced CAP-01 framework version exactly matches the package inputs
+- The decision's plots, operator and commodity exactly match the package inputs
 - The decision outcome is `PROCEED_TO_PACKAGE_COMPILATION`
+
+The checks are made by `validateForPackageCompilation` (see "Validation for package
+compilation").
 
 If the decision is `POTENTIALLY_STALE`, `SUPERSEDED`, missing, unverifiable, 
 or mismatched on any parameter, CAP-08 must fail closed and require 
@@ -532,10 +536,41 @@ interface ScsReviewDecisionSubmission {
 }
 ```
 
+### Validation for package compilation
+
+`validateForPackageCompilation` is the SCS-CAP-08 gate, defined once, here. In the pilot it is
+not an endpoint: SCS-CAP-08 calls it inside its own transaction, so the decision, its currency
+and the records being packaged are read in one snapshot.
+
+- **Inputs** are `ScsPackageCompilationInputs`: the scope of the package SCS-CAP-08 has been
+  asked to compile.
+- **The checks**, each reported in the result:
+  1. the decision exists (`decisionFound`);
+  2. its outcome is `PROCEED_TO_PACKAGE_COMPILATION`;
+  3. its `recordValidity` is `VALID`;
+  4. its currency, derived in the caller's snapshot, is `CURRENT`;
+  5. `evaluationId` equals the decision's;
+  6. `frameworkId` and `frameworkVersion` equal the decision's;
+  7. `plotIds` equal the decision's, as sets;
+  8. `operatorId` equals the decision's;
+  9. `commodityCode` equals the decision's.
+- **The result** is `valid` only when every check passes. Each failed check adds one blocker,
+  whose `blockerType` is the SCS-CAP-08 failure code for that check (for example
+  `REVIEW_DECISION_NOT_CURRENT`), with an explanation and the action required. A decision
+  that is not `CURRENT` names its staleness reasons or its successor, and the required action
+  is a new SCS-CAP-06 evaluation and a new decision.
+- The validation reads only. It records nothing.
+
+### Listing a subject's decisions
+
+`listDecisionsForSubject` returns the decisions whose operator and framework match and, when
+`plotIds` is given, whose plots equal it as a set: most recent first, each with its currency
+derived in one snapshot. A `REGULATORY_REVIEWER` or a `COMPLIANCE_OFFICER` may list; any other
+actor is `REVIEWER_NOT_AUTHORISED`. It is built with SCS-CAP-08.
+
 ### Deferred
 
-`requestReview` (see "One step"), `listDecisionsForSubject` and
-`validateForPackageCompilation` are built with SCS-CAP-08, which defines the package inputs.
+`requestReview` (see "One step").
 
 ### Open gaps
 
@@ -564,9 +599,6 @@ a resolution was recorded after the evaluation. A resolution for items in scope 
 the evaluation did not report is not reported: it could not have changed the result, and
 reporting it would be dishonest. This is a deliberate interpretation, not an open question. The
 check is a set comparison, so it is correct under concurrency.
-
-**Contract gap: package inputs.** `ScsPackageCompilationInputs` is not defined; SCS-CAP-08
-defines it.
 
 ## Provider-neutral interface
 
@@ -602,14 +634,30 @@ interface ScsRegulatoryReviewProvider {
   ): Promise<ScsDecisionPackageValidationResult>;
 }
 
+// The scope of the package SCS-CAP-08 has been asked to compile
+interface ScsPackageCompilationInputs {
+  operatorId: string;
+  frameworkId: string;
+  frameworkVersion: string;
+  commodityCode: string;
+  plotIds: string[];
+  evaluationId: string;
+}
+
 interface ScsDecisionPackageValidationResult {
   valid: boolean;
   decisionId: string;
-  currencyStatus: ScsDecisionCurrencyStatus;
-  recordValidity: string;
-  evaluationIdMatches: boolean;
-  frameworkVersionMatches: boolean;
+  decisionFound: boolean;
+  // Absent when the decision is not found
+  currencyStatus?: ScsDecisionCurrencyStatus;
+  recordValidity?: string;
   outcomePermitsCompilation: boolean;
+  evaluationIdMatches: boolean;
+  // frameworkId and frameworkVersion both
+  frameworkVersionMatches: boolean;
+  plotIdsMatch: boolean;
+  operatorIdMatches: boolean;
+  commodityCodeMatches: boolean;
   
   // If not valid — what must happen before compilation
   blockers: Array<{
