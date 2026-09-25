@@ -11,7 +11,7 @@ import { generate } from "../../scripts/generate-types.mjs";
 
 test("generated types match the schemas exactly", async () => {
   const outputs = (await generate()) as Record<string, string>;
-  assert.deepEqual(Object.keys(outputs).sort(), ["cap-01.ts", "cap-02.ts", "cap-03.ts", "cap-04.ts", "platform.ts", "shared.ts"]);
+  assert.deepEqual(Object.keys(outputs).sort(), ["cap-01.ts", "cap-02.ts", "cap-03.ts", "cap-04.ts", "cap-05.ts", "platform.ts", "shared.ts"]);
   for (const [file, expected] of Object.entries(outputs)) {
     const actual = await readFile(new URL(`../types/${file}`, import.meta.url), "utf8");
     assert.equal(actual, expected, `src/types/${file} is out of date or was edited by hand — run npm run generate:types`);

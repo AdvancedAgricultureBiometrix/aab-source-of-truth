@@ -1,0 +1,502 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-05:custody-event-submission-request:1",
+  "title": "ScsCustodyEventSubmissionRequest",
+  "description": "SCS-CAP-05 ScsCustodyEventSubmissionRequest (contract 7b4fc02, 9845179). The system sets eventId, eventVersion, schemaVersion, evidenceRequirementSpecId, both partyVersions, integrityStatus, submittedBy, submittedAt and the whole admission block. A quantity is required except for CERTIFICATION and INSPECTION events. Consistency rules the contract assigns to INTERNAL_INCONSISTENCY (positive amounts, unit descriptions, coordinates, country codes, event-type rules, dates) are checked by the capability so that its failure code is returned.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "frameworkAssociationId",
+    "eventType",
+    "sourceParty",
+    "destinationParty",
+    "commodity",
+    "eventLocation",
+    "eventTime",
+    "predecessorEventIds",
+    "successorEventIds",
+    "supportingDocument",
+    "chainOfCustodyComplete",
+    "uncertainties",
+    "contradictions",
+    "knownGaps"
+  ],
+  "properties": {
+    "frameworkAssociationId": {
+      "description": "An SCS-CAP-01 frameworkId (as in SCS-CAP-02), not an SCS-CAP-03 plot association.",
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "eventType": {
+      "type": "string",
+      "enum": [
+        "PURCHASE",
+        "TRANSFER",
+        "WEIGHING",
+        "PROCESSING",
+        "TRANSFORMATION",
+        "SPLIT",
+        "CONSOLIDATION",
+        "EXPORT",
+        "IMPORT",
+        "CERTIFICATION",
+        "INSPECTION",
+        "OTHER"
+      ]
+    },
+    "sourceParty": {
+      "title": "ScsCustodySourcePartyInput",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "partyId",
+        "partyRoleAtEvent"
+      ],
+      "properties": {
+        "partyId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "partyRoleAtEvent": {
+          "type": "string",
+          "enum": [
+            "SUPPLIER",
+            "AGGREGATOR",
+            "PROCESSOR",
+            "EXPORTER",
+            "OTHER"
+          ]
+        },
+        "actingUnderMandateId": {
+          "description": "An SCS-CAP-02 mandateId; checked, never authorising.",
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        }
+      }
+    },
+    "destinationParty": {
+      "title": "ScsCustodyDestinationPartyInput",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "partyId",
+        "partyRoleAtEvent"
+      ],
+      "properties": {
+        "partyId": {
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "partyRoleAtEvent": {
+          "type": "string",
+          "enum": [
+            "AGGREGATOR",
+            "PROCESSOR",
+            "EXPORTER",
+            "IMPORTER",
+            "OTHER"
+          ]
+        }
+      }
+    },
+    "commodity": {
+      "title": "ScsCustodyCommodity",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "commodityCode",
+        "commodityName",
+        "sourcePlotIds",
+        "sourcePlotIdsComplete",
+        "batchIdentifier"
+      ],
+      "properties": {
+        "commodityCode": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "commodityName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "sourcePlotIds": {
+          "type": "array",
+          "maxItems": 500,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          }
+        },
+        "sourcePlotIdsComplete": {
+          "type": "boolean"
+        },
+        "batchIdentifier": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "batchVersion": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "quantity": {
+      "title": "ScsCustodyQuantity",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "amount",
+        "unit"
+      ],
+      "properties": {
+        "amount": {
+          "description": "Greater than 0 (checked by the capability: INTERNAL_INCONSISTENCY).",
+          "type": "number"
+        },
+        "unit": {
+          "$ref": "#/$defs/quantityUnit"
+        },
+        "unitDescription": {
+          "description": "Required when unit is OTHER; absent otherwise.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "measurementMethod": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "measurementUncertainty": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        }
+      }
+    },
+    "eventLocation": {
+      "title": "ScsCustodyEventLocation",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "countryCode"
+      ],
+      "properties": {
+        "countryCode": {
+          "description": "ISO 3166-1 alpha-2 (checked by the capability).",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "administrativeArea": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "facilityId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "facilityName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "coordinates": {
+          "title": "ScsCustodyEventCoordinates",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "latitude",
+            "longitude"
+          ],
+          "properties": {
+            "latitude": {
+              "type": "number"
+            },
+            "longitude": {
+              "type": "number"
+            },
+            "accuracyMetres": {
+              "type": "number"
+            }
+          }
+        }
+      }
+    },
+    "eventTime": {
+      "title": "ScsCustodyEventTime",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "eventDate",
+        "timePrecision"
+      ],
+      "properties": {
+        "eventDate": {
+          "description": "The local calendar date at the event location.",
+          "type": "string",
+          "format": "date"
+        },
+        "eventTimeUTC": {
+          "description": "A full ISO 8601 timestamp in UTC.",
+          "type": "string",
+          "format": "date-time",
+          "pattern": "(Z|[+-]00:00)$"
+        },
+        "timePrecision": {
+          "type": "string",
+          "enum": [
+            "EXACT",
+            "DATE_ONLY",
+            "APPROXIMATE",
+            "UNKNOWN"
+          ]
+        }
+      }
+    },
+    "transformation": {
+      "title": "ScsCustodyTransformation",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "transformationType",
+        "inputQuantity",
+        "inputUnit",
+        "outputQuantity",
+        "outputUnit"
+      ],
+      "properties": {
+        "transformationType": {
+          "type": "string",
+          "enum": [
+            "DRYING",
+            "MILLING",
+            "PRESSING",
+            "BLENDING",
+            "GRADING",
+            "PACKAGING",
+            "OTHER"
+          ]
+        },
+        "inputQuantity": {
+          "type": "number"
+        },
+        "inputUnit": {
+          "$ref": "#/$defs/quantityUnit"
+        },
+        "inputUnitDescription": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "outputQuantity": {
+          "type": "number"
+        },
+        "outputUnit": {
+          "$ref": "#/$defs/quantityUnit"
+        },
+        "outputUnitDescription": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "conversionRatioDescription": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        }
+      }
+    },
+    "predecessorEventIds": {
+      "type": "array",
+      "maxItems": 100,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "format": "uuid",
+        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+      }
+    },
+    "successorEventIds": {
+      "type": "array",
+      "maxItems": 100,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "format": "uuid",
+        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+      }
+    },
+    "splitFromEventId": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "consolidatedFromEventIds": {
+      "type": "array",
+      "maxItems": 100,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "format": "uuid",
+        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+      }
+    },
+    "supportingDocument": {
+      "title": "ScsCustodySupportingDocumentInput",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "documentId",
+        "documentType",
+        "documentReference",
+        "contentDigest"
+      ],
+      "properties": {
+        "objectId": {
+          "description": "The SCS-PLATFORM-01 objectId of the stored document, when one is cited.",
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "documentId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "documentType": {
+          "type": "string",
+          "enum": [
+            "PURCHASE_RECEIPT",
+            "WEIGHT_TICKET",
+            "TRANSPORT_DOCUMENT",
+            "PROCESSING_RECORD",
+            "CERTIFICATION_DOCUMENT",
+            "INSPECTION_REPORT",
+            "CUSTOMS_DECLARATION",
+            "OTHER"
+          ]
+        },
+        "documentReference": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "issuingAuthority": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "documentDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "contentDigest": {
+          "description": "Lowercase hexadecimal SHA-256 of the document.",
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "submissionMandateId": {
+      "description": "An SCS-CAP-02 mandateId; checked, never authorising.",
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "chainOfCustodyComplete": {
+      "description": "As declared by the submitter.",
+      "type": "boolean"
+    },
+    "uncertainties": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1000,
+        "pattern": "\\S"
+      }
+    },
+    "contradictions": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1000,
+        "pattern": "\\S"
+      }
+    },
+    "knownGaps": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1000,
+        "pattern": "\\S"
+      }
+    }
+  },
+  "$defs": {
+    "quantityUnit": {
+      "title": "ScsCustodyQuantityUnit",
+      "type": "string",
+      "enum": [
+        "KG",
+        "TONNE",
+        "LITRE",
+        "M3",
+        "BALE",
+        "SACK",
+        "UNIT",
+        "OTHER"
+      ]
+    }
+  },
+  "if": {
+    "properties": {
+      "eventType": {
+        "enum": [
+          "CERTIFICATION",
+          "INSPECTION"
+        ]
+      }
+    }
+  },
+  "else": {
+    "properties": {
+      "quantity": true
+    },
+    "required": [
+      "quantity"
+    ]
+  }
+}

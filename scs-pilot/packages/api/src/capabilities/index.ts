@@ -6,5 +6,6 @@ import { cap01Routes } from "./cap-01/routes.js";
 import { cap02Routes } from "./cap-02/routes.js";
 import { cap03Routes } from "./cap-03/routes.js";
 import { cap04Routes } from "./cap-04/routes.js";
+import { cap05Routes } from "./cap-05/routes.js";
 
-export const CAPABILITY_ROUTES: readonly Route<never>[] = [...cap01Routes, ...cap02Routes, ...cap03Routes, ...cap04Routes];
+export const CAPABILITY_ROUTES: readonly Route<never>[] = [...cap01Routes, ...cap02Routes, ...cap03Routes, ...cap04Routes, ...cap05Routes];

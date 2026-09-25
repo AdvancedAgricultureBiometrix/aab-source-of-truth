@@ -47,6 +47,10 @@ import cap04EvidenceSubmissionRequest from "./cap-04/evidence-submission-request
 import cap04EvidenceAdmissionDecision from "./cap-04/evidence-admission-decision.schema.json" with { type: "json" };
 import cap04EvidenceAdmissionReceipt from "./cap-04/evidence-admission-receipt.schema.json" with { type: "json" };
 import cap04EvidenceAdmissionResponse from "./cap-04/evidence-admission-response.schema.json" with { type: "json" };
+import cap05CustodyEventSubmissionRequest from "./cap-05/custody-event-submission-request.schema.json" with { type: "json" };
+import cap05CustodyEventAdmissionDecision from "./cap-05/custody-event-admission-decision.schema.json" with { type: "json" };
+import cap05CustodyEventAdmissionReceipt from "./cap-05/custody-event-admission-receipt.schema.json" with { type: "json" };
+import cap05CustodyEventAdmissionResponse from "./cap-05/custody-event-admission-response.schema.json" with { type: "json" };
 
 import { registerSchema, type JsonSchema } from "../foundation/validation.js";
 
@@ -92,6 +96,10 @@ export const SCHEMAS = {
   cap04EvidenceAdmissionDecision,
   cap04EvidenceAdmissionReceipt,
   cap04EvidenceAdmissionResponse,
+  cap05CustodyEventSubmissionRequest,
+  cap05CustodyEventAdmissionDecision,
+  cap05CustodyEventAdmissionReceipt,
+  cap05CustodyEventAdmissionResponse,
 } as const satisfies Record<string, JsonSchema>;
 
 for (const schema of Object.values(SCHEMAS)) registerSchema(schema);

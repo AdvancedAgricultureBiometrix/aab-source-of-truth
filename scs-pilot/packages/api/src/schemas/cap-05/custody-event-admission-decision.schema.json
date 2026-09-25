@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-05:custody-event-admission-decision:1",
+  "title": "ScsCustodyEventAdmissionDecision",
+  "description": "SCS-CAP-05 ScsCustodyEventAdmissionDecision (contract 7b4fc02, 9845179). Admission means the event is genuine and attributable, not that any chain is continuous or sufficient. An admission check is true only if it was performed and passed; every limitation is recorded as a code and in prose. decisionReasons is never a limitation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decisionId",
+    "eventId",
+    "frameworkAssociationId",
+    "decision",
+    "admissionChecks",
+    "limitations",
+    "limitationCodes",
+    "decisionReasons",
+    "decidedBy",
+    "decidedAt",
+    "authorityBoundary"
+  ],
+  "properties": {
+    "decisionId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "eventId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "frameworkAssociationId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "decision": {
+      "type": "string",
+      "enum": [
+        "ADMITTED",
+        "ADMITTED_WITH_LIMITATIONS",
+        "QUARANTINED",
+        "REJECTED"
+      ]
+    },
+    "admissionChecks": {
+      "title": "ScsCustodyEventAdmissionChecks",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourcePartyIdentifiable",
+        "destinationPartyIdentifiable",
+        "commodityCodeRecognised",
+        "batchIdentifierPresent",
+        "eventTypeValid",
+        "quantityRecorded",
+        "eventTimeRecorded",
+        "supportingDocumentPresent",
+        "documentIntegrityVerified",
+        "submitterAuthorised",
+        "internallyConsistent"
+      ],
+      "properties": {
+        "sourcePartyIdentifiable": {
+          "type": "boolean"
+        },
+        "destinationPartyIdentifiable": {
+          "type": "boolean"
+        },
+        "commodityCodeRecognised": {
+          "type": "boolean"
+        },
+        "batchIdentifierPresent": {
+          "type": "boolean"
+        },
+        "eventTypeValid": {
+          "type": "boolean"
+        },
+        "quantityRecorded": {
+          "type": "boolean"
+        },
+        "eventTimeRecorded": {
+          "type": "boolean"
+        },
+        "supportingDocumentPresent": {
+          "type": "boolean"
+        },
+        "documentIntegrityVerified": {
+          "type": "boolean"
+        },
+        "submitterAuthorised": {
+          "type": "boolean"
+        },
+        "internallyConsistent": {
+          "type": "boolean"
+        }
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "maxItems": 500,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1000,
+        "pattern": "\\S"
+      }
+    },
+    "limitationCodes": {
+      "type": "array",
+      "maxItems": 13,
+      "uniqueItems": true,
+      "items": {
+        "title": "ScsCustodyEventLimitationCode",
+        "type": "string",
+        "enum": [
+          "PARTY_UNVERIFIED",
+          "SOURCE_PLOTS_INCOMPLETE",
+          "SOURCE_PLOT_NOT_REGISTERED",
+          "SOURCE_PLOT_RETIRED",
+          "QUANTITY_PRECISION_UNCERTAIN",
+          "EVENT_TIME_APPROXIMATE",
+          "LINKED_EVENT_NOT_ADMITTED",
+          "LINKED_EVENT_OUT_OF_SCOPE",
+          "INTEGRITY_UNVERIFIED",
+          "CHAIN_OF_CUSTODY_INCOMPLETE",
+          "MANDATE_NOT_VALID",
+          "QUANTITY_GAIN_UNEXPLAINED",
+          "CONTRADICTION_DECLARED"
+        ]
+      }
+    },
+    "decisionReasons": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1000,
+        "pattern": "\\S"
+      }
+    },
+    "rejectionReasons": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1000,
+        "pattern": "\\S"
+      }
+    },
+    "decidedBy": {
+      "$ref": "urn:aab:scs:schema:shared:actor-reference:1"
+    },
+    "decidedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "authorityBoundary": {
+      "title": "ScsCustodyEventAuthorityBoundary",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "admissionIsNotSufficiency",
+        "admittedEventDoesNotProveChainContinuity",
+        "admittedEventDoesNotVerifyPartyIdentity",
+        "admittedEventDoesNotConstituteLegalCompliance"
+      ],
+      "properties": {
+        "admissionIsNotSufficiency": {
+          "type": "boolean",
+          "const": true
+        },
+        "admittedEventDoesNotProveChainContinuity": {
+          "type": "boolean",
+          "const": true
+        },
+        "admittedEventDoesNotVerifyPartyIdentity": {
+          "type": "boolean",
+          "const": true
+        },
+        "admittedEventDoesNotConstituteLegalCompliance": {
+          "type": "boolean",
+          "const": true
+        }
+      }
+    }
+  }
+}
