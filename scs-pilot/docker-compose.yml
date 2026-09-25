@@ -32,7 +32,7 @@ name: scs-pilot
 
 services:
   postgres:
-    image: postgres:17-alpine
+    image: postgres:17.11-alpine3.24@sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB in .env}
@@ -49,7 +49,7 @@ services:
       retries: 20
 
   migrate:
-    image: node:24-alpine
+    image: node:24.21.0-alpine3.24@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1
     working_dir: /app
     command: sh -c "npm install --no-audit --no-fund && npm run migrate"
     restart: "no"
@@ -71,7 +71,7 @@ services:
         condition: service_healthy
 
   seaweedfs:
-    image: chrislusf/seaweedfs:4.47
+    image: chrislusf/seaweedfs:4.47@sha256:ce9e796f1fe6f06968f4c04bdaf8f678dad9c8acdfef3d244133d71bfa6bf882
     restart: unless-stopped
     entrypoint: ["sh", "-c"]
     command:
@@ -93,7 +93,7 @@ services:
       retries: 10
 
   api:
-    image: node:24-alpine
+    image: node:24.21.0-alpine3.24@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1
     working_dir: /app
     command: sh -c "npm install --no-audit --no-fund && npm run dev"
     environment:
