@@ -136,8 +136,12 @@ interface ScsDeforestationEvidenceRecord {
   provenance: {
     submittedBy: ActorReference;
     submittedAt: string;
+    // The SCS-PLATFORM-01 evidence object store's objectId, when a stored file is cited
+    evidenceObjectId?: string;
     originalObjectReference: string;
     contentDigest: string;
+    // Set by the system: VERIFIED when the cited stored object's digest matches;
+    // UNVERIFIED when no stored object is cited; FAILED is never recorded
     integrityStatus:
       | "VERIFIED"
       | "UNVERIFIED"
@@ -149,7 +153,9 @@ interface ScsDeforestationEvidenceRecord {
 
   // Spatial coverage — what area the evidence actually covers
   spatialCoverage: {
+    // Identifies the GeoJSON coverage geometry submitted with the evidence
     coverageGeometryReference: string;
+    // NOT_VERIFIED in the pilot: no spatial database
     intersectionWithPlot:
       | "FULL"
       | "PARTIAL"
@@ -282,6 +288,7 @@ interface ScsDeforestationEvidenceRecord {
     spatialCoverageCompleteAtAdmission: boolean;
 
     limitations: string[];
+    limitationCodes: ScsDeforestationEvidenceLimitationCode[];
     admittedBy: ActorReference;
     admittedAt: string;
   };
@@ -332,6 +339,7 @@ interface ScsDeforestationEvidenceAdmissionDecision {
   spatialCoverageCompleteAtAdmission: boolean;
 
   limitations: string[];
+  limitationCodes: ScsDeforestationEvidenceLimitationCode[];
   rejectionReasons?: string[];
 
   decidedBy: ActorReference;
@@ -371,7 +379,15 @@ Incomplete temporal coverage does not by itself cause rejection. CAP-04 rejects 
 - the evidence type is incompatible with the framework requirement
 - submission or access authority is absent
 
+For the pilot, "Admission rules for the pilot" below says which of these conditions end in
+`FAIL_CLOSED` and which are admitted with a recorded limitation. An attestation that exceeds
+its analysis, and incomplete lineage, are admitted with a limitation, not rejected.
+
 ## Collective sufficiency evaluation — CAP-06
+
+These interfaces are evaluated by SCS-CAP-06, not by SCS-CAP-04; they are kept here because
+they describe how admitted deforestation evidence is used. `evaluateTemporalSufficiency` is not
+part of the SCS-CAP-04 provider.
 
 CAP-06 evaluates all admitted evidence together. It does not apply simple date-union logic. Two items whose declared periods join together do not necessarily establish adequate coverage. CAP-06 must consider:
 
@@ -438,6 +454,276 @@ interface ScsTemporalCoverageResult {
 }
 ```
 
+## Admission rules for the pilot
+
+These rules define `submitEvidence` for the pilot. Every condition in the failure contract ends
+in `FAIL_CLOSED` and writes nothing. Everything else is admitted, with each shortfall recorded
+as a limitation, never silently dropped.
+
+### Outcomes
+
+- **`ADMITTED` or `ADMITTED_WITH_LIMITATIONS`** are the only admission outcomes. The decision
+  is `ADMITTED_WITH_LIMITATIONS` whenever at least one limitation code is recorded.
+- **`QUARANTINED`** is reached only through a later `quarantineEvidence` operation, never at
+  admission. Quarantine will be recorded as a separate event; the admitted record is never
+  changed.
+- **`REJECTED`** is reserved until its criteria are defined. A condition that would reject is
+  a `FAIL_CLOSED` failure instead.
+
+Because spatial coverage is never verified and temporal completeness is never evaluated at
+admission (below), every pilot admission is `ADMITTED_WITH_LIMITATIONS`. This is the honest
+result and must be disclosed to pilot partners.
+
+### Evidence object and integrity
+
+The evidence file itself is stored in the SCS evidence object store (SCS-PLATFORM-01), which
+computes its SHA-256. The submission may cite a stored object by its `objectId`, and always
+declares the file's `contentDigest`.
+
+- **Cited object.** The object must exist in the store (`EVIDENCE_OBJECT_NOT_FOUND`), and the
+  declared `contentDigest` must equal the stored digest (`OBJECT_INTEGRITY_FAILED`). When both
+  hold, `integrityStatus` is `VERIFIED`.
+- **No cited object.** `integrityStatus` is `UNVERIFIED`: nothing SCS holds can confirm the
+  declared digest. The limitation `INTEGRITY_UNVERIFIED` is recorded.
+- **Framework requirement.** When the specification's `integrityRequirement` is `VERIFIED`,
+  unverified integrity fails with `OBJECT_INTEGRITY_FAILED`. This is the one specification
+  requirement whose failure rejects the evidence.
+- `integrityStatus: FAILED` is never recorded: a failed integrity check writes nothing.
+
+### Fields the system sets
+
+`evidenceId`, `evidenceVersion` (1 until a revision operation exists), `schemaVersion`,
+`plotVersion` (the plot's current version), `evidenceRequirementSpecId` (from the plot's
+framework association, never from the client), `provenance.submittedBy`,
+`provenance.submittedAt`, `provenance.integrityStatus`, `spatialCoverage.intersectionWithPlot`
+(`NOT_VERIFIED` in the pilot) and the whole `admission` block.
+
+### Authority
+
+Only a `COMPLIANCE_OFFICER` may submit deforestation evidence. Otherwise
+`SUBMITTER_NOT_AUTHORISED`.
+
+### Plot and framework association
+
+- The plot must be registered (`PLOT_NOT_FOUND`) and not `RETIRED` (`PLOT_RETIRED`). A plot
+  that is `REGISTERED_WITH_GAPS` is registered.
+- The framework association must exist and belong to that plot
+  (`FRAMEWORK_ASSOCIATION_NOT_FOUND`).
+- The association must be `ACTIVE`, and so must its SCS-CAP-01 framework
+  (`FRAMEWORK_ASSOCIATION_NOT_ACTIVE`).
+
+### Spatial coverage
+
+The coverage is a GeoJSON geometry in EPSG:4326, validated like a plot geometry
+(SCS-CAP-03); an invalid geometry is `COVERAGE_GEOMETRY_INVALID`. Excluded areas are
+geometries validated the same way.
+
+- **Relation to the plot.** If the coverage's bounding box does not intersect the plot's
+  bounding box, the evidence cannot relate to the plot: `EVIDENCE_NOT_RELATED_TO_PLOT`.
+- **Intersection.** Beyond that bounding-box check, the intersection is not computed: there is
+  no spatial database. `intersectionWithPlot` is `NOT_VERIFIED`,
+  `spatialCoverageCompleteAtAdmission` is `false`, and the limitation
+  `SPATIAL_COVERAGE_NOT_VERIFIED` is recorded. A declared `plotCoveragePercent` is recorded as
+  declared. TODO(postgis).
+
+### Dates
+
+The dates must be internally consistent. Otherwise `TEMPORAL_DATES_INCONSISTENT`, naming each
+inconsistency:
+
+- in every layer, and in every known gap, a start is not after its end;
+- `POINT_IN_TIME` coverage has an `acquisitionInstant`, and no instant is given together with
+  an acquisition start or end;
+- no date is in the future;
+- every known gap lies within the evidence's acquisition or analysis window.
+
+`temporalCoverageCompleteAtAdmission` is always `false`: the framework-required period ends on
+a due diligence date that is not known at admission. The limitation
+`TEMPORAL_COVERAGE_NOT_EVALUATED` is recorded; SCS-CAP-06 evaluates completeness when it knows
+the required period.
+
+### Attestation
+
+An attestation that claims a period the submitted analysis does not support is admitted, not
+rejected: CAP-04 records what the evidence attested, including an overclaim.
+
+- **`ATTESTATION_EXCEEDS_ANALYSIS`** (a limitation): the attested period (`attestedPeriodStart`
+  to `attestedPeriodEnd`, or the attestation's `declaredCoverageStart` to
+  `declaredCoverageEnd`) begins before the analysis period begins or ends after it ends. The
+  record shows both periods; SCS-CAP-06 decides whether the difference matters.
+- An item with `coverageMode: AUTHORITY_ATTESTATION` and no analysis period cannot exceed an
+  analysis period that does not exist, and is exempt from this check.
+
+### Compatibility with the framework specification
+
+The SCS-CAP-01 specification's `deforestationEvidence` requirements are applied as follows:
+
+- **Accepted source types.** A specification's `acceptedSourceTypes` must use this contract's
+  `evidenceType` values. An `evidenceType` that is not among the accepted source types is
+  incompatible: `EVIDENCE_TYPE_INCOMPATIBLE`. Values in `acceptedSourceTypes` that are not
+  `evidenceType` values are ignored for the check and recorded as the limitation
+  `SOURCE_TYPE_VOCABULARY_UNKNOWN`.
+- **Resolution.** A `spatialResolutionMetres` coarser than `minimumResolutionMetres`, or not
+  stated when a minimum is set, is the limitation `RESOLUTION_BELOW_REQUIREMENT`.
+- **Recency.** When `minimumRecencyDays` is set and the most recent observation
+  (`acquisitionInstant` or `acquisitionEnd`) is older than that many days at admission, the
+  limitation is `RECENCY_BELOW_REQUIREMENT`. With no acquisition date, recency cannot be
+  evaluated: `RECENCY_NOT_EVALUATED`.
+- **Integrity.** See "Evidence object and integrity" above.
+- **Authority confirmation.** When `authorityConfirmationRequired` is `true` and no attestation
+  is provided, the limitation is `AUTHORITY_CONFIRMATION_MISSING`.
+
+### Provenance and lineage
+
+- **Lineage.** Each of `derivedFromEvidenceIds`, `baselineEvidenceIds` and
+  `comparisonEvidenceIds` should name an admitted CAP-04 record for the same plot. A cited
+  identifier that does not is the limitation `PROVENANCE_INCOMPLETE`, naming it. Admission
+  proceeds: lineage is often established after the fact.
+- **Chain of custody.** `chainOfCustodyComplete` is recorded as declared. When it is `false`,
+  the limitation `CHAIN_OF_CUSTODY_INCOMPLETE` is recorded.
+
+### Parties
+
+- `coverageAttestation.attestingPartyId`, when present, must be a registered SCS-CAP-02 party
+  (`ATTESTING_PARTY_NOT_FOUND`).
+- `analyticalMethod.analystOrganizationId`, when present, must be a registered SCS-CAP-02 party
+  (`ANALYST_PARTY_NOT_FOUND`).
+- Neither may be `RETIRED` (`PARTY_RETIRED`).
+- `source.sourceOrganizationId` is an identifier issued outside SCS and is recorded as given.
+
+### Limitation codes
+
+A limitation code is not a failure. It is recorded with the evidence and in the decision, and
+makes the decision `ADMITTED_WITH_LIMITATIONS`. The source's own stated limitations are kept
+verbatim in `evidenceClaim.limitations`.
+
+```typescript
+type ScsDeforestationEvidenceLimitationCode =
+  | "SPATIAL_COVERAGE_NOT_VERIFIED"
+  | "TEMPORAL_COVERAGE_NOT_EVALUATED"
+  | "INTEGRITY_UNVERIFIED"
+  | "ATTESTATION_EXCEEDS_ANALYSIS"
+  | "PROVENANCE_INCOMPLETE"
+  | "CHAIN_OF_CUSTODY_INCOMPLETE"
+  | "RESOLUTION_BELOW_REQUIREMENT"
+  | "RECENCY_BELOW_REQUIREMENT"
+  | "RECENCY_NOT_EVALUATED"
+  | "AUTHORITY_CONFIRMATION_MISSING"
+  | "SOURCE_TYPE_VOCABULARY_UNKNOWN";
+```
+
+### Submission request
+
+```typescript
+interface ScsDeforestationEvidenceSubmissionRequest {
+  plotId: string;
+  frameworkAssociationId: string;
+
+  evidenceType:
+    | "SATELLITE_IMAGE"
+    | "REMOTE_SENSING_ANALYSIS"
+    | "LAND_COVER_DATA_PRODUCT"
+    | "FORESTRY_AUTHORITY_CERTIFICATE"
+    | "GOVERNMENT_RECORD"
+    | "FIELD_VERIFICATION"
+    | "EXPERT_ASSESSMENT"
+    | "OTHER";
+
+  // As in ScsDeforestationEvidenceRecord.source
+  source: ScsDeforestationEvidenceRecord["source"];
+
+  evidenceObject: {
+    // The SCS-PLATFORM-01 objectId of the stored file, when one is cited
+    objectId?: string;
+    // The source's own reference to the original object
+    originalObjectReference: string;
+    // Lowercase hexadecimal SHA-256 of the file
+    contentDigest: string;
+    chainOfCustodyComplete: boolean;
+    derivedFromEvidenceIds?: string[];
+  };
+
+  spatialCoverage: {
+    coverageGeometry: {
+      geometryType: "POINT" | "POLYGON" | "MULTIPOLYGON";
+      coordinates: unknown;
+      coordinateReferenceSystem: string;
+    };
+    // Declared by the submitter; not computed in the pilot
+    plotCoveragePercent?: number;
+    spatialResolutionMetres?: number;
+    positionalAccuracyMetres?: number;
+    excludedAreas?: Array<{
+      geometry: {
+        geometryType: "POINT" | "POLYGON" | "MULTIPOLYGON";
+        coordinates: unknown;
+        coordinateReferenceSystem: string;
+      };
+      reason: string;
+    }>;
+  };
+
+  // As in the record
+  temporalCoverage: ScsDeforestationEvidenceRecord["temporalCoverage"];
+  analyticalMethod?: ScsDeforestationEvidenceRecord["analyticalMethod"];
+  evidenceClaim: ScsDeforestationEvidenceRecord["evidenceClaim"];
+  coverageAttestation: ScsDeforestationEvidenceRecord["coverageAttestation"];
+}
+```
+
+In the record, `spatialCoverage.coverageGeometryReference` and each excluded area's
+`geometryReference` identify the geometries submitted in this request, which SCS stores with
+the record.
+
+### Checks and the decision
+
+The failure checks run in this order: authority; dates; coverage geometry; the plot and
+framework association; the evidence object and integrity; relation to the plot; evidence type
+compatibility; parties. The admission checks in the decision record the outcome of each:
+
+- `submitterAuthorised`, `sourceIdentifiable`, `attributionEstablished`,
+  `temporalDatesInternallyConsistent` and `evidenceTypeCompatibleWithRequirement` are `true`
+  whenever evidence is admitted.
+- `sourceIdentifiable` rests on the required source fields (`sourceId`,
+  `sourceOrganizationId`, `sourceReference`). `attributionEstablished` rests on those fields,
+  the submitter's authority, and the attesting and analyst parties being registered.
+- `evidenceRelatedToClaimedPlot` is `true` when the bounding-box check passes; the decision
+  states that the full intersection was not verified.
+- `objectIntegrityVerified` is `true` only when `integrityStatus` is `VERIFIED`.
+- `attestationConsistentWithAnalysis` is `false` when `ATTESTATION_EXCEEDS_ANALYSIS` is
+  recorded.
+- `provenanceComplete` is `false` when `PROVENANCE_INCOMPLETE` or
+  `CHAIN_OF_CUSTODY_INCOMPLETE` is recorded.
+
+The decision gains `limitationCodes`, the codes recorded, alongside the human-readable
+`limitations`.
+
+### Open gaps
+
+**Contract gap: submission under a mandate.** An SCS-CAP-02 mandate may permit
+`SUBMIT_DEFORESTATION_EVIDENCE`, but an authenticated actor is not linked to a CAP-02 party:
+`ActorReference` has no `partyId`. Until that link exists, only a `COMPLIANCE_OFFICER` may
+submit, and mandate-based submission is deferred.
+
+**Contract gap: two attested periods.** The record carries an attested period in
+`temporalCoverage` (`attestedPeriodStart`, `attestedPeriodEnd`) and another in
+`coverageAttestation` (`declaredCoverageStart`, `declaredCoverageEnd`). Which is
+authoritative, and whether they must agree, is not defined. Both are recorded and both are
+checked against the analysis period.
+
+**Contract gap: claimed period and analysis period.** Whether `evidenceClaim`'s claimed period
+must lie within the analysis period is not defined, and is not checked.
+
+**Contract gap: `REJECTED` and `QUARANTINED`.** No criteria are defined for rejection at
+admission, and `quarantineEvidence` is not yet specified as a request and decision.
+
+**Contract gap: sufficiency interfaces.** `ScsDeforestationSufficiencyRequest` and
+`ScsTemporalCoverageResult` describe SCS-CAP-06's evaluation. `evaluateTemporalSufficiency`
+is not part of the CAP-04 provider.
+
+**Current system limit: spatial verification.** Without a spatial database, only a
+bounding-box check relates coverage to the plot. TODO(postgis).
+
 ## Provider-neutral interface
 
 ```typescript
@@ -461,10 +747,6 @@ interface ScsDeforestationEvidenceProvider {
     reason: string,
     quarantinedBy: ActorReference
   ): Promise<void>;
-
-  evaluateTemporalSufficiency(
-    request: ScsDeforestationSufficiencyRequest
-  ): Promise<ScsTemporalCoverageResult>;
 }
 ```
 
@@ -476,17 +758,24 @@ interface ScsDeforestationEvidenceAdmissionFailure {
   capabilityId: "SCS-CAP-04";
   result: "FAIL_CLOSED";
 
+  // ATTESTATION_EXCEEDS_ANALYSIS and PROVENANCE_INCOMPLETE are limitation codes,
+  // not failures: see "Admission rules for the pilot"
   error:
     | "SUBMITTER_NOT_AUTHORISED"
     | "PLOT_NOT_FOUND"
+    | "PLOT_RETIRED"
     | "FRAMEWORK_ASSOCIATION_NOT_FOUND"
+    | "FRAMEWORK_ASSOCIATION_NOT_ACTIVE"
     | "SOURCE_NOT_IDENTIFIABLE"
+    | "EVIDENCE_OBJECT_NOT_FOUND"
     | "OBJECT_INTEGRITY_FAILED"
+    | "COVERAGE_GEOMETRY_INVALID"
     | "EVIDENCE_NOT_RELATED_TO_PLOT"
     | "TEMPORAL_DATES_INCONSISTENT"
-    | "ATTESTATION_EXCEEDS_ANALYSIS"
-    | "PROVENANCE_INCOMPLETE"
     | "EVIDENCE_TYPE_INCOMPATIBLE"
+    | "ATTESTING_PARTY_NOT_FOUND"
+    | "ANALYST_PARTY_NOT_FOUND"
+    | "PARTY_RETIRED"
     | "DEPENDENCY_UNAVAILABLE";
 
   reasons: string[];

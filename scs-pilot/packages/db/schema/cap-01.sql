@@ -143,6 +143,10 @@ CREATE TABLE scs.regulatory_framework (
   -- Added by migration 011.
   CONSTRAINT regulatory_framework_framework_spec_uq
     UNIQUE (framework_id, evidence_spec_id),
+  -- the target of scs.custody_event's (framework, commodity) foreign key: a
+  -- custody event's commodity code is its framework's. Added by migration 014.
+  CONSTRAINT regulatory_framework_framework_commodity_uq
+    UNIQUE (framework_id, commodity_code),
 
   -- ── Contract enumerations ─────────────────────────────────────────────────
   CONSTRAINT regulatory_framework_status_ck

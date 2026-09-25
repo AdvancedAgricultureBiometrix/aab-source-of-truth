@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:platform:evidence-object:1",
+  "title": "ScsEvidenceObject",
+  "description": "SCS-PLATFORM-01 ScsEvidenceObject (contract 288bfd7): a stored evidence file, identified by the SHA-256 SCS computed over its bytes. Storing a file does not admit it as evidence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "objectId",
+    "objectReference",
+    "contentDigest",
+    "sizeBytes",
+    "mediaType",
+    "storedAt",
+    "storedBy"
+  ],
+  "properties": {
+    "objectId": {
+      "description": "Lowercase hexadecimal SHA-256 of the stored bytes, computed by SCS.",
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "objectReference": {
+      "description": "The reference a capability cites: scs-object:sha256:<objectId>.",
+      "type": "string",
+      "pattern": "^scs-object:sha256:[0-9a-f]{64}$"
+    },
+    "contentDigest": {
+      "title": "ScsEvidenceObjectDigest",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "algorithm",
+        "value"
+      ],
+      "properties": {
+        "algorithm": {
+          "type": "string",
+          "const": "SHA-256"
+        },
+        "value": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "sizeBytes": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 52428800
+    },
+    "mediaType": {
+      "description": "As declared at the first upload; not confirmed from the bytes.",
+      "type": "string",
+      "enum": [
+        "image/tiff",
+        "image/png",
+        "image/jpeg",
+        "application/pdf",
+        "application/zip",
+        "application/octet-stream"
+      ]
+    },
+    "storedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "storedBy": {
+      "$ref": "urn:aab:scs:schema:shared:actor-reference:1"
+    }
+  }
+}

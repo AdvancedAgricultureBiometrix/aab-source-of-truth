@@ -10,7 +10,7 @@ import "../schemas/registry.js";
 import { StaticTokenAuthenticator } from "./auth.js";
 import { ScsFailure } from "./errors.js";
 import type { Database, RoleFacts } from "./db.js";
-import { createApiServer, MAX_BODY_BYTES, type Route } from "./server.js";
+import { createApiServer, MAX_BODY_BYTES, type RawBody, type Route } from "./server.js";
 import type { JsonSchema } from "./validation.js";
 
 const TOKEN = "server-test-token-0123456789abcdefgh";
@@ -58,6 +58,14 @@ const routes: Route<never>[] = [
     method: "POST", path: "/things/:thingId/notes", capabilityId: "SCS-CAP-02", auth: "required", transactional: true, idempotency: "required",
     requestSchema: echoSchema, paramsSchema: thingParamsSchema,
     handle: async (ctx) => ({ status: 201, body: { params: ctx.params, got: ctx.body, digest: ctx.requestDigest } }),
+  },
+  {
+    method: "POST", path: "/upload", capabilityId: "SCS-PLATFORM", auth: "required", transactional: true, idempotency: "required",
+    rawBody: { maxBytes: 16, mediaTypes: ["application/pdf", "application/octet-stream"], tooLarge: "EVIDENCE_OBJECT_TOO_LARGE", unsupportedType: "EVIDENCE_OBJECT_TYPE_UNSUPPORTED" },
+    handle: async (ctx) => {
+      const body = ctx.body as unknown as RawBody;
+      return { status: 201, body: { size: body.bytes.length, mediaType: body.mediaType, text: body.bytes.toString("utf8"), digest: ctx.requestDigest } };
+    },
   },
   { method: "GET", path: "/public", capabilityId: "SCS-CAP-01", auth: "none", transactional: false, idempotency: "none", handle: async () => ({ status: 200, body: { ok: true } }) },
   {
@@ -244,11 +252,63 @@ test("a route without parameters keeps its digest: the fingerprint of the templa
   assert.equal(r.json!["digest"], requestFingerprint("POST", "/echo", { n: 7 }));
 });
 
+test("raw-body route: the handler gets the bytes and the media type (parameters ignored)", async () => {
+  const r = await call("POST", "/upload", { headers: { ...authed, "content-type": "application/PDF; name=x" }, body: "%PDF-1.7 hello" });
+  assert.equal(r.status, 201, JSON.stringify(r.json));
+  assert.deepEqual([r.json!["size"], r.json!["mediaType"], r.json!["text"]], [14, "application/pdf", "%PDF-1.7 hello"]);
+});
+
+test("raw-body route: a media type it does not accept is refused with the route's code", async () => {
+  for (const contentType of ["application/json", "text/plain", ""]) {
+    const r = await call("POST", "/upload", { headers: { ...authed, "content-type": contentType }, body: "abc" });
+    assert.equal(r.status, 415, contentType);
+    assert.equal(r.json!["error"], "EVIDENCE_OBJECT_TYPE_UNSUPPORTED");
+    assert.equal(r.json!["capabilityId"], "SCS-PLATFORM");
+  }
+});
+
+test("raw-body route: a body over the route's limit is refused with its code, declared or streamed", async () => {
+  const declared = await call("POST", "/upload", { headers: { ...authed, "content-type": "application/octet-stream" }, body: "x".repeat(17) });
+  assert.equal(declared.status, 413);
+  assert.equal(declared.json!["error"], "EVIDENCE_OBJECT_TOO_LARGE");
+  assert.deepEqual(declared.json!["reasons"], ["The request body must be at most 16 bytes."]);
+  // no Content-Length: the limit is enforced while the body streams in
+  const res = await fetch(`${base}/upload`, {
+    method: "POST",
+    headers: { ...authed, "content-type": "application/octet-stream" },
+    body: new ReadableStream({ start(c) { c.enqueue(new TextEncoder().encode("x".repeat(10))); c.enqueue(new TextEncoder().encode("x".repeat(10))); c.close(); } }),
+    duplex: "half",
+  } as RequestInit);
+  assert.equal(res.status, 413);
+  assert.equal(((await res.json()) as Record<string, unknown>)["error"], "EVIDENCE_OBJECT_TOO_LARGE");
+});
+
+test("raw-body route: an empty body is refused", async () => {
+  const r = await call("POST", "/upload", { headers: { ...authed, "content-type": "application/pdf" }, body: "" });
+  assert.equal(r.status, 400);
+  assert.deepEqual(r.json!["reasons"], ["The request body is empty; a file is required."]);
+});
+
+test("raw-body route: the fingerprint covers the bytes (via their digest) and the media type", async () => {
+  const send = (body: string, type = "application/pdf") => call("POST", "/upload", { headers: { ...authed, "content-type": type }, body });
+  const a = await send("same bytes");
+  const a2 = await send("same bytes");
+  const b = await send("other bytes");
+  const c = await send("same bytes", "application/octet-stream");
+  assert.equal(a.json!["digest"], a2.json!["digest"]);
+  assert.notEqual(a.json!["digest"], b.json!["digest"]);
+  assert.notEqual(a.json!["digest"], c.json!["digest"]);
+});
+
+test("raw-body route: authentication is checked before the body", async () => {
+  const r = await call("POST", "/upload", { headers: { "content-type": "text/plain" }, body: "x".repeat(100) });
+  assert.equal(r.status, 401);
+});
+
 test("route tables that bypass the rules are refused at construction", () => {
   const post = { method: "POST", path: "/x", capabilityId: "SCS-CAP-01", auth: "required", transactional: true, idempotency: "required", requestSchema: echoSchema, handle: async () => ({ status: 200, body: {} }) } as const;
   const refused = (route: object, db: Database | null, pattern: RegExp) =>
     assert.throws(() => createApiServer({ routes: [route as Route<never>], authenticator, db }), pattern);
-  refused({ ...post, requestSchema: undefined }, fakeDb, /must declare a requestSchema/);
   refused({ ...post, idempotency: "none" }, fakeDb, /write routes must be authenticated, transactional and require an Idempotency-Key/);
   refused({ ...post, transactional: false }, fakeDb, /write routes must be authenticated, transactional and require an Idempotency-Key/);
   refused({ ...post, auth: "none" }, fakeDb, /write routes must be authenticated, transactional and require an Idempotency-Key/);
@@ -256,6 +316,10 @@ test("route tables that bypass the rules are refused at construction", () => {
   refused({ ...post, method: "GET", transactional: false }, fakeDb, /idempotency requires a transactional route/);
   assert.throws(() => createApiServer({ routes: [routes[1]!, routes[1]!], authenticator, db: fakeDb }), /duplicate route/);
   refused({ ...post, path: "/x/:id" }, fakeDb, /must declare a paramsSchema/);
+  const raw = { maxBytes: 1, mediaTypes: ["application/pdf"], tooLarge: "EVIDENCE_OBJECT_TOO_LARGE", unsupportedType: "EVIDENCE_OBJECT_TYPE_UNSUPPORTED" };
+  refused({ ...post, rawBody: raw }, fakeDb, /a raw-body route has no requestSchema/);
+  refused({ ...post, method: "GET", transactional: false, idempotency: "none", requestSchema: undefined, rawBody: raw }, fakeDb, /only a POST route can take a raw body/);
+  refused({ ...post, requestSchema: undefined }, fakeDb, /must declare a requestSchema \(or a rawBody\)/);
   refused({ ...post, paramsSchema: thingParamsSchema }, fakeDb, /paramsSchema declared but the path has no parameters/);
   refused({ ...post, path: "/x/a:id", paramsSchema: thingParamsSchema }, fakeDb, /must be a whole segment/);
   refused({ ...post, path: "/x/:id/:id", paramsSchema: thingParamsSchema }, fakeDb, /duplicate path parameter name/);

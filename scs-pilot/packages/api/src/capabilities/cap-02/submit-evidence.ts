@@ -108,8 +108,8 @@ export async function submitIdentityEvidence(ctx: RouteContext<ScsIdentityEviden
       `submitterAuthorised: evaluated — actor ${actor.actorId} holds ${REGISTRANT_ROLE}.`,
       `evidenceIdsNotAlreadyLinked: evaluated — none of the ${count} evidence id(s) is already linked to party version ${party.partyVersion}.`,
       `Evidence admitted, not verified: submitting identity evidence does not verify identity. registrationStatus is unchanged (${party.registrationStatus}), no party version is created, and no verification assessment is created or changed. What the evidence proves is evaluated separately, by a verification assessment.`,
-      // TODO(evidence-store): replace this disclosure with a real existence check once the evidence store is built.
-      `Evidence ids not confirmed: the evidence store is not yet built, so the ${count} submitted evidence id(s) cannot be confirmed to identify any document. They are recorded as submitted.`,
+      // TODO(evidence-id-model): evidence ids predate the SCS-PLATFORM-01 object store (contract gap); replace this disclosure with an existence check once ids cite stored objects.
+      `Evidence ids not confirmed: the ${count} cited evidence id(s) are not linked to the SCS evidence object store; the store identifies files by SHA-256 digest, so these ids cannot be confirmed against it. They are recorded as submitted.`,
     ],
     decidedBy: actor,
     decidedAt: inserted.submittedAt,

@@ -137,7 +137,7 @@ test("valid role claim → 201; CLAIMED_UNVERIFIED, frameworkVersion from CAP-01
   }
   assert.ok(!d.decisionReasons.some((x) => x.includes("not paired per framework")), "one framework: no pairing gap to disclose");
   assert.ok(d.decisionReasons.some((x) => x.startsWith("Registration is not verification") && x.includes("Neither the role nor the party is verified")));
-  assert.ok(d.decisionReasons.some((x) => x.startsWith("Evidence ids not confirmed: the evidence store is not yet built")));
+  assert.ok(d.decisionReasons.some((x) => x.startsWith("Evidence ids not confirmed: ") && x.includes("are not linked to the SCS evidence object store; the store identifies files by SHA-256 digest")));
 
   const row = (await harness.admin.query(`SELECT * FROM scs.party_role_claim WHERE role_claim_id = $1`, [d.roleClaimId])).rows[0] as Record<string, unknown>;
   assert.equal(row["party_id"], partyId);

@@ -23,6 +23,7 @@ const typesDir = path.join(root, "src", "types");
  */
 const TARGETS = [
   { out: "shared.ts", schemas: ["shared/actor-reference.schema.json"] },
+  { out: "platform.ts", schemas: ["platform/evidence-object.schema.json"] },
   {
     out: "cap-01.ts",
     schemas: [
@@ -71,6 +72,24 @@ const TARGETS = [
       "cap-03/plot-registration-decision.schema.json",
       "cap-03/plot-registration-receipt.schema.json",
       "cap-03/plot-registration-response.schema.json",
+    ],
+  },
+  {
+    out: "cap-04.ts",
+    schemas: [
+      "cap-04/evidence-submission-request.schema.json",
+      "cap-04/evidence-admission-decision.schema.json",
+      "cap-04/evidence-admission-receipt.schema.json",
+      "cap-04/evidence-admission-response.schema.json",
+    ],
+  },
+  {
+    out: "cap-05.ts",
+    schemas: [
+      "cap-05/custody-event-submission-request.schema.json",
+      "cap-05/custody-event-admission-decision.schema.json",
+      "cap-05/custody-event-admission-receipt.schema.json",
+      "cap-05/custody-event-admission-response.schema.json",
     ],
   },
 ];

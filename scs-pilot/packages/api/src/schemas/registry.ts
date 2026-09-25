@@ -7,6 +7,7 @@
 // files (npm run generate:types) — never hand-written.
 
 import actorReference from "./shared/actor-reference.schema.json" with { type: "json" };
+import platformEvidenceObject from "./platform/evidence-object.schema.json" with { type: "json" };
 import cap01FrameworkRegistrationRequest from "./cap-01/framework-registration-request.schema.json" with { type: "json" };
 import cap01FrameworkRegistrationDecision from "./cap-01/framework-registration-decision.schema.json" with { type: "json" };
 import cap01FrameworkRegistrationReceipt from "./cap-01/framework-registration-receipt.schema.json" with { type: "json" };
@@ -42,11 +43,20 @@ import cap03PlotRegistrationRequest from "./cap-03/plot-registration-request.sch
 import cap03PlotRegistrationDecision from "./cap-03/plot-registration-decision.schema.json" with { type: "json" };
 import cap03PlotRegistrationReceipt from "./cap-03/plot-registration-receipt.schema.json" with { type: "json" };
 import cap03PlotRegistrationResponse from "./cap-03/plot-registration-response.schema.json" with { type: "json" };
+import cap04EvidenceSubmissionRequest from "./cap-04/evidence-submission-request.schema.json" with { type: "json" };
+import cap04EvidenceAdmissionDecision from "./cap-04/evidence-admission-decision.schema.json" with { type: "json" };
+import cap04EvidenceAdmissionReceipt from "./cap-04/evidence-admission-receipt.schema.json" with { type: "json" };
+import cap04EvidenceAdmissionResponse from "./cap-04/evidence-admission-response.schema.json" with { type: "json" };
+import cap05CustodyEventSubmissionRequest from "./cap-05/custody-event-submission-request.schema.json" with { type: "json" };
+import cap05CustodyEventAdmissionDecision from "./cap-05/custody-event-admission-decision.schema.json" with { type: "json" };
+import cap05CustodyEventAdmissionReceipt from "./cap-05/custody-event-admission-receipt.schema.json" with { type: "json" };
+import cap05CustodyEventAdmissionResponse from "./cap-05/custody-event-admission-response.schema.json" with { type: "json" };
 
 import { registerSchema, type JsonSchema } from "../foundation/validation.js";
 
 export const SCHEMAS = {
   actorReference,
+  platformEvidenceObject,
   cap01FrameworkRegistrationRequest,
   cap01FrameworkRegistrationDecision,
   cap01FrameworkRegistrationReceipt,
@@ -82,6 +92,14 @@ export const SCHEMAS = {
   cap03PlotRegistrationDecision,
   cap03PlotRegistrationReceipt,
   cap03PlotRegistrationResponse,
+  cap04EvidenceSubmissionRequest,
+  cap04EvidenceAdmissionDecision,
+  cap04EvidenceAdmissionReceipt,
+  cap04EvidenceAdmissionResponse,
+  cap05CustodyEventSubmissionRequest,
+  cap05CustodyEventAdmissionDecision,
+  cap05CustodyEventAdmissionReceipt,
+  cap05CustodyEventAdmissionResponse,
 } as const satisfies Record<string, JsonSchema>;
 
 for (const schema of Object.values(SCHEMAS)) registerSchema(schema);

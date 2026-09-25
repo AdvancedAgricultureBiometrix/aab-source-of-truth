@@ -13,9 +13,11 @@
     "start": "node dist/index.js",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "node --import tsx --test \"src/**/*.test.ts\"",
-    "generate:types": "node scripts/generate-types.mjs"
+    "generate:types": "node scripts/generate-types.mjs",
+    "migrate": "tsx src/migrations/cli.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1140.0",
     "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",
     "pg": "^8.23.0"

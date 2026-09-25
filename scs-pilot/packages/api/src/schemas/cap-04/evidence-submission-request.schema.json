@@ -1,0 +1,526 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-04:evidence-submission-request:1",
+  "title": "ScsDeforestationEvidenceSubmissionRequest",
+  "description": "SCS-CAP-04 ScsDeforestationEvidenceSubmissionRequest (contract 5c6a263). The system sets evidenceId, evidenceVersion, schemaVersion, plotVersion, evidenceRequirementSpecId (from the association), submittedBy, submittedAt, integrityStatus, intersectionWithPlot and the whole admission block. The claim vocabulary is DETECTED, never OCCURRED: an analysis cannot establish what occurred. Dates, geometry, integrity, the plot, association and parties are checked by the capability so that the contract's failure codes are returned.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "plotId",
+    "frameworkAssociationId",
+    "evidenceType",
+    "source",
+    "evidenceObject",
+    "spatialCoverage",
+    "temporalCoverage",
+    "evidenceClaim",
+    "coverageAttestation"
+  ],
+  "properties": {
+    "plotId": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "frameworkAssociationId": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "evidenceType": {
+      "type": "string",
+      "enum": [
+        "SATELLITE_IMAGE",
+        "REMOTE_SENSING_ANALYSIS",
+        "LAND_COVER_DATA_PRODUCT",
+        "FORESTRY_AUTHORITY_CERTIFICATE",
+        "GOVERNMENT_RECORD",
+        "FIELD_VERIFICATION",
+        "EXPERT_ASSESSMENT",
+        "OTHER"
+      ]
+    },
+    "source": {
+      "title": "ScsDeforestationEvidenceSource",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sourceId",
+        "sourceOrganizationId",
+        "sourceReference"
+      ],
+      "properties": {
+        "sourceId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "sourceOrganizationId": {
+          "description": "An identifier issued outside SCS.",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "sourceTitle": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "providerName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "productName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "productVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "sourceReference": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "issuingAuthority": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        }
+      }
+    },
+    "evidenceObject": {
+      "title": "ScsDeforestationEvidenceObjectInput",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "originalObjectReference",
+        "contentDigest",
+        "chainOfCustodyComplete"
+      ],
+      "properties": {
+        "objectId": {
+          "description": "The SCS-PLATFORM-01 objectId of the stored file, when one is cited.",
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "originalObjectReference": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "contentDigest": {
+          "description": "Lowercase hexadecimal SHA-256 of the file.",
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "chainOfCustodyComplete": {
+          "description": "As declared by the submitter.",
+          "type": "boolean"
+        },
+        "derivedFromEvidenceIds": {
+          "type": "array",
+          "maxItems": 100,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          }
+        }
+      }
+    },
+    "spatialCoverage": {
+      "title": "ScsDeforestationSpatialCoverageInput",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "coverageGeometry"
+      ],
+      "properties": {
+        "coverageGeometry": {
+          "title": "ScsCoverageGeometryInput",
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "geometryType",
+            "coordinates",
+            "coordinateReferenceSystem"
+          ],
+          "properties": {
+            "geometryType": {
+              "type": "string",
+              "enum": [
+                "POINT",
+                "POLYGON",
+                "MULTIPOLYGON"
+              ]
+            },
+            "coordinates": {
+              "description": "The GeoJSON (RFC 7946) coordinates member; validated by the capability.",
+              "type": "array"
+            },
+            "coordinateReferenceSystem": {
+              "description": "Must be EPSG:4326 (checked by the capability).",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1000,
+              "pattern": "\\S"
+            }
+          }
+        },
+        "plotCoveragePercent": {
+          "description": "Declared; not computed in the pilot.",
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "spatialResolutionMetres": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "positionalAccuracyMetres": {
+          "type": "number",
+          "minimum": 0
+        },
+        "excludedAreas": {
+          "type": "array",
+          "maxItems": 50,
+          "items": {
+            "title": "ScsExcludedAreaInput",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "geometry",
+              "reason"
+            ],
+            "properties": {
+              "geometry": {
+                "title": "ScsExcludedAreaGeometryInput",
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "geometryType",
+                  "coordinates",
+                  "coordinateReferenceSystem"
+                ],
+                "properties": {
+                  "geometryType": {
+                    "type": "string",
+                    "enum": [
+                      "POINT",
+                      "POLYGON",
+                      "MULTIPOLYGON"
+                    ]
+                  },
+                  "coordinates": {
+                    "description": "The GeoJSON (RFC 7946) coordinates member; validated by the capability.",
+                    "type": "array"
+                  },
+                  "coordinateReferenceSystem": {
+                    "description": "Must be EPSG:4326 (checked by the capability).",
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1000,
+                    "pattern": "\\S"
+                  }
+                }
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "pattern": "\\S"
+              }
+            }
+          }
+        }
+      }
+    },
+    "temporalCoverage": {
+      "title": "ScsDeforestationTemporalCoverage",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "coverageMode",
+        "knownGapPeriods"
+      ],
+      "properties": {
+        "acquisitionInstant": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "acquisitionStart": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "acquisitionEnd": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "analysisPeriodStart": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "analysisPeriodEnd": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "attestedPeriodStart": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "attestedPeriodEnd": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "coverageMode": {
+          "type": "string",
+          "enum": [
+            "POINT_IN_TIME",
+            "MULTIPLE_OBSERVATIONS",
+            "CONTINUOUS_MONITORING",
+            "CHANGE_ANALYSIS",
+            "AUTHORITY_ATTESTATION"
+          ]
+        },
+        "knownGapPeriods": {
+          "type": "array",
+          "maxItems": 100,
+          "items": {
+            "title": "ScsKnownGapPeriod",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "start",
+              "end",
+              "reason"
+            ],
+            "properties": {
+              "start": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "end": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "reason": {
+                "type": "string",
+                "enum": [
+                  "CLOUD_COVER",
+                  "NO_ACQUISITION",
+                  "SENSOR_LIMITATION",
+                  "DATA_UNAVAILABLE",
+                  "ANALYSIS_EXCLUDED",
+                  "OTHER"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "analyticalMethod": {
+      "title": "ScsAnalyticalMethod",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "methodName",
+        "detectionTarget",
+        "qualityStatus"
+      ],
+      "properties": {
+        "methodName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "methodVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "analystOrganizationId": {
+          "description": "A registered SCS-CAP-02 partyId, not RETIRED.",
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "baselineEvidenceIds": {
+          "type": "array",
+          "maxItems": 100,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          }
+        },
+        "comparisonEvidenceIds": {
+          "type": "array",
+          "maxItems": 100,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+          }
+        },
+        "detectionTarget": {
+          "type": "string",
+          "enum": [
+            "DEFORESTATION",
+            "FOREST_DEGRADATION",
+            "LAND_COVER_CHANGE",
+            "TREE_COVER_CHANGE",
+            "OTHER"
+          ]
+        },
+        "minimumDetectableChange": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "cloudCoverPercent": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "qualityStatus": {
+          "type": "string",
+          "enum": [
+            "ACCEPTABLE",
+            "LIMITED",
+            "UNASSESSED"
+          ]
+        }
+      }
+    },
+    "evidenceClaim": {
+      "title": "ScsEvidenceClaim",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "claimType",
+        "claimSummary",
+        "confidence",
+        "limitations"
+      ],
+      "properties": {
+        "claimType": {
+          "description": "Claim vocabulary: DETECTED, never OCCURRED.",
+          "type": "string",
+          "enum": [
+            "NO_DEFORESTATION_DETECTED",
+            "POSSIBLE_DEFORESTATION_DETECTED",
+            "DEFORESTATION_DETECTED",
+            "NO_FOREST_DEGRADATION_DETECTED",
+            "POSSIBLE_FOREST_DEGRADATION_DETECTED",
+            "FOREST_DEGRADATION_DETECTED",
+            "INCONCLUSIVE"
+          ]
+        },
+        "claimSummary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "claimedPeriodStart": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "claimedPeriodEnd": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "confidence": {
+          "type": "string",
+          "enum": [
+            "HIGH",
+            "MEDIUM",
+            "LOW",
+            "NOT_STATED"
+          ]
+        },
+        "limitations": {
+          "description": "Stated by the source; preserved verbatim.",
+          "type": "array",
+          "maxItems": 200,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000,
+            "pattern": "\\S"
+          }
+        }
+      }
+    },
+    "coverageAttestation": {
+      "title": "ScsCoverageAttestation",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attestationProvided"
+      ],
+      "properties": {
+        "attestationProvided": {
+          "type": "boolean"
+        },
+        "attestingPartyId": {
+          "description": "A registered SCS-CAP-02 partyId, not RETIRED.",
+          "type": "string",
+          "format": "uuid",
+          "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+        },
+        "attestingRole": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "authorityBasis": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "attestedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "declaredCoverageStart": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "declaredCoverageEnd": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "declarationTextReference": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        }
+      }
+    }
+  }
+}

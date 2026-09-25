@@ -173,7 +173,7 @@ test("valid mandate → 201; CLAIMED_UNVERIFIED, NOT_REVOKED, boundary flags tru
     assert.ok(d.decisionReasons.some((x) => x.startsWith(`${check}: evaluated`)), `${check} has an evaluated reason`);
   }
   assert.ok(d.decisionReasons.some((x) => x.startsWith(`activeRelationshipExists: evaluated — relationship ${relationshipId} is ACTIVE`)));
-  assert.ok(d.decisionReasons.some((x) => x.startsWith("Evidence ids not confirmed") && x.includes("or to show that the granting party agreed")));
+  assert.ok(d.decisionReasons.some((x) => x.startsWith("Evidence ids not confirmed: ") && x.includes("are not linked to the SCS evidence object store; the store identifies files by SHA-256 digest") && x.includes("Nothing confirms that the granting party agreed")));
   assert.ok(d.decisionReasons.some((x) => x.startsWith("Registration is not verification") && x.includes("permitting only SUBMIT_IDENTITY_EVIDENCE, SUBMIT_CUSTODY_EVIDENCE")));
 
   const row = (await harness.admin.query(`SELECT * FROM scs.representation_mandate WHERE mandate_id = $1`, [d.mandateId])).rows[0] as Record<string, unknown>;

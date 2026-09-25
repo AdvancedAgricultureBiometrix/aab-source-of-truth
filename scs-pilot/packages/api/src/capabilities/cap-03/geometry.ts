@@ -31,7 +31,13 @@ export type GeometryType = "POINT" | "POLYGON" | "MULTIPOLYGON";
 
 type Position = readonly [number, number];
 
-const BASE = "/plot/geometry";
+/** Where the geometry sits in the request, for the JSON pointers in problems; and whether the plot area rule applies. */
+export interface GeometryOptions {
+  /** Default "/plot/geometry" (SCS-CAP-03). */
+  readonly base?: string;
+  /** The EUDR plot area rule (areaHectares). Default true; false for evidence coverage geometries. */
+  readonly areaRule?: boolean;
+}
 
 /** Check one position; on success return [longitude, latitude]. */
 function position(value: unknown, at: string, problems: string[]): Position | null {
@@ -113,14 +119,16 @@ function polygon(value: unknown, at: string, problems: string[], budget: { posit
   value.forEach((r, i) => ring(r, `${at}/${i}`, problems, budget));
 }
 
-export function validateGeometry(geometryType: GeometryType, coordinates: unknown, areaHectares: number | undefined): string[] {
+export function validateGeometry(geometryType: GeometryType, coordinates: unknown, areaHectares: number | undefined, options: GeometryOptions = {}): string[] {
+  const BASE = options.base ?? "/plot/geometry";
+  const areaRule = options.areaRule ?? true;
   const problems: string[] = [];
   const at = `${BASE}/coordinates`;
   const budget = { positions: 0 };
 
   if (geometryType === "POINT") {
     position(coordinates, at, problems);
-    if (areaHectares !== undefined && areaHectares > POINT_MAX_HECTARES) {
+    if (areaRule && areaHectares !== undefined && areaHectares > POINT_MAX_HECTARES) {
       problems.push(
         `${BASE}/areaHectares: a POINT may represent a plot of at most ${POINT_MAX_HECTARES} hectares (EUDR Article 2(28)); ${areaHectares} ha must be a POLYGON or MULTIPOLYGON.`,
       );
@@ -138,8 +146,38 @@ export function validateGeometry(geometryType: GeometryType, coordinates: unknow
   if (budget.positions > MAX_TOTAL_POSITIONS) {
     problems.push(`${at}: a plot may have at most ${MAX_TOTAL_POSITIONS} positions in the pilot (it has ${budget.positions}).`);
   }
-  if (areaHectares === undefined) {
+  if (areaRule && areaHectares === undefined) {
     problems.push(`${BASE}/areaHectares: required for a ${geometryType}.`);
   }
   return problems;
+}
+
+export interface BoundingBox {
+  readonly minLon: number;
+  readonly minLat: number;
+  readonly maxLon: number;
+  readonly maxLat: number;
+}
+
+/** The bounding box of valid GeoJSON coordinates (any nesting depth); null if there are no positions. */
+export function boundingBox(coordinates: unknown): BoundingBox | null {
+  let box: { minLon: number; minLat: number; maxLon: number; maxLat: number } | null = null;
+  const visit = (v: unknown): void => {
+    if (!Array.isArray(v)) return;
+    if (v.length >= 2 && typeof v[0] === "number" && typeof v[1] === "number") {
+      const [lon, lat] = v as [number, number];
+      box = box === null
+        ? { minLon: lon, minLat: lat, maxLon: lon, maxLat: lat }
+        : { minLon: Math.min(box.minLon, lon), minLat: Math.min(box.minLat, lat), maxLon: Math.max(box.maxLon, lon), maxLat: Math.max(box.maxLat, lat) };
+      return;
+    }
+    v.forEach(visit);
+  };
+  visit(coordinates);
+  return box;
+}
+
+/** True if two bounding boxes share any point (touching counts). */
+export function boxesIntersect(a: BoundingBox, b: BoundingBox): boolean {
+  return a.minLon <= b.maxLon && b.minLon <= a.maxLon && a.minLat <= b.maxLat && b.minLat <= a.maxLat;
 }

@@ -192,7 +192,7 @@ test("valid registration → 201; relationship CLAIMED_UNVERIFIED and ACTIVE; re
   }
   assert.equal(Object.keys(d.eligibilityChecks).length, 12);
   assert.ok(d.decisionReasons.some((x) => x.startsWith("Registration is not verification") && x.includes("verifies neither party")));
-  assert.ok(d.decisionReasons.some((x) => x.startsWith("Evidence ids not confirmed: the evidence store is not yet built")));
+  assert.ok(d.decisionReasons.some((x) => x.startsWith("Evidence ids not confirmed: ") && x.includes("are not linked to the SCS evidence object store; the store identifies files by SHA-256 digest")));
 
   const row = (await harness.admin.query(`SELECT * FROM scs.supply_chain_relationship WHERE relationship_id = $1`, [d.relationshipId])).rows[0] as Record<string, unknown>;
   assert.equal(row["from_party_id"], body.fromPartyId);
