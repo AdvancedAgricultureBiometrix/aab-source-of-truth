@@ -1024,7 +1024,10 @@ what it read:
   frozen evidence it evaluated, and its receipt (`SUFFICIENCY_EVALUATION`) is written in the
   same transaction.
 - `getEvaluationResult` returns a recorded evaluation exactly as recorded, to a
-  `COMPLIANCE_OFFICER`. An unknown identifier is `EVALUATION_NOT_FOUND`.
+  `COMPLIANCE_OFFICER` or a `REGULATORY_REVIEWER`: the SCS-CAP-09 reviewer reads the
+  evaluation through it and decides on its digest. Any other actor is
+  `REQUESTOR_NOT_AUTHORISED`. Reading an evaluation never confers the right to request one.
+  An unknown identifier is `EVALUATION_NOT_FOUND`.
   `listEvaluationsForPlot` returns a plot's evaluations, most recent first.
 
 ### Submission request
