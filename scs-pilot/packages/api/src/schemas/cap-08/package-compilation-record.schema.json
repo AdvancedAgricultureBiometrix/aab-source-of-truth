@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-08:package-compilation-record:1",
+  "title": "ScsPackageCompilationDecision",
+  "description": "SCS-CAP-08 compilation record (contract 4b1f05b, 901a600): governance evidence that a package was compiled through the gate, from which request, by whom, by which service, with which rendition. Not a distributable artefact. Only COMPILED is ever recorded.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "compilationId",
+    "packageId",
+    "requestId",
+    "decision",
+    "gateChecks",
+    "compiledAt",
+    "compiledBy",
+    "compiledByServiceIdentity",
+    "packageDigest",
+    "rendition"
+  ],
+  "properties": {
+    "compilationId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "packageId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "requestId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "decision": {
+      "type": "string",
+      "const": "COMPILED"
+    },
+    "gateChecks": {
+      "title": "ScsPackageGateChecks",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reviewDecisionFound",
+        "outcomePermitsCompilation",
+        "recordIsValid",
+        "currencyIsCurrent",
+        "evaluationIdMatches",
+        "frameworkVersionMatches",
+        "plotIdsMatch",
+        "operatorIdMatches",
+        "commodityCodeMatches"
+      ],
+      "properties": {
+        "reviewDecisionFound": {
+          "type": "boolean",
+          "const": true
+        },
+        "outcomePermitsCompilation": {
+          "type": "boolean",
+          "const": true
+        },
+        "recordIsValid": {
+          "type": "boolean",
+          "const": true
+        },
+        "currencyIsCurrent": {
+          "type": "boolean",
+          "const": true
+        },
+        "evaluationIdMatches": {
+          "type": "boolean",
+          "const": true
+        },
+        "frameworkVersionMatches": {
+          "type": "boolean",
+          "const": true
+        },
+        "plotIdsMatch": {
+          "type": "boolean",
+          "const": true
+        },
+        "operatorIdMatches": {
+          "type": "boolean",
+          "const": true
+        },
+        "commodityCodeMatches": {
+          "type": "boolean",
+          "const": true
+        }
+      }
+    },
+    "compiledAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "compiledBy": {
+      "$ref": "urn:aab:scs:schema:shared:actor-reference:1"
+    },
+    "compiledByServiceIdentity": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000,
+      "pattern": "\\S"
+    },
+    "packageDigest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "rendition": {
+      "title": "ScsPackageRenditionReference",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "renditionId",
+        "mediaType",
+        "sha256",
+        "rendererVersion"
+      ],
+      "properties": {
+        "renditionId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "mediaType": {
+          "type": "string",
+          "const": "application/pdf"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "rendererVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        }
+      }
+    }
+  }
+}

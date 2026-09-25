@@ -9,6 +9,7 @@
  *   src/schemas/cap-09/currency-assessment.schema.json
  *   src/schemas/cap-09/review-decision-params.schema.json
  *   src/schemas/cap-09/currency-assessment-request.schema.json
+ *   src/schemas/cap-09/recorded-decision.schema.json
  * To change these types, edit the schema(s) above, then run:
  *   npm run generate:types
  * npm test fails if this file differs from what the schemas generate.
@@ -287,3 +288,97 @@ export interface ScsReviewDecisionPathParams {
  * Body of POST /scs/v1/review-decisions/:decisionId/currency-assessments: empty. The assessment is derived by the system.
  */
 export interface ScsCurrencyAssessmentRequest {}
+
+/**
+ * An SCS-CAP-09 decision as recorded: ScsRegulatoryReviewDecision without its derived currency fields (currencyStatus, currencyLastAssessedAt, stalenessReasons, supersededByDecisionId, supersededAt), which depend on when the decision is read. SCS-CAP-08 packages this form (contract 4b1f05b).
+ */
+export interface ScsRecordedReviewDecision {
+  decisionId: string;
+  schemaVersion: string;
+  evaluationId: string;
+  evaluationSnapshotDigest: string;
+  frameworkId: string;
+  frameworkVersion: string;
+  evidenceRequirementSpecId: string;
+  commodityCode: string;
+  operatorId: string;
+  /**
+   * @maxItems 500
+   */
+  plotIds: string[];
+  decisionOutcome:
+    | "PROCEED_TO_PACKAGE_COMPILATION"
+    | "DO_NOT_PROCEED"
+    | "REQUIRES_FURTHER_EVIDENCE"
+    | "REQUIRES_SPECIALIST_REVIEW"
+    | "REVIEW_ABORTED_FAIL_CLOSED";
+  reviewReasoning: ScsRecordedReviewReasoning;
+  reviewer: ScsRecordedReviewer;
+  decidedAt: string;
+  recordValidity: "VALID" | "PROCEDURALLY_INVALID" | "UNDER_CHALLENGE" | "SUPERSEDED_BY_CORRECTION";
+  supersedes?: ScsRecordedSupersedes;
+  /**
+   * @maxItems 50
+   */
+  decisionReasons: string[];
+  authorityBoundary: ScsRecordedReviewAuthorityBoundary;
+}
+export interface ScsRecordedReviewReasoning {
+  evaluationSummaryAssessed: string;
+  /**
+   * @maxItems 1000
+   */
+  gapsConsidered: ScsRecordedReviewReasoningGap[];
+  /**
+   * @maxItems 1000
+   */
+  conflictsConsidered: ScsRecordedReviewReasoningConflict[];
+  /**
+   * @maxItems 200
+   */
+  limitationsAcknowledged: string[];
+  basisForOutcome: string;
+  /**
+   * @maxItems 200
+   */
+  remainingConcerns?: string[];
+  /**
+   * @maxItems 200
+   */
+  conditionsIfAny?: string[];
+}
+export interface ScsRecordedReviewReasoningGap {
+  gapId: string;
+  assessment: string;
+}
+export interface ScsRecordedReviewReasoningConflict {
+  conflictKey: string;
+  assessment: string;
+}
+export interface ScsRecordedReviewer {
+  reviewerId: string;
+  reviewerName: string;
+  reviewerOrganizationId: string;
+  reviewerRoleReference: string;
+  authorityBasis: string;
+  authorityVerifiedAt: string;
+}
+export interface ScsRecordedSupersedes {
+  priorDecisionId: string;
+  priorEvaluationId: string;
+  priorDecisionOutcome:
+    | "PROCEED_TO_PACKAGE_COMPILATION"
+    | "DO_NOT_PROCEED"
+    | "REQUIRES_FURTHER_EVIDENCE"
+    | "REQUIRES_SPECIALIST_REVIEW"
+    | "REVIEW_ABORTED_FAIL_CLOSED";
+  priorDecidedAt: string;
+  supersessionReason: string;
+}
+export interface ScsRecordedReviewAuthorityBoundary {
+  authorisesWorkflowStepOnly: true;
+  noComplianceDetermination: true;
+  noRegulatorySubmissionAuthority: true;
+  doesNotSubstituteForRegulatoryAcceptance: true;
+  legalResponsibilityRemainsWithOperator: true;
+}

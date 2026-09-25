@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-08:package-compilation-response:1",
+  "title": "ScsPackageCompilationResponse",
+  "description": "Body of a successful POST /scs/v1/due-diligence-packages (201): the compilation record, the package envelope, the receipt and its digest (contract 901a600).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decision",
+    "package",
+    "receipt",
+    "receiptDigest"
+  ],
+  "properties": {
+    "decision": {
+      "$ref": "urn:aab:scs:schema:cap-08:package-compilation-record:1"
+    },
+    "package": {
+      "$ref": "urn:aab:scs:schema:cap-08:package-envelope:1"
+    },
+    "receipt": {
+      "$ref": "urn:aab:scs:schema:cap-08:package-compilation-receipt:1"
+    },
+    "receiptDigest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

@@ -138,8 +138,13 @@ export const AUTHORITY_BOUNDARY: ScsRegulatoryReviewDecision["authorityBoundary"
   legalResponsibilityRemainsWithOperator: true,
 };
 
-/** The decision as the contract defines it: the recorded row, with its currency as derived. */
-export function decisionRecord(d: DecisionRow, currency: Currency, prior: DecisionRow | null): ScsRegulatoryReviewDecision {
+/** The fields of a decision that depend on when it is read: its currency, derived. */
+export const DERIVED_DECISION_FIELDS = ["currencyStatus", "currencyLastAssessedAt", "stalenessReasons", "supersededByDecisionId", "supersededAt"] as const;
+
+export type RecordedDecision = Omit<ScsRegulatoryReviewDecision, (typeof DERIVED_DECISION_FIELDS)[number]>;
+
+/** The decision as recorded: everything but its derived currency (SCS-CAP-08 packages this). */
+export function recordedDecision(d: DecisionRow, prior: DecisionRow | null): RecordedDecision {
   return {
     decisionId: d.decisionId,
     schemaVersion: d.schemaVersion,
@@ -171,10 +176,6 @@ export function decisionRecord(d: DecisionRow, currency: Currency, prior: Decisi
     },
     decidedAt: d.decidedAt,
     recordValidity: d.recordValidity as ScsRegulatoryReviewDecision["recordValidity"],
-    currencyStatus: currency.currencyStatus,
-    currencyLastAssessedAt: currency.assessedAt.toISOString(),
-    ...(currency.materialChanges.length === 0 ? {} : { stalenessReasons: currency.materialChanges.map((c) => ({ ...c })) }),
-    ...(currency.successor === null ? {} : { supersededByDecisionId: currency.successor.decisionId, supersededAt: currency.successor.decidedAt }),
     ...(prior === null || d.supersessionReason === null
       ? {}
       : {
@@ -188,5 +189,16 @@ export function decisionRecord(d: DecisionRow, currency: Currency, prior: Decisi
         }),
     decisionReasons: [...d.decisionReasons],
     authorityBoundary: AUTHORITY_BOUNDARY,
+  };
+}
+
+/** The decision as the contract defines it: the recorded row, with its currency as derived. */
+export function decisionRecord(d: DecisionRow, currency: Currency, prior: DecisionRow | null): ScsRegulatoryReviewDecision {
+  return {
+    ...recordedDecision(d, prior),
+    currencyStatus: currency.currencyStatus,
+    currencyLastAssessedAt: currency.assessedAt.toISOString(),
+    ...(currency.materialChanges.length === 0 ? {} : { stalenessReasons: currency.materialChanges.map((c) => ({ ...c })) }),
+    ...(currency.successor === null ? {} : { supersededByDecisionId: currency.successor.decisionId, supersededAt: currency.successor.decidedAt }),
   };
 }

@@ -13,6 +13,7 @@
 // and every capability route in capabilities/index.ts.
 
 import { CAPABILITY_ROUTES } from "./capabilities/index.js";
+import { cap08Routes } from "./capabilities/cap-08/routes.js";
 import { StaticTokenAuthenticator } from "./foundation/auth.js";
 import { log } from "./foundation/correlation.js";
 import { connectDatabase, dbConfigFromEnv, RestrictedRoleViolation, type Database } from "./foundation/db.js";
@@ -58,7 +59,7 @@ async function main(): Promise<void> {
   }
 
   const port = Number(process.env["API_PORT"] ?? 3000);
-  const server = createApiServer({ routes: [...evidenceObjectRoutes(objectStore), ...CAPABILITY_ROUTES], authenticator, db });
+  const server = createApiServer({ routes: [...evidenceObjectRoutes(objectStore), ...CAPABILITY_ROUTES, ...cap08Routes(objectStore)], authenticator, db });
   server.listen(port, () => log.info("scs-pilot-api listening", { port }));
 
   for (const signal of ["SIGINT", "SIGTERM"] as const) {

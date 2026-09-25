@@ -67,6 +67,13 @@ import cap09ReviewDecisionResponse from "./cap-09/review-decision-response.schem
 import cap09CurrencyAssessment from "./cap-09/currency-assessment.schema.json" with { type: "json" };
 import cap09ReviewDecisionParams from "./cap-09/review-decision-params.schema.json" with { type: "json" };
 import cap09CurrencyAssessmentRequest from "./cap-09/currency-assessment-request.schema.json" with { type: "json" };
+import cap09RecordedDecision from "./cap-09/recorded-decision.schema.json" with { type: "json" };
+import cap08PackageCompilationRequest from "./cap-08/package-compilation-request.schema.json" with { type: "json" };
+import cap08DueDiligencePackage from "./cap-08/due-diligence-package.schema.json" with { type: "json" };
+import cap08PackageEnvelope from "./cap-08/package-envelope.schema.json" with { type: "json" };
+import cap08PackageCompilationRecord from "./cap-08/package-compilation-record.schema.json" with { type: "json" };
+import cap08PackageCompilationReceipt from "./cap-08/package-compilation-receipt.schema.json" with { type: "json" };
+import cap08PackageCompilationResponse from "./cap-08/package-compilation-response.schema.json" with { type: "json" };
 
 import { registerSchema, type JsonSchema } from "../foundation/validation.js";
 
@@ -132,6 +139,13 @@ export const SCHEMAS = {
   cap09CurrencyAssessment,
   cap09ReviewDecisionParams,
   cap09CurrencyAssessmentRequest,
+  cap09RecordedDecision,
+  cap08PackageCompilationRequest,
+  cap08DueDiligencePackage,
+  cap08PackageEnvelope,
+  cap08PackageCompilationRecord,
+  cap08PackageCompilationReceipt,
+  cap08PackageCompilationResponse,
 } as const satisfies Record<string, JsonSchema>;
 
 for (const schema of Object.values(SCHEMAS)) registerSchema(schema);

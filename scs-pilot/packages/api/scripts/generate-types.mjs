@@ -107,6 +107,17 @@ const TARGETS = [
     ],
   },
   {
+    out: "cap-08.ts",
+    schemas: [
+      "cap-08/package-compilation-request.schema.json",
+      "cap-08/due-diligence-package.schema.json",
+      "cap-08/package-envelope.schema.json",
+      "cap-08/package-compilation-record.schema.json",
+      "cap-08/package-compilation-receipt.schema.json",
+      "cap-08/package-compilation-response.schema.json",
+    ],
+  },
+  {
     out: "cap-09.ts",
     schemas: [
       "cap-09/review-decision-request.schema.json",
@@ -116,6 +127,7 @@ const TARGETS = [
       "cap-09/currency-assessment.schema.json",
       "cap-09/review-decision-params.schema.json",
       "cap-09/currency-assessment-request.schema.json",
+      "cap-09/recorded-decision.schema.json",
     ],
   },
 ];
