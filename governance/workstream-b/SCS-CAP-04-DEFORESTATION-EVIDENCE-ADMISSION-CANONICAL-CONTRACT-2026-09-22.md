@@ -389,6 +389,11 @@ These interfaces are evaluated by SCS-CAP-06, not by SCS-CAP-04; they are kept h
 they describe how admitted deforestation evidence is used. `evaluateTemporalSufficiency` is not
 part of the SCS-CAP-04 provider.
 
+**Superseded by SCS-CAP-06.** These definitions were written before SCS-CAP-06 was designed.
+Where they differ, SCS-CAP-06's definitions govern: `ScsSufficiencyEvaluationRequest` in place
+of `ScsDeforestationSufficiencyRequest`, and the per-plot `ScsTemporalCoverageEvaluation` in
+place of `ScsTemporalCoverageResult`, with SCS-CAP-06's rules for temporal coverage.
+
 CAP-06 evaluates all admitted evidence together. It does not apply simple date-union logic. Two items whose declared periods join together do not necessarily establish adequate coverage. CAP-06 must consider:
 
 - whether the evidence covers the entire plot spatially

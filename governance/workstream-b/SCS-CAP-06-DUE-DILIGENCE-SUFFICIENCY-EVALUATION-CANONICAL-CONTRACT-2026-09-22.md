@@ -153,6 +153,7 @@ CAP-06 should declare `CONFLICTING_EVIDENCE` only when all seven conditions are 
 
 ```typescript
 interface ScsSufficiencyEvaluationRequest {
+  // Set by the system, never by the requester
   requestId: string;
   requestedBy: ActorReference;
   requestedAt: string;
@@ -163,6 +164,9 @@ interface ScsSufficiencyEvaluationRequest {
     plotVersions?: Record<string, number>;
     commodityCode: string;
     relevantProductCode?: string;
+    // The custody chain: the batches and the operator they must reach
+    batchIdentifiers?: string[];
+    operatorPartyId?: string;
   };
 
   // Which framework governs this evaluation
@@ -175,6 +179,7 @@ interface ScsSufficiencyEvaluationRequest {
   // The period the evaluation must cover
   // Framework-required period — not hardcoded here
   evaluationPeriod: {
+    // Set by the system: the specification's referenceCutoffDate
     referenceDate: string;
     evaluationEndDate: string;
     assessmentType:
@@ -183,10 +188,12 @@ interface ScsSufficiencyEvaluationRequest {
       | "BOTH";
   };
 
-  // Which admitted evidence is in scope
+  // Which admitted evidence is in scope. The system determines the scope:
+  // all admitted evidence for the subject under the framework. A list given
+  // by the requester must match it exactly. Evidence with limitations is
+  // always included; there is no option to exclude it
   evidenceScope: {
-    admittedEvidenceIds: string[];
-    includeEvidenceWithLimitations: boolean;
+    admittedEvidenceIds?: string[];
     // Quarantined evidence must never be included
     includeQuarantinedEvidence: false;
   };
@@ -199,7 +206,11 @@ interface ScsSufficiencyEvaluationRequest {
     | "CONFLICT_DETECTION"
     | "GAP_IDENTIFICATION"
     | "PROVENANCE_AND_AUTHORITY"
+    | "CUSTODY_CHAIN"
   >;
+
+  // A re-evaluation cites the evaluation it follows
+  previousEvaluationId?: string;
 }
 ```
 
@@ -216,14 +227,29 @@ interface ScsEvidenceGap {
     | "REGISTRY_VERIFICATION_ABSENT"
     | "TENURE_VERIFICATION_ABSENT"
     | "ATTESTATION_ABSENT"
+    | "ATTESTATION_WITHOUT_ANALYSIS"
     | "PROVENANCE_INCOMPLETE"
     | "EVIDENCE_TYPE_NOT_PROVIDED"
     | "AUTHORITY_CONFIRMATION_ABSENT"
     | "RESOLUTION_BELOW_REQUIREMENT"
+    | "RECENCY_BELOW_REQUIREMENT"
+    | "EVIDENCE_ABSENT"
+    | "SPATIAL_COVERAGE_NOT_EVALUATED"
+    | "OVERLAP_NOT_EVALUATED"
+    | "COVERAGE_TYPE_NOT_EVALUATED"
+    | "INTEGRITY_UNVERIFIED"
+    | "PARTY_UNVERIFIED"
+    | "PLOT_IDENTIFIER_TYPE_NOT_MET"
+    | "PLOT_IDENTIFIER_TYPE_UNRECOGNISED"
+    | "CUSTODY_CHAIN_BROKEN"
+    | "CUSTODY_DOCUMENT_TYPE_MISSING"
+    | "CUSTODY_STANDARD_NOT_EVALUATED"
+    | "TRACEABILITY_DEPTH_NOT_EVALUATED"
     | "OTHER";
 
+  // plotId is absent for a custody subject (a batch)
   subject: {
-    plotId: string;
+    plotId?: string;
     subjectType: string;
     subjectReference?: string;
   };
@@ -250,10 +276,14 @@ interface ScsEvidenceGap {
 ```typescript
 interface ScsEvidenceConflict {
   conflictId: string;
+  // Stable across evaluations: the requirement code and the two evidence
+  // ids, in sorted order. A resolution record names this key
+  conflictKey: string;
   requirementCode: string;
 
+  // plotId is absent for a custody subject (a batch)
   subject: {
-    plotId: string;
+    plotId?: string;
     subjectType: string;
     subjectReference?: string;
   };
@@ -283,6 +313,7 @@ interface ScsEvidenceConflict {
     | "METHOD_CONFLICT"
     | "AUTHORITY_CONFLICT"
     | "PLOT_VERSION_CONFLICT"
+    | "QUANTITY_CONFLICT"
     | "OTHER";
 
   explanation: string;
@@ -293,7 +324,8 @@ interface ScsEvidenceConflict {
     | "REQUIRES_ADDITIONAL_EVIDENCE"
     | "REQUIRES_AUTHORITY_CONFIRMATION";
 
-  // Only present when resolutionStatus is RESOLVED
+  // Only present when resolutionStatus is RESOLVED: the resolutionId of the
+  // ScsConflictResolutionRecord that resolved it
   resolutionDecisionId?: string;
 }
 ```
@@ -335,7 +367,10 @@ interface ScsRequirementEvaluation {
 ### Temporal coverage evaluation
 
 ```typescript
+// One per plot: evidence covers a plot, not the subject as a whole
 interface ScsTemporalCoverageEvaluation {
+  plotId: string;
+
   requiredPeriod: {
     start: string;
     end: string;
@@ -437,11 +472,22 @@ interface ScsSufficiencyEvaluationResult {
   evidenceRequirementSpecId: string;
   plotIds: string[];
   commodityCode: string;
+  batchIdentifiers: string[];
+  operatorPartyId?: string;
   evaluationPeriod: {
     referenceDate: string;
     evaluationEndDate: string;
     assessmentType: string;
   };
+
+  // The frozen input: exactly the admitted records evaluated
+  evaluatedEvidence: {
+    deforestationEvidenceIds: string[];
+    custodyEventIds: string[];
+  };
+
+  // The evaluation this one follows, for a re-evaluation
+  previousEvaluationId?: string;
 
   // Overall result — derived from requirement-level results
   // using deterministic precedence rules
@@ -456,9 +502,11 @@ interface ScsSufficiencyEvaluationResult {
   // Requirement-level results — the complete landscape
   requirementEvaluations: ScsRequirementEvaluation[];
 
-  // Dimensional evaluations
-  temporalCoverage: ScsTemporalCoverageEvaluation;
+  // Dimensional evaluations — temporal and spatial coverage per plot
+  temporalCoverage: ScsTemporalCoverageEvaluation[];
   spatialCoverage: ScsSpatialCoverageEvaluation[];
+  // Present when the subject names batches
+  custodyChain?: ScsCustodyChainEvaluation[];
 
   // All gaps — even when overallState is CONFLICTING_EVIDENCE
   allGaps: ScsEvidenceGap[];
@@ -481,6 +529,7 @@ interface ScsSufficiencyEvaluationResult {
       | "HUMAN_DECISION_REQUIRED"
       | "OBTAIN_REGISTRY_VERIFICATION"
       | "CHALLENGE_ATTESTATION"
+      | "OBTAIN_CUSTODY_EVIDENCE"
       | "OTHER";
     requirementCode: string;
     explanation: string;
@@ -568,6 +617,367 @@ CAP-06 does not:
 - Promote evidence into accepted regulatory knowledge
 - Replace SCS-CAP-09's human review gate
 
+## Evaluation rules for the pilot
+
+These rules define `evaluateSufficiency` for the pilot. Every condition in the failure contract
+ends in `FAIL_CLOSED` and produces no evaluation. Every other evaluation is recorded, whatever
+its outcome, with every gap and conflict disclosed.
+
+### Outcomes and the honest pilot result
+
+- **Recorded states.** A recorded evaluation's `overallState` is `SUFFICIENT`,
+  `GAPS_REQUIRE_HUMAN_DECISION`, `INSUFFICIENT` or `CONFLICTING_EVIDENCE`, derived by the
+  precedence rules. `FAIL_CLOSED` is never recorded: a condition that prevents a trustworthy
+  evaluation is a failure, and no evaluation is produced. `hasFailClosedConditions` is therefore
+  always `false` on a recorded evaluation.
+- **No pilot evaluation can be `SUFFICIENT`.** The pilot has no spatial database, so spatial
+  coverage is `NOT_EVALUATED` for every plot. `SUFFICIENT` requires every spatial evaluation to
+  pass. The best pilot outcome is `GAPS_REQUIRE_HUMAN_DECISION`. This is the honest result and
+  must be disclosed to pilot partners. TODO(postgis).
+
+### Authority and system-set fields
+
+- Only a `COMPLIANCE_OFFICER` may request an evaluation. Otherwise `REQUESTOR_NOT_AUTHORISED`.
+- The system sets `requestId`, `requestedBy`, `requestedAt`, `evaluationPeriod.referenceDate`,
+  `evaluationId`, `evaluatedAt` and `evaluatorVersion` (the constant `scs-cap06-pilot-1`).
+- `requestReEvaluation` is an ordinary evaluation that cites `previousEvaluationId`. It
+  produces a new evaluation and never changes the earlier one. The cited evaluation must exist
+  and concern the same subject (below).
+
+### Framework and specification
+
+- The framework must be registered by SCS-CAP-01 and `ACTIVE`, and `frameworkVersion` must
+  equal its `regulationVersion`. Otherwise `FRAMEWORK_VERSION_NOT_RESOLVED`.
+- `evidenceRequirementSpecId` must be that framework's own specification. Otherwise
+  `EVIDENCE_REQUIREMENT_SPEC_NOT_FOUND`.
+- `commodityCode` must equal the framework's `commodityCode`. Otherwise
+  `FRAMEWORK_VERSION_NOT_RESOLVED`, naming the mismatch.
+
+### Evaluation period
+
+- `referenceDate` is the specification's `deforestationEvidence.referenceCutoffDate`, set by the
+  system.
+- `evaluationEndDate` comes from the request. It must be after `referenceDate` and not in the
+  future (the database clock). Otherwise `EVALUATION_PERIOD_INVALID`.
+- `assessmentType` comes from the request.
+
+### Subject
+
+- **Plots.** Every plot must be registered by SCS-CAP-03 (`PLOT_NOT_FOUND`) and have an `ACTIVE`
+  association with the framework (`FRAMEWORK_ASSOCIATION_NOT_FOUND`). A `RETIRED` plot cannot be
+  evaluated (`PLOT_NOT_FOUND`, naming it as retired). When `plotVersions` is given, each must be
+  the plot's current version (`PLOT_NOT_FOUND`).
+- **Custody.** `batchIdentifiers` and `operatorPartyId` are given together or not at all. Each
+  batch must have at least one admitted custody event under the framework
+  (`BATCH_NOT_FOUND`). The operator must be a registered SCS-CAP-02 party that is not `RETIRED`
+  (`OPERATOR_PARTY_NOT_FOUND`).
+- **Subject identity.** Two evaluations concern the same subject when they name the same set of
+  plots, the same commodity, the same framework and the same set of batches. SCS-CAP-09 uses
+  this identity to find the most recent evaluation of a subject.
+
+### Evidence scope
+
+The system, not the requester, decides which evidence is evaluated.
+
+- **The scope** is every admitted SCS-CAP-04 record for the subject's plots whose framework
+  association is with this framework, and every admitted SCS-CAP-05 event under the framework
+  for the subject's batches.
+- **Limitations never exclude evidence.** Evidence admitted with limitations is always
+  evaluated: excluding it would exclude every SCS-CAP-04 record and would allow adverse evidence
+  to be left out.
+- **A requester's list.** When `evidenceScope.admittedEvidenceIds` is given, every identifier
+  must be an admitted record (`EVIDENCE_RECORD_NOT_RESOLVED`), and the list must equal the
+  system's scope exactly (`EVIDENCE_SCOPE_INCOMPLETE`, naming what is missing and what is
+  extra). A requester cannot narrow the evidence.
+- **Quarantine.** No quarantine operation exists yet, so no evidence in scope is quarantined.
+  When quarantine exists, quarantined evidence in scope is `QUARANTINED_EVIDENCE_IN_SCOPE`.
+- **The frozen input.** The evaluation records exactly which records it evaluated
+  (`evaluatedEvidence`). Evaluating the same frozen input under the same rules gives the same
+  result.
+- **Requested analysis cannot narrow the evaluation.** Every applicable requirement and every
+  dimension is always evaluated. `requestedAnalysis` is recorded as the requester asked, but
+  omitting a dimension neither skips it nor changes the overall state.
+
+### Requirement catalogue
+
+Each requirement applies only when its specification field demands it; otherwise its state is
+`NOT_APPLICABLE`.
+
+| Code | Applies when | Satisfied when |
+|---|---|---|
+| `DEF-TEMPORAL-COVERAGE` | `sufficiencyThreshold.allPlotsHaveDeforestationEvidence` | every plot's required period is covered (see "Temporal coverage"), with no adverse finding |
+| `DEF-SPATIAL-COVERAGE` | `sufficiencyThreshold.allPlotsHaveDeforestationEvidence` | every plot is fully covered (see "Spatial coverage") |
+| `DEF-SOURCE-TYPE` | always | every covering item's `evidenceType` is among `acceptedSourceTypes` |
+| `DEF-RESOLUTION` | `minimumResolutionMetres` is set | every covering item states a resolution at least that fine |
+| `DEF-RECENCY` | `minimumRecencyDays` is set | each plot's most recent observation is within that many days of `evaluationEndDate` |
+| `DEF-INTEGRITY` | always | every covering item's integrity is `VERIFIED` |
+| `DEF-AUTHORITY-CONFIRMATION` | `authorityConfirmationRequired` | every plot has a covering item with an attestation |
+| `PLOT-REGISTERED` | `sufficiencyThreshold.allPlotsRegistered` | every plot is registered and its overlap has been evaluated |
+| `PLOT-GEOLOCATION` | `plotRequirements.geolocationRequired` | every plot has a geometry |
+| `PLOT-LAND-REGISTRY` | `plotRequirements.landRegistryRequired` | every plot's `registryVerificationStatus` is `VERIFIED` |
+| `PLOT-OWNERSHIP-VERIFIED` | `plotRequirements.ownershipVerificationRequired` | every plot has a `VERIFIED` tenure claim |
+| `PLOT-IDENTIFIER-TYPE` | always | every plot's geometry meets `minimumPlotIdentifierType` |
+| `CUSTODY-CHAIN-CONTINUITY` | `sufficiencyThreshold.custodyChainComplete` | each batch's chain is continuous to the operator at the required depth |
+| `CUSTODY-DOCUMENT-TYPES` | `custodyEvidence.requiredDocumentTypes` is not empty | every required document type is present across the chain |
+| `CUSTODY-TRACEABILITY-DEPTH` | `sufficiencyThreshold.custodyChainComplete` | the chain reaches the depth `traceabilityDepth` requires |
+
+**`sufficiencyThreshold`.** Each `true` flag makes its condition mandatory, as the table shows.
+`humanReviewCompleted` is a SCS-CAP-09 matter: human review follows the evaluation, so CAP-06
+does not evaluate it, and the explanation says so. `noUnresolvedGaps: false` does not relax the
+definition of `SUFFICIENT`: any remaining gap still prevents it (see "Open gaps").
+
+**Provenance and authority** findings are recorded against the requirement the evidence
+supports: an unverified analyst, attesting party or custody party is the gap `PARTY_UNVERIFIED`
+(SCS-CAP-02: no current `VERIFIED_FOR_DECLARED_SCOPE` assessment), and a CAP-04
+`PROVENANCE_INCOMPLETE` or `CHAIN_OF_CUSTODY_INCOMPLETE` limitation is the gap
+`PROVENANCE_INCOMPLETE`.
+
+### Gap classification
+
+Every gap is either missing evidence, which human review cannot cure, or a verification gap,
+which a recorded human determination can address.
+
+- **Missing evidence** (`automaticFailure: true`; the requirement is `UNSATISFIED`):
+  `TEMPORAL_INTERVAL_MISSING`, `EVIDENCE_ABSENT`, `EVIDENCE_TYPE_NOT_PROVIDED`,
+  `RESOLUTION_BELOW_REQUIREMENT`, `RECENCY_BELOW_REQUIREMENT`, `PLOT_IDENTIFIER_TYPE_NOT_MET`,
+  `CUSTODY_CHAIN_BROKEN`, `CUSTODY_DOCUMENT_TYPE_MISSING`.
+- **Verification gaps** (`humanDecisionRequired: true`; the requirement is
+  `GAP_REQUIRES_HUMAN_DECISION`): `REGISTRY_VERIFICATION_ABSENT`, `TENURE_VERIFICATION_ABSENT`,
+  `OVERLAP_NOT_EVALUATED`, `SPATIAL_COVERAGE_NOT_EVALUATED`, `COVERAGE_TYPE_NOT_EVALUATED`,
+  `AUTHORITY_CONFIRMATION_ABSENT`, `ATTESTATION_ABSENT`, `ATTESTATION_WITHOUT_ANALYSIS`,
+  `INTEGRITY_UNVERIFIED`,
+  `PARTY_UNVERIFIED`, `PROVENANCE_INCOMPLETE`, `PLOT_IDENTIFIER_TYPE_UNRECOGNISED`,
+  `CUSTODY_STANDARD_NOT_EVALUATED`, `TRACEABILITY_DEPTH_NOT_EVALUATED`.
+
+### Requirement state and overall state
+
+A requirement's state is the first that applies:
+
+1. `NOT_APPLICABLE` — its specification field does not demand it;
+2. `CONFLICTING_EVIDENCE` — it has a material unresolved conflict;
+3. `UNSATISFIED` — it has an adverse finding or a missing-evidence gap;
+4. `GAP_REQUIRES_HUMAN_DECISION` — it has a verification gap;
+5. `SATISFIED`.
+
+`PARTIALLY_SATISFIED` is not used in the pilot: a partly met requirement is reported through its
+gaps. The overall state is derived from the requirement states by the precedence rules:
+`CONFLICTING_EVIDENCE` if any requirement is conflicting; otherwise `INSUFFICIENT` if any is
+unsatisfied; otherwise `GAPS_REQUIRE_HUMAN_DECISION` if any has a verification gap; otherwise
+`SUFFICIENT`.
+
+### Temporal coverage
+
+Coverage is evaluated per plot over the required period, from `referenceDate` to
+`evaluationEndDate`. It is never a union of declared dates.
+
+- **What an item supports.** An admitted CAP-04 record supports its **analysis period**, minus
+  its declared known gaps, and only when its `analyticalMethod.detectionTarget` matches the
+  assessment type (`DEFORESTATION`, `FOREST_DEGRADATION`, or either for `BOTH`, which needs
+  both covered).
+- **Point in time.** A `POINT_IN_TIME` item supports only its instant. It never fills an
+  interval.
+- **Attestations.** An attested period never creates coverage. An `AUTHORITY_ATTESTATION` item
+  with no analysis period supports nothing; it is the verification gap
+  `ATTESTATION_WITHOUT_ANALYSIS` for human decision: the attestation is present, the analysis
+  behind it is not. An attestation that extends beyond its
+  own analysis period is listed in `attestationExceedingAnalysis`, with the next step
+  `CHALLENGE_ATTESTATION`. It is not a two-party conflict.
+- **Claims.** `NO_DEFORESTATION_DETECTED` and `NO_FOREST_DEGRADATION_DETECTED` support coverage.
+  `INCONCLUSIVE` supports none.
+- **Adverse findings.** A `DEFORESTATION_DETECTED`, `POSSIBLE_DEFORESTATION_DETECTED`,
+  `FOREST_DEGRADATION_DETECTED` or `POSSIBLE_FOREST_DEGRADATION_DETECTED` claim whose claimed or
+  analysis period falls after `referenceDate`, not contradicted by other evidence, makes
+  `DEF-TEMPORAL-COVERAGE` `UNSATISFIED`, so the result is at best `INSUFFICIENT`, never
+  `SUFFICIENT`. The explanation names the finding, and the next step is
+  `HUMAN_DECISION_REQUIRED`. When other evidence contradicts it, it is a conflict (below).
+- **Quality.** `coverageQuality` follows the claim's `confidence` (`HIGH`, `MEDIUM`, `LOW`;
+  `NOT_STATED` is `UNASSESSED`), and is at most `LOW` when the method's `qualityStatus` is
+  `LIMITED`.
+- **Uncovered intervals** are the missing-evidence gap `TEMPORAL_INTERVAL_MISSING`, one per
+  interval.
+- **Not quantified.** Acquisition frequency, cloud interference and the risk of undetected change
+  between observations are not quantified in the pilot. The `coverageNote` says so, and they
+  never help an evaluation reach `SUFFICIENT`.
+- **Recency** is re-evaluated against `evaluationEndDate`, not the admission date: each plot's
+  most recent observation (`acquisitionInstant` or `acquisitionEnd`) must be within
+  `minimumRecencyDays` of it.
+
+### Spatial coverage
+
+- **Not evaluated in the pilot.** Without a spatial database the covered area cannot be
+  computed. Every plot's `coverageAssessment` is `NOT_EVALUATED`, and `DEF-SPATIAL-COVERAGE`
+  has the verification gap `SPATIAL_COVERAGE_NOT_EVALUATED`. TODO(postgis).
+- **Coverage types.** Only `FULL_PLOT_COVERAGE` is evaluated. `REPRESENTATIVE_SAMPLE` and
+  `RISK_BASED` are the verification gap `COVERAGE_TYPE_NOT_EVALUATED`.
+- **Recorded.** Each CAP-04 excluded area is listed in `excludedAreaReferences`.
+  `plotGeometryChangedSinceEvidence` is `true` when an item records an earlier `plotVersion`
+  than the plot's current version.
+
+### Plots
+
+- **Overlap.** Every pilot plot has overlap `NOT_EVALUATED` (SCS-CAP-03). Where `PLOT-REGISTERED`
+  applies, this is the verification gap `OVERLAP_NOT_EVALUATED`.
+- **Registry and tenure.** Where required, a registry status other than `VERIFIED` is
+  `REGISTRY_VERIFICATION_ABSENT`, and a plot with no `VERIFIED` tenure claim is
+  `TENURE_VERIFICATION_ABSENT`, both for human decision.
+- **Identifier type.** `minimumPlotIdentifierType` is matched only for `GPS_POLYGON` (a
+  `POLYGON` or `MULTIPOLYGON` geometry) and `GPS_POINT` (any geometry). A point plot under
+  `GPS_POLYGON` is the missing-evidence gap `PLOT_IDENTIFIER_TYPE_NOT_MET`. Any other value is
+  the verification gap `PLOT_IDENTIFIER_TYPE_UNRECOGNISED`.
+
+### Conflicts
+
+- **Deforestation evidence.** Two admitted CAP-04 records are in material conflict when they
+  concern the same plot, their analysis periods overlap, their detection targets are the same,
+  and their claims are opposed: a `NO_…_DETECTED` claim against a `…_DETECTED` or
+  `POSSIBLE_…_DETECTED` claim for the same target. Without a spatial database, spatial overlap
+  is only "possible" (their bounding boxes intersect), and the explanation says so.
+- **Custody.** A CAP-05 event with declared contradictions (`CONTRADICTION_DECLARED`) is a
+  custody conflict. Two linked events whose quantities are incompatible (the later quantity
+  exceeds the earlier in the same unit, with no transformation or consolidation between them)
+  are a `QUANTITY_CONFLICT`.
+- **Materiality.** A conflict meeting these rules is `MATERIAL_UNRESOLVED` unless a valid
+  resolution record names its `conflictKey` (below). Every conflict found is reported.
+- **Stable identity.** `conflictKey` is the requirement code and the two evidence identifiers
+  in sorted order, so the same conflict has the same key in every evaluation.
+
+### Custody chain
+
+Evaluated when the subject names batches.
+
+- **The chain** is the admitted CAP-05 events of the batch under the framework, joined by their
+  resolved links (predecessor, split-from, consolidated-from). Successors are derived from
+  later events' predecessors.
+- **Continuity.** At `FULL_CHAIN` depth, the chain must run without a break from an event
+  whose source plots include the subject's plots to an event whose destination is the operator.
+  At `FIRST_SUPPLIER` depth, an event must deliver the batch to the operator from an identified
+  source party. A break is the missing-evidence gap `CUSTODY_CHAIN_BROKEN`: an unresolved link,
+  or an event whose source party is not the previous event's destination party.
+- **Depth.** `RISK_PROPORTIONATE` is the verification gap `TRACEABILITY_DEPTH_NOT_EVALUATED`.
+- **Documents.** Each of `requiredDocumentTypes` must appear as a supporting document type
+  somewhere in the chain. A missing type is `CUSTODY_DOCUMENT_TYPE_MISSING`.
+- **Standards.** `chainOfCustodyStandards` cannot be matched: no event field records a
+  standard. A non-empty list is the verification gap `CUSTODY_STANDARD_NOT_EVALUATED`.
+
+```typescript
+interface ScsCustodyChainEvaluation {
+  batchIdentifier: string;
+  operatorPartyId: string;
+  requiredDepth: "FIRST_SUPPLIER" | "FULL_CHAIN" | "RISK_PROPORTIONATE";
+
+  // The admitted events evaluated, in chain order where known
+  eventIds: string[];
+
+  chainAssessment: "CONTINUOUS" | "BROKEN" | "NOT_EVALUATED";
+
+  // Each break, as a gap
+  breaks: Array<{
+    afterEventId?: string;
+    beforeEventId?: string;
+    explanation: string;
+    gapId: string;
+  }>;
+
+  documentTypesPresent: string[];
+  documentTypesMissing: string[];
+
+  // Conflicts found in the chain (declared contradictions, quantity conflicts)
+  conflictIds: string[];
+}
+```
+
+### Conflict resolution records
+
+A conflict is resolved only by a human, through `submitConflictResolution`. CAP-06 never
+creates a resolution.
+
+```typescript
+interface ScsConflictResolutionRecord {
+  resolutionId: string;
+  // The conflict examined, by its stable key
+  conflictKey: string;
+  // The evaluation in which the conflict was found
+  evaluationId: string;
+  // The evidence items compared
+  comparedEvidenceIds: string[];
+  // Provenance and methods considered
+  provenanceAndMethodsConsidered: string;
+  resolutionReason: string;
+  // A source found inapplicable, if any
+  inapplicableEvidenceId?: string;
+  additionalEvidenceObtained: boolean;
+  additionalEvidenceIds: string[];
+  remainingLimitations: string[];
+  reviewer: ActorReference;
+  authorityBasis: string;
+  resolvedAt: string;
+  reEvaluationRequired: boolean;
+}
+```
+
+- **Role.** Only an actor holding `CONFLICT_RESOLVER` may submit a resolution
+  (`RESOLVER_NOT_AUTHORISED`). It is separate from `COMPLIANCE_OFFICER` and
+  `VERIFICATION_OFFICER`: the separation of duties SCS-CAP-02 applies to verification.
+- **Checks.** The conflict must have been reported under that key in that evaluation
+  (`CONFLICT_NOT_FOUND`), and every field above must be given (`RESOLUTION_INCOMPLETE`).
+- **Effect.** A later evaluation finding the same `conflictKey` records it as
+  `MATERIAL_RESOLVED`, with `resolutionDecisionId` naming the resolution, and the remaining
+  limitations are reported.
+- **Build order.** `submitConflictResolution` is built after `evaluateSufficiency`. Until it
+  exists, every material conflict is `UNRESOLVED`.
+
+### Persistence
+
+- An evaluation is recorded immutably, with its full result, the plots it covers and the
+  frozen evidence it evaluated, and its receipt (`SUFFICIENCY_EVALUATION`) is written in the
+  same transaction.
+- `getEvaluationResult` returns a recorded evaluation exactly as recorded.
+  `listEvaluationsForPlot` returns a plot's evaluations, most recent first.
+
+### Submission request
+
+```typescript
+interface ScsSufficiencyEvaluationSubmission {
+  subject: ScsSufficiencyEvaluationRequest["subject"];
+  framework: ScsSufficiencyEvaluationRequest["framework"];
+  evaluationPeriod: {
+    evaluationEndDate: string;
+    assessmentType: "DEFORESTATION" | "FOREST_DEGRADATION" | "BOTH";
+  };
+  evidenceScope: ScsSufficiencyEvaluationRequest["evidenceScope"];
+  requestedAnalysis: ScsSufficiencyEvaluationRequest["requestedAnalysis"];
+  previousEvaluationId?: string;
+}
+```
+
+### Open gaps
+
+**Contract gap: undetected change.** Acquisition frequency, cloud interference and the risk of
+undetected change between observations are listed as considerations but are not quantified.
+The pilot records them as not evaluated.
+
+**Contract gap: sampled and risk-based coverage.** What `REPRESENTATIVE_SAMPLE` and
+`RISK_BASED` require is not defined.
+
+**Contract gap: `noUnresolvedGaps: false`.** What a specification means by allowing unresolved
+gaps is not defined. It does not relax `SUFFICIENT`.
+
+**Contract gap: custody standards.** `chainOfCustodyStandards` names standards no custody event
+records; matching them needs a field in SCS-CAP-05.
+
+**Contract gap: distinct failure codes.** A `commodityCode` that is not the framework's is
+refused as `FRAMEWORK_VERSION_NOT_RESOLVED`, naming the mismatch, because no closer code exists.
+Each distinct failure mode should eventually have its own code.
+
+**Contract gap: re-verifying integrity.** Stored files are not re-hashed at evaluation; integrity
+is as verified at admission. `EVIDENCE_INTEGRITY_FAILED` is not returned by the pilot.
+
+**Contract gap: access scope.** There are no tenants in the pilot, so `ACCESS_SCOPE_INVALID` is
+not returned. TODO(tenant-scope).
+
+**Current system limit: spatial evaluation.** Without a spatial database, spatial coverage and
+overlap are not evaluated, so no pilot evaluation can be `SUFFICIENT`. TODO(postgis).
+
 ## Provider-neutral interface
 
 ```typescript
@@ -619,6 +1029,18 @@ interface ScsSufficiencyEvaluationFailure {
     | "EVIDENCE_INTEGRITY_FAILED"
     | "QUARANTINED_EVIDENCE_IN_SCOPE"
     | "ACCESS_SCOPE_INVALID"
+    // evaluationEndDate not after the reference date, or in the future
+    | "EVALUATION_PERIOD_INVALID"
+    // A requester's evidence list that does not match the system's scope
+    | "EVIDENCE_SCOPE_INCOMPLETE"
+    // Custody subject: a batch with no admitted event under the framework,
+    // or an operator that is not a registered party
+    | "BATCH_NOT_FOUND"
+    | "OPERATOR_PARTY_NOT_FOUND"
+    // submitConflictResolution only
+    | "CONFLICT_NOT_FOUND"
+    | "RESOLVER_NOT_AUTHORISED"
+    | "RESOLUTION_INCOMPLETE"
     | "DEPENDENCY_UNAVAILABLE";
 
   reasons: string[];
@@ -644,17 +1066,6 @@ Evaluation cannot reach SUFFICIENT because:
 ```
 
 This makes the system defensible when a due diligence statement is challenged — the institution can demonstrate exactly what the evaluation found, why it found it, and what evidence was missing.
-
-## Open gaps
-
-**Contract gap: custody-chain evaluation.** SCS-CAP-05 admits custody events and leaves the
-evaluation of the chain to CAP-06: whether the admitted events form a sufficiently continuous
-chain from source plots to operator, with consistent quantities, recorded transformations and
-disclosed contradictions (SCS-CAP-05, "Custody chain sufficiency request — for CAP-06"). This
-contract does not yet define that evaluation. `ScsSufficiencyEvaluationRequest` is plot-centred:
-its `subject` names no batch and no operator, and `requestedAnalysis` has no custody-chain
-dimension. A custody-chain analysis dimension, with the batch and operator in the request
-subject, must be defined before CAP-06 is built.
 
 ## What this document does not establish
 
