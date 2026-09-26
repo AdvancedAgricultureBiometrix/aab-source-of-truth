@@ -4,7 +4,7 @@
 **Domain:** Supply Chain Sovereignty (SCS)
 **Authority:** DEFINES THE CONTRACT FOR SCS-CAP-05. Establishes no commissioning,
 production, Gate D, WP05, scientific-validity or regulatory authority. This
-capability is PROPOSED_NOT_ADMITTED. No implementation exists.
+capability is PROPOSED_NOT_ADMITTED. A pilot implementation exists; what it covers is recorded in `scs-pilot/packages/api/src/capabilities/cap-05/README.md`.
 
 ## Plain-English boundary statement
 
@@ -773,8 +773,8 @@ no stored object cannot be checked for alteration (`INTEGRITY_UNVERIFIED`).
 
 **Contract gap: chain sufficiency.** `ScsCustodyChainSufficiencyRequest` describes SCS-CAP-06's
 evaluation. It is not part of the CAP-05 provider, and no `evaluateChainSufficiency` operation
-belongs to CAP-05. SCS-CAP-06 does not yet define a custody-chain evaluation (see its "Open
-gaps").
+belongs to CAP-05. SCS-CAP-06 now defines the custody-chain evaluation (its "Custody chain"
+section).
 
 **Contract gap: party verification summary.** "Unverified" rests on SCS-CAP-02 assessments,
 whose party-level summary is itself an SCS-CAP-02 contract gap. The pilot counts any current

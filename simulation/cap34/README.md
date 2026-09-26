@@ -13,7 +13,7 @@ This directory contains the isolated CAP-34 simulator and its fail-closed disclo
 
 ## Fidelity
 
-The two new pathways are classified in manifest snapshot `CAP34-MANIFEST-2026-09-20-SNAPSHOT-002` as:
+The two pathways were first classified in manifest snapshot `CAP34-MANIFEST-2026-09-20-SNAPSHOT-002`, and are still classified the same way in the current manifest, `CAP34-MANIFEST-2026-09-20-SNAPSHOT-008` (v1.7.0):
 
 - `simulatorMode: ROADMAP_PREVIEW`
 - `fidelity: CONCEPT_PREVIEW_NOT_IMPLEMENTED`
@@ -37,6 +37,8 @@ Run the Node behavioural proofs from this directory, against a clean checkout of
 node capability-fidelity-manifest.behavioural-test.js
 node cap34-canonical-end-to-end.behavioural-test.js
 node cap34-pathway-preview.behavioural-test.js
+node cap34-historical-snapshot-validity.behavioural-test.js
+node scs-roadmap-preview.behavioural-test.js
 ```
 
 Each proof is written to its frozen record in `governance/workstream-b/`:
@@ -44,12 +46,18 @@ Each proof is written to its frozen record in `governance/workstream-b/`:
 - `CAP-34-MANIFEST-VALIDATOR-BEHAVIOURAL-PROOF.json`
 - `CAP-34-CANONICAL-END-TO-END-BEHAVIOURAL-PROOF.json`
 - `CAP-34-PATHWAY-PREVIEW-BEHAVIOURAL-PROOF.json`
+- `CAP-34-HISTORICAL-SNAPSHOT-VALIDITY-BEHAVIOURAL-PROOF.json`
+- `CAP-34-SCS-ROADMAP-PREVIEW-BEHAVIOURAL-PROOF.json`
 
 Expected results:
 
-- `PASS_CAP34_MANIFEST_VALIDATOR_BEHAVIOURAL_PROOF` — 14/14 fixtures, exit code 0.
-- `PASS_CAP34_CANONICAL_END_TO_END_BEHAVIOURAL_PROOF` — 42/42 fixtures, exit code 0.
+- `PASS_CAP34_MANIFEST_VALIDATOR_BEHAVIOURAL_PROOF` — 16/16 fixtures, exit code 0.
+- `PASS_CAP34_CANONICAL_END_TO_END_BEHAVIOURAL_PROOF` — 44/44 fixtures (16 manifest, 28 receipt), exit code 0.
 - `PASS_CAP34_PATHWAY_PREVIEW_BEHAVIOURAL_PROOF` — 8/8 fixtures, exit code 0.
+- `PASS_CAP34_HISTORICAL_SNAPSHOT_VALIDITY_BEHAVIOURAL_PROOF` — 57/57 fixtures, exit code 0.
+- `PASS_CAP34_SCS_ROADMAP_PREVIEW_BEHAVIOURAL_PROOF` — 14/14 fixtures, exit code 0.
+
+These are the results in the frozen records on `main`; the manifest validator and pathway preview records name manifest snapshot 007. CI does not run these proofs.
 
 These results prove only the defined simulator-safety, manifest, receipt and preview-disclosure behaviours. They do not prove capability implementation, scientific correctness, regulatory compliance, production readiness, sovereignty, commissioning, Gate D satisfaction or WP05 commencement.
 

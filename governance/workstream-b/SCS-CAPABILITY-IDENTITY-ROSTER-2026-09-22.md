@@ -20,6 +20,24 @@ The AGR domain uses a machine-readable frozen JSON roster (`simulation/cap34/cap
 | `PARTIAL_INTERFACE_DESIGN_ONLY` | Partial interfaces have been defined within other capability contracts. No standalone canonical contract exists. No implementation exists. |
 | `CONCEPT_PREVIEW_NOT_IMPLEMENTED` | The capability is documented in the domain definition as a proposed identity. No interfaces have been designed. No implementation exists. |
 
+## Position as of 2026-09-27
+
+The capability sections and the "Institutional position as of 2026-09-22" below record identities and maturity as of 22 September. Since then, eight capabilities have pilot implementations on `main` (merged in PRs #22 to #25), and each capability section's **Implementation** row now points to the README that records what the pilot covers. The state of each capability, in the platform's maturity states (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`):
+
+| Capability | State | Record |
+|---|---|---|
+| SCS-CAP-01 | behaviourally proven (minimum vertical slice) | `scs-pilot/packages/api/src/capabilities/cap-01/README.md` |
+| SCS-CAP-02 | behaviourally proven (minimum vertical slice) | `scs-pilot/packages/api/src/capabilities/cap-02/README.md` |
+| SCS-CAP-03 | behaviourally proven (minimum vertical slice) | `scs-pilot/packages/api/src/capabilities/cap-03/README.md` |
+| SCS-CAP-04 | behaviourally proven (minimum vertical slice) | `scs-pilot/packages/api/src/capabilities/cap-04/README.md` |
+| SCS-CAP-05 | behaviourally proven (minimum vertical slice) | `scs-pilot/packages/api/src/capabilities/cap-05/README.md` |
+| SCS-CAP-06 | behaviourally proven (minimum vertical slice) | `scs-pilot/packages/api/src/capabilities/cap-06/README.md` |
+| SCS-CAP-08 | behaviourally proven (minimum vertical slice) | `scs-pilot/packages/api/src/capabilities/cap-08/README.md` |
+| SCS-CAP-09 | behaviourally proven (minimum vertical slice) | `scs-pilot/packages/api/src/capabilities/cap-09/README.md` |
+| SCS-CAP-07, SCS-CAP-10, SCS-CAP-11, SCS-CAP-12 | named only | no contract |
+
+No SCS capability is admitted or commissioned. Every capability remains `PROPOSED_NOT_ADMITTED`.
+
 ## Institutional position as of 2026-09-22
 
 Eight provider-neutral SCS capability contracts have been designed and recorded: SCS-CAP-01 (Regulatory Framework Registration), SCS-CAP-02 (Operator and Supplier Identity Registration), SCS-CAP-03 (Plot and Land Unit Registration), SCS-CAP-04 (Deforestation Evidence Admission), SCS-CAP-05 (Supply Chain Custody Evidence Admission), SCS-CAP-06 (Due Diligence Sufficiency Evaluation), SCS-CAP-08 (Due Diligence Package Compilation), and SCS-CAP-09 (Regulatory Review and Promotion). None have been implemented or behaviourally proven. Four additional capabilities remain at concept preview stage. None of the twelve currently makes compliance decisions, produces due diligence statements, or possesses regulatory authority.
@@ -30,7 +48,7 @@ Eight provider-neutral SCS capability contracts have been designed and recorded:
 - No SCS capability produces or submits due diligence statements
 - No SCS capability assumes the operator's legal responsibility under EUDR or any other regulation
 - No SCS capability shares evidence with the AGR domain — the two domains are entirely separate
-- No SCS capability is implemented or behaviourally proven
+- No SCS capability is admitted or commissioned (until 2026-09-27 this read "implemented or behaviourally proven"; see the position as of 2026-09-27)
 
 ---
 
@@ -40,7 +58,7 @@ Eight provider-neutral SCS capability contracts have been designed and recorded:
 |---|---|
 | Admission status | `PROPOSED_NOT_ADMITTED` |
 | Representation maturity | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` |
-| Implementation | NOT AUTHORISED — NOT STARTED |
+| Implementation | PILOT IMPLEMENTATION ON `main` — see `scs-pilot/packages/api/src/capabilities/cap-01/README.md` (updated 2026-09-27) |
 | Launch candidate | YES — first of three launch capabilities |
 | Contract | `governance/workstream-b/SCS-CAP-01-REGULATORY-FRAMEWORK-REGISTRATION-CANONICAL-CONTRACT-2026-09-22.md` |
 | Dependencies | None — foundation all others depend on |
@@ -63,7 +81,7 @@ Eight provider-neutral SCS capability contracts have been designed and recorded:
 |---|---|
 | Admission status | `PROPOSED_NOT_ADMITTED` |
 | Representation maturity | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` |
-| Implementation | NOT AUTHORISED — NOT STARTED |
+| Implementation | PILOT IMPLEMENTATION ON `main` — see `scs-pilot/packages/api/src/capabilities/cap-02/README.md` (updated 2026-09-27) |
 | Launch candidate | NO — second phase, contract now complete |
 | Contract | `governance/workstream-b/SCS-CAP-02-OPERATOR-AND-SUPPLIER-IDENTITY-REGISTRATION-CANONICAL-CONTRACT-2026-09-23.md` |
 | Dependencies | SCS-CAP-01 |
@@ -83,7 +101,7 @@ Eight provider-neutral SCS capability contracts have been designed and recorded:
 |---|---|
 | Admission status | `PROPOSED_NOT_ADMITTED` |
 | Representation maturity | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` |
-| Implementation | NOT AUTHORISED — NOT STARTED |
+| Implementation | PILOT IMPLEMENTATION ON `main` — see `scs-pilot/packages/api/src/capabilities/cap-03/README.md` (updated 2026-09-27) |
 | Launch candidate | YES — second of three launch capabilities |
 | Contract | `governance/workstream-b/SCS-CAP-03-PLOT-AND-LAND-UNIT-REGISTRATION-CANONICAL-CONTRACT-2026-09-22.md` |
 | Dependencies | SCS-CAP-01 |
@@ -106,7 +124,7 @@ Eight provider-neutral SCS capability contracts have been designed and recorded:
 |---|---|
 | Admission status | `PROPOSED_NOT_ADMITTED` |
 | Representation maturity | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` |
-| Implementation | NOT AUTHORISED — NOT STARTED |
+| Implementation | PILOT IMPLEMENTATION ON `main` — see `scs-pilot/packages/api/src/capabilities/cap-04/README.md` (updated 2026-09-27) |
 | Launch candidate | YES — third of three launch capabilities |
 | Contract | `governance/workstream-b/SCS-CAP-04-DEFORESTATION-EVIDENCE-ADMISSION-CANONICAL-CONTRACT-2026-09-22.md` |
 | Dependencies | SCS-CAP-01, SCS-CAP-03 |
@@ -132,7 +150,7 @@ Eight provider-neutral SCS capability contracts have been designed and recorded:
 |---|---|
 | Admission status | `PROPOSED_NOT_ADMITTED` |
 | Representation maturity | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` |
-| Implementation | NOT AUTHORISED — NOT STARTED |
+| Implementation | PILOT IMPLEMENTATION ON `main` — see `scs-pilot/packages/api/src/capabilities/cap-05/README.md` (updated 2026-09-27) |
 | Launch candidate | NO — second phase, contract now complete |
 | Contract | `governance/workstream-b/SCS-CAP-05-SUPPLY-CHAIN-CUSTODY-EVIDENCE-ADMISSION-CANONICAL-CONTRACT-2026-09-23.md` |
 | Dependencies | SCS-CAP-01, SCS-CAP-02, SCS-CAP-03 |
@@ -151,7 +169,7 @@ Eight provider-neutral SCS capability contracts have been designed and recorded:
 |---|---|
 | Admission status | `PROPOSED_NOT_ADMITTED` |
 | Representation maturity | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` |
-| Implementation | NOT AUTHORISED — NOT STARTED |
+| Implementation | PILOT IMPLEMENTATION ON `main` — see `scs-pilot/packages/api/src/capabilities/cap-06/README.md` (updated 2026-09-27) |
 | Launch candidate | NO — second design phase complete |
 | Contract | `governance/workstream-b/SCS-CAP-06-DUE-DILIGENCE-SUFFICIENCY-EVALUATION-CANONICAL-CONTRACT-2026-09-22.md` |
 | Dependencies | SCS-CAP-01, SCS-CAP-03, SCS-CAP-04 |
@@ -194,7 +212,7 @@ Eight provider-neutral SCS capability contracts have been designed and recorded:
 |---|---|
 | Admission status | `PROPOSED_NOT_ADMITTED` |
 | Representation maturity | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` |
-| Implementation | NOT AUTHORISED — NOT STARTED |
+| Implementation | PILOT IMPLEMENTATION ON `main` — see `scs-pilot/packages/api/src/capabilities/cap-08/README.md` (updated 2026-09-27) |
 | Launch candidate | NO — second design phase complete |
 | Contract | `governance/workstream-b/SCS-CAP-08-DUE-DILIGENCE-PACKAGE-COMPILATION-CANONICAL-CONTRACT-2026-09-22.md` |
 | Dependencies | SCS-CAP-01, SCS-CAP-03, SCS-CAP-04, SCS-CAP-05, SCS-CAP-06, SCS-CAP-09 |
@@ -217,7 +235,7 @@ Eight provider-neutral SCS capability contracts have been designed and recorded:
 |---|---|
 | Admission status | `PROPOSED_NOT_ADMITTED` |
 | Representation maturity | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` |
-| Implementation | NOT AUTHORISED — NOT STARTED |
+| Implementation | PILOT IMPLEMENTATION ON `main` — see `scs-pilot/packages/api/src/capabilities/cap-09/README.md` (updated 2026-09-27) |
 | Launch candidate | NO — second design phase complete |
 | Contract | `governance/workstream-b/SCS-CAP-09-REGULATORY-REVIEW-AND-PROMOTION-CANONICAL-CONTRACT-2026-09-22.md` |
 | Dependencies | SCS-CAP-01, SCS-CAP-03, SCS-CAP-04, SCS-CAP-06 |
@@ -293,17 +311,17 @@ Eight provider-neutral SCS capability contracts have been designed and recorded:
 
 ## Summary table
 
-| Capability | Name | Admission | Maturity | Launch |
-|---|---|---|---|---|
-| SCS-CAP-01 | Regulatory Framework Registration | `PROPOSED_NOT_ADMITTED` | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` | YES |
-| SCS-CAP-02 | Operator and Supplier Identity Registration | `PROPOSED_NOT_ADMITTED` | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` | NO |
-| SCS-CAP-03 | Plot and Land Unit Registration | `PROPOSED_NOT_ADMITTED` | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` | YES |
-| SCS-CAP-04 | Deforestation Evidence Admission | `PROPOSED_NOT_ADMITTED` | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` | YES |
-| SCS-CAP-05 | Supply Chain Custody Evidence Admission | `PROPOSED_NOT_ADMITTED` | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` | NO |
-| SCS-CAP-06 | Due Diligence Sufficiency Evaluation | `PROPOSED_NOT_ADMITTED` | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` | NO |
-| SCS-CAP-07 | Evidence Source Discovery | `PROPOSED_NOT_ADMITTED` | `CONCEPT_PREVIEW_NOT_IMPLEMENTED` | NO |
-| SCS-CAP-08 | Due Diligence Package Compilation | `PROPOSED_NOT_ADMITTED` | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` | NO |
-| SCS-CAP-09 | Regulatory Review and Promotion | `PROPOSED_NOT_ADMITTED` | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` | NO |
-| SCS-CAP-10 | Challenge Response and Evidence Retrieval | `PROPOSED_NOT_ADMITTED` | `CONCEPT_PREVIEW_NOT_IMPLEMENTED` | NO |
-| SCS-CAP-11 | Regulatory Framework Update Management | `PROPOSED_NOT_ADMITTED` | `CONCEPT_PREVIEW_NOT_IMPLEMENTED` | NO |
-| SCS-CAP-12 | Cross-Boundary Evidence Reference | `PROPOSED_NOT_ADMITTED` | `CONCEPT_PREVIEW_NOT_IMPLEMENTED` | NO |
+| Capability | Name | Admission | Maturity (2026-09-22) | Launch | State (2026-09-27) |
+|---|---|---|---|---|---|
+| SCS-CAP-01 | Regulatory Framework Registration | `PROPOSED_NOT_ADMITTED` | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` | YES | behaviourally proven |
+| SCS-CAP-02 | Operator and Supplier Identity Registration | `PROPOSED_NOT_ADMITTED` | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` | NO | behaviourally proven |
+| SCS-CAP-03 | Plot and Land Unit Registration | `PROPOSED_NOT_ADMITTED` | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` | YES | behaviourally proven |
+| SCS-CAP-04 | Deforestation Evidence Admission | `PROPOSED_NOT_ADMITTED` | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` | YES | behaviourally proven |
+| SCS-CAP-05 | Supply Chain Custody Evidence Admission | `PROPOSED_NOT_ADMITTED` | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` | NO | behaviourally proven |
+| SCS-CAP-06 | Due Diligence Sufficiency Evaluation | `PROPOSED_NOT_ADMITTED` | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` | NO | behaviourally proven |
+| SCS-CAP-07 | Evidence Source Discovery | `PROPOSED_NOT_ADMITTED` | `CONCEPT_PREVIEW_NOT_IMPLEMENTED` | NO | named only |
+| SCS-CAP-08 | Due Diligence Package Compilation | `PROPOSED_NOT_ADMITTED` | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` | NO | behaviourally proven |
+| SCS-CAP-09 | Regulatory Review and Promotion | `PROPOSED_NOT_ADMITTED` | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` | NO | behaviourally proven |
+| SCS-CAP-10 | Challenge Response and Evidence Retrieval | `PROPOSED_NOT_ADMITTED` | `CONCEPT_PREVIEW_NOT_IMPLEMENTED` | NO | named only |
+| SCS-CAP-11 | Regulatory Framework Update Management | `PROPOSED_NOT_ADMITTED` | `CONCEPT_PREVIEW_NOT_IMPLEMENTED` | NO | named only |
+| SCS-CAP-12 | Cross-Boundary Evidence Reference | `PROPOSED_NOT_ADMITTED` | `CONCEPT_PREVIEW_NOT_IMPLEMENTED` | NO | named only |

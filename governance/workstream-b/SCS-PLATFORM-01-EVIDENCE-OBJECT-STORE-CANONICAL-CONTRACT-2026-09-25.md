@@ -2,7 +2,7 @@
 
 **Status:** CANONICAL CONTRACT — NOT IMPLEMENTATION
 **Domain:** Supply Chain Sovereignty (SCS)
-**Authority:** DEFINES THE CONTRACT FOR THE SCS EVIDENCE OBJECT STORE, A PLATFORM SERVICE SHARED BY ALL SCS CAPABILITIES. Establishes no commissioning, production, Gate D, WP05, scientific-validity or regulatory authority. PROPOSED_NOT_ADMITTED. No implementation exists.
+**Authority:** DEFINES THE CONTRACT FOR THE SCS EVIDENCE OBJECT STORE, A PLATFORM SERVICE SHARED BY ALL SCS CAPABILITIES. Establishes no commissioning, production, Gate D, WP05, scientific-validity or regulatory authority. PROPOSED_NOT_ADMITTED. A pilot implementation exists in `scs-pilot/packages/api/src/platform/evidence-objects/`.
 
 ## Plain-English boundary statement
 

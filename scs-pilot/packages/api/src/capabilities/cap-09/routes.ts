@@ -5,9 +5,10 @@
 // submitDecision runs at READ COMMITTED and serialises decisions on a subject
 // with an advisory lock (submit-decision.ts explains why not REPEATABLE READ).
 // getDecision and assessCurrency run in one REPEATABLE READ transaction, so
-// every currency check reads one snapshot. requestReview,
-// listDecisionsForSubject and validateForPackageCompilation are deferred to
-// SCS-CAP-08 (contract ff6d3b8, "Deferred").
+// every currency check reads one snapshot. validateForPackageCompilation is
+// not a route: SCS-CAP-08 calls it in its own transaction
+// (validate-for-package.ts). requestReview and listDecisionsForSubject are not
+// built (contract, "Deferred").
 
 import type { Route } from "../../foundation/server.js";
 import { SCHEMAS } from "../../schemas/registry.js";
