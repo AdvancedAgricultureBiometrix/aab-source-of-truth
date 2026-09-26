@@ -209,7 +209,8 @@ interface ActorReference {
 
 ## Follow-up work
 
-- **Rename `SCS-PLATFORM-01` and `SCS-PLATFORM-02`** to `AAB-PLATFORM-01` (Evidence Object Store) and `AAB-PLATFORM-02` (Governed Document Rendition), in a follow-up commit. The rename covers the contract files, their HTML, and every reference to them in contracts, READMEs, code comments and error attributions. Records already stored keep the identifiers they were written with.
+- **Rename `SCS-PLATFORM-01` and `SCS-PLATFORM-02`** to `AAB-PLATFORM-01` (Evidence Object Store) and `AAB-PLATFORM-02` (Governed Document Rendition), in a follow-up commit. The rename covers the contract files, their HTML, and every reference to them in contracts, READMEs, code comments and error attributions. Records already stored keep the identifiers they were written with. *Done on 2026-09-27, with migration 020 reissuing the two table comments. Left for their own changes: the runtime error attribution `SCS-PLATFORM`, which waits for extraction, and the PDF metadata below.*
+- **The PDF metadata written by the AAB-PLATFORM-02 renderer** (`Producer` and `Creator`) still reads `SCS-PLATFORM-02`, with the matching font-check error message. Changing it changes the bytes of every new PDF and the cross-platform rendition digest, so it is its own change: a new expected digest, a renderer version bump, and the digest re-verified across platforms.
 - **AAB-PLATFORM-04 Actor–Subject Link:** its own contract, defined after this one is committed.
 - **Amendments adopting section 3** in SCS-CAP-02, SCS-CAP-04 and SCS-CAP-05.
 
