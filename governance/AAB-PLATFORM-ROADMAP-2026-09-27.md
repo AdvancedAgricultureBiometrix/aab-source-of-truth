@@ -490,12 +490,15 @@ flowchart LR
 
 ### 5.5 Before any capability can be admitted
 
-- **A definition of Gate D.** Blocking: see section 7.3.
+- **An admission authority.** CAP-20 names a "capability identity and admission authority" as the source of admission status, and no document defines it. No capability can be admitted until it exists.
 - **The ten-point admission checklist.** It is reproduced verbatim only in the Evidence Watch candidate design, and written for Evidence Watch. No capability has been put through it.
 - **A shared `ActorReference` contract.** `TODO(actor-reference)` says this "must be confirmed in a shared contract before any capability is admitted".
+- **Independent review** of each capability, as admission requires.
 - **The capability registry and the CAP-34 fidelity manifest updated together** (checklist items 8 and 9).
   - The fidelity manifest does not list the SCS capabilities at all.
   - CAP-34's SCS roadmap preview (`simulation/cap34/scs-roadmap-preview.js`) shows them as `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED`, or `CONCEPT_PREVIEW_NOT_IMPLEMENTED`.
+
+Gate D is not an admission prerequisite. It follows admission, and blocks commissioning (section 7.3).
 
 ## 6. Open TODOs
 
@@ -643,11 +646,14 @@ This is evidence for the SCS pilot stack only. It changes no control's status.
 - **WP04** (security qualification loop): instance remediation is verified; the reconstruction root cause remains open.
 - **WP05** (reconstruction replay and isolated authority regression proof): proposed only. "WP05 has not begun."
 - **The commissioning harness** (`PH2-COM-AUTO-01`): provisional, and not implemented.
-- **Gate D: a required gate with no specification. BLOCKING.**
-  - Gate D is not defined in any document in the repository.
-  - About twenty documents disclaim satisfying it. `governance/phase-2/wp04/PH2_WP04_GATE_D_TRACEABILITY_AMENDMENT.md` records `PH2-SEC-RESTORE-FUNCTION-GRANT-01` as an open "mandatory Gate-D qualification item". The country isolation architecture records that no country deployment has received Gate D authority.
-  - No document says what Gate D requires, who decides it, or what evidence satisfies it.
-  - **This blocks admission and commissioning.** No capability can be admitted, and no country environment commissioned, until Gate D is specified. Until then no one can show what passing it takes, and every claim that something does not satisfy it has nothing to be measured against.
+- **Gate D blocks commissioning.**
+  - **When this roadmap was first written,** Gate D was defined in no document. About twenty documents disclaimed satisfying it; `governance/phase-2/wp04/PH2_WP04_GATE_D_TRACEABILITY_AMENDMENT.md` recorded `PH2-SEC-RESTORE-FUNCTION-GRANT-01` as an open "mandatory Gate-D qualification item"; and the country isolation architecture recorded that no country deployment had received Gate D authority.
+  - **It is now defined** in `governance/AAB-GATE-D-DEPLOYMENT-QUALIFICATION-DEFINITION-2026-09-27.md` as **deployment qualification**:
+    - it is the AAB authority decision between capability admission and country commissioning;
+    - it is granted to one deployment (one country environment, one release, a named set of admitted capabilities), never to a capability in the abstract;
+    - it is decided by the Platform Owner on an independent reviewer's assessment.
+  - **Gate D follows admission.** An ungranted Gate D blocks commissioning. It does not block admission, which is blocked by its own prerequisites: an admission authority, the ten-point checklist, the shared `ActorReference` contract and independent review (section 5.5).
+  - **No deployment has been assessed, and none could be granted today.** Three items block the first assessment: the admission authority, which no document defines; the first independent reviewer appointment; and the commissioning governance document.
 
 ## Decisions recorded on 2026-09-27
 
@@ -657,7 +663,7 @@ These points came up while compiling the roadmap and were decided in review.
 2. **Twelve SCS capabilities.** All twelve are listed. SCS-CAP-07, 10, 11 and 12 have no contract and are `named only`.
 3. **SCS-CAP-08 and SCS-CAP-09 are `behaviourally proven`.** The proof was merged in PR #25. The `MINIMUM_VERTICAL_SLICE_PROVEN` records in their READMEs follow in a separate commit after this roadmap.
 4. **Running code without a contract stays `named only`,** with the code noted, whatever it does.
-5. **Gate D is recorded as a missing definition that blocks admission and commissioning** (section 7.3).
+5. **Gate D is recorded as a missing definition that blocks commissioning** (section 7.3). Corrected on 2026-09-27: this item first said it blocked admission as well. Gate D follows admission; it is now defined in `governance/AAB-GATE-D-DEPLOYMENT-QUALIFICATION-DEFINITION-2026-09-27.md`.
 6. **The independent dependency audit is due now,** and is required before any platform extraction begins (section 5.3).
 7. **The documents that understate what exists** (section 6.5) are corrected in their own commits after this roadmap, not in it.
 
@@ -671,4 +677,4 @@ These points came up while compiling the roadmap and were decided in review.
 - It does not change any control's status, and does not satisfy Gate D or begin WP05.
 - It does not schedule build work. Section 5 records dependencies, and the one next step the separation decision itself requires (the dependency audit).
 - It does not verify the rehearsal application, whose code is not in this repository.
-- It does not define the missing terms it reports (Gate D, the provisioning authority).
+- It does not define the missing terms it reports. Gate D is defined separately (`governance/AAB-GATE-D-DEPLOYMENT-QUALIFICATION-DEFINITION-2026-09-27.md`); the provisioning authority and the admission authority are not defined anywhere.
