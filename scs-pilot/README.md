@@ -1,22 +1,25 @@
-# SCS pilot — vertical proof (scaffold)
+# SCS pilot — vertical proof
 
-Project structure for the Supply Chain Sovereignty pilot. **No capability logic is implemented.** The one piece with real content is the SCS-CAP-01 database table, `packages/db/schema/cap-01.sql`, which implements the `ScsRegulatoryFramework` record from its canonical contract.
+The Supply Chain Sovereignty pilot: the SCS vertical proof, merged to `main` in PRs #22 to #25. It implements SCS-CAP-01 to SCS-CAP-06, SCS-CAP-08 and SCS-CAP-09, each for its minimum vertical slice, with SCS-PLATFORM-01 (evidence object store) and SCS-PLATFORM-02 (governed document rendition). Each capability README records which operations are built and what is proven. Every capability remains `PROPOSED_NOT_ADMITTED`; nothing here is admitted or commissioned. Current state across the platform: `governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`.
 
 | Path | What it is |
 |---|---|
 | `docker-compose.yml` | Local stack: PostgreSQL 17, the migration runner, SeaweedFS (S3-compatible: the evidence object store), and the API |
 | `.env.example` | Every environment variable, with placeholder values only |
-| `packages/api` | Node.js 24 + TypeScript API. Serves `GET /health` and SCS-CAP-01 `POST /scs/v1/frameworks` (framework registration); everything else gets the canonical 404 envelope |
+| `packages/api` | Node.js 24 + TypeScript API. Serves `GET /health` and the capability and platform routes; anything else gets the canonical 404 envelope |
 | `packages/api/src/capabilities/` | Capability code, one folder per capability; `README.md` there sets out the pattern every capability follows, with `cap-01/` as the reference implementation |
 | `packages/api/src/foundation/` | Shared runtime used by every capability: `server.ts` (node:http routing, parsing, responses), `errors.ts` (canonical failure envelope), `correlation.ts` (correlation IDs, JSON logs), `validation.ts` (strict Ajv), `auth.ts` (bearer token → ActorReference), `db.ts` (restricted-role pool, startup guard, transactions), `receipts.ts` (immutable decision receipts), `idempotency.ts` (Idempotency-Key replay and conflict), `canonical.ts` (canonical JSON, SHA-256) |
-| `packages/api/src/schemas/` | JSON Schemas: CAP-01 registration request and receipt, and the shared ActorReference (pilot definition) |
+| `packages/api/src/platform/` | SCS-PLATFORM-01 (`evidence-objects/`) and SCS-PLATFORM-02 (`renditions/`) |
+| `packages/api/src/ops/` | Operator tools built into the image: `object-store-archive.ts` (export and import) and `verify-integrity.ts` (the integrity check used by backup and restore) |
+| `packages/api/src/schemas/` | JSON Schemas for every request, record and receipt, and the shared ActorReference (pilot definition) |
 | `packages/api/src/types/` | TypeScript types **generated** from the schemas (`npm run generate:types`). Never edit these by hand; `npm test` fails if they drift |
-| `packages/api/src/capabilities/cap-NN` | One placeholder per capability, linking to its canonical contract |
-| `packages/db/schema/cap-01.sql` | Current-state definition of the CAP-01 table |
-| `packages/db/schema/cap-02.sql` | Current-state definition of the six CAP-02 tables |
-| `packages/db/schema/platform.sql` | Current-state definition of the append-only `decision_receipt` and `idempotency_record` tables |
+| `packages/api/src/capabilities/cap-NN` | One folder per capability (01 to 06, 08, 09), each with a README linking its canonical contract and recording what is built and proven |
+| `packages/db/schema/cap-NN.sql` | Current-state definition of each capability's tables |
+| `packages/db/schema/platform.sql` | Current-state definition of the platform tables: the append-only `decision_receipt` and `idempotency_record`, evidence objects and renditions |
 | `packages/db/schema/roles-rls.sql` | Current-state definition of the `scs_api` role, grants and row-level security |
-| `packages/db/migrations/` | Applied history, 001–005. Committed migrations are immutable |
+| `packages/db/migrations/` | Applied history, 001–019. Committed migrations are immutable |
+| `edge/`, `isolation/` | The edge container's committed nginx configuration, and the network isolation check (see the access isolation proof) |
+| `backup/` | The backup and restore procedure and its proof (see its README) |
 | `packages/api/src/migrations/` | The migration runner (`npm run migrate`, the `migrate` service): applies pending migrations in order as the owner role, records them in `scs_migration.applied_migration`, then sets the `scs_api` password |
 
 ## Run locally
