@@ -4,8 +4,9 @@
 --
 -- Shared by every capability, owned by no capability contract. Migration 005
 -- was generated from this file (receipts and idempotency records); migration
--- 012 added scs.evidence_object (SCS-PLATFORM-01); migration 018 added
--- scs.rendition (SCS-PLATFORM-02). Requires 001–004 (schema scs, role
+-- 012 added scs.evidence_object (AAB-PLATFORM-01); migration 018 added
+-- scs.rendition (AAB-PLATFORM-02); migration 020 reissued both tables'
+-- comments with the AAB-PLATFORM names. Requires 001–004 (schema scs, role
 -- scs_api).
 --
 -- Both tables are INSERT-ONLY for everyone:
@@ -129,7 +130,7 @@ COMMENT ON TABLE scs.idempotency_record IS
   'Successful response per (actor, idempotency key), written in the operation''s transaction. Append-only for every role.';
 
 
--- ── scs.evidence_object (SCS-PLATFORM-01, migration 012) ───────────────────
+-- ── scs.evidence_object (AAB-PLATFORM-01, migration 012) ───────────────────
 -- One row per stored evidence file. The bytes live in the object store
 -- (MinIO / S3) under their SHA-256; this row records what was stored, when
 -- and by whom. The file's identity is its digest: the same bytes are stored
@@ -168,9 +169,9 @@ CREATE TRIGGER evidence_object_no_truncate
   FOR EACH STATEMENT EXECUTE FUNCTION scs.reject_modification();
 
 COMMENT ON TABLE scs.evidence_object IS
-  'SCS-PLATFORM-01 evidence object store: one row per stored file, identified by its SHA-256. Storing a file does not admit it as evidence. Append-only for every role.';
+  'AAB-PLATFORM-01 evidence object store: one row per stored file, identified by its SHA-256. Storing a file does not admit it as evidence. Append-only for every role.';
 
--- ── scs.rendition (SCS-PLATFORM-02, migration 018) ─────────────────────────
+-- ── scs.rendition (AAB-PLATFORM-02, migration 018) ─────────────────────────
 -- One row per rendition: a PDF presenting one governed record. The bytes live
 -- in the object store under their SHA-256; this row records which record they
 -- present (by its id and digest), with which renderer, when and for whom. A
@@ -219,7 +220,7 @@ CREATE TRIGGER rendition_no_truncate
   FOR EACH STATEMENT EXECUTE FUNCTION scs.reject_modification();
 
 COMMENT ON TABLE scs.rendition IS
-  'SCS-PLATFORM-02 governed document rendition: one row per PDF presenting a governed record, identified by its SHA-256. Never the record, never evidence. Append-only for every role.';
+  'AAB-PLATFORM-02 governed document rendition: one row per PDF presenting a governed record, identified by its SHA-256. Never the record, never evidence. Append-only for every role.';
 
 -- ── Grants and row-level security (rule from migration 004) ─────────────────
 GRANT SELECT, INSERT ON scs.decision_receipt TO scs_api;
