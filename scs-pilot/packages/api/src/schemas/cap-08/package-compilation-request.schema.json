@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-08:package-compilation-request:1",
+  "title": "ScsPackageCompilationSubmission",
+  "description": "SCS-CAP-08 ScsPackageCompilationSubmission (contract 4b1f05b, 901a600). The scope fields confirm what the compiler means to package: each must equal the review decision's; the evidence ids must equal the evaluation's manifest, as sets. The system sets requestId, requestedBy and requestedAt.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "reviewDecisionId",
+    "operatorId",
+    "frameworkId",
+    "frameworkVersion",
+    "commodityCode",
+    "plotIds",
+    "evaluationId",
+    "deforestationEvidenceIds",
+    "custodyEvidenceIds"
+  ],
+  "properties": {
+    "reviewDecisionId": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "operatorId": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "frameworkId": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "frameworkVersion": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000,
+      "pattern": "\\S"
+    },
+    "commodityCode": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000,
+      "pattern": "\\S"
+    },
+    "plotIds": {
+      "type": "array",
+      "maxItems": 500,
+      "items": {
+        "type": "string",
+        "format": "uuid",
+        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "evaluationId": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "deforestationEvidenceIds": {
+      "type": "array",
+      "maxItems": 5000,
+      "items": {
+        "type": "string",
+        "format": "uuid",
+        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+      },
+      "uniqueItems": true
+    },
+    "custodyEvidenceIds": {
+      "type": "array",
+      "maxItems": 5000,
+      "items": {
+        "type": "string",
+        "format": "uuid",
+        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+      },
+      "uniqueItems": true
+    },
+    "packageTitle": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300,
+      "pattern": "\\S"
+    }
+  }
+}

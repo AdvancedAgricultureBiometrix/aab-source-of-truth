@@ -1,0 +1,232 @@
+<!doctype html>
+<!-- Generated from governance/workstream-b/SCS-PLATFORM-02-GOVERNED-DOCUMENT-RENDITION-CANONICAL-CONTRACT-2026-09-26.md using governance/canonical-contract-template.html. Do not edit by hand; edit the markdown source and re-render. -->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SCS-PLATFORM-02 — Governed Document Rendition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,500;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+/* ── Tokens ─────────────────────────────────────────────────────────── */
+:root{
+  --green:#06271f;          /* primary accent: header band, headings, labels, badges */
+  --green-2:#0d3b2f;
+  --mint:#78ecad;           /* secondary accent: status indicators, callouts */
+  --mint-tint:#eefbf4;      /* mint at low strength, for callout fills */
+  --mint-edge:#b8ecd0;
+  --ink:#17211d;
+  --muted:#5f6d67;
+  --faint:#8a9791;
+  --rule:#dde5e1;
+  --code-bg:#f6f8f7;
+  --paper:#ffffff;
+  --mono:"JetBrains Mono",Consolas,"SFMono-Regular",monospace;
+  --sans:"Inter","Segoe UI",system-ui,sans-serif;
+  --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+}
+*{box-sizing:border-box}
+html{background:#e7ece9}
+body{margin:0;color:var(--ink);font:400 10pt/1.62 var(--sans);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+mark.ph{background:#fff4c2;color:#6b4e00;border:1px dashed #d9b300;border-radius:3px;padding:0 3px;font:600 .92em var(--mono)}
+
+/* ── Sheet ──────────────────────────────────────────────────────────── */
+.sheet{background:var(--paper);max-width:210mm;margin:22px auto;box-shadow:0 2px 26px rgba(6,39,31,.13)}
+.content{padding:10mm 19mm 16mm}
+.screen-note{max-width:210mm;margin:14px auto 0;font:9pt/1.5 var(--sans);color:var(--muted);text-align:center}
+
+/* ── Header band ───────────────────────────────────────────────────── */
+.band{background:var(--green);color:#fff;padding:13mm 19mm 11mm;position:relative}
+.band-top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:12mm}
+.brand{display:flex;align-items:center;gap:11px}
+.brand svg{width:30px;height:30px;flex:none}
+.brand b{display:block;font:700 12pt/1 var(--sans);letter-spacing:.06em}
+.brand small{display:block;margin-top:4px;font:500 6.8pt/1 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:#a9c9bb}
+.ref-code{font:600 9.5pt/1 var(--mono);letter-spacing:.05em;color:var(--mint);border:1px solid rgba(120,236,173,.55);border-radius:4px;padding:7px 10px}
+.kind{font:600 7pt/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--mint);margin:0 0 9px}
+.band h1{font:600 22pt/1.14 var(--serif);letter-spacing:-.01em;margin:0 0 14px;max-width:150mm}
+.badge{display:inline-flex;align-items:center;gap:8px;font:600 7.6pt/1 var(--mono);letter-spacing:.06em;border-radius:999px;padding:7px 12px 7px 10px}
+.badge::before{content:"";width:8px;height:8px;border-radius:50%;flex:none}
+.badge.design{background:var(--mint);color:var(--green)}
+.badge.design::before{background:var(--green)}
+.badge.proposed{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.6)}
+.badge.proposed::before{background:transparent;border:1.5px solid var(--mint)}
+.badge.admitted{background:#fff;color:var(--green)}
+.badge.admitted::before{background:var(--mint);box-shadow:0 0 0 2px var(--green)}
+
+/* ── Metadata ──────────────────────────────────────────────────────── */
+.meta{display:grid;grid-template-columns:31mm 1fr;margin:9mm 0 0;border-top:2px solid var(--green)}
+.meta dt,.meta dd{margin:0;padding:6px 0;border-bottom:1px solid var(--rule)}
+.meta dt{font:600 6.9pt/1.9 var(--sans);letter-spacing:.15em;text-transform:uppercase;color:var(--green)}
+.meta dd{font-size:9pt;color:var(--ink)}
+.meta dd.verbatim{font-size:8.8pt}
+.meta dd .unstated{color:var(--faint);font-style:italic}
+.meta dd code{font-size:8pt}
+
+/* ── Contents ──────────────────────────────────────────────────────── */
+nav.toc{margin:7mm 0 2mm;break-inside:avoid}
+nav.toc h2{all:unset;display:block;font:600 6.9pt/1 var(--sans);letter-spacing:.15em;text-transform:uppercase;color:var(--green);margin-bottom:8px}
+nav.toc ol{list-style:none;margin:0;padding:0;columns:2;column-gap:10mm;font-size:8.8pt}
+nav.toc li{padding:2.5px 0;break-inside:avoid;display:flex;gap:9px}
+nav.toc a{color:var(--ink);text-decoration:none}
+nav.toc .n{font:500 8pt var(--mono);color:var(--faint);min-width:18px}
+
+/* ── Sections & clauses ────────────────────────────────────────────── */
+section.sec{margin-top:9mm}
+.head-keep{break-inside:avoid;page-break-inside:avoid}
+.head-keep.head-only{break-after:avoid;page-break-after:avoid} /* heading directly above a long definition */
+h2.sec-h{display:flex;align-items:baseline;gap:10px;font:600 13pt/1.3 var(--serif);color:var(--green);margin:0 0 9px;padding-bottom:6px;border-bottom:1.5px solid var(--green);break-after:avoid;page-break-after:avoid}
+h2.sec-h .n{font:500 8.5pt var(--mono);color:var(--faint);letter-spacing:.02em}
+h3.sub-h{display:flex;align-items:baseline;gap:9px;font:600 8pt/1.35 var(--sans);letter-spacing:.11em;text-transform:uppercase;color:var(--green);margin:16px 0 8px;break-after:avoid;page-break-after:avoid}
+h3.sub-h .n{font:500 8pt var(--mono);color:var(--faint);letter-spacing:0;text-transform:none}
+.clause{position:relative;padding-left:11mm;margin:0 0 9px}
+.clause>.cn{position:absolute;left:0;top:0;font:500 7.4pt/2.05 var(--mono);color:var(--faint)}
+.clause>.cb{min-width:0}
+.clause p{margin:0;orphans:3;widows:3}
+.clause ul,.clause ol{margin:0;padding-left:16px}
+.clause li{margin:2px 0;break-inside:avoid}
+.clause ul li::marker{color:var(--green)}
+.clause ol li::marker{font:600 8.5pt var(--mono);color:var(--green)}
+code{font:500 8.3pt var(--mono);color:var(--green-2);background:var(--code-bg);border:1px solid #e3eae6;border-radius:3px;padding:0 3.5px}
+strong{font-weight:650;color:var(--green)}
+
+/* ── Callouts ──────────────────────────────────────────────────────── */
+.rule-callout{margin:0;border-left:3px solid var(--mint);background:var(--mint-tint);padding:11px 14px;border-radius:0 5px 5px 0;break-inside:avoid}
+.rule-callout .lbl{display:block;font:600 6.6pt/1 var(--sans);letter-spacing:.17em;text-transform:uppercase;color:var(--green);margin-bottom:6px}
+.rule-callout p{font:italic 400 10.5pt/1.55 var(--serif);color:var(--green)}
+.rule-callout strong{font-style:italic}
+.boundary{border:1px solid var(--rule);border-top:3px solid var(--green);border-radius:4px;padding:10px 14px 8px;break-inside:avoid}
+.boundary ul{list-style:none;padding:0}
+.boundary li{position:relative;padding-left:18px}
+.boundary li::before{content:"";position:absolute;left:2px;top:.62em;width:8px;height:1.5px;background:var(--green)}
+
+/* ── Tables ────────────────────────────────────────────────────────── */
+table.grid{width:100%;border-collapse:collapse;font-size:8.8pt;break-inside:avoid}
+table.grid th{text-align:left;font:600 6.8pt/1.4 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--green);border-bottom:1.5px solid var(--green);padding:5px 8px 5px 0}
+table.grid td{padding:6px 8px 6px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+table.grid td:first-child{font-weight:600;color:var(--green)}
+
+/* ── Structured definitions (from TypeScript) ──────────────────────── */
+.def{border:1px solid var(--rule);border-radius:5px;overflow:hidden;background:#fff}
+.def.short{break-inside:avoid}
+.def-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:7px 11px;background:var(--green);color:#fff;break-after:avoid}
+.def-head .dn{font:600 9pt var(--mono);letter-spacing:.01em}
+.def-head .dn .extends{font-weight:400;color:#a9c9bb}
+.def-head .dk{font:600 6.4pt/1 var(--sans);letter-spacing:.17em;text-transform:uppercase;color:var(--mint)}
+.f{display:grid;grid-template-columns:minmax(40mm,38%) 1fr;gap:12px;padding:5px 11px;border-top:1px solid #edf1ef;break-inside:avoid;page-break-inside:avoid}
+.f:first-of-type{border-top:0}
+.fn{font:500 8.4pt/1.6 var(--mono);color:var(--green);overflow-wrap:anywhere} /* renderer inserts <wbr> at camelCase humps */
+.f.flag{grid-template-columns:1fr auto}
+.fn .opt{font:500 6.2pt/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--faint);border:1px solid var(--rule);border-radius:3px;padding:2px 4px;margin-left:6px;vertical-align:1px}
+.ft{font:400 8.2pt/1.6 var(--mono);color:var(--muted);word-break:break-word}
+.ft .lit{color:var(--green);font-weight:600}
+.ft .tref{color:#2f5d8a}
+.enum{list-style:none;margin:1px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:3px 4px}
+.enum li{font:500 7.6pt/1 var(--mono);color:var(--green);background:var(--mint-tint);border:1px solid var(--mint-edge);border-radius:3px;padding:3px 5px}
+.enum-note{display:block;font:500 6.4pt/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:0 0 4px}
+.fixed{font:600 7.6pt/1 var(--mono);color:var(--green);background:var(--mint);border-radius:3px;padding:3px 6px}
+.grp{padding:6px 11px 3px;font:italic 400 8.6pt/1.45 var(--serif);color:var(--muted);border-top:1px solid #edf1ef;break-after:avoid}
+.nest{grid-column:1 / -1;margin:3px 0 2px;border-left:2px solid var(--mint-edge);padding-left:0}
+.nest .f{padding-left:12px;border-top-color:#f1f4f2}
+.nest .grp{padding-left:12px}
+.f.has-nest{grid-template-columns:1fr;gap:0;break-inside:auto;page-break-inside:auto} /* a group may break between its fields; each field stays whole */
+.f.has-nest>.fn,.f.has-nest>.enum-note{break-after:avoid;page-break-after:avoid}
+.def.provider .f{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}
+.m-sig,.m-ret{overflow-wrap:anywhere} /* renderer inserts <wbr> at camelCase humps */
+.m-sig{font:500 8.3pt/1.6 var(--mono);color:var(--green)}
+.m-sig .p{color:var(--muted);font-weight:400}
+.m-ret{font:400 8.2pt/1.6 var(--mono);color:var(--muted)}
+.m-ret::before{content:"→ ";color:var(--faint)}
+
+/* ── Verbatim blocks & diagrams ────────────────────────────────────── */
+.verbatim-block{background:var(--code-bg);border:1px solid var(--rule);border-radius:5px;break-inside:avoid}
+.verbatim-block .lbl{display:block;font:600 6.4pt/1 var(--sans);letter-spacing:.17em;text-transform:uppercase;color:var(--faint);padding:8px 11px 0}
+.verbatim-block pre{margin:0;padding:6px 11px 10px;font:400 8pt/1.55 var(--mono);color:var(--ink);white-space:pre-wrap;word-break:break-word}
+figure.diagram{margin:0;border:1px solid var(--rule);border-radius:5px;padding:12px;text-align:center;break-inside:avoid}
+figure.diagram pre.mermaid{margin:0;text-align:left;font:400 7.8pt/1.45 var(--mono);color:var(--muted);white-space:pre-wrap}
+figure.diagram pre.mermaid[data-processed]{text-align:center}
+figure.diagram svg{max-width:100%;height:auto}
+figure.diagram figcaption{font:600 6.4pt/1 var(--sans);letter-spacing:.17em;text-transform:uppercase;color:var(--faint);margin-top:9px}
+
+/* ── End matter ────────────────────────────────────────────────────── */
+.end{margin-top:12mm;padding-top:8px;border-top:1.5px solid var(--green);display:flex;justify-content:space-between;gap:14px;font:500 7pt/1.5 var(--sans);color:var(--muted)}
+.end code{font-size:7pt}
+
+/* ── Print ─────────────────────────────────────────────────────────── */
+@page{
+  size:A4;
+  margin:16mm 17mm 19mm;
+  @bottom-left{content:"SCS-PLATFORM-02  ·  Page " counter(page) " of " counter(pages);font:600 7pt "JetBrains Mono",Consolas,monospace;color:#06271f;border-top:1px solid #06271f;padding-top:4mm;vertical-align:top;white-space:nowrap}
+  @bottom-right{content:"Adaptive Agricultural Brain — Governed Scientific Intelligence Infrastructure";font:500 6.8pt "Inter",sans-serif;color:#5f6d67;border-top:1px solid #06271f;padding-top:4mm;vertical-align:top;white-space:nowrap}
+}
+@media print{
+  html{background:#fff}
+  .screen-note{display:none}
+  .sheet{margin:0;max-width:none;box-shadow:none}
+  .band{border-radius:6px;padding:11mm 12mm 10mm}
+  .band-top{margin-bottom:10mm}
+  .content{padding:0}
+  .end{display:none}
+  nav.toc{break-after:page;page-break-after:always} /* page 1 is the cover: header, details, contents */
+  a{color:inherit;text-decoration:none}
+  mark.ph{background:none;border:0;color:inherit;padding:0}
+}
+</style>
+</head>
+<body>
+<p class="screen-note">A4 print-ready. Print → Save as PDF, paper A4, margins Default, and turn off “Headers and footers” — each page carries its own footer.</p>
+<article class="sheet">
+
+<header class="band">
+  <div class="band-top">
+    <div class="brand">
+      <svg viewBox="0 0 30 30" aria-hidden="true"><rect x="3" y="5" width="24" height="4.4" rx="2.2" fill="#78ecad"/><rect x="3" y="12.8" width="24" height="4.4" rx="2.2" fill="#ffffff"/><rect x="3" y="20.6" width="24" height="4.4" rx="2.2" fill="#ffffff"/></svg>
+      <div><b>AAB</b><small>Adaptive Agricultural Brain</small></div>
+    </div>
+    <span class="ref-code">SCS-PLATFORM-02</span>
+  </div>
+  <p class="kind">Canonical Contract</p>
+  <h1>Governed Document Rendition</h1>
+  <span class="badge design">DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED</span>
+</header>
+
+<div class="content">
+  <dl class="meta">
+    <dt>Reference</dt><dd><code>SCS-PLATFORM-02</code></dd>
+    <dt>Status</dt><dd class="verbatim">CANONICAL CONTRACT — NOT IMPLEMENTATION</dd>
+    <dt>Version</dt><dd><span class="unstated">Not stated in source</span></dd>
+    <dt>Date</dt><dd>2026-09-26</dd>
+    <dt>Domain</dt><dd class="verbatim">Supply Chain Sovereignty (SCS)</dd><dt>Authority</dt><dd class="verbatim">DEFINES THE CONTRACT FOR GOVERNED DOCUMENT RENDITION, A PLATFORM SERVICE SHARED BY ALL SCS CAPABILITIES. Establishes no commissioning, production, Gate D, WP05, scientific-validity or regulatory authority. PROPOSED_NOT_ADMITTED. No implementation exists.</dd>
+  </dl>
+
+  <nav class="toc" aria-label="Contents"><h2>Contents</h2><ol>
+    <li><span class="n">01</span><a href="#plain-english-boundary-statement">Plain-English boundary statement</a></li><li><span class="n">02</span><a href="#the-governing-rule">The governing rule</a></li><li><span class="n">03</span><a href="#why-it-is-a-platform-service">Why it is a platform service</a></li><li><span class="n">04</span><a href="#what-a-rendition-is-and-is-not">What a rendition is — and is not</a></li><li><span class="n">05</span><a href="#rendering-rules">Rendering rules</a></li><li><span class="n">06</span><a href="#determinism">Determinism</a></li><li><span class="n">07</span><a href="#the-rendition-record">The rendition record</a></li><li><span class="n">08</span><a href="#retrieval">Retrieval</a></li><li><span class="n">09</span><a href="#tooling">Tooling</a></li><li><span class="n">10</span><a href="#the-pilot-renderer">The pilot renderer</a></li><li><span class="n">11</span><a href="#failure-contract">Failure contract</a></li><li><span class="n">12</span><a href="#open-gaps">Open gaps</a></li><li><span class="n">13</span><a href="#what-this-document-does-not-establish">What this document does not establish</a></li>
+  </ol></nav>
+
+<section class="sec" id="plain-english-boundary-statement"><div class="head-keep"><h2 class="sec-h"><span class="n">01</span>Plain-English boundary statement</h2><div class="clause"><span class="cn">1.1</span><div class="cb"><p>A rendition is a human-readable document, a PDF, made from one governed record so that a person can read it, print it or hand it to someone else. SCS-CAP-08's due diligence package is its first source. A rendition presents the record. It is never the record: it adds nothing, removes nothing required, and decides nothing. Anyone holding a rendition can check it against the record it presents, because every page names that record's digest.</p></div></div></div></section>
+<section class="sec" id="the-governing-rule"><div class="head-keep"><h2 class="sec-h"><span class="n">02</span>The governing rule</h2><div class="clause"><span class="cn">2.1</span><div class="cb"><blockquote class="rule-callout"><span class="lbl">Governing rule</span><p>The record is the authority; the rendition only presents it. A rendition is made from the stored record alone, shows every part the record's owner requires, and names the record's digest on every page, so no one can mistake the rendition for the record or present less than the record says.</p></blockquote></div></div></div></section>
+<section class="sec" id="why-it-is-a-platform-service"><div class="head-keep"><h2 class="sec-h"><span class="n">03</span>Why it is a platform service</h2><div class="clause"><span class="cn">3.1</span><div class="cb"><p>Any capability that hands a governed record to a person needs the same guarantees: the document shows exactly what the record says, it can be reproduced, and it can be checked. SCS-CAP-08 is the first user; SCS-CAP-10's challenge responses are likely to be the next. The rules are therefore stated once, here. Each capability supplies only its template and says which of its sections must always appear.</p></div></div></div></section>
+<section class="sec" id="what-a-rendition-is-and-is-not"><div class="head-keep"><h2 class="sec-h"><span class="n">04</span>What a rendition is — and is not</h2><div class="clause"><span class="cn">4.1</span><div class="cb"><p><strong>A rendition is:</strong></p></div></div></div><div class="clause"><span class="cn">4.2</span><div class="cb"><ul><li>A PDF made from one stored governed record, by a pinned renderer and a versioned template</li><li>Reproducible: the same record, renderer version and template version give the same bytes</li><li>Checkable: every page shows the record's identity and digest</li></ul></div></div><div class="clause"><span class="cn">4.3</span><div class="cb"><p><strong>A rendition is not:</strong></p></div></div><div class="clause"><span class="cn">4.4</span><div class="cb"><ul><li>The record, or a substitute for it</li><li>A signature, a seal, a certification or an attestation by anyone</li><li>Evidence: it is never admitted by any capability</li><li>A place for any text, summary or interpretation the record does not contain</li></ul></div></div></section>
+<section class="sec" id="rendering-rules"><div class="head-keep"><h2 class="sec-h"><span class="n">05</span>Rendering rules</h2><div class="clause"><span class="cn">5.1</span><div class="cb"><ul><li><strong>Source only.</strong> A rendition is made from the record exactly as it is stored, read once. The renderer reads nothing else: no other records, no current time, no network, no random values.</li><li><strong>Completeness.</strong> Every section the owning capability's template declares is rendered. A section the owning capability marks as mandatory is never omitted, summarised, truncated or collapsed. Lists are rendered item by item, never aggregated into a count or summary alone.</li><li><strong>No added content.</strong> Beyond the record, a rendition contains only the fixed text of its template: headings, labels and the notices below.</li><li><strong>Every page</strong> carries, in its footer:<ul><li>the owning capability and the record's identifier;</li><li>the record's digest and its algorithm;</li><li>"Presentation of a governed record. Not the record. Verify against the digest.";</li><li>the page number and page count.</li></ul></li><li><strong>The first page</strong> states what the record is and is not, in the owning capability's words (for SCS-CAP-08: compiled, not submitted; not a compliance certificate).</li><li><strong>A completeness test</strong> is part of every template: rendering a record and extracting the text must yield every value in the record's mandatory sections.</li></ul></div></div></div></section>
+<section class="sec" id="determinism"><div class="head-keep"><h2 class="sec-h"><span class="n">06</span>Determinism</h2><div class="clause"><span class="cn">6.1</span><div class="cb"><p>The same record, renderer version and template version produce byte-identical output. That requires:</p></div></div></div><div class="clause"><span class="cn">6.2</span><div class="cb"><ul><li><strong>Fixed metadata.</strong> The PDF's creation and modification dates are the record's own timestamp (for SCS-CAP-08, <code>compiledAt</code>), never the time of rendering. The document identifier is derived from the record's digest.</li><li><strong>Embedded, pinned fonts.</strong> Every font is embedded, and its file is pinned by version and SHA-256 in the renderer. Nothing is fetched at render time.</li><li><strong>A pinned renderer.</strong> The renderer's library, its version and the template's version are recorded with each rendition as <code>rendererVersion</code>.</li><li><strong>No compression variance.</strong> Compression settings are fixed by the renderer version.</li></ul></div></div></section>
+<section class="sec" id="the-rendition-record"><div class="head-keep head-only"><h2 class="sec-h"><span class="n">07</span>The rendition record</h2></div><div class="clause"><span class="cn">7.1</span><div class="cb"><div class="def"><div class="def-head"><span class="dn">ScsRendition</span><span class="dk">Interface</span></div><div class="f"><span class="fn">renditionId</span><span class="ft"><span>string</span></span></div><div class="grp">The capability whose record is rendered, e.g. "SCS-CAP-08"</div><div class="f"><span class="fn">sourceCapabilityId</span><span class="ft"><span>string</span></span></div><div class="grp">The record rendered, e.g. a packageId</div><div class="f"><span class="fn">sourceRecordId</span><span class="ft"><span>string</span></span></div><div class="grp">The record's own digest, as shown on every page</div><div class="f"><span class="fn">sourceDigest</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">sourceDigestAlgorithm</span><span class="ft"><span>string</span></span></div><div class="grp">Renderer library and version, and template id and version</div><div class="f"><span class="fn">rendererVersion</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">mediaType</span><span class="ft"><span class="lit">&quot;application/pdf&quot;</span></span></div><div class="f"><span class="fn">byteLength</span><span class="ft"><span>number</span></span></div><div class="grp">SHA-256 of the rendered bytes, computed by SCS</div><div class="f"><span class="fn">sha256</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">renderedAt</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">renderedFor</span><span class="ft"><span class="tref">ActorReference</span></span></div></div></div></div><div class="clause"><span class="cn">7.2</span><div class="cb"><ul><li><strong>Storage.</strong> The bytes are stored in the object store (SCS-PLATFORM-01) under their SHA-256, as a system write, not through the upload endpoint. A stored rendition is never evidence.</li><li><strong>Append-only.</strong> A rendition record is never changed or deleted. Rendering a record again, for example with a new renderer version, adds a new rendition record and never replaces one.</li><li><strong>One-way binding.</strong> The rendition names its record and the record's digest; the record never names its renditions. The owning capability may record which rendition it made (SCS-CAP-08 does, in its compilation record).</li><li><strong>When.</strong> The owning capability decides when a rendition is made. SCS-CAP-08 renders at compilation, so the file an operator presents is the one whose digest was receipted.</li><li><strong>Order of writes.</strong> The object store is not transactional. The bytes are written first; the rendition record is then written in the owning capability's transaction. Bytes whose transaction fails are an unreferenced object and are harmless.</li></ul></div></div></section>
+<section class="sec" id="retrieval"><div class="head-keep"><h2 class="sec-h"><span class="n">08</span>Retrieval</h2><div class="clause"><span class="cn">8.1</span><div class="cb"><p><code>GET /scs/v1/renditions/:renditionId</code> returns the rendition's bytes, with <code>Content-Type: application/pdf</code> and the SHA-256 in a response header.</p></div></div></div><div class="clause"><span class="cn">8.2</span><div class="cb"><ul><li><strong>Access.</strong> The owning capability's readers only (for SCS-CAP-08: <code>COMPLIANCE_OFFICER</code> or <code>REGULATORY_REVIEWER</code>). Any other actor is <code>READER_NOT_AUTHORISED</code>.</li><li><strong>Integrity on read.</strong> The bytes are re-hashed before they are returned. If they do not match the recorded SHA-256, nothing is returned (<code>RENDITION_INTEGRITY_FAILED</code>).</li><li>An unknown rendition is <code>RENDITION_NOT_FOUND</code>.</li></ul></div></div></section>
+<section class="sec" id="tooling"><div class="head-keep"><h2 class="sec-h"><span class="n">09</span>Tooling</h2><div class="clause"><span class="cn">9.1</span><div class="cb"><ul><li><strong>A PDF library, not a browser.</strong> Renditions are built with a pinned PDF library, not a headless browser: a library is small, runs without a network, and can be made deterministic. A browser is a large, frequently changing dependency whose output varies by version.</li><li><strong>Dependency audit first.</strong> The library is chosen only after a dependency audit (licence, maintenance, transitive dependencies, known vulnerabilities, determinism). The chosen library and version are recorded in this contract's implementation notes when adopted.</li></ul></div></div></div></section>
+<section class="sec" id="the-pilot-renderer"><div class="head-keep"><h2 class="sec-h"><span class="n">10</span>The pilot renderer</h2><div class="clause"><span class="cn">10.1</span><div class="cb"><p>The dependency audit compared pdf-lib 1.17.1 and pdfkit 0.20.2. pdf-lib, and the font package it needs, have not been maintained since 2022, which disqualifies them for governed document production. pdfkit is adopted.</p></div></div></div><div class="clause"><span class="cn">10.2</span><div class="cb"><ul><li><strong>Library.</strong> pdfkit <strong>0.20.2</strong>, pinned exactly (no range). A new pdfkit version is a new renderer version: it produces new renditions and never replaces existing ones.</li><li><strong>No stream compression.</strong> pdfkit compresses with the runtime's zlib, whose output is not guaranteed to be the same across runtime versions and platforms. The pilot renderer turns compression off, so the bytes depend only on the renderer, its fonts and the record. Files are larger as a result.</li><li><strong>Fonts.</strong> Two families, stored in the repository at <code>packages/api/assets/fonts/</code> with their SIL Open Font License 1.1 texts. The renderer refuses to render if a font's SHA-256 differs from the one recorded here. All are the static, unhinted TrueType files of the official releases (hinting only affects screen rasterisation):</li></ul></div></div><div class="clause"><span class="cn">10.3</span><div class="cb"><table class="grid"><thead><tr><th>File</th><th>Family and release</th><th>Source</th><th>Bytes</th><th>SHA-256</th></tr></thead><tbody><tr><td><code>NotoSans-Regular.ttf</code></td><td>Noto Sans v2.015</td><td>github.com/notofonts/latin-greek-cyrillic, release <code>NotoSans-v2.015</code></td><td>431364</td><td><code>f3961a9cde016d41a4879aecda1474d3a36d6bf54fa0e4643de029cc2248b0e8</code></td></tr><tr><td><code>NotoSans-Bold.ttf</code></td><td>Noto Sans v2.015</td><td>as above</td><td>432376</td><td><code>87cb2d84472a7d66da659ee47b6cdb9552326e8c128245231f191b6ac72529d9</code></td></tr><tr><td><code>NotoSansThai-Regular.ttf</code></td><td>Noto Sans Thai v2.002</td><td>github.com/notofonts/thai, release <code>NotoSansThai-v2.002</code></td><td>20960</td><td><code>d4303fe9c63ebb72759ca8b6d2040c8ae81689f7d08d7b91c656154382b49313</code></td></tr><tr><td><code>NotoSansThai-Bold.ttf</code></td><td>Noto Sans Thai v2.002</td><td>as above</td><td>20600</td><td><code>5227602d7f9108252cfb7d75d6f7b2a26bdb2fc2fa89a702f9063758fb2f86c7</code></td></tr></tbody></table></div></div><div class="clause"><span class="cn">10.4</span><div class="cb"><ul><li><strong>Scripts.</strong> Noto Sans covers Latin, Latin Extended (including Vietnamese), Greek and Cyrillic. Thai is not in Noto Sans; it is published as Noto Sans Thai. The renderer splits text into runs by script and sets each Thai run (U+0E00–U+0E7F) in Noto Sans Thai. Text in any other script not covered is refused rather than rendered as missing glyphs.</li><li><strong>Thai SARA AM.</strong> The font draws SARA AM (U+0E33) as two glyphs, and a PDF reader then extracts it as SARA AM followed by an extra SARA AA. The renderer therefore writes SARA AM as its compatibility decomposition (U+0E4D U+0E32), which looks the same and extracts correctly: extracted text equals the record's text under NFKC normalisation.</li><li><strong>Text extraction for tests.</strong> pdfjs-dist <strong>6.3.289</strong> (Apache-2.0), a development dependency only, without its optional native canvas package. Completeness tests compare under NFKC, and leave out the page footers, which a reader can place between the two halves of an entry that breaks across a page.</li><li><strong>Cross-platform stability.</strong> A test renders a fixed record and compares the SHA-256 of the output with a stored expected value, on every platform that runs the tests, CI (Linux) included. A different digest on any platform is a critical failure: a rendition's recorded digest must not depend on where it was rendered.</li><li><strong><code>rendererVersion</code></strong> records the library and version, the font releases and the template and its version, for example <code>pdfkit@0.20.2;noto-sans@2.015;noto-sans-thai@2.002;scs-cap08-package@1</code>.</li></ul></div></div></section>
+<section class="sec" id="failure-contract"><div class="head-keep"><h2 class="sec-h"><span class="n">11</span>Failure contract</h2><div class="clause"><span class="cn">11.1</span><div class="cb"><div class="def short"><div class="def-head"><span class="dn">ScsRenditionFailure</span><span class="dk">Interface</span></div><div class="f flag"><span class="fn">ok</span><span class="ft"><span class="fixed">false</span></span></div><div class="f"><span class="fn">capabilityId</span><span class="ft"><span class="lit">&quot;SCS-PLATFORM&quot;</span></span></div><div class="f"><span class="fn">result</span><span class="ft"><span class="lit">&quot;FAIL_CLOSED&quot;</span></span></div><div class="grp">The stored bytes no longer match the recorded SHA-256</div><div class="f"><span class="fn">error</span><span class="ft"><span class="enum-note">One of</span><ul class="enum"><li>&quot;UNAUTHENTICATED&quot;</li><li>&quot;READER_NOT_AUTHORISED&quot;</li><li>&quot;RENDITION_NOT_FOUND&quot;</li><li>&quot;RENDITION_INTEGRITY_FAILED&quot;</li><li>&quot;REQUEST_VALIDATION_FAILED&quot;</li><li>&quot;DEPENDENCY_UNAVAILABLE&quot;</li></ul></span></div><div class="f"><span class="fn">reasons</span><span class="ft"><span>string</span>[]</span></div><div class="f flag"><span class="fn">noWrites</span><span class="ft"><span class="fixed">true</span></span></div></div></div></div></div><div class="clause"><span class="cn">11.2</span><div class="cb"><p>A rendering failure during a capability's operation is reported by that capability (for SCS-CAP-08: <code>RENDITION_FAILED</code>), and that operation records nothing.</p></div></div></section>
+<section class="sec" id="open-gaps"><div class="head-keep"><h2 class="sec-h"><span class="n">12</span>Open gaps</h2><div class="clause"><span class="cn">12.1</span><div class="cb"><p><strong>Contract gap: Thai line breaking.</strong> Thai is written without spaces between words. The pilot renderer has no dictionary-based word breaking, so a Thai run longer than a line is broken at the line's edge, which may fall inside a word. The text is complete and extracts correctly; only the break position may be wrong.</p></div></div></div><div class="clause"><span class="cn">12.2</span><div class="cb"><p><strong>Contract gap: other scripts.</strong> Only the scripts listed under "The pilot renderer" can be rendered. Records containing other scripts cannot be rendered until a font covering them is added and recorded here.</p></div></div><div class="clause"><span class="cn">12.3</span><div class="cb"><p><strong>Contract gap: archival and accessibility standards.</strong> Conformance to PDF/A (archival) or PDF/UA (accessibility) is not claimed, and no rendition is presented as conforming. pdfkit has options for both, but their output has not been checked with a validator. If a regulatory authority or auditor requires either, it becomes a formal requirement with a tested implementation.</p></div></div><div class="clause"><span class="cn">12.4</span><div class="cb"><p><strong>Contract gap: languages.</strong> Renditions are in English only.</p></div></div><div class="clause"><span class="cn">12.5</span><div class="cb"><p><strong>Contract gap: signatures.</strong> A rendition is not signed. Whether an operator may apply their own signature to a rendition, and how that relates to the record, is not defined.</p></div></div><div class="clause"><span class="cn">12.6</span><div class="cb"><p><strong>Contract gap: retention.</strong> How long renditions are kept is not defined; they are not deleted by any operation in this contract.</p></div></div></section>
+<section class="sec" id="what-this-document-does-not-establish"><div class="head-keep"><h2 class="sec-h"><span class="n">13</span>What this document does not establish</h2><div class="clause"><span class="cn">13.1</span><div class="cb"><div class="boundary"><ul><li>It does not make any rendition a record, a declaration or a certification</li><li>It does not admit any evidence</li><li>It does not implement, deploy or migrate anything</li><li>It does not alter commissioning status, satisfy Gate D, close WP05, or grant any production or commissioning authority</li></ul></div></div></div></div></section>
+
+  <footer class="end"><span><code>SCS-PLATFORM-02</code> · Source: <code>governance/workstream-b/SCS-PLATFORM-02-GOVERNED-DOCUMENT-RENDITION-CANONICAL-CONTRACT-2026-09-26.md</code></span><span>Adaptive Agricultural Brain — Governed Scientific Intelligence Infrastructure</span></footer>
+</div>
+</article>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+mermaid.initialize({startOnLoad:true,securityLevel:"strict",theme:"base",fontFamily:"Inter, Segoe UI, sans-serif",
+  themeVariables:{primaryColor:"#eefbf4",primaryBorderColor:"#06271f",primaryTextColor:"#06271f",lineColor:"#3f8f6a",
+  secondaryColor:"#f6f8f7",tertiaryColor:"#ffffff",actorBkg:"#06271f",actorTextColor:"#ffffff",actorBorder:"#06271f",
+  signalColor:"#17211d",signalTextColor:"#17211d",noteBkgColor:"#eefbf4",noteBorderColor:"#78ecad",noteTextColor:"#06271f",fontSize:"12px"}});
+</script>
+</body>
+</html>

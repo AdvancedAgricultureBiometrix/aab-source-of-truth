@@ -109,7 +109,11 @@ that satisfies all of the following:
 - `currencyStatus` is `CURRENT`
 - The referenced CAP-06 evaluation ID exactly matches the package inputs
 - The referenced CAP-01 framework version exactly matches the package inputs
+- The decision's plots, operator and commodity exactly match the package inputs
 - The decision outcome is `PROCEED_TO_PACKAGE_COMPILATION`
+
+The checks are made by `validateForPackageCompilation` (see "Validation for package
+compilation").
 
 If the decision is `POTENTIALLY_STALE`, `SUPERSEDED`, missing, unverifiable, 
 or mismatched on any parameter, CAP-08 must fail closed and require 
@@ -150,7 +154,7 @@ sequenceDiagram
     CAP09->>CAP09: Validate decision completeness
     CAP09->>CAP09: Record outcome, reasoning, timestamp, reviewer identity
     CAP09->>CAP09: Bind decision immutably to evaluationId
-    CAP09->>Store: Write ScsRegulatoryReviewDecision (currencyStatus: CURRENT)
+    CAP09->>Store: Write ScsRegulatoryReviewDecision (currency derived when decided)
     CAP09-->>CO: ScsReviewDecisionRecord
 
     Note over CO,Store: Decision is permanent from this moment.<br/>currencyStatus changes only when the<br/>evidence landscape changes after this point.
@@ -210,8 +214,10 @@ interface ScsRegulatoryReviewDecision {
   // Cannot be a generic statement
   reviewReasoning: {
     evaluationSummaryAssessed: string;
-    gapsConsidered: string[];
-    conflictsConsidered: string[];
+    // Every gap the evaluation reports, each with how it was weighed
+    gapsConsidered: Array<{ gapId: string; assessment: string }>;
+    // Every conflict the evaluation reports as unresolved, each with whether it was material
+    conflictsConsidered: Array<{ conflictKey: string; assessment: string }>;
     limitationsAcknowledged: string[];
     basisForOutcome: string;
     remainingConcerns?: string[];
@@ -220,11 +226,17 @@ interface ScsRegulatoryReviewDecision {
 
   // Reviewer identity and authority — permanent
   reviewer: {
+    // The authenticated actor
     reviewerId: string;
+    // Declared by the reviewer
     reviewerName: string;
+    // A registered SCS-CAP-02 party
     reviewerOrganizationId: string;
+    // Declared by the reviewer
     reviewerRoleReference: string;
+    // Declared; not verified (no authority model exists)
     authorityBasis: string;
+    // When the reviewer's role was checked — never a verification of authorityBasis
     authorityVerifiedAt: string;
   };
 
@@ -238,8 +250,8 @@ interface ScsRegulatoryReviewDecision {
     | "UNDER_CHALLENGE"
     | "SUPERSEDED_BY_CORRECTION";
 
-  // Property 3 — currency — the only mutable property
-  // Updated by the system when the landscape changes
+  // Property 3 — currency — derived when the decision is read or assessed,
+  // never stored: the decision record itself is never changed
   currencyStatus: ScsDecisionCurrencyStatus;
   currencyLastAssessedAt: string;
 
@@ -251,9 +263,14 @@ interface ScsRegulatoryReviewDecision {
     explanation: string;
   }>;
 
-  // If SUPERSEDED — what supersedes this decision
+  // If SUPERSEDED — what supersedes this decision (derived)
   supersededByDecisionId?: string;
   supersededAt?: string;
+
+  // System-generated disclosures: the authority basis is as declared, and a
+  // PROCEED on a GAPS_REQUIRE_HUMAN_DECISION evaluation is a human decision on
+  // disclosed gaps
+  decisionReasons: string[];
 
   // This decision does not declare compliance
   authorityBoundary: {
@@ -297,6 +314,8 @@ The earlier decision's `currencyStatus` is updated to `SUPERSEDED`. Its
 interface ScsDecisionCurrencyAssessment {
   decisionId: string;
   assessedAt: string;
+  // Who requested the assessment: every recorded assessment is attributable
+  assessedBy: ActorReference;
   currencyStatus: ScsDecisionCurrencyStatus;
 
   // What was checked
@@ -343,7 +362,243 @@ The review reasoning cannot be a generic statement. The reviewer must address:
 A reviewer must not be allowed to approve proceeding merely by selecting 
 `PROCEED_TO_PACKAGE_COMPILATION` without substantive reasoning. The 
 `reviewReasoning` fields are required. An empty or generic reasoning record 
-produces `recordValidity: PROCEDURALLY_INVALID`.
+is refused (`REASONING_INCOMPLETE`) and nothing is recorded (see "Review rules for the pilot").
+
+## Review rules for the pilot
+
+These rules define `submitDecision`, `getDecision` and `assessCurrency` for the pilot. Every
+condition in the failure contract ends in `FAIL_CLOSED` and records nothing. A recorded decision
+is permanent: nothing about it is ever changed.
+
+### One step, bound to what was reviewed
+
+The pilot has no separate `requestReview` step. The reviewer reads the SCS-CAP-06 evaluation
+through `getEvaluationResult` and submits the decision with the `evaluationSnapshotDigest` of
+what they reviewed: the SHA-256 of the canonical JSON of that result. It must equal the digest
+of the recorded result (`EVALUATION_DIGEST_MISMATCH`). This proves the reviewer decided on
+exactly the evaluation that is recorded. `ScsReviewPackage` is not used.
+
+### Authority and the reviewer's identity
+
+- **Role.** Only an actor holding `REGULATORY_REVIEWER` may submit a decision
+  (`REVIEWER_NOT_AUTHORISED`). It is separate from `COMPLIANCE_OFFICER`,
+  `VERIFICATION_OFFICER` and `CONFLICT_RESOLVER`: requesting an evaluation never confers
+  review authority.
+- **Independence.** The reviewer is not the actor who requested the evaluation, and did not
+  resolve any conflict resolution the evaluation applied (`REVIEWER_NOT_AUTHORISED`).
+- **Identity.**
+  - `reviewer.reviewerId` is the actor.
+  - `reviewerName` and `reviewerRoleReference` are recorded as declared.
+  - `reviewerOrganizationId` must be a registered SCS-CAP-02 party that is not `RETIRED`
+    (`REVIEWER_ORGANIZATION_NOT_FOUND`).
+- **Authority basis.** No model exists of which reviewer may decide for which framework and
+  commodity, so `authorityBasis` is recorded as declared, and the decision says so.
+  `authorityVerifiedAt` is the time the reviewer's role was checked: it never presents the
+  declared authority as verified.
+
+### The evaluation reviewed
+
+- It must be recorded (`EVALUATION_NOT_FOUND`).
+- **Integrity.** Its stored result must still be exactly the result its receipt records, and
+  the receipt must still hash to its recorded digest (`EVALUATION_INTEGRITY_FAILED`). This
+  catches tampering or corruption between evaluation and review. It is distinct from
+  `EVALUATION_DIGEST_MISMATCH`, where the reviewer reviewed a different version.
+- **Not superseded.** No later evaluation of the same subject (the SCS-CAP-06 subject: plots,
+  commodity, framework and batches) exists (`EVALUATION_ALREADY_SUPERSEDED`).
+- **Context.** `frameworkId`, `frameworkVersion` and `commodityCode` must equal the
+  evaluation's (`FRAMEWORK_MISMATCH`).
+- **Operator.** `operatorId` must be a registered SCS-CAP-02 party that is not `RETIRED`
+  (`OPERATOR_PARTY_NOT_FOUND`). When the evaluation names an operator (a custody subject), it
+  must be that one (`OPERATOR_MISMATCH`).
+
+### Outcomes
+
+- **Permitted outcomes follow the evaluation.** `PROCEED_TO_PACKAGE_COMPILATION` is permitted
+  only when the evaluation is `GAPS_REQUIRE_HUMAN_DECISION` or `SUFFICIENT`. It is refused
+  (`OUTCOME_NOT_PERMITTED`) on:
+  - `INSUFFICIENT`: human review cannot cure missing evidence;
+  - `CONFLICTING_EVIDENCE`: a conflict is resolved only through a recorded SCS-CAP-06 conflict
+    resolution and a new evaluation.
+
+  `DO_NOT_PROCEED`, `REQUIRES_FURTHER_EVIDENCE` and `REQUIRES_SPECIALIST_REVIEW` are always
+  permitted.
+- **`REVIEW_ABORTED_FAIL_CLOSED` is never recorded.** A review that cannot proceed fails
+  closed and records nothing, the same rule as `FAIL_CLOSED` in SCS-CAP-06.
+- **The honest pilot result.** No pilot evaluation can be `SUFFICIENT` (SCS-CAP-06:
+  spatial coverage is not evaluated). So every pilot `PROCEED_TO_PACKAGE_COMPILATION` is a
+  human deciding on disclosed gaps. The decision's `decisionReasons` state this every time;
+  it is never optional.
+
+### Reasoning
+
+Generic reasoning is refused, and nothing is recorded (`REASONING_INCOMPLETE`, naming every
+problem). A recorded decision is therefore always procedurally valid.
+
+- `evaluationSummaryAssessed`, `basisForOutcome` and every assessment are non-blank.
+- **Every gap is addressed.** `gapsConsidered` has one entry, with an assessment, for every
+  gap the evaluation reports (by `gapId`).
+- **Every unresolved conflict is addressed.** `conflictsConsidered` has one entry, with an
+  assessment, for every conflict the evaluation reports as unresolved (by `conflictKey`).
+  Resolved conflicts may also be addressed.
+- No entry may name a gap or conflict the evaluation does not report.
+
+### One decision per evaluation, and supersession
+
+- An evaluation is decided at most once (`DECISION_ALREADY_RECORDED`).
+- **The current decision of a subject** is its most recent decision that no later decision
+  supersedes.
+- **Superseding it.** A decision on a subject that already has a current decision must name
+  that decision in `supersedes`, with a reason (`SUPERSEDES_NOT_CURRENT`). A decision naming
+  another decision, or naming one where the subject has none, is refused the same way. The
+  system fills in the rest of `supersedes` from the earlier decision.
+- The earlier decision is never changed. Its `SUPERSEDED` status is derived when read, as is
+  `supersededByDecisionId`.
+
+### Fields the system sets
+
+`decisionId`, `schemaVersion`, `decidedAt`, `evaluationSnapshotDigest` (as verified), the frozen
+context (`evidenceRequirementSpecId` and `plotIds`, from the evaluation), `reviewer.reviewerId`,
+`reviewer.authorityVerifiedAt`, `recordValidity` (`VALID` at creation), `decisionReasons` and
+`authorityBoundary`.
+
+### Record validity
+
+A recorded decision is `VALID`. `UNDER_CHALLENGE` and `SUPERSEDED_BY_CORRECTION` require
+challenge and correction operations that are not defined (see "Open gaps").
+
+### Currency — derived, never stored
+
+A decision is never updated. Its `currencyStatus`, `currencyLastAssessedAt`,
+`stalenessReasons`, `supersededByDecisionId` and `supersededAt` are derived deterministically
+whenever the decision is read (`getDecision`) or assessed (`assessCurrency`). Only
+`assessCurrency` records its assessment, as an append-only `ScsDecisionCurrencyAssessment`.
+
+**The checks** compare the decision's evaluation with the governed landscape now:
+
+| Change | Checked how | Pilot |
+|---|---|---|
+| `NEW_EVIDENCE_ADMITTED` | an admitted record in the evaluation's scope that is not in its manifest (a set comparison, correct under concurrency) | checked |
+| `CONFLICT_RESOLUTION_ADDED_OR_WITHDRAWN` | a conflict resolution for a conflict the evaluation reported that the evaluation did not apply (see "The conflict-resolution check") | checked for added; none can be withdrawn |
+| `CAP06_EVALUATION_SUPERSEDED` | a later evaluation of the same subject | checked |
+| `EVIDENCE_WITHDRAWN_OR_QUARANTINED`, `EVIDENCE_RECLASSIFIED`, `PLOT_IDENTITY_CHANGED`, `PLOT_BOUNDARY_CHANGED`, `TENURE_RECORD_CHANGED`, `REGISTRY_VERIFICATION_CHANGED`, `FRAMEWORK_VERSION_CHANGED`, `EVIDENCE_INTEGRITY_CHALLENGED` | no operation can cause them yet | `UNCHANGED`, with a note saying so |
+
+**The status** is the first that applies:
+
+1. `SUPERSEDED`: a later decision supersedes this one;
+2. `POTENTIALLY_STALE`: a check found a change;
+3. `FAIL_CLOSED`: a check could not be performed (`UNAVAILABLE`), so currency cannot be
+   determined;
+4. `CURRENT`.
+
+Currency is advisory. It never revokes a decision. SCS-CAP-08 compiles only from a `CURRENT`
+decision.
+
+**A decision stale from the start.** Currency is derived when the decision is recorded, too. A
+decision may therefore be recorded as `POTENTIALLY_STALE` when evidence was admitted after the
+evaluation but before the decision. This is disclosed in the decision and its receipt
+(`stalenessReasons`), never a refusal: the reviewer decided on what they reviewed, and the
+staleness is a fact about the landscape now, not an invalidation of the review. Refusing it
+would let any evidence admitted while a reviewer deliberates block the decision indefinitely.
+
+**Reading and assessing.** A `REGULATORY_REVIEWER` or a `COMPLIANCE_OFFICER` may read a decision
+(`getDecision`) or record a currency assessment (`assessCurrency`); any other actor is
+`REVIEWER_NOT_AUTHORISED`. An unknown decision is `DECISION_NOT_FOUND`. Every recorded assessment
+names the actor who requested it (`assessedBy`). An assessment is not a decision, so it has no
+receipt.
+
+### Submission request
+
+```typescript
+interface ScsReviewDecisionSubmission {
+  evaluationId: string;
+  // SHA-256 of the canonical JSON of the evaluation result that was reviewed
+  evaluationSnapshotDigest: string;
+  frameworkId: string;
+  frameworkVersion: string;
+  commodityCode: string;
+  operatorId: string;
+
+  decisionOutcome: Exclude<ScsReviewDecisionOutcome, "REVIEW_ABORTED_FAIL_CLOSED">;
+  reviewReasoning: ScsRegulatoryReviewDecision["reviewReasoning"];
+
+  reviewer: {
+    reviewerName: string;
+    reviewerOrganizationId: string;
+    reviewerRoleReference: string;
+    authorityBasis: string;
+  };
+
+  // Required when the subject already has a current decision
+  supersedes?: {
+    priorDecisionId: string;
+    supersessionReason: string;
+  };
+}
+```
+
+### Validation for package compilation
+
+`validateForPackageCompilation` is the SCS-CAP-08 gate, defined once, here. In the pilot it is
+not an endpoint: SCS-CAP-08 calls it inside its own transaction, so the decision, its currency
+and the records being packaged are read in one snapshot.
+
+- **Inputs** are `ScsPackageCompilationInputs`: the scope of the package SCS-CAP-08 has been
+  asked to compile.
+- **The checks**, each reported in the result:
+  1. the decision exists (`decisionFound`);
+  2. its outcome is `PROCEED_TO_PACKAGE_COMPILATION`;
+  3. its `recordValidity` is `VALID`;
+  4. its currency, derived in the caller's snapshot, is `CURRENT`;
+  5. `evaluationId` equals the decision's;
+  6. `frameworkId` and `frameworkVersion` equal the decision's;
+  7. `plotIds` equal the decision's, as sets;
+  8. `operatorId` equals the decision's;
+  9. `commodityCode` equals the decision's.
+- **The result** is `valid` only when every check passes. Each failed check adds one blocker,
+  whose `blockerType` is the SCS-CAP-08 failure code for that check (for example
+  `REVIEW_DECISION_NOT_CURRENT`), with an explanation and the action required. A decision
+  that is not `CURRENT` names its staleness reasons or its successor, and the required action
+  is a new SCS-CAP-06 evaluation and a new decision.
+- The validation reads only. It records nothing.
+
+### Listing a subject's decisions
+
+`listDecisionsForSubject` returns the decisions whose operator and framework match and, when
+`plotIds` is given, whose plots equal it as a set: most recent first, each with its currency
+derived in one snapshot. A `REGULATORY_REVIEWER` or a `COMPLIANCE_OFFICER` may list; any other
+actor is `REVIEWER_NOT_AUTHORISED`. It is built with SCS-CAP-08.
+
+### Deferred
+
+`requestReview` (see "One step").
+
+### Open gaps
+
+**Contract gap: reviewer authority.** Which reviewer may decide for which framework and
+commodity is not modelled. The authority basis is recorded as declared.
+
+**Contract gap: the reviewer's name.** An authenticated actor has no name. `reviewerName` is
+recorded as declared.
+
+**Contract gap: challenge and correction.** How a decision comes to be `UNDER_CHALLENGE` or
+`SUPERSEDED_BY_CORRECTION` is not defined.
+
+**Contract gap: staleness triggers with no operation.** Evidence withdrawal, quarantine and
+reclassification, plot and tenure changes, framework version changes and integrity challenges
+have no operation yet, so they cannot occur and are reported as unchanged.
+
+**Contract gap: an unavailable check.** A check is `UNAVAILABLE` when it cannot be performed.
+In the pilot every check reads the same database in one snapshot, and a failed read fails the
+whole request (`DEPENDENCY_UNAVAILABLE`), so no check is reported as `UNAVAILABLE` and
+`FAIL_CLOSED` currency is not produced. It is recorded, not produced.
+
+**Decision: the conflict-resolution check.** `CONFLICT_RESOLUTION_ADDED_OR_WITHDRAWN` reports
+a conflict resolution recorded for a conflict the evaluation reported, which the evaluation did
+not apply. SCS-CAP-06 applies every resolution visible to it for a conflict it reports, so such
+a resolution was recorded after the evaluation. A resolution for items in scope whose conflict
+the evaluation did not report is not reported: it could not have changed the result, and
+reporting it would be dishonest. This is a deliberate interpretation, not an open question. The
+check is a set comparison, so it is correct under concurrency.
 
 ## Provider-neutral interface
 
@@ -379,14 +634,30 @@ interface ScsRegulatoryReviewProvider {
   ): Promise<ScsDecisionPackageValidationResult>;
 }
 
+// The scope of the package SCS-CAP-08 has been asked to compile
+interface ScsPackageCompilationInputs {
+  operatorId: string;
+  frameworkId: string;
+  frameworkVersion: string;
+  commodityCode: string;
+  plotIds: string[];
+  evaluationId: string;
+}
+
 interface ScsDecisionPackageValidationResult {
   valid: boolean;
   decisionId: string;
-  currencyStatus: ScsDecisionCurrencyStatus;
-  recordValidity: string;
-  evaluationIdMatches: boolean;
-  frameworkVersionMatches: boolean;
+  decisionFound: boolean;
+  // Absent when the decision is not found
+  currencyStatus?: ScsDecisionCurrencyStatus;
+  recordValidity?: string;
   outcomePermitsCompilation: boolean;
+  evaluationIdMatches: boolean;
+  // frameworkId and frameworkVersion both
+  frameworkVersionMatches: boolean;
+  plotIdsMatch: boolean;
+  operatorIdMatches: boolean;
+  commodityCodeMatches: boolean;
   
   // If not valid — what must happen before compilation
   blockers: Array<{
@@ -406,13 +677,29 @@ interface ScsRegulatoryReviewFailure {
   result: "FAIL_CLOSED";
 
   error:
+    // Not REGULATORY_REVIEWER, or not independent of the evaluation
     | "REVIEWER_NOT_AUTHORISED"
+    // reviewerOrganizationId is not a registered, non-retired party
+    | "REVIEWER_ORGANIZATION_NOT_FOUND"
     | "EVALUATION_NOT_FOUND"
+    // getDecision or assessCurrency: no decision is recorded with that id
+    | "DECISION_NOT_FOUND"
     | "EVALUATION_ALREADY_SUPERSEDED"
+    // The stored result no longer matches its receipt (tampering or corruption)
     | "EVALUATION_INTEGRITY_FAILED"
+    // The digest the reviewer supplied is not the stored result's (they reviewed another version)
+    | "EVALUATION_DIGEST_MISMATCH"
     | "REASONING_INCOMPLETE"
     | "DECISION_ALREADY_RECORDED"
+    // The subject has a current decision that this decision does not name in supersedes
+    | "SUPERSEDES_NOT_CURRENT"
     | "FRAMEWORK_MISMATCH"
+    // operatorId is not a registered, non-retired party
+    | "OPERATOR_PARTY_NOT_FOUND"
+    // operatorId is not the evaluation's operator
+    | "OPERATOR_MISMATCH"
+    // PROCEED_TO_PACKAGE_COMPILATION on an INSUFFICIENT or CONFLICTING_EVIDENCE evaluation
+    | "OUTCOME_NOT_PERMITTED"
     | "DEPENDENCY_UNAVAILABLE";
 
   reasons: string[];

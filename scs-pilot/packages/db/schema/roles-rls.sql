@@ -33,8 +33,14 @@
 --   * Two named PERMISSIVE policies per table, for scs_api only: SELECT all
 --     rows, INSERT any row. Pilot scope: one country per deployment and
 --     database (SCS sovereignty model), and no organisation/workspace column
---     exists yet to scope by. TODO(tenant-scope): when one exists, these
---     policies become USING (… = current_setting('scs.<scope>')::uuid).
+--     exists yet to scope by.
+--   * TODO(tenant-scope): these USING (true) / WITH CHECK (true) policies
+--     enforce row-level security at the table level only: they apply no
+--     organisation-level row filtering. A country deployment with several
+--     organisations needs an organisation column on every scoped table and
+--     policies USING (organization_id = current_setting('scs.organization_id')::uuid),
+--     with the API setting scs.organization_id in each transaction. Not
+--     implemented; disclosed as a known gap.
 --   * No UPDATE or DELETE policy: even if a privilege were granted by
 --     mistake, RLS would still let no row be changed or removed.
 --   * The owner is not subject to RLS (ENABLE, not FORCE). The API can never

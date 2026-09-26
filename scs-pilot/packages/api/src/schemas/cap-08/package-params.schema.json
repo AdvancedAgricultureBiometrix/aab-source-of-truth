@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-08:package-params:1",
+  "title": "ScsPackagePathParams",
+  "description": "Path parameters of GET /scs/v1/due-diligence-packages/:packageId and .../integrity.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "packageId"
+  ],
+  "properties": {
+    "packageId": {
+      "type": "string",
+      "format": "uuid"
+    }
+  }
+}

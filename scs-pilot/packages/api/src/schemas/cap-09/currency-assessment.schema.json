@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-09:currency-assessment:1",
+  "title": "ScsDecisionCurrencyAssessment",
+  "description": "SCS-CAP-09 ScsDecisionCurrencyAssessment (contract ff6d3b8, a816101): a recorded, attributable assessment of a decision's currency. It is not a decision and has no receipt.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "assessmentId",
+    "decisionId",
+    "assessedAt",
+    "assessedBy",
+    "currencyStatus",
+    "checksPerformed",
+    "materialChanges"
+  ],
+  "properties": {
+    "assessmentId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "decisionId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "assessedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "assessedBy": {
+      "$ref": "urn:aab:scs:schema:shared:actor-reference:1"
+    },
+    "currencyStatus": {
+      "type": "string",
+      "enum": [
+        "CURRENT",
+        "POTENTIALLY_STALE",
+        "SUPERSEDED",
+        "FAIL_CLOSED"
+      ]
+    },
+    "supersededByDecisionId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "checksPerformed": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {
+        "title": "ScsCurrencyCheck",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "checkType",
+          "checkResult"
+        ],
+        "properties": {
+          "checkType": {
+            "type": "string",
+            "enum": [
+              "NEW_EVIDENCE_ADMITTED",
+              "EVIDENCE_WITHDRAWN_OR_QUARANTINED",
+              "EVIDENCE_RECLASSIFIED",
+              "PLOT_IDENTITY_CHANGED",
+              "PLOT_BOUNDARY_CHANGED",
+              "TENURE_RECORD_CHANGED",
+              "REGISTRY_VERIFICATION_CHANGED",
+              "CONFLICT_RESOLUTION_ADDED_OR_WITHDRAWN",
+              "FRAMEWORK_VERSION_CHANGED",
+              "CAP06_EVALUATION_SUPERSEDED",
+              "EVIDENCE_INTEGRITY_CHALLENGED",
+              "OTHER"
+            ]
+          },
+          "checkResult": {
+            "type": "string",
+            "enum": [
+              "UNCHANGED",
+              "CHANGED",
+              "UNAVAILABLE"
+            ]
+          },
+          "detail": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 10000
+          }
+        }
+      }
+    },
+    "materialChanges": {
+      "type": "array",
+      "maxItems": 1000,
+      "items": {
+        "title": "ScsMaterialChange",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "changeType",
+          "changedAt",
+          "changedEntityId",
+          "explanation"
+        ],
+        "properties": {
+          "changeType": {
+            "type": "string",
+            "enum": [
+              "NEW_EVIDENCE_ADMITTED",
+              "EVIDENCE_WITHDRAWN_OR_QUARANTINED",
+              "EVIDENCE_RECLASSIFIED",
+              "PLOT_IDENTITY_CHANGED",
+              "PLOT_BOUNDARY_CHANGED",
+              "TENURE_RECORD_CHANGED",
+              "REGISTRY_VERIFICATION_CHANGED",
+              "CONFLICT_RESOLUTION_ADDED_OR_WITHDRAWN",
+              "FRAMEWORK_VERSION_CHANGED",
+              "CAP06_EVALUATION_SUPERSEDED",
+              "EVIDENCE_INTEGRITY_CHALLENGED",
+              "OTHER"
+            ]
+          },
+          "changedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "changedEntityId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000,
+            "pattern": "\\S"
+          },
+          "explanation": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 10000
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-08:package-read-result:1",
+  "title": "ScsPackageReadResult",
+  "description": "Body of GET /scs/v1/due-diligence-packages/:packageId (contract 700c40a): the envelope exactly as stored (what packageDigest covers) and, beside it, the currency of the decision it was compiled from, derived at read time and never part of the digested content.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "envelope",
+    "currency"
+  ],
+  "properties": {
+    "envelope": {
+      "$ref": "urn:aab:scs:schema:cap-08:package-envelope:1"
+    },
+    "currency": {
+      "title": "ScsPackageDecisionCurrency",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decisionId",
+        "status",
+        "assessedAt"
+      ],
+      "properties": {
+        "decisionId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "CURRENT",
+            "POTENTIALLY_STALE",
+            "SUPERSEDED",
+            "FAIL_CLOSED"
+          ]
+        },
+        "assessedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "stalenessReasons": {
+          "type": "array",
+          "maxItems": 1000,
+          "items": {
+            "title": "ScsPackageStalenessReason",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "changeType",
+              "changedAt",
+              "changedEntityId",
+              "explanation"
+            ],
+            "properties": {
+              "changeType": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "pattern": "\\S"
+              },
+              "changedAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "changedEntityId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "pattern": "\\S"
+              },
+              "explanation": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 10000
+              }
+            }
+          }
+        },
+        "supersededByDecisionId": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,1194 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-08:due-diligence-package:1",
+  "title": "ScsDueDiligencePackage",
+  "description": "SCS-CAP-08 package content (contract 4b1f05b, 901a600): everything digested. packageDigest is \"sha256:\" + the SHA-256 of its canonical JSON, so identical content always has the same digest. Compilation metadata (packageId, compiledAt, requestedByActorId, compiledByServiceIdentity) is outside it, in the envelope. It is not a compliance certificate, a declaration or a submission.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "compilationBasis",
+    "regulatoryFramework",
+    "operator",
+    "plots",
+    "deforestationEvidence",
+    "custodyEvidence",
+    "sufficiencyEvaluation",
+    "reviewDecision",
+    "gapDisclosure",
+    "packageLimitations",
+    "authorityBoundary",
+    "challengeResponseMetadata"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000,
+      "pattern": "\\S"
+    },
+    "packageTitle": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300,
+      "pattern": "\\S"
+    },
+    "compilationBasis": {
+      "title": "ScsPackageCompilationBasis",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reviewDecisionId",
+        "evaluationId",
+        "frameworkId",
+        "frameworkVersion",
+        "evidenceRequirementSpecId",
+        "compilationVersion"
+      ],
+      "properties": {
+        "reviewDecisionId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "evaluationId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "frameworkId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "frameworkVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "evidenceRequirementSpecId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "compilationVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        }
+      }
+    },
+    "regulatoryFramework": {
+      "title": "ScsPackageRegulatoryFramework",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "frameworkId",
+        "frameworkVersion",
+        "regulationName",
+        "regulationVersion",
+        "regulatoryAuthority",
+        "commodityCode",
+        "commodityName",
+        "countryOfOrigin",
+        "destinationMarket",
+        "applicableNationalLaws",
+        "evidenceRequirementSpecId",
+        "frameworkRegisteredAt"
+      ],
+      "properties": {
+        "frameworkId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "frameworkVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "regulationName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "regulationVersion": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "regulatoryAuthority": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "commodityCode": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "commodityName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "countryOfOrigin": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "destinationMarket": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "applicableNationalLaws": {
+          "type": "array",
+          "maxItems": 1000,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 10000
+          }
+        },
+        "evidenceRequirementSpecId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "frameworkRegisteredAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "operator": {
+      "title": "ScsPackageOperator",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operatorId",
+        "operatorName",
+        "operatorOrganizationType",
+        "countryOfRegistration"
+      ],
+      "properties": {
+        "operatorId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "operatorName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "operatorOrganizationType": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "countryOfRegistration": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "countryOfOperation": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "authorisedRepresentativeId": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    },
+    "plots": {
+      "type": "array",
+      "maxItems": 500,
+      "items": {
+        "title": "ScsPackagePlot",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "plotId",
+          "plotVersion",
+          "countryCode",
+          "geometryCaptureMethod",
+          "registryVerificationStatus",
+          "overlapState",
+          "tenureClaims",
+          "frameworkAssociationId",
+          "registrationStatus",
+          "plotGaps"
+        ],
+        "properties": {
+          "plotId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "plotVersion": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "plotName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000,
+            "pattern": "\\S"
+          },
+          "countryCode": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000,
+            "pattern": "\\S"
+          },
+          "administrativeAreas": {
+            "type": "array",
+            "maxItems": 1000,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 10000
+            }
+          },
+          "geometryCaptureMethod": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000,
+            "pattern": "\\S"
+          },
+          "positionalAccuracyMetres": {
+            "type": "number"
+          },
+          "registryVerificationStatus": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000,
+            "pattern": "\\S"
+          },
+          "overlapState": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000,
+            "pattern": "\\S"
+          },
+          "tenureClaims": {
+            "type": "array",
+            "maxItems": 10000,
+            "items": {
+              "title": "ScsPackageTenureClaim",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "tenureClaimId",
+                "claimantType",
+                "tenureBasis",
+                "verificationStatus",
+                "limitations"
+              ],
+              "properties": {
+                "tenureClaimId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "claimantType": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1000,
+                  "pattern": "\\S"
+                },
+                "tenureBasis": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1000,
+                  "pattern": "\\S"
+                },
+                "verificationStatus": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1000,
+                  "pattern": "\\S"
+                },
+                "limitations": {
+                  "type": "array",
+                  "maxItems": 1000,
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 10000
+                  }
+                }
+              }
+            }
+          },
+          "frameworkAssociationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "registrationStatus": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000,
+            "pattern": "\\S"
+          },
+          "plotGaps": {
+            "type": "array",
+            "maxItems": 10000,
+            "items": {
+              "title": "ScsPackagePlotGap",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "gapType",
+                "explanation"
+              ],
+              "properties": {
+                "gapType": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1000,
+                  "pattern": "\\S"
+                },
+                "explanation": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 10000
+                }
+              }
+            }
+          }
+        }
+      },
+      "minItems": 1
+    },
+    "deforestationEvidence": {
+      "type": "array",
+      "maxItems": 5000,
+      "items": {
+        "title": "ScsPackageDeforestationEvidence",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "evidenceId",
+          "evidenceVersion",
+          "evidenceType",
+          "plotId",
+          "source",
+          "provenance",
+          "temporalCoverage",
+          "spatialCoverage",
+          "evidenceClaim",
+          "admissionStatus",
+          "admissionLimitations"
+        ],
+        "properties": {
+          "evidenceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "evidenceVersion": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "evidenceType": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000,
+            "pattern": "\\S"
+          },
+          "plotId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "source": {
+            "title": "ScsPackageEvidenceSource",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "sourceOrganizationId",
+              "sourceReference"
+            ],
+            "properties": {
+              "sourceOrganizationId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "pattern": "\\S"
+              },
+              "sourceTitle": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "pattern": "\\S"
+              },
+              "providerName": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "pattern": "\\S"
+              },
+              "sourceReference": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "pattern": "\\S"
+              },
+              "issuingAuthority": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "pattern": "\\S"
+              }
+            }
+          },
+          "provenance": {
+            "title": "ScsPackageEvidenceProvenance",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "submittedBy",
+              "submittedAt",
+              "contentDigest",
+              "integrityStatus",
+              "chainOfCustodyComplete"
+            ],
+            "properties": {
+              "submittedBy": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "pattern": "\\S"
+              },
+              "submittedAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "contentDigest": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "integrityStatus": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "pattern": "\\S"
+              },
+              "chainOfCustodyComplete": {
+                "type": "boolean"
+              }
+            }
+          },
+          "temporalCoverage": {
+            "title": "ScsPackageTemporalCoverage",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "coverageMode",
+              "knownGapPeriods"
+            ],
+            "properties": {
+              "acquisitionInstant": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "acquisitionStart": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "acquisitionEnd": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "analysisPeriodStart": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "analysisPeriodEnd": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "attestedPeriodStart": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "attestedPeriodEnd": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "coverageMode": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "pattern": "\\S"
+              },
+              "knownGapPeriods": {
+                "type": "array",
+                "maxItems": 10000,
+                "items": {
+                  "title": "ScsPackageKnownGapPeriod",
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "start",
+                    "end",
+                    "reason"
+                  ],
+                  "properties": {
+                    "start": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "end": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "reason": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 10000
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "spatialCoverage": {
+            "title": "ScsPackageSpatialCoverage",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "intersectionWithPlot",
+              "excludedAreaIds"
+            ],
+            "properties": {
+              "intersectionWithPlot": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "pattern": "\\S"
+              },
+              "plotCoveragePercent": {
+                "type": "number"
+              },
+              "spatialResolutionMetres": {
+                "type": "number"
+              },
+              "excludedAreaIds": {
+                "type": "array",
+                "maxItems": 10000,
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          },
+          "evidenceClaim": {
+            "title": "ScsPackageEvidenceClaim",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "claimType",
+              "claimSummary",
+              "confidence",
+              "limitations"
+            ],
+            "properties": {
+              "claimType": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "pattern": "\\S"
+              },
+              "claimSummary": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 10000
+              },
+              "claimedPeriodStart": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "claimedPeriodEnd": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "confidence": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "pattern": "\\S"
+              },
+              "limitations": {
+                "type": "array",
+                "maxItems": 1000,
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 10000
+                }
+              }
+            }
+          },
+          "admissionStatus": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000,
+            "pattern": "\\S"
+          },
+          "admissionLimitations": {
+            "type": "array",
+            "maxItems": 1000,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 10000
+            }
+          }
+        }
+      }
+    },
+    "custodyEvidence": {
+      "type": "array",
+      "maxItems": 5000,
+      "items": {
+        "title": "ScsPackageCustodyEvent",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "eventId",
+          "eventVersion",
+          "eventType",
+          "batchIdentifier",
+          "commodityCode",
+          "sourcePartyId",
+          "destinationPartyId",
+          "eventDate",
+          "timePrecision",
+          "supportingDocument",
+          "provenance",
+          "sourcePlotIds",
+          "links",
+          "uncertainties",
+          "contradictions",
+          "admissionStatus",
+          "admissionLimitations"
+        ],
+        "properties": {
+          "eventId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "eventVersion": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "eventType": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000,
+            "pattern": "\\S"
+          },
+          "batchIdentifier": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000,
+            "pattern": "\\S"
+          },
+          "commodityCode": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000,
+            "pattern": "\\S"
+          },
+          "sourcePartyId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "destinationPartyId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "eventDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "timePrecision": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000,
+            "pattern": "\\S"
+          },
+          "quantity": {
+            "title": "ScsPackageCustodyQuantity",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "amount",
+              "unit",
+              "measurementMethod"
+            ],
+            "properties": {
+              "amount": {
+                "type": "number"
+              },
+              "unit": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "pattern": "\\S"
+              },
+              "measurementMethod": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "pattern": "\\S"
+              }
+            }
+          },
+          "supportingDocument": {
+            "title": "ScsPackageSupportingDocument",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "documentType",
+              "documentReference",
+              "contentDigest"
+            ],
+            "properties": {
+              "documentType": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "pattern": "\\S"
+              },
+              "documentReference": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "pattern": "\\S"
+              },
+              "contentDigest": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            }
+          },
+          "provenance": {
+            "title": "ScsPackageCustodyProvenance",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "submittedBy",
+              "submittedAt",
+              "integrityStatus",
+              "chainOfCustodyComplete"
+            ],
+            "properties": {
+              "submittedBy": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "pattern": "\\S"
+              },
+              "submittedAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "integrityStatus": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "pattern": "\\S"
+              },
+              "chainOfCustodyComplete": {
+                "type": "boolean"
+              }
+            }
+          },
+          "sourcePlotIds": {
+            "type": "array",
+            "maxItems": 10000,
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "links": {
+            "type": "array",
+            "maxItems": 10000,
+            "items": {
+              "title": "ScsPackageCustodyLink",
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "linkType",
+                "citedEventId"
+              ],
+              "properties": {
+                "linkType": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1000,
+                  "pattern": "\\S"
+                },
+                "citedEventId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 1000,
+                  "pattern": "\\S"
+                },
+                "linkedEventId": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          },
+          "uncertainties": {
+            "type": "array",
+            "maxItems": 1000,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 10000
+            }
+          },
+          "contradictions": {
+            "type": "array",
+            "maxItems": 1000,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 10000
+            }
+          },
+          "admissionStatus": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000,
+            "pattern": "\\S"
+          },
+          "admissionLimitations": {
+            "type": "array",
+            "maxItems": 1000,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 10000
+            }
+          }
+        }
+      }
+    },
+    "sufficiencyEvaluation": {
+      "title": "ScsPackageSufficiencyEvaluation",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evaluationId",
+        "evaluationSnapshotDigest",
+        "evaluationReceiptDigest",
+        "result"
+      ],
+      "properties": {
+        "evaluationId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "evaluationSnapshotDigest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "evaluationReceiptDigest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "result": {
+          "$ref": "urn:aab:scs:schema:cap-06:sufficiency-evaluation-result:1"
+        }
+      }
+    },
+    "reviewDecision": {
+      "title": "ScsPackageReviewDecision",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decisionId",
+        "decision",
+        "decisionReceiptDigest",
+        "currencyStatusAtCompilation",
+        "recordValidityAtCompilation"
+      ],
+      "properties": {
+        "decisionId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "decision": {
+          "$ref": "urn:aab:scs:schema:cap-09:recorded-decision:1"
+        },
+        "decisionReceiptDigest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "currencyStatusAtCompilation": {
+          "type": "string",
+          "const": "CURRENT"
+        },
+        "recordValidityAtCompilation": {
+          "type": "string",
+          "const": "VALID"
+        }
+      }
+    },
+    "gapDisclosure": {
+      "title": "ScsPackageGapDisclosure",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "totalGapsIdentified",
+        "blockingGaps",
+        "nonBlockingGaps",
+        "gapDisclosureStatement"
+      ],
+      "properties": {
+        "totalGapsIdentified": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "blockingGaps": {
+          "type": "array",
+          "maxItems": 10000,
+          "items": {
+            "title": "ScsPackageBlockingGap",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "gapId",
+              "requirementCode",
+              "gapType",
+              "explanation",
+              "humanDecisionMade",
+              "reviewerAssessment"
+            ],
+            "properties": {
+              "gapId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "requirementCode": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "pattern": "\\S"
+              },
+              "gapType": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "pattern": "\\S"
+              },
+              "explanation": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 10000
+              },
+              "humanDecisionMade": {
+                "type": "boolean"
+              },
+              "humanDecisionId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "reviewerAssessment": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 10000
+              }
+            }
+          }
+        },
+        "nonBlockingGaps": {
+          "type": "array",
+          "maxItems": 10000,
+          "items": {
+            "title": "ScsPackageNonBlockingGap",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "gapId",
+              "requirementCode",
+              "gapType",
+              "explanation",
+              "reviewerAssessment"
+            ],
+            "properties": {
+              "gapId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "requirementCode": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "pattern": "\\S"
+              },
+              "gapType": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "pattern": "\\S"
+              },
+              "explanation": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 10000
+              },
+              "reviewerAssessment": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 10000
+              }
+            }
+          }
+        },
+        "gapDisclosureStatement": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 10000
+        }
+      }
+    },
+    "packageLimitations": {
+      "type": "array",
+      "maxItems": 1000,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 10000
+      }
+    },
+    "authorityBoundary": {
+      "title": "ScsPackageAuthorityBoundary",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "compiledNotSubmitted",
+        "operatorMustMakeDeclaration",
+        "noComplianceDetermination",
+        "doesNotGuaranteeRegulatoryAcceptance",
+        "legalResponsibilityRemainsWithOperator",
+        "sufficientEvidenceDoesNotMeanLegallyCompliant",
+        "gapsDisclosedNotResolved"
+      ],
+      "properties": {
+        "compiledNotSubmitted": {
+          "type": "boolean",
+          "const": true
+        },
+        "operatorMustMakeDeclaration": {
+          "type": "boolean",
+          "const": true
+        },
+        "noComplianceDetermination": {
+          "type": "boolean",
+          "const": true
+        },
+        "doesNotGuaranteeRegulatoryAcceptance": {
+          "type": "boolean",
+          "const": true
+        },
+        "legalResponsibilityRemainsWithOperator": {
+          "type": "boolean",
+          "const": true
+        },
+        "sufficientEvidenceDoesNotMeanLegallyCompliant": {
+          "type": "boolean",
+          "const": true
+        },
+        "gapsDisclosedNotResolved": {
+          "type": "boolean",
+          "const": true
+        }
+      }
+    },
+    "challengeResponseMetadata": {
+      "title": "ScsPackageChallengeResponseMetadata",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "allEvidenceIds",
+        "allProvenanceChains",
+        "retrievableViaCapability"
+      ],
+      "properties": {
+        "allEvidenceIds": {
+          "type": "array",
+          "maxItems": 10000,
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "allProvenanceChains": {
+          "type": "array",
+          "maxItems": 10000,
+          "items": {
+            "title": "ScsPackageProvenanceChain",
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "evidenceId",
+              "evidenceKind",
+              "admissionReceiptId",
+              "contentDigest",
+              "fileSha256Verified"
+            ],
+            "properties": {
+              "evidenceId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "evidenceKind": {
+                "type": "string",
+                "enum": [
+                  "DEFORESTATION",
+                  "CUSTODY"
+                ]
+              },
+              "admissionReceiptId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "contentDigest": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "fileSha256Verified": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "retrievableViaCapability": {
+          "type": "string",
+          "const": "SCS-CAP-10"
+        }
+      }
+    }
+  }
+}

@@ -3,3 +3,5 @@ packages/api/config/static-actors.json
 node_modules/
 dist/
 *.log
+# backups hold credentials (.env, static actors) and country data: never committed
+backups/

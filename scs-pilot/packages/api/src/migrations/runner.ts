@@ -219,8 +219,13 @@ export function apiPasswordProblem(password: string | undefined, ownerPassword: 
  * Set the scs_api login password (migration 004 creates the role without one;
  * passwords never live in migrations). The value is quoted by the server
  * (format %L), never interpolated into SQL text here, and never logged.
+ *
+ * `role` defaults to scs_api; the migrate CLI never passes it. It exists so
+ * the test can prove the quoting on a throwaway role: scs_api is shared by
+ * every database on the instance, so changing its password in a test would
+ * break a running API that uses the same instance.
  */
-export async function setApiPassword(client: pg.Client, password: string): Promise<void> {
-  const { rows } = await client.query<{ sql: string }>(`SELECT format('ALTER ROLE scs_api PASSWORD %L', $1::text) AS sql`, [password]);
+export async function setApiPassword(client: pg.Client, password: string, role = "scs_api"): Promise<void> {
+  const { rows } = await client.query<{ sql: string }>(`SELECT format('ALTER ROLE %I PASSWORD %L', $2::text, $1::text) AS sql`, [password, role]);
   await client.query(rows[0]!.sql);
 }

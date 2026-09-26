@@ -93,6 +93,12 @@ CREATE TABLE scs.sufficiency_evaluation (
   CONSTRAINT sufficiency_evaluation_request_uq UNIQUE (request_id),
   -- the target of the previous-evaluation foreign key: same subject
   CONSTRAINT sufficiency_evaluation_subject_uq UNIQUE (evaluation_id, subject_key),
+  -- the target of scs.regulatory_review_decision's context foreign key: a
+  -- review decision's frozen context is the evaluation's own. Added by
+  -- migration 017.
+  CONSTRAINT sufficiency_evaluation_context_uq
+    UNIQUE (evaluation_id, subject_key, framework_id, framework_version, evidence_requirement_spec_id,
+            commodity_code, overall_state),
 
   -- ── Foreign keys ──────────────────────────────────────────────────────────
   CONSTRAINT sufficiency_evaluation_framework_spec_fk

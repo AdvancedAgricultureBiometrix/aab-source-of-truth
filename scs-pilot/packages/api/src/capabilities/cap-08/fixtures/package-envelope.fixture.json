@@ -1,0 +1,630 @@
+{
+  "compilationMetadata": {
+    "compiledAt": "2026-09-25T23:12:15.207Z",
+    "compiledByServiceIdentity": "scs-pilot-api;scs-cap08-pilot-1",
+    "packageId": "eec3ca10-aeb7-48b6-b68f-bd7f854a95c5",
+    "requestedByActorId": "officer-cap08"
+  },
+  "package": {
+    "authorityBoundary": {
+      "compiledNotSubmitted": true,
+      "doesNotGuaranteeRegulatoryAcceptance": true,
+      "gapsDisclosedNotResolved": true,
+      "legalResponsibilityRemainsWithOperator": true,
+      "noComplianceDetermination": true,
+      "operatorMustMakeDeclaration": true,
+      "sufficientEvidenceDoesNotMeanLegallyCompliant": true
+    },
+    "challengeResponseMetadata": {
+      "allEvidenceIds": [
+        "ce474ed8-4745-4ab2-a330-ad58e17b1e9c"
+      ],
+      "allProvenanceChains": [
+        {
+          "admissionReceiptId": "1b42fae4-e549-48b2-a493-9f09e1221b36",
+          "contentDigest": "a50a410a726ba0068c46b121fd22535d4f5885d7ce5d3dda19a68664678aeeb9",
+          "evidenceId": "ce474ed8-4745-4ab2-a330-ad58e17b1e9c",
+          "evidenceKind": "DEFORESTATION",
+          "fileSha256Verified": true
+        }
+      ],
+      "retrievableViaCapability": "SCS-CAP-10"
+    },
+    "compilationBasis": {
+      "compilationVersion": "scs-cap08-pilot-1",
+      "evaluationId": "f35ab83e-3afe-43ab-9651-375c554db586",
+      "evidenceRequirementSpecId": "16522ae2-65eb-4124-a0fe-27fcdeb8fec7",
+      "frameworkId": "498931d0-ef7d-4571-998e-3afa2f5d064e",
+      "frameworkVersion": "consolidated-2024",
+      "reviewDecisionId": "cbaccf5e-dc42-4b3a-aada-14a85e49e4e1"
+    },
+    "custodyEvidence": [],
+    "deforestationEvidence": [
+      {
+        "admissionLimitations": [
+          "Spatial coverage not verified: the coverage's bounding box intersects the plot's, but the intersection with the plot was not computed (no spatial database). intersectionWithPlot is NOT_VERIFIED.",
+          "Temporal coverage not evaluated: the framework-required period ends on a due diligence date not known at admission. SCS-CAP-06 will evaluate whether collective admitted evidence covers the full framework-required period."
+        ],
+        "admissionStatus": "ADMITTED_WITH_LIMITATIONS",
+        "evidenceClaim": {
+          "claimSummary": "No forest loss detected over the plot.",
+          "claimType": "NO_DEFORESTATION_DETECTED",
+          "confidence": "HIGH",
+          "limitations": [
+            "Cloud cover 12% in 2022."
+          ]
+        },
+        "evidenceId": "ce474ed8-4745-4ab2-a330-ad58e17b1e9c",
+        "evidenceType": "SATELLITE_IMAGE",
+        "evidenceVersion": 1,
+        "plotId": "f7711972-9d87-4377-8f7f-abd5405b6e43",
+        "provenance": {
+          "chainOfCustodyComplete": true,
+          "contentDigest": "a50a410a726ba0068c46b121fd22535d4f5885d7ce5d3dda19a68664678aeeb9",
+          "integrityStatus": "VERIFIED",
+          "submittedAt": "2026-09-25T23:12:14.988Z",
+          "submittedBy": "officer-cap08"
+        },
+        "source": {
+          "sourceOrganizationId": "ESA",
+          "sourceReference": "https://dataspace.copernicus.eu/",
+          "sourceTitle": "Sentinel-2 L2A"
+        },
+        "spatialCoverage": {
+          "excludedAreaIds": [],
+          "intersectionWithPlot": "NOT_VERIFIED",
+          "spatialResolutionMetres": 10
+        },
+        "temporalCoverage": {
+          "analysisPeriodEnd": "2024-07-01T00:00:00.000Z",
+          "analysisPeriodStart": "2020-12-31T00:00:00.000Z",
+          "coverageMode": "CHANGE_ANALYSIS",
+          "knownGapPeriods": []
+        }
+      }
+    ],
+    "gapDisclosure": {
+      "blockingGaps": [
+        {
+          "explanation": "Spatial coverage of plot f7711972-9d87-4377-8f7f-abd5405b6e43 is not evaluated: the pilot has no spatial database, so the covered area cannot be computed. TODO(postgis).",
+          "gapId": "3dcaf23f-959a-5d36-924c-eee32c8ac02c",
+          "gapType": "SPATIAL_COVERAGE_NOT_EVALUATED",
+          "humanDecisionId": "cbaccf5e-dc42-4b3a-aada-14a85e49e4e1",
+          "humanDecisionMade": true,
+          "requirementCode": "DEF-SPATIAL-COVERAGE",
+          "reviewerAssessment": "Gap DEF-SPATIAL-COVERAGE 3dcaf23f-959a-5d36-924c-eee32c8ac02c: accepted as a disclosed pilot limit."
+        },
+        {
+          "explanation": "Overlap of plot f7711972-9d87-4377-8f7f-abd5405b6e43 with other registered plots has not been evaluated (no spatial database). TODO(postgis).",
+          "gapId": "7e1da393-3b21-5275-a049-0ede809064f6",
+          "gapType": "OVERLAP_NOT_EVALUATED",
+          "humanDecisionId": "cbaccf5e-dc42-4b3a-aada-14a85e49e4e1",
+          "humanDecisionMade": true,
+          "requirementCode": "PLOT-REGISTERED",
+          "reviewerAssessment": "Gap PLOT-REGISTERED 7e1da393-3b21-5275-a049-0ede809064f6: accepted as a disclosed pilot limit."
+        }
+      ],
+      "gapDisclosureStatement": "2 gaps were identified: 2 blocking and 0 non-blocking. Each was addressed by human review decision cbaccf5e-dc42-4b3a-aada-14a85e49e4e1, whose assessment is recorded with the gap. This package discloses the gaps; it does not resolve them.",
+      "nonBlockingGaps": [],
+      "totalGapsIdentified": 2
+    },
+    "operator": {
+      "countryOfRegistration": "TH",
+      "operatorId": "3c55ad10-54d0-4f35-96ce-aa4f9678e1a7",
+      "operatorName": "Hợp tác xã Cà phê Đắk Lắk 8f365672",
+      "operatorOrganizationType": "LEGAL_ENTITY"
+    },
+    "packageLimitations": [
+      "Spatial coverage and plot overlap are not evaluated in the pilot (no spatial database), so no evaluation can be SUFFICIENT.",
+      "Every pilot plot is REGISTERED_WITH_GAPS.",
+      "The reviewer's authority basis is recorded as declared, not verified.",
+      "This package is in English only.",
+      "The original evidence files are not included in the package; each is identified by its verified SHA-256, and the evidence export bundle that carries them is not yet implemented."
+    ],
+    "packageTitle": "Due diligence package: rubber lots, Surat Thani (สุราษฎร์ธานี) for Hợp tác xã Đắk Lắk",
+    "plots": [
+      {
+        "countryCode": "TH",
+        "frameworkAssociationId": "126f5163-74dd-411a-bb64-720462857dfb",
+        "geometryCaptureMethod": "PHONE_GPS",
+        "overlapState": "NOT_EVALUATED",
+        "plotGaps": [
+          {
+            "explanation": "Plot overlap is not evaluated in the pilot (no spatial database); the plot's recorded overlap state is NOT_EVALUATED.",
+            "gapType": "OVERLAP_NOT_EVALUATED"
+          },
+          {
+            "explanation": "Spatial coverage of plot f7711972-9d87-4377-8f7f-abd5405b6e43 is not evaluated: the pilot has no spatial database, so the covered area cannot be computed. TODO(postgis).",
+            "gapType": "SPATIAL_COVERAGE_NOT_EVALUATED"
+          },
+          {
+            "explanation": "Overlap of plot f7711972-9d87-4377-8f7f-abd5405b6e43 with other registered plots has not been evaluated (no spatial database). TODO(postgis).",
+            "gapType": "OVERLAP_NOT_EVALUATED"
+          }
+        ],
+        "plotId": "f7711972-9d87-4377-8f7f-abd5405b6e43",
+        "plotName": "สวนยางบ้านนาสาร จำกัด",
+        "plotVersion": 1,
+        "registrationStatus": "REGISTERED_WITH_GAPS",
+        "registryVerificationStatus": "NOT_APPLICABLE",
+        "tenureClaims": [
+          {
+            "claimantType": "INDIVIDUAL",
+            "limitations": [],
+            "tenureBasis": "CUSTOMARY_INDIVIDUAL_RIGHT",
+            "tenureClaimId": "f4f7440f-1310-4a3f-b22b-aa3ad1cc0e23",
+            "verificationStatus": "UNVERIFIED"
+          }
+        ]
+      }
+    ],
+    "regulatoryFramework": {
+      "applicableNationalLaws": [
+        "National forestry law"
+      ],
+      "commodityCode": "4001",
+      "commodityName": "Commodity 4001",
+      "countryOfOrigin": "TH",
+      "destinationMarket": "EU",
+      "evidenceRequirementSpecId": "16522ae2-65eb-4124-a0fe-27fcdeb8fec7",
+      "frameworkId": "498931d0-ef7d-4571-998e-3afa2f5d064e",
+      "frameworkRegisteredAt": "2026-09-25T23:12:14.658Z",
+      "frameworkVersion": "consolidated-2024",
+      "regulationName": "EU Deforestation Regulation",
+      "regulationVersion": "consolidated-2024",
+      "regulatoryAuthority": "European Commission"
+    },
+    "reviewDecision": {
+      "currencyStatusAtCompilation": "CURRENT",
+      "decision": {
+        "authorityBoundary": {
+          "authorisesWorkflowStepOnly": true,
+          "doesNotSubstituteForRegulatoryAcceptance": true,
+          "legalResponsibilityRemainsWithOperator": true,
+          "noComplianceDetermination": true,
+          "noRegulatorySubmissionAuthority": true
+        },
+        "commodityCode": "4001",
+        "decidedAt": "2026-09-25T23:12:15.126Z",
+        "decisionId": "cbaccf5e-dc42-4b3a-aada-14a85e49e4e1",
+        "decisionOutcome": "PROCEED_TO_PACKAGE_COMPILATION",
+        "decisionReasons": [
+          "The reviewer reviewer-cap08 holds REGULATORY_REVIEWER, checked at 2026-09-25T23:12:15.126Z. The reviewer's name and role reference are recorded as declared.",
+          "The authority basis is recorded as declared, not verified: no model exists of which reviewer may decide for which framework and commodity.",
+          "Independence was checked: the reviewer did not request evaluation f35ab83e-3afe-43ab-9651-375c554db586 and recorded none of the 0 conflict resolution(s) it applied.",
+          "The decision is bound to evaluation f35ab83e-3afe-43ab-9651-375c554db586 as recorded: its stored result matches its receipt, and the digest reviewed is the stored result's (dd276305d8a90a09d9688c109d9f045054f502691c90662ef09ca681c65a0db6).",
+          "PROCEED_TO_PACKAGE_COMPILATION on a GAPS_REQUIRE_HUMAN_DECISION evaluation is a human decision on disclosed gaps: the reviewer addressed each of the evaluation's 2 gap(s) and decided to proceed despite them. It does not make the evidence sufficient.",
+          "No pilot evaluation can be SUFFICIENT (SCS-CAP-06 does not evaluate spatial coverage), so every pilot PROCEED_TO_PACKAGE_COMPILATION is a human decision on disclosed gaps.",
+          "This decision authorises a workflow step only. It is not a compliance determination, carries no regulatory submission authority, does not substitute for regulatory acceptance, and legal responsibility remains with the operator."
+        ],
+        "evaluationId": "f35ab83e-3afe-43ab-9651-375c554db586",
+        "evaluationSnapshotDigest": "dd276305d8a90a09d9688c109d9f045054f502691c90662ef09ca681c65a0db6",
+        "evidenceRequirementSpecId": "16522ae2-65eb-4124-a0fe-27fcdeb8fec7",
+        "frameworkId": "498931d0-ef7d-4571-998e-3afa2f5d064e",
+        "frameworkVersion": "consolidated-2024",
+        "operatorId": "3c55ad10-54d0-4f35-96ce-aa4f9678e1a7",
+        "plotIds": [
+          "f7711972-9d87-4377-8f7f-abd5405b6e43"
+        ],
+        "recordValidity": "VALID",
+        "reviewReasoning": {
+          "basisForOutcome": "The disclosed gaps are limits of the pilot, not missing evidence for this plot.",
+          "conditionsIfAny": [],
+          "conflictsConsidered": [],
+          "evaluationSummaryAssessed": "Reviewed evaluation f35ab83e-3afe-43ab-9651-375c554db586 (GAPS_REQUIRE_HUMAN_DECISION).",
+          "gapsConsidered": [
+            {
+              "assessment": "Gap DEF-SPATIAL-COVERAGE 3dcaf23f-959a-5d36-924c-eee32c8ac02c: accepted as a disclosed pilot limit.",
+              "gapId": "3dcaf23f-959a-5d36-924c-eee32c8ac02c"
+            },
+            {
+              "assessment": "Gap PLOT-REGISTERED 7e1da393-3b21-5275-a049-0ede809064f6: accepted as a disclosed pilot limit.",
+              "gapId": "7e1da393-3b21-5275-a049-0ede809064f6"
+            }
+          ],
+          "limitationsAcknowledged": [
+            "Spatial coverage is not evaluated in the pilot."
+          ],
+          "remainingConcerns": []
+        },
+        "reviewer": {
+          "authorityBasis": "Appointed under the due diligence procedure.",
+          "authorityVerifiedAt": "2026-09-25T23:12:15.126Z",
+          "reviewerId": "reviewer-cap08",
+          "reviewerName": "A. Reviewer",
+          "reviewerOrganizationId": "2248c8be-97ad-462e-8dac-f8e95e1306c0",
+          "reviewerRoleReference": "Independent reviewer"
+        },
+        "schemaVersion": "1"
+      },
+      "decisionId": "cbaccf5e-dc42-4b3a-aada-14a85e49e4e1",
+      "decisionReceiptDigest": "fca08cf01f097f45942774a07c787b3bbbb754f2b66e2d305231e15b962909f4",
+      "recordValidityAtCompilation": "VALID"
+    },
+    "schemaVersion": "1",
+    "sufficiencyEvaluation": {
+      "evaluationId": "f35ab83e-3afe-43ab-9651-375c554db586",
+      "evaluationReceiptDigest": "6fca82735a75881428117ba248d6907c0fe3194d69fa85f0cabff942e1d517c6",
+      "evaluationSnapshotDigest": "dd276305d8a90a09d9688c109d9f045054f502691c90662ef09ca681c65a0db6",
+      "result": {
+        "allConflicts": [],
+        "allGaps": [
+          {
+            "automaticFailure": false,
+            "explanation": "Spatial coverage of plot f7711972-9d87-4377-8f7f-abd5405b6e43 is not evaluated: the pilot has no spatial database, so the covered area cannot be computed. TODO(postgis).",
+            "gapId": "3dcaf23f-959a-5d36-924c-eee32c8ac02c",
+            "gapType": "SPATIAL_COVERAGE_NOT_EVALUATED",
+            "humanDecisionRequired": true,
+            "requirementCode": "DEF-SPATIAL-COVERAGE",
+            "subject": {
+              "plotId": "f7711972-9d87-4377-8f7f-abd5405b6e43",
+              "subjectReference": "scs:plot/f7711972-9d87-4377-8f7f-abd5405b6e43",
+              "subjectType": "PLOT"
+            }
+          },
+          {
+            "automaticFailure": false,
+            "explanation": "Overlap of plot f7711972-9d87-4377-8f7f-abd5405b6e43 with other registered plots has not been evaluated (no spatial database). TODO(postgis).",
+            "gapId": "7e1da393-3b21-5275-a049-0ede809064f6",
+            "gapType": "OVERLAP_NOT_EVALUATED",
+            "humanDecisionRequired": true,
+            "requirementCode": "PLOT-REGISTERED",
+            "subject": {
+              "plotId": "f7711972-9d87-4377-8f7f-abd5405b6e43",
+              "subjectReference": "scs:plot/f7711972-9d87-4377-8f7f-abd5405b6e43",
+              "subjectType": "PLOT"
+            }
+          }
+        ],
+        "authorityBoundary": {
+          "advisoryOnly": true,
+          "noComplianceDetermination": true,
+          "noDueDiligenceStatementAuthority": true,
+          "noRegulatoryPromotionAuthority": true,
+          "sufficientDoesNotMeanLegallyCompliant": true,
+          "sufficientMeansEvidenceSufficient": true
+        },
+        "batchIdentifiers": [],
+        "commodityCode": "4001",
+        "evaluatedAt": "2026-09-25T23:12:15.024Z",
+        "evaluatedEvidence": {
+          "appliedResolutionIds": [],
+          "custodyEventIds": [],
+          "deforestationEvidenceIds": [
+            "ce474ed8-4745-4ab2-a330-ad58e17b1e9c"
+          ],
+          "manifest": [
+            {
+              "admittedAt": "2026-09-25T23:12:14.988Z",
+              "contentDigest": "a50a410a726ba0068c46b121fd22535d4f5885d7ce5d3dda19a68664678aeeb9",
+              "evidenceId": "ce474ed8-4745-4ab2-a330-ad58e17b1e9c",
+              "kind": "DEFORESTATION",
+              "version": 1
+            }
+          ]
+        },
+        "evaluationExplanation": [
+          "Evaluated under framework 498931d0-ef7d-4571-998e-3afa2f5d064e (regulationVersion consolidated-2024), evidence requirement specification 16522ae2-65eb-4124-a0fe-27fcdeb8fec7, for commodity 4001.",
+          "Required period: 2020-12-31 (the specification's referenceCutoffDate) to 2024-06-30; assessment type DEFORESTATION.",
+          "Frozen input: 1 admitted deforestation evidence record(s) and 0 admitted custody event(s), read in one snapshot at 2026-09-25T23:12:15.024Z; the manifest records each item's version and content digest. Evidence admitted with limitations is always included.",
+          "Overall state: GAPS_REQUIRE_HUMAN_DECISION.",
+          "Evaluation cannot reach SUFFICIENT because:",
+          "  1. DEF-SPATIAL-COVERAGE is GAP_REQUIRES_HUMAN_DECISION: applies because sufficiencyThreshold.allPlotsHaveDeforestationEvidence is true. 0 missing-evidence gap(s), 1 verification gap(s).",
+          "  2. PLOT-REGISTERED is GAP_REQUIRES_HUMAN_DECISION: applies because sufficiencyThreshold.allPlotsRegistered is true. 0 missing-evidence gap(s), 1 verification gap(s).",
+          "Pilot limit: spatial coverage and plot overlap are not evaluated (no spatial database), so no pilot evaluation can be SUFFICIENT. TODO(postgis).",
+          "sufficiencyThreshold.humanReviewCompleted is a SCS-CAP-09 matter: human review follows this evaluation, so it is not evaluated here.",
+          "No evidence in scope is quarantined: no quarantine operation exists yet.",
+          "Every dimension was evaluated. requestedAnalysis is recorded as asked (it omits TEMPORAL_COVERAGE, SPATIAL_COVERAGE, REQUIREMENT_BY_REQUIREMENT, GAP_IDENTIFICATION, PROVENANCE_AND_AUTHORITY, CUSTODY_CHAIN), but it never narrows the evaluation.",
+          "This result is advisory only: SUFFICIENT would mean sufficient under the evaluated specification, never legally compliant. Human review through SCS-CAP-09 is always required."
+        ],
+        "evaluationId": "f35ab83e-3afe-43ab-9651-375c554db586",
+        "evaluationPeriod": {
+          "assessmentType": "DEFORESTATION",
+          "evaluationEndDate": "2024-06-30",
+          "referenceDate": "2020-12-31"
+        },
+        "evaluatorVersion": "scs-cap06-pilot-1",
+        "evidenceCutoffAt": "2026-09-25T23:12:15.024Z",
+        "evidenceRequirementSpecId": "16522ae2-65eb-4124-a0fe-27fcdeb8fec7",
+        "frameworkId": "498931d0-ef7d-4571-998e-3afa2f5d064e",
+        "frameworkVersion": "consolidated-2024",
+        "hasEvidenceGaps": true,
+        "hasFailClosedConditions": false,
+        "hasMaterialUnresolvedConflicts": false,
+        "nextSteps": [
+          {
+            "explanation": "A recorded human determination is required for the verification gap(s).",
+            "priority": "SIGNIFICANT",
+            "requirementCode": "DEF-SPATIAL-COVERAGE",
+            "stepType": "HUMAN_DECISION_REQUIRED"
+          },
+          {
+            "explanation": "A recorded human determination is required for the verification gap(s).",
+            "priority": "SIGNIFICANT",
+            "requirementCode": "PLOT-REGISTERED",
+            "stepType": "HUMAN_DECISION_REQUIRED"
+          }
+        ],
+        "overallState": "GAPS_REQUIRE_HUMAN_DECISION",
+        "plotIds": [
+          "f7711972-9d87-4377-8f7f-abd5405b6e43"
+        ],
+        "requestId": "c90b518d-8921-48ce-bc68-7c4a265a6fcd",
+        "requestedAnalysis": [
+          "CONFLICT_DETECTION"
+        ],
+        "requestedAt": "2026-09-25T23:12:15.024Z",
+        "requestedBy": {
+          "actorId": "officer-cap08",
+          "actorType": "HUMAN",
+          "authenticationMethod": "STATIC_TOKEN",
+          "roles": [
+            "COMPLIANCE_OFFICER"
+          ]
+        },
+        "requirementEvaluations": [
+          {
+            "conflictingEvidenceIds": [],
+            "conflicts": [],
+            "evaluationExplanation": "DEF-TEMPORAL-COVERAGE is SATISFIED: applies because sufficiencyThreshold.allPlotsHaveDeforestationEvidence is true.",
+            "evidenceRequirementSpecId": "16522ae2-65eb-4124-a0fe-27fcdeb8fec7",
+            "gaps": [],
+            "humanDecisionRequired": false,
+            "noComplianceDetermination": true,
+            "requirementCode": "DEF-TEMPORAL-COVERAGE",
+            "state": "SATISFIED",
+            "supportingEvidenceIds": [
+              "ce474ed8-4745-4ab2-a330-ad58e17b1e9c"
+            ]
+          },
+          {
+            "conflictingEvidenceIds": [],
+            "conflicts": [],
+            "evaluationExplanation": "DEF-SPATIAL-COVERAGE is GAP_REQUIRES_HUMAN_DECISION: applies because sufficiencyThreshold.allPlotsHaveDeforestationEvidence is true. 0 missing-evidence gap(s), 1 verification gap(s).",
+            "evidenceRequirementSpecId": "16522ae2-65eb-4124-a0fe-27fcdeb8fec7",
+            "gaps": [
+              {
+                "automaticFailure": false,
+                "explanation": "Spatial coverage of plot f7711972-9d87-4377-8f7f-abd5405b6e43 is not evaluated: the pilot has no spatial database, so the covered area cannot be computed. TODO(postgis).",
+                "gapId": "3dcaf23f-959a-5d36-924c-eee32c8ac02c",
+                "gapType": "SPATIAL_COVERAGE_NOT_EVALUATED",
+                "humanDecisionRequired": true,
+                "requirementCode": "DEF-SPATIAL-COVERAGE",
+                "subject": {
+                  "plotId": "f7711972-9d87-4377-8f7f-abd5405b6e43",
+                  "subjectReference": "scs:plot/f7711972-9d87-4377-8f7f-abd5405b6e43",
+                  "subjectType": "PLOT"
+                }
+              }
+            ],
+            "humanDecisionRequired": true,
+            "noComplianceDetermination": true,
+            "requirementCode": "DEF-SPATIAL-COVERAGE",
+            "state": "GAP_REQUIRES_HUMAN_DECISION",
+            "supportingEvidenceIds": [
+              "ce474ed8-4745-4ab2-a330-ad58e17b1e9c"
+            ]
+          },
+          {
+            "conflictingEvidenceIds": [],
+            "conflicts": [],
+            "evaluationExplanation": "DEF-SOURCE-TYPE is SATISFIED: applies because always.",
+            "evidenceRequirementSpecId": "16522ae2-65eb-4124-a0fe-27fcdeb8fec7",
+            "gaps": [],
+            "humanDecisionRequired": false,
+            "noComplianceDetermination": true,
+            "requirementCode": "DEF-SOURCE-TYPE",
+            "state": "SATISFIED",
+            "supportingEvidenceIds": [
+              "ce474ed8-4745-4ab2-a330-ad58e17b1e9c"
+            ]
+          },
+          {
+            "conflictingEvidenceIds": [],
+            "conflicts": [],
+            "evaluationExplanation": "DEF-RESOLUTION is SATISFIED: applies because minimumResolutionMetres is 10.",
+            "evidenceRequirementSpecId": "16522ae2-65eb-4124-a0fe-27fcdeb8fec7",
+            "gaps": [],
+            "humanDecisionRequired": false,
+            "noComplianceDetermination": true,
+            "requirementCode": "DEF-RESOLUTION",
+            "state": "SATISFIED",
+            "supportingEvidenceIds": [
+              "ce474ed8-4745-4ab2-a330-ad58e17b1e9c"
+            ]
+          },
+          {
+            "conflictingEvidenceIds": [],
+            "conflicts": [],
+            "evaluationExplanation": "DEF-RECENCY is NOT_APPLICABLE: its specification field does not demand it.",
+            "evidenceRequirementSpecId": "16522ae2-65eb-4124-a0fe-27fcdeb8fec7",
+            "gaps": [],
+            "humanDecisionRequired": false,
+            "noComplianceDetermination": true,
+            "requirementCode": "DEF-RECENCY",
+            "state": "NOT_APPLICABLE",
+            "supportingEvidenceIds": []
+          },
+          {
+            "conflictingEvidenceIds": [],
+            "conflicts": [],
+            "evaluationExplanation": "DEF-INTEGRITY is SATISFIED: applies because always.",
+            "evidenceRequirementSpecId": "16522ae2-65eb-4124-a0fe-27fcdeb8fec7",
+            "gaps": [],
+            "humanDecisionRequired": false,
+            "noComplianceDetermination": true,
+            "requirementCode": "DEF-INTEGRITY",
+            "state": "SATISFIED",
+            "supportingEvidenceIds": [
+              "ce474ed8-4745-4ab2-a330-ad58e17b1e9c"
+            ]
+          },
+          {
+            "conflictingEvidenceIds": [],
+            "conflicts": [],
+            "evaluationExplanation": "DEF-AUTHORITY-CONFIRMATION is NOT_APPLICABLE: its specification field does not demand it.",
+            "evidenceRequirementSpecId": "16522ae2-65eb-4124-a0fe-27fcdeb8fec7",
+            "gaps": [],
+            "humanDecisionRequired": false,
+            "noComplianceDetermination": true,
+            "requirementCode": "DEF-AUTHORITY-CONFIRMATION",
+            "state": "NOT_APPLICABLE",
+            "supportingEvidenceIds": []
+          },
+          {
+            "conflictingEvidenceIds": [],
+            "conflicts": [],
+            "evaluationExplanation": "PLOT-REGISTERED is GAP_REQUIRES_HUMAN_DECISION: applies because sufficiencyThreshold.allPlotsRegistered is true. 0 missing-evidence gap(s), 1 verification gap(s).",
+            "evidenceRequirementSpecId": "16522ae2-65eb-4124-a0fe-27fcdeb8fec7",
+            "gaps": [
+              {
+                "automaticFailure": false,
+                "explanation": "Overlap of plot f7711972-9d87-4377-8f7f-abd5405b6e43 with other registered plots has not been evaluated (no spatial database). TODO(postgis).",
+                "gapId": "7e1da393-3b21-5275-a049-0ede809064f6",
+                "gapType": "OVERLAP_NOT_EVALUATED",
+                "humanDecisionRequired": true,
+                "requirementCode": "PLOT-REGISTERED",
+                "subject": {
+                  "plotId": "f7711972-9d87-4377-8f7f-abd5405b6e43",
+                  "subjectReference": "scs:plot/f7711972-9d87-4377-8f7f-abd5405b6e43",
+                  "subjectType": "PLOT"
+                }
+              }
+            ],
+            "humanDecisionRequired": true,
+            "noComplianceDetermination": true,
+            "requirementCode": "PLOT-REGISTERED",
+            "state": "GAP_REQUIRES_HUMAN_DECISION",
+            "supportingEvidenceIds": [
+              "f7711972-9d87-4377-8f7f-abd5405b6e43"
+            ]
+          },
+          {
+            "conflictingEvidenceIds": [],
+            "conflicts": [],
+            "evaluationExplanation": "PLOT-GEOLOCATION is SATISFIED: applies because plotRequirements.geolocationRequired is true.",
+            "evidenceRequirementSpecId": "16522ae2-65eb-4124-a0fe-27fcdeb8fec7",
+            "gaps": [],
+            "humanDecisionRequired": false,
+            "noComplianceDetermination": true,
+            "requirementCode": "PLOT-GEOLOCATION",
+            "state": "SATISFIED",
+            "supportingEvidenceIds": [
+              "f7711972-9d87-4377-8f7f-abd5405b6e43"
+            ]
+          },
+          {
+            "conflictingEvidenceIds": [],
+            "conflicts": [],
+            "evaluationExplanation": "PLOT-LAND-REGISTRY is NOT_APPLICABLE: its specification field does not demand it.",
+            "evidenceRequirementSpecId": "16522ae2-65eb-4124-a0fe-27fcdeb8fec7",
+            "gaps": [],
+            "humanDecisionRequired": false,
+            "noComplianceDetermination": true,
+            "requirementCode": "PLOT-LAND-REGISTRY",
+            "state": "NOT_APPLICABLE",
+            "supportingEvidenceIds": []
+          },
+          {
+            "conflictingEvidenceIds": [],
+            "conflicts": [],
+            "evaluationExplanation": "PLOT-OWNERSHIP-VERIFIED is NOT_APPLICABLE: its specification field does not demand it.",
+            "evidenceRequirementSpecId": "16522ae2-65eb-4124-a0fe-27fcdeb8fec7",
+            "gaps": [],
+            "humanDecisionRequired": false,
+            "noComplianceDetermination": true,
+            "requirementCode": "PLOT-OWNERSHIP-VERIFIED",
+            "state": "NOT_APPLICABLE",
+            "supportingEvidenceIds": []
+          },
+          {
+            "conflictingEvidenceIds": [],
+            "conflicts": [],
+            "evaluationExplanation": "PLOT-IDENTIFIER-TYPE is SATISFIED: applies because always.",
+            "evidenceRequirementSpecId": "16522ae2-65eb-4124-a0fe-27fcdeb8fec7",
+            "gaps": [],
+            "humanDecisionRequired": false,
+            "noComplianceDetermination": true,
+            "requirementCode": "PLOT-IDENTIFIER-TYPE",
+            "state": "SATISFIED",
+            "supportingEvidenceIds": []
+          },
+          {
+            "conflictingEvidenceIds": [],
+            "conflicts": [],
+            "evaluationExplanation": "CUSTODY-CHAIN-CONTINUITY is NOT_APPLICABLE: its specification field does not demand it.",
+            "evidenceRequirementSpecId": "16522ae2-65eb-4124-a0fe-27fcdeb8fec7",
+            "gaps": [],
+            "humanDecisionRequired": false,
+            "noComplianceDetermination": true,
+            "requirementCode": "CUSTODY-CHAIN-CONTINUITY",
+            "state": "NOT_APPLICABLE",
+            "supportingEvidenceIds": []
+          },
+          {
+            "conflictingEvidenceIds": [],
+            "conflicts": [],
+            "evaluationExplanation": "CUSTODY-DOCUMENT-TYPES is NOT_APPLICABLE: its specification field does not demand it.",
+            "evidenceRequirementSpecId": "16522ae2-65eb-4124-a0fe-27fcdeb8fec7",
+            "gaps": [],
+            "humanDecisionRequired": false,
+            "noComplianceDetermination": true,
+            "requirementCode": "CUSTODY-DOCUMENT-TYPES",
+            "state": "NOT_APPLICABLE",
+            "supportingEvidenceIds": []
+          },
+          {
+            "conflictingEvidenceIds": [],
+            "conflicts": [],
+            "evaluationExplanation": "CUSTODY-TRACEABILITY-DEPTH is NOT_APPLICABLE: its specification field does not demand it.",
+            "evidenceRequirementSpecId": "16522ae2-65eb-4124-a0fe-27fcdeb8fec7",
+            "gaps": [],
+            "humanDecisionRequired": false,
+            "noComplianceDetermination": true,
+            "requirementCode": "CUSTODY-TRACEABILITY-DEPTH",
+            "state": "NOT_APPLICABLE",
+            "supportingEvidenceIds": []
+          }
+        ],
+        "spatialCoverage": [
+          {
+            "coverageAssessment": "NOT_EVALUATED",
+            "excludedAreaReferences": [],
+            "plotGeometryChangedSinceEvidence": false,
+            "plotId": "f7711972-9d87-4377-8f7f-abd5405b6e43",
+            "plotVersion": 1,
+            "registeredGeometryReference": "scs:plot/f7711972-9d87-4377-8f7f-abd5405b6e43/v1/geometry",
+            "spatialConflictReferences": [],
+            "uncoveredAreaReferences": []
+          }
+        ],
+        "temporalCoverage": [
+          {
+            "attestationExceedingAnalysis": [],
+            "conflictingIntervals": [],
+            "coverageNote": "Coverage is the admitted analysis periods, minus declared known gaps, whose detection target and claim match the assessment; it is never a union of declared or attested dates. Intervals are half-open (end exclusive). Acquisition frequency, cloud interference and the risk of undetected change between observations are not quantified in the pilot.",
+            "plotId": "f7711972-9d87-4377-8f7f-abd5405b6e43",
+            "requiredPeriod": {
+              "assessmentType": "DEFORESTATION",
+              "end": "2024-07-01T00:00:00.000Z",
+              "start": "2020-12-31T00:00:00.000Z"
+            },
+            "supportedIntervals": [
+              {
+                "coverageQuality": "HIGH",
+                "end": "2024-07-01T00:00:00.000Z",
+                "evidenceIds": [
+                  "ce474ed8-4745-4ab2-a330-ad58e17b1e9c"
+                ],
+                "start": "2020-12-31T00:00:00.000Z",
+                "supportType": "CHANGE_ANALYSIS analysis, DEFORESTATION"
+              }
+            ],
+            "uncoveredIntervals": []
+          }
+        ]
+      }
+    }
+  },
+  "packageDigest": "sha256:cbd20b37bfab1747f6da03ff048e3ea24653cebb3417cf7da23e12461c55d374"
+}

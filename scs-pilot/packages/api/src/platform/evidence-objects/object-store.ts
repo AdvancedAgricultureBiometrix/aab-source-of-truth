@@ -14,7 +14,7 @@
 // to create the bucket and put/head objects (no delete) is the production
 // answer, together with object locking or an equivalent retention guarantee.
 
-import { CreateBucketCommand, HeadBucketCommand, HeadObjectCommand, PutObjectCommand, S3Client, S3ServiceException } from "@aws-sdk/client-s3";
+import { CreateBucketCommand, GetObjectCommand, HeadBucketCommand, HeadObjectCommand, PutObjectCommand, S3Client, S3ServiceException } from "@aws-sdk/client-s3";
 
 import { platformFailure } from "../../foundation/errors.js";
 
@@ -24,6 +24,8 @@ export interface ObjectStore {
   ensureBucket(): Promise<void>;
   /** Store bytes under `key` unless an object is already there. Never overwrites. */
   putIfAbsent(key: string, bytes: Buffer, mediaType: string): Promise<"stored" | "exists">;
+  /** The bytes stored under `key`, or null when nothing is stored there. Never modifies. */
+  get(key: string): Promise<Buffer | null>;
 }
 
 export interface ObjectStoreConfig {
@@ -102,5 +104,15 @@ export class S3ObjectStore implements ObjectStore {
       throw err;
     }
     return "exists";
+  }
+
+  async get(key: string): Promise<Buffer | null> {
+    try {
+      const got = await this.client.send(new GetObjectCommand({ Bucket: this.bucket, Key: key }));
+      return Buffer.from(await got.Body!.transformToByteArray());
+    } catch (err) {
+      if (status(err) === 404) return null;
+      throw unavailable(err);
+    }
   }
 }

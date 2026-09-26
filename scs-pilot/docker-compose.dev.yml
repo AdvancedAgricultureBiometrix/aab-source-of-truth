@@ -1,0 +1,17 @@
+# SCS pilot — development override: PostgreSQL and the object store reachable
+# from the host, for the integration tests (127.0.0.1 only).
+#
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
+#
+# The services themselves stay on the internal network, with no route outside:
+# the edge container forwards two more ports to them (edge/nginx.dev.conf). A
+# country deployment runs docker-compose.yml alone, where only the API is
+# reachable from the host.
+
+services:
+  edge:
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+      - "127.0.0.1:${S3_PORT:-9000}:8333"
+    volumes:
+      - ./edge/nginx.dev.conf:/etc/nginx/nginx.conf:ro

@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-08:package-envelope:1",
+  "title": "ScsDueDiligencePackageEnvelope",
+  "description": "What is stored and distributed (contract 4b1f05b): the package content, its digest, and the compilation metadata, which is outside the digest.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "package",
+    "packageDigest",
+    "compilationMetadata"
+  ],
+  "properties": {
+    "package": {
+      "$ref": "urn:aab:scs:schema:cap-08:due-diligence-package:1"
+    },
+    "packageDigest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "compilationMetadata": {
+      "title": "ScsPackageCompilationMetadata",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "packageId",
+        "compiledAt",
+        "requestedByActorId",
+        "compiledByServiceIdentity"
+      ],
+      "properties": {
+        "packageId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "compiledAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "requestedByActorId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "compiledByServiceIdentity": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        }
+      }
+    }
+  }
+}

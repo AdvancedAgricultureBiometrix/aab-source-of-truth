@@ -85,6 +85,10 @@ export const PLATFORM_ERRORS = {
   // SCS-PLATFORM-01 evidence object store (raw-body upload route)
   EVIDENCE_OBJECT_TOO_LARGE: 413,
   EVIDENCE_OBJECT_TYPE_UNSUPPORTED: 415,
+  // SCS-PLATFORM-02 rendition download
+  READER_NOT_AUTHORISED: 403,
+  RENDITION_NOT_FOUND: 404,
+  RENDITION_INTEGRITY_FAILED: 422,
 } as const;
 
 export type PlatformErrorCode = keyof typeof PLATFORM_ERRORS;
@@ -99,8 +103,14 @@ export class ScsFailure<C extends CapabilityId = CapabilityId, E extends string 
   readonly code: E;
   readonly reasons: readonly string[];
   readonly httpStatus: number;
+  /**
+   * Further fields a capability's failure contract defines (e.g. SCS-CAP-08's
+   * failedGateCheck and blockers). They are added to the envelope, but can
+   * never replace its core fields or boundary flags.
+   */
+  readonly extra: Readonly<Record<string, unknown>> | undefined;
 
-  constructor(args: { capabilityId: C; code: E; reasons: readonly string[]; httpStatus: number }) {
+  constructor(args: { capabilityId: C; code: E; reasons: readonly string[]; httpStatus: number; extra?: Readonly<Record<string, unknown>> }) {
     const reasons = args.reasons.map((r) => r.trim()).filter((r) => r.length > 0);
     if (reasons.length === 0) {
       throw new TypeError(`ScsFailure ${args.code}: at least one non-blank reason is required`);
@@ -114,6 +124,7 @@ export class ScsFailure<C extends CapabilityId = CapabilityId, E extends string 
     this.code = args.code;
     this.reasons = Object.freeze(reasons);
     this.httpStatus = args.httpStatus;
+    this.extra = args.extra === undefined ? undefined : Object.freeze({ ...args.extra });
   }
 }
 
@@ -148,7 +159,8 @@ export function toEnvelope<C extends CapabilityId, E extends string>(
     correlationId,
   };
   const flags: BoundaryFlags<C> = CAPABILITY_BOUNDARY_FLAGS[failure.capabilityId];
-  return Object.freeze(Object.assign({}, core, flags));
+  // extra first: the core fields and the flags always win
+  return Object.freeze(Object.assign({}, failure.extra ?? {}, core, flags));
 }
 
 /**

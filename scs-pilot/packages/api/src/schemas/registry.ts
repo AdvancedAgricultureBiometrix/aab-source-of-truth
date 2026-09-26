@@ -60,6 +60,24 @@ import cap06ConflictResolutionRequest from "./cap-06/conflict-resolution-request
 import cap06ConflictResolutionRecord from "./cap-06/conflict-resolution-record.schema.json" with { type: "json" };
 import cap06ConflictResolutionReceipt from "./cap-06/conflict-resolution-receipt.schema.json" with { type: "json" };
 import cap06ConflictResolutionResponse from "./cap-06/conflict-resolution-response.schema.json" with { type: "json" };
+import cap09ReviewDecisionRequest from "./cap-09/review-decision-request.schema.json" with { type: "json" };
+import cap09ReviewDecision from "./cap-09/review-decision.schema.json" with { type: "json" };
+import cap09ReviewDecisionReceipt from "./cap-09/review-decision-receipt.schema.json" with { type: "json" };
+import cap09ReviewDecisionResponse from "./cap-09/review-decision-response.schema.json" with { type: "json" };
+import cap09CurrencyAssessment from "./cap-09/currency-assessment.schema.json" with { type: "json" };
+import cap09ReviewDecisionParams from "./cap-09/review-decision-params.schema.json" with { type: "json" };
+import cap09CurrencyAssessmentRequest from "./cap-09/currency-assessment-request.schema.json" with { type: "json" };
+import cap09RecordedDecision from "./cap-09/recorded-decision.schema.json" with { type: "json" };
+import cap08PackageCompilationRequest from "./cap-08/package-compilation-request.schema.json" with { type: "json" };
+import cap08DueDiligencePackage from "./cap-08/due-diligence-package.schema.json" with { type: "json" };
+import cap08PackageEnvelope from "./cap-08/package-envelope.schema.json" with { type: "json" };
+import cap08PackageCompilationRecord from "./cap-08/package-compilation-record.schema.json" with { type: "json" };
+import cap08PackageCompilationReceipt from "./cap-08/package-compilation-receipt.schema.json" with { type: "json" };
+import cap08PackageCompilationResponse from "./cap-08/package-compilation-response.schema.json" with { type: "json" };
+import cap08PackageParams from "./cap-08/package-params.schema.json" with { type: "json" };
+import cap08PackageReadResult from "./cap-08/package-read-result.schema.json" with { type: "json" };
+import cap08PackageIntegrityResult from "./cap-08/package-integrity-result.schema.json" with { type: "json" };
+import platformRenditionParams from "./platform/rendition-params.schema.json" with { type: "json" };
 
 import { registerSchema, type JsonSchema } from "../foundation/validation.js";
 
@@ -118,6 +136,24 @@ export const SCHEMAS = {
   cap06ConflictResolutionRecord,
   cap06ConflictResolutionReceipt,
   cap06ConflictResolutionResponse,
+  cap09ReviewDecisionRequest,
+  cap09ReviewDecision,
+  cap09ReviewDecisionReceipt,
+  cap09ReviewDecisionResponse,
+  cap09CurrencyAssessment,
+  cap09ReviewDecisionParams,
+  cap09CurrencyAssessmentRequest,
+  cap09RecordedDecision,
+  cap08PackageCompilationRequest,
+  cap08DueDiligencePackage,
+  cap08PackageEnvelope,
+  cap08PackageCompilationRecord,
+  cap08PackageCompilationReceipt,
+  cap08PackageCompilationResponse,
+  cap08PackageParams,
+  cap08PackageReadResult,
+  cap08PackageIntegrityResult,
+  platformRenditionParams,
 } as const satisfies Record<string, JsonSchema>;
 
 for (const schema of Object.values(SCHEMAS)) registerSchema(schema);

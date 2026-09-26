@@ -23,7 +23,7 @@ const typesDir = path.join(root, "src", "types");
  */
 const TARGETS = [
   { out: "shared.ts", schemas: ["shared/actor-reference.schema.json"] },
-  { out: "platform.ts", schemas: ["platform/evidence-object.schema.json"] },
+  { out: "platform.ts", schemas: ["platform/evidence-object.schema.json", "platform/rendition-params.schema.json"] },
   {
     out: "cap-01.ts",
     schemas: [
@@ -104,6 +104,33 @@ const TARGETS = [
       "cap-06/conflict-resolution-record.schema.json",
       "cap-06/conflict-resolution-receipt.schema.json",
       "cap-06/conflict-resolution-response.schema.json",
+    ],
+  },
+  {
+    out: "cap-08.ts",
+    schemas: [
+      "cap-08/package-compilation-request.schema.json",
+      "cap-08/due-diligence-package.schema.json",
+      "cap-08/package-envelope.schema.json",
+      "cap-08/package-compilation-record.schema.json",
+      "cap-08/package-compilation-receipt.schema.json",
+      "cap-08/package-compilation-response.schema.json",
+      "cap-08/package-params.schema.json",
+      "cap-08/package-read-result.schema.json",
+      "cap-08/package-integrity-result.schema.json",
+    ],
+  },
+  {
+    out: "cap-09.ts",
+    schemas: [
+      "cap-09/review-decision-request.schema.json",
+      "cap-09/review-decision.schema.json",
+      "cap-09/review-decision-receipt.schema.json",
+      "cap-09/review-decision-response.schema.json",
+      "cap-09/currency-assessment.schema.json",
+      "cap-09/review-decision-params.schema.json",
+      "cap-09/currency-assessment-request.schema.json",
+      "cap-09/recorded-decision.schema.json",
     ],
   },
 ];

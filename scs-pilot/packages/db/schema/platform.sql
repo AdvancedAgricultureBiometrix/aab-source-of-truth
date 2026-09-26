@@ -1,11 +1,12 @@
 -- ============================================================================
--- Platform tables — decision receipts, idempotency records and evidence
--- objects (current state)
+-- Platform tables — decision receipts, idempotency records, evidence objects
+-- and renditions (current state)
 --
 -- Shared by every capability, owned by no capability contract. Migration 005
 -- was generated from this file (receipts and idempotency records); migration
--- 012 added scs.evidence_object (SCS-PLATFORM-01). Requires 001–004 (schema
--- scs, role scs_api).
+-- 012 added scs.evidence_object (SCS-PLATFORM-01); migration 018 added
+-- scs.rendition (SCS-PLATFORM-02). Requires 001–004 (schema scs, role
+-- scs_api).
 --
 -- Both tables are INSERT-ONLY for everyone:
 --   * scs_api gets SELECT + INSERT only (as every scs table, migration 004).
@@ -73,8 +74,10 @@ CREATE TABLE scs.decision_receipt (
     CHECK (request_digest ~ '^[0-9a-f]{64}$' AND receipt_digest ~ '^[0-9a-f]{64}$'),
   CONSTRAINT decision_receipt_json_shape_ck
     CHECK (jsonb_typeof(actor) = 'object' AND jsonb_typeof(receipt) = 'object'),
+  -- IS NOT DISTINCT FROM, not =: a receipt with no receiptId gives NULL, and a
+  -- CHECK passes on NULL. Replaced by migration 019.
   CONSTRAINT decision_receipt_receipt_id_matches_ck
-    CHECK (receipt ->> 'receiptId' = receipt_id::text)
+    CHECK (receipt ->> 'receiptId' IS NOT DISTINCT FROM receipt_id::text)
 );
 
 CREATE INDEX decision_receipt_subject_idx ON scs.decision_receipt (capability_id, subject_id);
@@ -166,6 +169,57 @@ CREATE TRIGGER evidence_object_no_truncate
 COMMENT ON TABLE scs.evidence_object IS
   'SCS-PLATFORM-01 evidence object store: one row per stored file, identified by its SHA-256. Storing a file does not admit it as evidence. Append-only for every role.';
 
+-- ── scs.rendition (SCS-PLATFORM-02, migration 018) ─────────────────────────
+-- One row per rendition: a PDF presenting one governed record. The bytes live
+-- in the object store under their SHA-256; this row records which record they
+-- present (by its id and digest), with which renderer, when and for whom. A
+-- rendition is never evidence: it has no row in scs.evidence_object, so it
+-- cannot be cited as one. Rendering again adds a row and never replaces one.
+CREATE TABLE scs.rendition (
+  rendition_id             uuid        NOT NULL DEFAULT gen_random_uuid(),
+  source_capability_id     text        NOT NULL,   -- the capability whose record is rendered
+  source_record_id         uuid        NOT NULL,   -- e.g. a packageId
+  source_digest            text        NOT NULL,   -- the record's digest, shown on every page
+  source_digest_algorithm  text        NOT NULL,
+  renderer_version         text        NOT NULL,   -- renderer library and version, template and version
+  media_type               text        NOT NULL,
+  byte_length              bigint      NOT NULL,
+  sha256                   text        NOT NULL,   -- lowercase hex of the rendered bytes, computed by SCS
+  storage_bucket           text        NOT NULL,
+  storage_key              text        NOT NULL,
+  rendered_at              timestamptz NOT NULL,
+  rendered_for             jsonb       NOT NULL,   -- ActorReference
+  created_at               timestamptz NOT NULL DEFAULT now(),
+
+  CONSTRAINT rendition_pk PRIMARY KEY (rendition_id),
+  -- the target of a capability's binding foreign key (SCS-CAP-08: package_compilation)
+  CONSTRAINT rendition_binding_uq UNIQUE (rendition_id, source_record_id, source_digest),
+  -- extended when another capability renders its records
+  CONSTRAINT rendition_source_ck CHECK (source_capability_id IN ('SCS-CAP-08')),
+  CONSTRAINT rendition_media_type_ck CHECK (media_type = 'application/pdf'),
+  CONSTRAINT rendition_sha256_ck CHECK (sha256 ~ '^[0-9a-f]{64}$'),
+  CONSTRAINT rendition_size_ck CHECK (byte_length >= 1),
+  -- the file is stored under its digest
+  CONSTRAINT rendition_storage_key_ck CHECK (storage_key = sha256),
+  CONSTRAINT rendition_text_ck
+    CHECK (btrim(source_digest) <> '' AND btrim(source_digest_algorithm) <> '' AND btrim(renderer_version) <> ''
+       AND btrim(storage_bucket) <> ''),
+  CONSTRAINT rendition_actor_ck
+    CHECK (jsonb_typeof(rendered_for) = 'object' AND (rendered_for ->> 'actorId') IS NOT NULL)
+);
+
+CREATE INDEX rendition_source_idx ON scs.rendition (source_capability_id, source_record_id);
+
+CREATE TRIGGER rendition_append_only
+  BEFORE UPDATE OR DELETE ON scs.rendition
+  FOR EACH ROW EXECUTE FUNCTION scs.reject_modification();
+CREATE TRIGGER rendition_no_truncate
+  BEFORE TRUNCATE ON scs.rendition
+  FOR EACH STATEMENT EXECUTE FUNCTION scs.reject_modification();
+
+COMMENT ON TABLE scs.rendition IS
+  'SCS-PLATFORM-02 governed document rendition: one row per PDF presenting a governed record, identified by its SHA-256. Never the record, never evidence. Append-only for every role.';
+
 -- ── Grants and row-level security (rule from migration 004) ─────────────────
 GRANT SELECT, INSERT ON scs.decision_receipt TO scs_api;
 ALTER TABLE scs.decision_receipt ENABLE ROW LEVEL SECURITY;
@@ -186,4 +240,11 @@ ALTER TABLE scs.evidence_object ENABLE ROW LEVEL SECURITY;
 CREATE POLICY evidence_object_scs_api_select ON scs.evidence_object
   AS PERMISSIVE FOR SELECT TO scs_api USING (true);
 CREATE POLICY evidence_object_scs_api_insert ON scs.evidence_object
+  AS PERMISSIVE FOR INSERT TO scs_api WITH CHECK (true);
+
+GRANT SELECT, INSERT ON scs.rendition TO scs_api;
+ALTER TABLE scs.rendition ENABLE ROW LEVEL SECURITY;
+CREATE POLICY rendition_scs_api_select ON scs.rendition
+  AS PERMISSIVE FOR SELECT TO scs_api USING (true);
+CREATE POLICY rendition_scs_api_insert ON scs.rendition
   AS PERMISSIVE FOR INSERT TO scs_api WITH CHECK (true);
