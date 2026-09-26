@@ -1,6 +1,6 @@
 # AAB Platform Roadmap — 2026-09-27
 
-**Status:** DRAFT ROADMAP — FOR FINAL REVIEW — NOT COMMITTED
+**Status:** PLATFORM ROADMAP
 **Authority:** RECORDS THE STATE OF EVERY AAB PLATFORM PRIMITIVE AND CAPABILITY, AS DEMONSTRATED BY THE CONTRACTS, CODE, TESTS AND PROOFS ON `main` AT `9f17cc2`, AND WHAT MUST EXIST BEFORE WHAT. Admits no capability, grants no implementation, commissioning, production, regulatory or scientific authority, changes no control's status, and does not satisfy Gate D or begin WP05.
 **Sources:**
 - `governance/AAB-PLATFORM-PURPOSE-AND-VALUES-REVISION-2026-09-25.md`
