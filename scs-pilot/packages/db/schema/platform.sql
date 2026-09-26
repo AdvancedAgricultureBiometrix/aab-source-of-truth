@@ -97,6 +97,7 @@ COMMENT ON TABLE scs.decision_receipt IS
 CREATE TABLE scs.idempotency_record (
   idempotency_record_id uuid      NOT NULL DEFAULT gen_random_uuid(),
   actor_id            text        NOT NULL,   -- ActorReference.actorId; keys are per actor
+                                              -- TODO(multi-issuer-idempotency): (issuer, actor_id) once a second issuer acts
   idempotency_key     text        NOT NULL,
   request_fingerprint text        NOT NULL,   -- SHA-256 hex of method + route + canonical body
   response_status     integer     NOT NULL,

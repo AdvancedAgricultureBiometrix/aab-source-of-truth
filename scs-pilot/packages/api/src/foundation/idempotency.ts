@@ -4,6 +4,11 @@
 // Keys are scoped per actor. The request fingerprint is the SHA-256 of the
 // canonical {method, route, body}.
 //
+// TODO(multi-issuer-idempotency): keys are scoped by ActorReference.actorId,
+// which is unique while a deployment has one issuer. When a second issuer
+// first acts in a deployment, scope keys by (issuer, actorId), by a migration
+// defined at that point (AAB-PLATFORM-03 ActorReference, section 4).
+//
 //   * key not seen before     → run the operation; on success (2xx) record
 //                               the response in the SAME transaction
 //   * key seen, same request  → return the original response unchanged
