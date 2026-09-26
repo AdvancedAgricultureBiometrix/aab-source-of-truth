@@ -1,5 +1,5 @@
 // SCS-CAP-08 packages (contract 4b1f05b, 901a600, 700c40a) — requestCompilation
-// with its SCS-PLATFORM-02 rendition (a0f8c46), getPackage,
+// with its AAB-PLATFORM-02 rendition (a0f8c46), getPackage,
 // verifyPackageIntegrity and the rendition download — end to end: real HTTP, real
 // PostgreSQL (the API connected as a restricted member of scs_api) and a real
 // S3-compatible object store. Every record packaged is made through its
@@ -144,7 +144,7 @@ async function registerPlot(f: Framework, plotName?: string) {
   return { plotId: d.plotId, associationId: d.frameworkAssociationResults[0]!.associationId };
 }
 
-/** Uploads a real file through SCS-PLATFORM-01 and returns its SHA-256 (the objectId). */
+/** Uploads a real file through AAB-PLATFORM-01 and returns its SHA-256 (the objectId). */
 async function storedObject(): Promise<string> {
   const bytes = Buffer.concat([Buffer.from("II*\0"), randomBytes(256)]);
   const r = await send("POST", "/scs/v1/evidence-objects", undefined, { raw: bytes, type: "image/tiff" });
@@ -752,7 +752,7 @@ test("verifyPackageIntegrity: other actors → 403; an unknown package → 404",
   await readRefused(`${PACKAGES}/${randomUUID()}/integrity`, 404, "PACKAGE_NOT_FOUND", "SCS-CAP-08");
 });
 
-// ── Rendition download (SCS-PLATFORM-02) ─────────────────────────────────────
+// ── Rendition download (AAB-PLATFORM-02) ─────────────────────────────────────
 
 async function download(renditionId: string, opts: { who?: Who; to?: string } = {}) {
   const res = await fetch(`${opts.to ?? base}/scs/v1/renditions/${renditionId}`, { headers: { authorization: `Bearer ${TOKENS[opts.who ?? "officer"]}` } });

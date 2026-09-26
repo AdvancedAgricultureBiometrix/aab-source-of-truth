@@ -26,7 +26,7 @@
 //                      → PLOT_RECORDS_NOT_FOUND
 //   8. files         — every cited file re-hashed from the object store
 //                      → EVIDENCE_INTEGRITY_FAILED; store down → DEPENDENCY_UNAVAILABLE
-//   9. assembly and digest (assemble.ts), then the rendition (SCS-PLATFORM-02)
+//   9. assembly and digest (assemble.ts), then the rendition (AAB-PLATFORM-02)
 //                      → RENDITION_FAILED when the package cannot be rendered
 //
 // Written: the rendition, the package, the compilation record and its receipt

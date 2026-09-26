@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:aab:scs:schema:platform:rendition-params:1",
   "title": "ScsRenditionPathParams",
-  "description": "Path parameters of GET /scs/v1/renditions/:renditionId (SCS-PLATFORM-02).",
+  "description": "Path parameters of GET /scs/v1/renditions/:renditionId (AAB-PLATFORM-02).",
   "type": "object",
   "additionalProperties": false,
   "required": [

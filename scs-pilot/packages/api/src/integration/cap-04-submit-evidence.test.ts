@@ -2,7 +2,7 @@
 // through the server layer, real PostgreSQL (database built from every
 // migration), the API connected as a restricted member of scs_api. Parties,
 // frameworks and plots are registered through their own endpoints. Stored
-// evidence objects are inserted as SCS-PLATFORM-01 rows directly: CAP-04
+// evidence objects are inserted as AAB-PLATFORM-01 rows directly: CAP-04
 // reads the row, never the object store, so no object store is needed here.
 
 import { after, before, test } from "node:test";
@@ -102,7 +102,7 @@ async function registerPlot(frameworkId: string, coordinates: unknown = [PLOT_SQ
   return { plotId: d.plotId, associationId: d.frameworkAssociationResults[0]!.associationId! };
 }
 
-/** Inserts an SCS-PLATFORM-01 evidence object row for fresh random bytes; returns its SHA-256 (the objectId). */
+/** Inserts an AAB-PLATFORM-01 evidence object row for fresh random bytes; returns its SHA-256 (the objectId). */
 async function storedObject(): Promise<string> {
   const digest = createHash("sha256").update(randomBytes(64)).digest("hex");
   await harness.admin.query(

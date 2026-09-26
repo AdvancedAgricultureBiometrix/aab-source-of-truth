@@ -3,7 +3,7 @@
 // their own. Database errors are mapped to canonical failures
 // (foundation/db-errors.ts). Frameworks (SCS-CAP-01), parties, verification
 // assessments and mandates (SCS-CAP-02), plots (SCS-CAP-03) and stored
-// objects (SCS-PLATFORM-01) are read from their tables, never written.
+// objects (AAB-PLATFORM-01) are read from their tables, never written.
 
 import type { Tx } from "../../foundation/db.js";
 import { withDatabaseErrors } from "../../foundation/db-errors.js";
@@ -97,7 +97,7 @@ export async function findMandates(tx: Tx, mandateIds: readonly string[]): Promi
   );
 }
 
-/** True if SCS-PLATFORM-01 holds an object with this SHA-256 (the objectId). */
+/** True if AAB-PLATFORM-01 holds an object with this SHA-256 (the objectId). */
 export async function objectExists(tx: Tx, sha256: string): Promise<boolean> {
   const { rows } = await withDatabaseErrors(CAPABILITY_ID, () => tx.query(`SELECT 1 FROM scs.evidence_object WHERE content_sha256 = $1`, [sha256]));
   return rows.length > 0;

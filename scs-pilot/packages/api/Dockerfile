@@ -15,7 +15,7 @@
 # context.
 #
 # The base image is pinned to the exact version and digest that produced the
-# verified SCS-PLATFORM-02 rendition (commit 9a2238c).
+# verified AAB-PLATFORM-02 rendition (commit 9a2238c).
 
 ARG NODE_IMAGE=node:24.21.0-alpine3.24@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1
 
@@ -35,7 +35,7 @@ WORKDIR /app
 COPY api/package.json api/package-lock.json ./
 RUN npm ci --omit=dev --no-audit --no-fund && npm cache clean --force
 COPY --from=build /build/api/dist ./dist
-# the fonts recorded in SCS-PLATFORM-02, checked against their SHA-256 at use
+# the fonts recorded in AAB-PLATFORM-02, checked against their SHA-256 at use
 COPY api/assets ./assets
 # the migrations the migrate service applies (runner default: /db/migrations)
 COPY db/migrations /db/migrations

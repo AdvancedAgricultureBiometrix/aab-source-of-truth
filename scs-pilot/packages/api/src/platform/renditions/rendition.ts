@@ -1,8 +1,8 @@
-// SCS-PLATFORM-02: produce a rendition of a governed record inside the owning
+// AAB-PLATFORM-02: produce a rendition of a governed record inside the owning
 // capability's transaction (contract e99ff4f/8e64e33 and a0f8c46).
 //
 //   1. render the document (renderer.ts): same document, same bytes;
-//   2. store the bytes in the object store (SCS-PLATFORM-01) under their
+//   2. store the bytes in the object store (AAB-PLATFORM-01) under their
 //      SHA-256, never overwriting. The object store is not transactional, so
 //      the bytes are written first: if the capability's transaction later
 //      fails, they are an unreferenced object and harmless;

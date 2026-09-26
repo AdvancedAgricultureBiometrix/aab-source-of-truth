@@ -51,7 +51,7 @@ export interface ScsDeforestationEvidenceSource {
 }
 export interface ScsDeforestationEvidenceObjectInput {
   /**
-   * The SCS-PLATFORM-01 objectId of the stored file, when one is cited.
+   * The AAB-PLATFORM-01 objectId of the stored file, when one is cited.
    */
   objectId?: string;
   originalObjectReference: string;

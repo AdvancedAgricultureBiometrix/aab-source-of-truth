@@ -195,7 +195,7 @@ export async function addVerificationAssessment(ctx: RouteContext<ScsVerificatio
       `Assessment is not registration: the party's registrationStatus is unchanged (${party.registrationStatus}); no earlier assessment is changed.`,
       ...(expired ? ["Already expired: this assessment counts as VERIFICATION_EXPIRED when the party's verification status is derived."] : []),
       `Verifying authority recorded as declared: ${request.verifyingAuthority.authorityName} (${request.verifyingAuthority.authorityId}) cannot be checked against a registry of verifying authorities; none exists.`,
-      // TODO(evidence-id-model): evidence ids predate the SCS-PLATFORM-01 object store (contract gap); replace this disclosure with an existence check once ids cite stored objects.
+      // TODO(evidence-id-model): evidence ids predate the AAB-PLATFORM-01 object store (contract gap); replace this disclosure with an existence check once ids cite stored objects.
       `Evidence ids not confirmed: the ${count} cited evidence id(s) are not linked to the SCS evidence object store; the store identifies files by SHA-256 digest, so these ids cannot be confirmed against it. Their link to the party was checked; their content was not.`,
     ],
     decidedBy: actor,

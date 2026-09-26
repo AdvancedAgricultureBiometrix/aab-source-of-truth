@@ -1,4 +1,4 @@
-// SCS-PLATFORM-01 object store client: where evidence file bytes live
+// AAB-PLATFORM-01 object store client: where evidence file bytes live
 // (SeaweedFS in the pilot stack; any S3-compatible store that honours
 // conditional writes).
 //

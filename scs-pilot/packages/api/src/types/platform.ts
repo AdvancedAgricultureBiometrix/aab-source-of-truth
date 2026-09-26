@@ -12,7 +12,7 @@
 import type { ActorReference } from "./shared.js";
 
 /**
- * SCS-PLATFORM-01 ScsEvidenceObject (contract 288bfd7): a stored evidence file, identified by the SHA-256 SCS computed over its bytes. Storing a file does not admit it as evidence.
+ * AAB-PLATFORM-01 ScsEvidenceObject (contract 288bfd7): a stored evidence file, identified by the SHA-256 SCS computed over its bytes. Storing a file does not admit it as evidence.
  */
 export interface ScsEvidenceObject {
   /**
@@ -39,7 +39,7 @@ export interface ScsEvidenceObjectDigest {
 }
 
 /**
- * Path parameters of GET /scs/v1/renditions/:renditionId (SCS-PLATFORM-02).
+ * Path parameters of GET /scs/v1/renditions/:renditionId (AAB-PLATFORM-02).
  */
 export interface ScsRenditionPathParams {
   renditionId: string;

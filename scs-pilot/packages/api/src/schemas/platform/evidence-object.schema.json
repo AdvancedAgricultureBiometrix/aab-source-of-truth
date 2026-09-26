@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:aab:scs:schema:platform:evidence-object:1",
   "title": "ScsEvidenceObject",
-  "description": "SCS-PLATFORM-01 ScsEvidenceObject (contract 288bfd7): a stored evidence file, identified by the SHA-256 SCS computed over its bytes. Storing a file does not admit it as evidence.",
+  "description": "AAB-PLATFORM-01 ScsEvidenceObject (contract 288bfd7): a stored evidence file, identified by the SHA-256 SCS computed over its bytes. Storing a file does not admit it as evidence.",
   "type": "object",
   "additionalProperties": false,
   "required": [

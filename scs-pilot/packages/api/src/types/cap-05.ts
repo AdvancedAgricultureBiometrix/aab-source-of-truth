@@ -152,7 +152,7 @@ export interface ScsCustodyTransformation {
 }
 export interface ScsCustodySupportingDocumentInput {
   /**
-   * The SCS-PLATFORM-01 objectId of the stored document, when one is cited.
+   * The AAB-PLATFORM-01 objectId of the stored document, when one is cited.
    */
   objectId?: string;
   documentId: string;

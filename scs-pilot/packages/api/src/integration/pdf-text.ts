@@ -1,5 +1,5 @@
 // Test helper: the text of a rendition, page by page, with each page's footer
-// separated from its body (SCS-PLATFORM-02, "The pilot renderer": completeness
+// separated from its body (AAB-PLATFORM-02, "The pilot renderer": completeness
 // tests leave the footers out, because a reader can place a footer between the
 // two halves of an entry that breaks across a page). Text is NFKC-normalised
 // with whitespace collapsed, so a record's text can be found in it as a

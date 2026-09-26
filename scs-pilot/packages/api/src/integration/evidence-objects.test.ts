@@ -1,4 +1,4 @@
-// SCS-PLATFORM-01 POST /scs/v1/evidence-objects, end to end: real HTTP, real
+// AAB-PLATFORM-01 POST /scs/v1/evidence-objects, end to end: real HTTP, real
 // PostgreSQL (the API as a restricted member of scs_api) and a real
 // S3-compatible object store (SeaweedFS in the pilot), in a throwaway bucket.
 //

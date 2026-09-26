@@ -1,5 +1,5 @@
 // Type declarations for the parts of pdfkit 0.20.2 and fontkit 2.0.4 the
-// renderer uses (SCS-PLATFORM-02). Neither package ships types, and the
+// renderer uses (AAB-PLATFORM-02). Neither package ships types, and the
 // community types lag pdfkit's version, so only what is used is declared.
 
 declare module "pdfkit" {

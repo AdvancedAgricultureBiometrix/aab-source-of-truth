@@ -181,7 +181,7 @@ export async function registerMandate(ctx: RouteContext<ScsMandateRegistrationRe
       `consentEvidenceProvided: evaluated — ${consentCount} consent evidence id(s) provided. Their content is not verified: see below.`,
       "noConflictingRecord: evaluated — no NOT_REVOKED mandate for this pair shares a framework and a permitted action and overlaps this validity period.",
       `Registration is not verification: REGISTERED records a claimed mandate (verificationStatus CLAIMED_UNVERIFIED) permitting only ${permittedActions.join(", ")}. It verifies neither party and permits no approval, alteration of the granting party's identity, or legal declaration on its behalf.`,
-      // TODO(evidence-id-model): evidence ids predate the SCS-PLATFORM-01 object store (contract gap); replace this disclosure with an existence check once ids cite stored objects.
+      // TODO(evidence-id-model): evidence ids predate the AAB-PLATFORM-01 object store (contract gap); replace this disclosure with an existence check once ids cite stored objects.
       `Evidence ids not confirmed: the ${consentCount} cited consent evidence id(s) are not linked to the SCS evidence object store; the store identifies files by SHA-256 digest, so these ids cannot be confirmed against it. Nothing confirms that the granting party agreed. They are recorded as submitted.`,
     ],
     decidedBy: actor,

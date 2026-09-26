@@ -64,7 +64,7 @@ CREATE TABLE scs.deforestation_evidence_record (
   -- provenance and integrity
   submitted_by                      jsonb       NOT NULL,   -- ActorReference
   submitted_at                      timestamptz NOT NULL,
-  evidence_object_sha256            text,                   -- the cited SCS-PLATFORM-01 object, if any
+  evidence_object_sha256            text,                   -- the cited AAB-PLATFORM-01 object, if any
   original_object_reference         text        NOT NULL,
   content_digest                    text        NOT NULL,   -- declared by the submitter
   integrity_status                  text        NOT NULL,

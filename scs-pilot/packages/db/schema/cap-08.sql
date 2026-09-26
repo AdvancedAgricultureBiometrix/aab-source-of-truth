@@ -15,7 +15,7 @@
 --   ScsPackageCompilationDecision       → scs.package_compilation
 --     (governance evidence, not a distributable artefact)
 --
--- The rendition (SCS-PLATFORM-02) is scs.rendition in platform.sql. The
+-- The rendition (AAB-PLATFORM-02) is scs.rendition in platform.sql. The
 -- evidence export bundle is specified but not implemented, and has no table.
 --
 -- Current-state reference for the CAP-08 tables. Migration 018 is generated
