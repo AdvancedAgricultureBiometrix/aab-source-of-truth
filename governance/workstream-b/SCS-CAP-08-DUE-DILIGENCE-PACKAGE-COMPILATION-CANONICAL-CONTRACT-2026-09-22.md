@@ -4,7 +4,7 @@
 **Domain:** Supply Chain Sovereignty (SCS)
 **Authority:** DEFINES THE CONTRACT FOR SCS-CAP-08. Establishes no commissioning,
 production, Gate D, WP05, scientific-validity or regulatory authority. This
-capability is PROPOSED_NOT_ADMITTED. No implementation exists.
+capability is PROPOSED_NOT_ADMITTED. A pilot implementation exists; what it covers is recorded in `scs-pilot/packages/api/src/capabilities/cap-08/README.md`.
 
 ## Plain-English boundary statement
 

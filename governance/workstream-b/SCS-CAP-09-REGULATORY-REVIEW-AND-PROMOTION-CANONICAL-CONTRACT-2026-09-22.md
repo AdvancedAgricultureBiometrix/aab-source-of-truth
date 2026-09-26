@@ -4,7 +4,7 @@
 **Domain:** Supply Chain Sovereignty (SCS)
 **Authority:** DEFINES THE CONTRACT FOR SCS-CAP-09. Establishes no commissioning, 
 production, Gate D, WP05, scientific-validity or regulatory authority. This 
-capability is PROPOSED_NOT_ADMITTED. No implementation exists.
+capability is PROPOSED_NOT_ADMITTED. A pilot implementation exists; what it covers is recorded in `scs-pilot/packages/api/src/capabilities/cap-09/README.md`.
 
 ## Plain-English boundary statement
 
@@ -566,7 +566,7 @@ and the records being packaged are read in one snapshot.
 `listDecisionsForSubject` returns the decisions whose operator and framework match and, when
 `plotIds` is given, whose plots equal it as a set: most recent first, each with its currency
 derived in one snapshot. A `REGULATORY_REVIEWER` or a `COMPLIANCE_OFFICER` may list; any other
-actor is `REVIEWER_NOT_AUTHORISED`. It is built with SCS-CAP-08.
+actor is `REVIEWER_NOT_AUTHORISED`. It is not yet built.
 
 ### Deferred
 
