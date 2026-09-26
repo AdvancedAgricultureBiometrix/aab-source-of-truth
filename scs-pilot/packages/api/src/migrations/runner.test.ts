@@ -282,17 +282,29 @@ test("the scs_api password rules (as the old init script enforced them)", () => 
   assert.equal(apiPasswordProblem("a-good-api-password-2026", "owner-pass"), null);
 });
 
-test("setApiPassword sets the scs_api password, quoting it server-side", async () => {
-  const c = await freshDatabase();
+test("setApiPassword sets a role's password, quoting it server-side, without touching the shared scs_api role", async () => {
+  // A throwaway role, not scs_api: scs_api is shared by every database on the
+  // instance, and a dev API on the same instance must keep its password.
+  const role = `scs_test_pwd_${randomBytes(5).toString("hex")}`;
+  const password = "it's a 'quoted' pass; DROP ROLE x; --";
+  const scsApiBefore = (await server.query(`SELECT rolpassword FROM pg_authid WHERE rolname = 'scs_api'`)).rows;
+  await server.query(`CREATE ROLE ${role} LOGIN`);
   try {
-    await serialised(async () => {
-      await migrate(c, await loadMigrations());
-      await setApiPassword(c, "it's a 'quoted' pass; DROP ROLE x; --");
-      assert.equal(to(await c.query(`SELECT rolpassword IS NOT NULL AS set FROM pg_authid WHERE rolname = 'scs_api'`)).set, true);
-    });
+    await setApiPassword(server, password, role);
+    assert.match(to(await server.query<{ p: string }>(`SELECT rolpassword AS p FROM pg_authid WHERE rolname = $1`, [role])).p, /^SCRAM-SHA-256\$/);
+    // the exact password, quotes and all, logs in
+    const url = new URL(adminUrl());
+    const login = new pg.Client({ host: url.hostname, port: Number(url.port || 5432), database: url.pathname.slice(1) || "postgres", user: role, password });
+    await login.connect();
+    try {
+      assert.equal(to(await login.query<{ u: string }>("SELECT current_user AS u")).u, role);
+    } finally {
+      await login.end();
+    }
   } finally {
-    await c.end();
+    await server.query(`DROP ROLE IF EXISTS ${role}`);
   }
+  assert.deepEqual((await server.query(`SELECT rolpassword FROM pg_authid WHERE rolname = 'scs_api'`)).rows, scsApiBefore, "scs_api's password is unchanged");
 });
 
 function to<T extends pg.QueryResultRow>(r: pg.QueryResult<T>): T {
