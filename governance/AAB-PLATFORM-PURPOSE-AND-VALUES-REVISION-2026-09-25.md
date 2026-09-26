@@ -75,7 +75,7 @@ distinct, and no statement about AAB may blur them:
 | **Designed** | A canonical contract defines the capability. |
 | **Implemented** | Code exists that performs what the contract defines. |
 | **Behaviourally proven** | Tests or proofs demonstrate the behaviour end to end, honestly, over real inputs. For the SCS pilot this is recorded as `MINIMUM_VERTICAL_SLICE_PROVEN`. |
-| **Admitted** | The capability has passed the ten-point admission checklist and is a canonical capability of the platform. |
+| **Admitted** | The capability has been admitted by the capability admission authority, and is a canonical capability of the platform. What admission requires, who decides it and its fail-closed rule are defined in `governance/AAB-CAPABILITY-ADMISSION-AUTHORITY-DEFINITION-2026-09-27.md`. The ten-point admission checklist is part of admission, not all of it. |
 | **Commissioned** | The capability is authorised for operational use through commissioning. |
 
 Each state requires the one before it. Being in one state never implies the next: a

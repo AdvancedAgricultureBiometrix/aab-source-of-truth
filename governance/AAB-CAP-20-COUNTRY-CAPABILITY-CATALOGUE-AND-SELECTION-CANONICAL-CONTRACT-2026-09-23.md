@@ -83,12 +83,21 @@ not appear selectable or activatable as though current.
 
 ## Conflict and freshness behaviour
 
+**Admission states.** `ADMISSION_STALE_REASSESSMENT_REQUIRED` means an admitted capability's contract or admitted implementation has changed since admission. `ADMISSION_WITHDRAWN` means the admission was withdrawn by a superseding decision. Both are defined in `governance/AAB-CAPABILITY-ADMISSION-AUTHORITY-DEFINITION-2026-09-27.md`, and neither counts as `ADMITTED`.
+
+**How `maturityStatus` follows these admission states:**
+- **`admissionStatus: ADMISSION_STALE_REASSESSMENT_REQUIRED`.** `maturityStatus` is `IMPLEMENTED_NOT_YET_ADMITTED`. `maturityDisclosure.currentMaturityExplanation` must state that the capability was admitted, that it has changed since, and that reassessment is required. It must not read as though the capability had never been admitted.
+- **`admissionStatus: ADMISSION_WITHDRAWN`.** `maturityStatus` is `ADMISSION_WITHDRAWN`, and the two fields agree. `IMPLEMENTED_NOT_YET_ADMITTED` is never used for a withdrawn admission: withdrawn and never admitted are different states, and conflating them loses information.
+
 The authoritative source always wins. CAP-20 must never present an optimistic
 cached value when the authoritative source says otherwise.
 
 | Conflict scenario | Required behaviour |
 |---|---|
 | Catalogue says ADMITTED, admission registry says NOT_ADMITTED | Display NOT_ADMITTED |
+| Admission registry says ADMISSION_STALE_REASSESSMENT_REQUIRED | Display it, with `maturityStatus` `IMPLEMENTED_NOT_YET_ADMITTED` and a disclosure that reassessment is required; not selectable or activatable as admitted until reassessed |
+| Admission registry says ADMISSION_WITHDRAWN | Display it, with `maturityStatus` `ADMISSION_WITHDRAWN`; not selectable or activatable as admitted |
+| `maturityStatus` says OPERATIONAL_AND_ADMITTED, admission registry says stale or withdrawn | The admission registry wins: display `maturityStatus` as the rules above require |
 | Catalogue says IMPLEMENTED, implementation authority unavailable | Display IMPLEMENTATION_STATUS_UNVERIFIABLE |
 | Entitlement exists, activation registry says inactive | Display NOT_ACTIVATED |
 | Commercially available globally, unavailable in this jurisdiction | Display jurisdiction restriction prominently |
@@ -118,6 +127,7 @@ interface AabCatalogueEntry {
     maturityStatus:
       | "OPERATIONAL_AND_ADMITTED"
       | "IMPLEMENTED_NOT_YET_ADMITTED"
+      | "ADMISSION_WITHDRAWN"
       | "DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED"
       | "CONCEPT_PREVIEW_NOT_IMPLEMENTED"
       | "RETIRED"
@@ -149,6 +159,8 @@ interface AabCatalogueEntry {
       | "IMPLEMENTATION_STATUS_UNVERIFIABLE";
     admissionStatus:
       | "ADMITTED"
+      | "ADMISSION_STALE_REASSESSMENT_REQUIRED"
+      | "ADMISSION_WITHDRAWN"
       | "ADMISSION_IN_PROGRESS"
       | "NOT_ADMITTED"
       | "ADMISSION_STATUS_UNVERIFIABLE";
