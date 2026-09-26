@@ -76,7 +76,7 @@ or hand to a regulatory authority. Only the first is the record.
    content is digested as "The package digest" describes. It is the only authoritative
    artefact.
 2. **The PDF rendition**: a human-readable presentation of the package, rendered from the stored
-   package only, under SCS-PLATFORM-02 (governed document rendition). It is never the record.
+   package only, under AAB-PLATFORM-02 (governed document rendition). It is never the record.
    Its SHA-256 is recorded, and every page shows the `packageDigest` it presents.
 3. **The evidence export bundle**: the original evidence files the package cites, each verified
    against its recorded SHA-256, with a manifest bound to the `packageDigest`. Specified now
@@ -102,7 +102,7 @@ graph TD
     E[SCS-CAP-06<br/>Due Diligence Sufficiency Evaluation] -->|sufficiency evaluation| H
     F[SCS-CAP-09<br/>Regulatory Review and Promotion] -->|PROCEED_TO_PACKAGE_COMPILATION<br/>CURRENT + VALID| H
     K[SCS-CAP-02<br/>Party Identity] -->|operator party| H
-    H -->|package to render| R[SCS-PLATFORM-02<br/>Governed Document Rendition]
+    H -->|package to render| R[AAB-PLATFORM-02<br/>Governed Document Rendition]
     H -->|compiled package| G[Authorised Operator]
     G -->|operator's legal declaration| I[Regulatory Authority]
     H -.->|challenge response| J[SCS-CAP-10<br/>Challenge Response and Evidence Retrieval]
@@ -121,8 +121,8 @@ sequenceDiagram
     participant CAP03 as SCS-CAP-03
     participant CAP02 as SCS-CAP-02
     participant CAP01 as SCS-CAP-01
-    participant OS as Object store (SCS-PLATFORM-01)
-    participant R as Renderer (SCS-PLATFORM-02)
+    participant OS as Object store (AAB-PLATFORM-01)
+    participant R as Renderer (AAB-PLATFORM-02)
 
     CO->>CAP08: RequestPackageCompilation (decisionId, packageInputs)
     CAP08->>CAP09: ValidateForPackageCompilation (decisionId, packageInputs)
@@ -499,7 +499,7 @@ interface ScsPackageCompilationDecision {
   compiledByServiceIdentity: string;
   packageDigest: string;
 
-  // The rendition made at compilation (SCS-PLATFORM-02)
+  // The rendition made at compilation (AAB-PLATFORM-02)
   rendition: {
     renditionId: string;
     mediaType: "application/pdf";
@@ -606,7 +606,7 @@ every blocker the validation reported. When several fail, the code is the first 
 ### Evidence integrity
 
 - Every file cited by a packaged record (a SCS-CAP-04 evidence object, a SCS-CAP-05 supporting
-  document) is read from the object store (SCS-PLATFORM-01) and re-hashed. Its SHA-256 must
+  document) is read from the object store (AAB-PLATFORM-01) and re-hashed. Its SHA-256 must
   equal the recorded digest (`EVIDENCE_INTEGRITY_FAILED`). This read is internal to
   compilation; it is not a retrieval operation of the object store.
 - SCS-CAP-06 relies on integrity as verified at admission. A package goes to a regulator, so
@@ -694,7 +694,7 @@ outcomes.
 
 ### The rendition
 
-- The package is rendered at compilation under SCS-PLATFORM-02, with the SCS-CAP-08 package
+- The package is rendered at compilation under AAB-PLATFORM-02, with the SCS-CAP-08 package
   template, from the package exactly as it is stored. The file is written to the object store
   first; the rendition record, the package, the compilation record and the receipt are then
   written in one transaction. A file whose transaction fails is an unreferenced object and is
@@ -755,7 +755,7 @@ what SCS-CAP-10 records and shows. Only `REQUESTOR_NOT_AUTHORISED` (403) and
   `GET /scs/v1/due-diligence-packages/:packageId` (`getPackage`, `200` with
   `ScsPackageReadResult`) and `GET /scs/v1/due-diligence-packages/:packageId/integrity`
   (`verifyPackageIntegrity`, `200` with `ScsPackageIntegrityVerificationResult`). A package's
-  rendition is downloaded through SCS-PLATFORM-02 (`GET /scs/v1/renditions/:renditionId`), by
+  rendition is downloaded through AAB-PLATFORM-02 (`GET /scs/v1/renditions/:renditionId`), by
   the same readers.
 
 ### Submission request
@@ -790,7 +790,7 @@ Specified now; its implementation is deferred until after the rendition.
 
 - **Contents.** The original file of every evidence item in the package: each SCS-CAP-04
   evidence object and each SCS-CAP-05 supporting document, read from the object store
-  (SCS-PLATFORM-01) and named by its SHA-256.
+  (AAB-PLATFORM-01) and named by its SHA-256.
 - **Manifest.** A `manifest.json` lists, for each file, the evidence id and kind, the SHA-256,
   the media type and the byte length, and names the `packageDigest` the bundle belongs to.
 - **Verified when bundled.** Every file is re-hashed as it is added. A file that does not match
@@ -810,7 +810,7 @@ Specified now; its implementation is deferred until after the rendition.
 
 ### Open gaps
 
-**Contract gap: the evidence bundle's size.** Each file is at most 50 MB (SCS-PLATFORM-01), but
+**Contract gap: the evidence bundle's size.** Each file is at most 50 MB (AAB-PLATFORM-01), but
 no limit is set for a whole bundle, and how a bundle larger than one download should be split
 is not decided.
 

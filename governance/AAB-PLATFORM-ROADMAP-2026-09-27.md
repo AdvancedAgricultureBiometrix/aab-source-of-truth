@@ -1,6 +1,7 @@
 # AAB Platform Roadmap — 2026-09-27
 
 **Status:** PLATFORM ROADMAP
+**Renamed identifiers (2026-09-27):** SCS-PLATFORM-01 and SCS-PLATFORM-02 are now AAB-PLATFORM-01 and AAB-PLATFORM-02, and are cited by their new names throughout.
 **Authority:** RECORDS THE STATE OF EVERY AAB PLATFORM PRIMITIVE AND CAPABILITY, AS DEMONSTRATED BY THE CONTRACTS, CODE, TESTS AND PROOFS ON `main` AT `9f17cc2`, AND WHAT MUST EXIST BEFORE WHAT. Admits no capability, grants no implementation, commissioning, production, regulatory or scientific authority, changes no control's status, and does not satisfy Gate D or begin WP05.
 **Sources:**
 - `governance/AAB-PLATFORM-PURPOSE-AND-VALUES-REVISION-2026-09-25.md`
@@ -54,12 +55,12 @@ The domain separation decision (25 September) names eleven platform primitives. 
 |---|---|---|---|---|
 | 1 | Canonical runtime schemas | JSON Schema 2020-12 with strict Ajv; generated types; the whole registry compiled up front (`foundation/validation.ts`) | `implemented`, exercised by every endpoint and the 549-test suite | No platform-level schema registry; schemas live in `scs-pilot` |
 | 2 | Governed identity and authority | `foundation/auth.ts`: static bearer tokens stored as SHA-256, role checks, separation of duties | `implemented` | `TODO(oidc)`; `TODO(role-registry)`; the actor-to-party link (`TODO(actor-reference)`: `ActorReference` has no shared contract and no `partyId`), so mandate-based submission is refused everywhere |
-| 3 | Immutable evidence objects | SCS-PLATFORM-01: content-addressed by SHA-256, conditional write, never overwritten | `implemented` (upload only) | Retrieval, retention and read access are undefined in the contract; `TODO(object-store-credentials)`; SCS-CAP-02 and SCS-CAP-03 evidence ids are not linked to stored objects (`TODO(evidence-id-model)`) |
+| 3 | Immutable evidence objects | AAB-PLATFORM-01: content-addressed by SHA-256, conditional write, never overwritten | `implemented` (upload only) | Retrieval, retention and read access are undefined in the contract; `TODO(object-store-credentials)`; SCS-CAP-02 and SCS-CAP-03 evidence ids are not linked to stored objects (`TODO(evidence-id-model)`) |
 | 4 | Provenance | Submitter, submission time, cited and linked lineage, recorded at admission | `implemented` | No shared provenance contract; each capability records its own |
 | 5 | Admission decisions | SCS-CAP-02 to SCS-CAP-05: admit, or admit with limitations, fail closed | `implemented` | `REJECTED` and `QUARANTINED` are reserved everywhere; no quarantine operation exists |
 | 6 | Frozen evaluation snapshots | SCS-CAP-06: one REPEATABLE READ snapshot, a manifest, a pure evaluation, content-derived ids | `implemented` | Stored files are not re-hashed at evaluation time |
 | 7 | Attributable human review | SCS-CAP-06 conflict resolution (independent `CONFLICT_RESOLVER`); SCS-CAP-09 review decisions with derived currency | `implemented` | Reviewer authority is declared, not verified; a decision cannot be challenged or corrected; eight staleness triggers have no operation that can fire them |
-| 8 | Governed package compilation | SCS-CAP-08 with SCS-PLATFORM-02 rendition; digest over content only; `verifyPackageIntegrity` | `implemented` | The evidence export bundle; operator listing; the operator declaration; the authorised representative |
+| 8 | Governed package compilation | SCS-CAP-08 with AAB-PLATFORM-02 rendition; digest over content only; `verifyPackageIntegrity` | `implemented` | The evidence export bundle; operator listing; the operator declaration; the authorised representative |
 | 9 | Receipts and auditability | A receipt in the same transaction as the decision, a canonical digest, correlation ids, append-only tables guarded by triggers | `implemented`, exercised by every write | `TODO(idempotency-retention)`; failed attempts leave no audit record (SCS-CAP-08) |
 | 10 | Country isolation | Internal network with no route outside; a pinned edge container; `scs_api` restricted by grants and RLS | `behaviourally proven` for one environment (access isolation proof; CI runs 36225055661 and 36225819409) | Isolation between environments on a shared host (`TODO(tenant-network-policy)`); organisation-level rows (`TODO(tenant-scope)`); log content; an independent security review |
 | 11 | Backup and reconstruction | `scs-pilot/backup/`: full backup, restore into a fresh environment, verified | `behaviourally proven` for the pilot stack (backup-restore proof; CI run 36227701973) | `TODO(backup-encryption)`; signed backups; backup without an outage; recovery objectives; point-in-time recovery; backup location; deletion |
@@ -103,8 +104,8 @@ The SCS domain definition and the SCS capability roster name **twelve** SCS capa
 | SCS-CAP-10 Challenge Response and Evidence Retrieval | `named only` | — | — |
 | SCS-CAP-11 Regulatory Framework Update Management | `named only` | — | — |
 | SCS-CAP-12 Cross-Boundary Evidence Reference | `named only` | — | — |
-| SCS-PLATFORM-01 Evidence Object Store | `implemented` | upload | none |
-| SCS-PLATFORM-02 Governed Document Rendition | `implemented` | render, download | none |
+| AAB-PLATFORM-01 Evidence Object Store | `implemented` | upload | none |
+| AAB-PLATFORM-02 Governed Document Rendition | `implemented` | render, download | none |
 | SCS-BRAIN-CANDIDATE-01 Governed Evidence Intelligence | `named only` (candidate design record) | — | — |
 
 **The pilot's standard for `MINIMUM_VERTICAL_SLICE_PROVEN`:** records feed an SCS-CAP-06 evaluation that runs end to end, honestly, over real admitted evidence, as the restricted `scs_api` role. It does not mean a best-case outcome. **No pilot evaluation can reach `SUFFICIENT`** (`TODO(postgis)`); the best pilot outcome is `GAPS_REQUIRE_HUMAN_DECISION`. The READMEs require that pilot partners be told this.
@@ -166,7 +167,7 @@ The SCS domain definition and the SCS capability roster name **twelve** SCS capa
   - There are no criteria for `REJECTED` or `QUARANTINED`.
   - Temporal sufficiency belongs to SCS-CAP-06.
 - **Open TODOs:** `TODO(postgis)`, `TODO(object-store-credentials)`.
-- **Depends on:** SCS-CAP-01, SCS-CAP-02, SCS-CAP-03 and SCS-PLATFORM-01.
+- **Depends on:** SCS-CAP-01, SCS-CAP-02, SCS-CAP-03 and AAB-PLATFORM-01.
 
 **SCS-CAP-05 Supply Chain Custody Evidence Admission — `behaviourally proven`**
 - **Built:** `submitCustodyEvent` (`POST /scs/v1/custody-events`).
@@ -178,7 +179,7 @@ The SCS domain definition and the SCS capability roster name **twelve** SCS capa
   - There is no batch or facility registry.
   - Mandate scope is not checked.
 - **Open TODOs:** `TODO(object-store-credentials)`.
-- **Depends on:** SCS-CAP-01, SCS-CAP-02, SCS-CAP-03 (optional source plots) and SCS-PLATFORM-01.
+- **Depends on:** SCS-CAP-01, SCS-CAP-02, SCS-CAP-03 (optional source plots) and AAB-PLATFORM-01.
 
 **SCS-CAP-06 Due Diligence Sufficiency Evaluation — `behaviourally proven`**
 - **Built:**
@@ -203,7 +204,7 @@ The SCS domain definition and the SCS capability roster name **twelve** SCS capa
 - **Depends on:** SCS-CAP-01 and SCS-CAP-06.
 
 **SCS-CAP-08 Due Diligence Package Compilation — `behaviourally proven`**
-- **Built:** `requestCompilation` with its PDF rendition, `getPackage`, `verifyPackageIntegrity`, and the rendition download through SCS-PLATFORM-02.
+- **Built:** `requestCompilation` with its PDF rendition, `getPackage`, `verifyPackageIntegrity`, and the rendition download through AAB-PLATFORM-02.
 - **Not built:**
   - `listPackagesForOperator`;
   - `getPackageDigest` (deferred, since `getPackage` returns the digest);
@@ -215,7 +216,7 @@ The SCS domain definition and the SCS capability roster name **twelve** SCS capa
   - No bundle size rule.
   - Failed compilations leave no audit record.
 - **Proof:** `cap-08-packages.test.ts` proves the whole chain end to end, from framework to package and PDF, every gap disclosed. `rendition.test.ts` checks the rendition digest across platforms. The backup-restore proof rebuilds a package in a restored environment. The proof was merged in PR #25 (CI run 36228700962). The README's `MINIMUM_VERTICAL_SLICE_PROVEN` record follows in a separate commit.
-- **Depends on:** SCS-CAP-01 to SCS-CAP-06, SCS-CAP-09 (a CURRENT, VALID `PROCEED_TO_PACKAGE_COMPILATION` decision), SCS-PLATFORM-01 and SCS-PLATFORM-02.
+- **Depends on:** SCS-CAP-01 to SCS-CAP-06, SCS-CAP-09 (a CURRENT, VALID `PROCEED_TO_PACKAGE_COMPILATION` decision), AAB-PLATFORM-01 and AAB-PLATFORM-02.
 
 **SCS-CAP-09 Regulatory Review and Promotion — `behaviourally proven`**
 - **Built:** `submitDecision`, `getDecision`, `assessCurrency`, and `validateForPackageCompilation` (internal, called by SCS-CAP-08).
@@ -241,13 +242,13 @@ The SCS domain definition and the SCS capability roster name **twelve** SCS capa
 - **Depends on:** SCS-CAP-01, 03, 04, 05, 08 and 09, "plus stable country-isolation architecture confirmed in production".
 - The roster calls it last to be designed, and highest complexity.
 
-**SCS-PLATFORM-01 Evidence Object Store — `implemented`**
+**AAB-PLATFORM-01 Evidence Object Store — `implemented`**
 - **Built:** upload (`POST /scs/v1/evidence-objects`), up to 50 MB, six media types, never overwritten.
 - **Not defined by the contract:** retrieval, retention, read access, and who may upload.
 - **Not verified:** that the media type matches the bytes.
 - **Open TODOs:** `TODO(object-store-credentials)`, which must be done "before any real data is stored".
 
-**SCS-PLATFORM-02 Governed Document Rendition — `implemented`**
+**AAB-PLATFORM-02 Governed Document Rendition — `implemented`**
 - **Built:** a deterministic PDF renderer (pdfkit 0.20.2, fonts pinned by SHA-256) and `GET /scs/v1/renditions/:renditionId` with a re-hash on read.
 - **Open:**
   - Thai line breaking.
@@ -256,7 +257,7 @@ The SCS domain definition and the SCS capability roster name **twelve** SCS capa
   - English only.
   - No signatures.
   - Retention.
-- **Depends on:** SCS-PLATFORM-01.
+- **Depends on:** AAB-PLATFORM-01.
 
 **SCS-BRAIN-CANDIDATE-01 Governed Evidence Intelligence — `named only` (candidate design record)**
 - A read-only, advisory reasoning layer above the SCS capabilities.
@@ -372,12 +373,12 @@ The eleven primitives of section 1 are what every domain builds on. This section
 |---|---|---|---|---|
 | 1 | Canonical runtime schemas | `implemented`: every endpoint | Browser contracts in the rehearsal bundle; no runtime-enforced canonical schemas evidenced | — |
 | 2 | Governed identity and authority | `implemented` | The rehearsal resolves actors through `agriculture.api_resolve_authenticated_actor`; browser contracts `AAB-ID-01` to `09` | CAP-23 (`named only`); CAP-24 (`named only`) |
-| 3 | Immutable evidence objects | `implemented` (SCS-PLATFORM-01) | CAP-04 `preserveOriginal` (`designed`); the rehearsal's community photo upload | CAP-03 (`named only`) |
+| 3 | Immutable evidence objects | `implemented` (AAB-PLATFORM-01) | CAP-04 `preserveOriginal` (`designed`); the rehearsal's community photo upload | CAP-03 (`named only`) |
 | 4 | Provenance | `implemented` | CAP-04 record envelope (`designed`) | CAP-03 (`named only`) |
 | 5 | Admission decisions | `implemented` (SCS-CAP-02 to 05) | CAP-04 `MemoryAdmissionDecision` (`designed`) | CAP-04 (`designed`) |
 | 6 | Frozen evaluation snapshots | `implemented` (SCS-CAP-06) | CAP-05 `EvidenceLandscapeSnapshotIdentity` (`designed`) | CAP-05 (`designed`) |
 | 7 | Attributable human review | `implemented` (SCS-CAP-06, SCS-CAP-09) | The rehearsal's `decide_learning_review` and `decide_observation_review` | CAP-25 (`named only`); CAP-09 (`named only`) |
-| 8 | Governed package compilation | `implemented` (SCS-CAP-08, SCS-PLATFORM-02) | None | CAP-11 (`named only`, post-launch) |
+| 8 | Governed package compilation | `implemented` (SCS-CAP-08, AAB-PLATFORM-02) | None | CAP-11 (`named only`, post-launch) |
 | 9 | Receipts and auditability | `implemented` | CAP-34 disclosure receipt (simulation only) | CAP-30 (`named only`) |
 | 10 | Country isolation | `behaviourally proven`, one environment | The rehearsal: Phase-1 findings CR-02 and CR-04 are production-standard failures | CAP-26 (`named only`); CAP-16 (`named only`) |
 | 11 | Backup and reconstruction | `behaviourally proven`, pilot stack | The rehearsal: CR-06 and CR-07 are production-standard failures | CAP-28 (`named only`) |
@@ -393,7 +394,7 @@ The eleven primitives of section 1 are what every domain builds on. This section
 
 ```mermaid
 flowchart LR
-  P1[SCS-PLATFORM-01<br/>object store] --> P2[SCS-PLATFORM-02<br/>rendition]
+  P1[AAB-PLATFORM-01<br/>object store] --> P2[AAB-PLATFORM-02<br/>rendition]
   C01[SCS-CAP-01] --> C02[SCS-CAP-02]
   C01 --> C03[SCS-CAP-03]
   C02 --> C03
@@ -551,7 +552,7 @@ Gate D is not an admission prerequisite. It follows admission, and blocks commis
 - **Proof:** no independent security review; `SHA256SUMS` unsigned; no recovery objectives; no point-in-time recovery.
 - **Reserved outcomes:** `REJECTED` and `QUARANTINED` in every admission capability.
 - **Undefined reviewer and verifier authority:** SCS-CAP-02 verifying authorities; SCS-CAP-09 reviewer authority.
-- **Unsupported languages and scripts:** SCS-PLATFORM-02 and SCS-CAP-08 are English only.
+- **Unsupported languages and scripts:** AAB-PLATFORM-02 and SCS-CAP-08 are English only.
 - **AGR candidate:** the eight remediation items for the cross-institutional landscape candidate.
 - **Phase 2 security:**
   - `PH2-SEC-CC-RLS-ADVISORY-01` is OPEN.
@@ -561,7 +562,7 @@ Gate D is not an admission prerequisite. It follows admission, and blocks commis
 
 These are corrections, not capability gaps. They should be fixed so the record stops understating what exists.
 
-- **All eight SCS contract headers,** SCS-PLATFORM-01 and SCS-PLATFORM-02 say "No implementation exists".
+- **All eight SCS contract headers,** AAB-PLATFORM-01 and AAB-PLATFORM-02 say "No implementation exists".
 - **The SCS roster** marks everything "NOT AUTHORISED — NOT STARTED" and `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED`.
 - **CAP-34's SCS roadmap preview** (`simulation/cap34/scs-roadmap-preview.js`) shows every SCS capability as not implemented. It shows SCS-CAP-02 and SCS-CAP-05 as `CONCEPT_PREVIEW_NOT_IMPLEMENTED`, although both have contracts.
 - **`scs-pilot/README.md`** says "No capability logic is implemented", that only SCS-CAP-01 is served, and migrations 001–005.

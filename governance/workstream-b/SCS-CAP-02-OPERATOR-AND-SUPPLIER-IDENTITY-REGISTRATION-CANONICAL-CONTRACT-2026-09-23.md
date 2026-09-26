@@ -625,7 +625,7 @@ party (`getParty`) also returns evidence submitted later. That must be specified
 `getParty` is implemented.
 
 **Contract gap: the evidence id model.** The evidence identifiers in this contract are
-uuids, and predate the SCS evidence object store (SCS-PLATFORM-01), which identifies files
+uuids, and predate the SCS evidence object store (AAB-PLATFORM-01), which identifies files
 by their SHA-256 digest. They are not linked to the store and cannot be confirmed against
 it. Aligning them, so that evidence cites stored objects as SCS-CAP-04 and SCS-CAP-05 do,
 requires a contract change and a migration. Until then, identifiers are recorded as

@@ -591,7 +591,7 @@ only.
 is not checked: there is no country boundary data. TODO(country-boundary-check).
 
 **Contract gap: the evidence id model.** `supportingEvidenceIds` and the tenure claims'
-`evidenceIds` are uuids, and predate the SCS evidence object store (SCS-PLATFORM-01), which
+`evidenceIds` are uuids, and predate the SCS evidence object store (AAB-PLATFORM-01), which
 identifies files by their SHA-256 digest. They are not linked to the store and cannot be
 confirmed against it. Aligning them requires a contract change and a migration. Until then,
 identifiers are recorded as submitted, and every decision must say that they cannot be

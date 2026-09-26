@@ -12,7 +12,7 @@
 - `identity/contracts/AAB-ID-01` to `AAB-ID-03`: the rehearsal identity doctrine (account link, actor link, membership authority)
 - `handovers/AAB-COUNTRY-ONBOARDING-CANONICAL-PATH.md`: "Authentication is not authority"
 - `governance/AAB-PLATFORM-DOMAIN-SEPARATION-DECISION-2026-09-25.md`: identity is a platform primitive, and "SCS domain → AAB platform primitives. Never the reverse."
-- every canonical contract that uses `ActorReference`: SCS-CAP-01 to SCS-CAP-09, SCS-PLATFORM-01 and -02, CAP-04, CAP-20 and CAP-21
+- every canonical contract that uses `ActorReference`: SCS-CAP-01 to SCS-CAP-09, AAB-PLATFORM-01 and -02, CAP-04, CAP-20 and CAP-21
 - the SCS-CAP-02 representation mandate, and the mandate gaps in SCS-CAP-02, SCS-CAP-04 and SCS-CAP-05
 - the Gate D, capability admission authority and capability admission registry definitions
 
@@ -163,7 +163,7 @@ interface ActorReference {
 |---|---|---|
 | Decision receipts (every governed write) | the receipt's `actor` | None beyond this contract |
 | Idempotency records | the actor's identity | Keyed by `actorId`, which is unique while a deployment has one issuer. `TODO(multi-issuer-idempotency)`: when a second issuer first acts in a deployment, keys become (`issuer`, `actorId`), by a migration defined at that point. |
-| Evidence objects, renditions (SCS-PLATFORM-01, -02) | `storedBy`, `renderedFor` | None beyond this contract |
+| Evidence objects, renditions (AAB-PLATFORM-01, -02) | `storedBy`, `renderedFor` | None beyond this contract |
 | Capability decisions (for example CAP-09 review decisions) | `decidedBy`, `reviewer`, `assessedBy` | As each capability's contract requires |
 | **Capability admission records** | each party's decision | **Governance decision:** `HUMAN`, `accountableName` present, and the decision signed |
 | **Change and resolution records** (admission registry) | the signing parties | **Governance decision** |

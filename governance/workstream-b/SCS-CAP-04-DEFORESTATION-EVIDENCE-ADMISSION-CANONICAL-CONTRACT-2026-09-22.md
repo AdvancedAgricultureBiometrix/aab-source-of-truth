@@ -136,7 +136,7 @@ interface ScsDeforestationEvidenceRecord {
   provenance: {
     submittedBy: ActorReference;
     submittedAt: string;
-    // The SCS-PLATFORM-01 evidence object store's objectId, when a stored file is cited
+    // The AAB-PLATFORM-01 evidence object store's objectId, when a stored file is cited
     evidenceObjectId?: string;
     originalObjectReference: string;
     contentDigest: string;
@@ -481,7 +481,7 @@ result and must be disclosed to pilot partners.
 
 ### Evidence object and integrity
 
-The evidence file itself is stored in the SCS evidence object store (SCS-PLATFORM-01), which
+The evidence file itself is stored in the SCS evidence object store (AAB-PLATFORM-01), which
 computes its SHA-256. The submission may cite a stored object by its `objectId`, and always
 declares the file's `contentDigest`.
 
@@ -638,7 +638,7 @@ interface ScsDeforestationEvidenceSubmissionRequest {
   source: ScsDeforestationEvidenceRecord["source"];
 
   evidenceObject: {
-    // The SCS-PLATFORM-01 objectId of the stored file, when one is cited
+    // The AAB-PLATFORM-01 objectId of the stored file, when one is cited
     objectId?: string;
     // The source's own reference to the original object
     originalObjectReference: string;

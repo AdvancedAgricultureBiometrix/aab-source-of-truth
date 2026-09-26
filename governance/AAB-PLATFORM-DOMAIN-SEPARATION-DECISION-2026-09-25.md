@@ -5,6 +5,7 @@
 MODULES, AND THE RULES FOR ANY FUTURE EXTRACTION. Grants no refactor authority now.
 Admits no capability, and does not alter commissioning status, Gate D, WP05, or any
 production or regulatory authority.
+**Renamed identifiers (2026-09-27):** SCS-PLATFORM-01 and SCS-PLATFORM-02 are now AAB-PLATFORM-01 and AAB-PLATFORM-02, and are cited by their new names below. The runtime error attribution `SCS-PLATFORM` is unchanged; it is part of the naming coupling described under "Coupling: the honest position".
 **Evidence base:** the SCS vertical proof on `implementation/scs-vertical-proof`
 (PRs #22, #23 and #24; SCS-CAP-01 to SCS-CAP-06 `MINIMUM_VERTICAL_SLICE_PROVEN`).
 
@@ -31,7 +32,7 @@ the same degree. Each one's status is stated honestly, as of this record:
 |---|---|---|---|
 | 1 | Canonical runtime schemas | JSON Schema 2020-12 (Ajv strict), generated types, the whole registry compiled up front | Exercised by every endpoint |
 | 2 | Governed identity and authority | authenticated actors, role checks, separation of duties (verifier, resolver) | Exercised; the actor-to-party link is a known gap |
-| 3 | Immutable evidence objects | SCS-PLATFORM-01: content-addressed by SHA-256, conditional write, never overwritten | Exercised |
+| 3 | Immutable evidence objects | AAB-PLATFORM-01: content-addressed by SHA-256, conditional write, never overwritten | Exercised |
 | 4 | Provenance | submitter, submission time, cited and linked lineage, recorded at admission | Exercised |
 | 5 | Admission decisions | admit, or admit with limitations, fail closed, every limitation disclosed | Exercised (SCS-CAP-02 to SCS-CAP-05) |
 | 6 | Frozen evaluation snapshots | one REPEATABLE READ snapshot, a manifest, a pure evaluation, content-derived identifiers | Exercised (SCS-CAP-06) |

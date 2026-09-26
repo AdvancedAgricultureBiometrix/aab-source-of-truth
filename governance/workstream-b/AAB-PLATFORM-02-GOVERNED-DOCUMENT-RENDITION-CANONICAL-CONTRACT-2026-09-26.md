@@ -1,7 +1,8 @@
-# SCS-PLATFORM-02 — Governed Document Rendition — Canonical Contract — 2026-09-26
+# AAB-PLATFORM-02 — Governed Document Rendition — Canonical Contract — 2026-09-26
 
 **Status:** CANONICAL CONTRACT — NOT IMPLEMENTATION
 **Domain:** Supply Chain Sovereignty (SCS)
+**Renamed:** from SCS-PLATFORM-02 on 2026-09-27. Platform contracts are numbered AAB-PLATFORM-NN (AAB-PLATFORM-03, decision 1).
 **Authority:** DEFINES THE CONTRACT FOR GOVERNED DOCUMENT RENDITION, A PLATFORM SERVICE SHARED BY ALL SCS CAPABILITIES. Establishes no commissioning, production, Gate D, WP05, scientific-validity or regulatory authority. PROPOSED_NOT_ADMITTED. A pilot implementation exists in `scs-pilot/packages/api/src/platform/renditions/`.
 
 ## Plain-English boundary statement
@@ -96,7 +97,7 @@ interface ScsRendition {
 }
 ```
 
-- **Storage.** The bytes are stored in the object store (SCS-PLATFORM-01) under their SHA-256,
+- **Storage.** The bytes are stored in the object store (AAB-PLATFORM-01) under their SHA-256,
   as a system write, not through the upload endpoint. A stored rendition is never evidence.
 - **Append-only.** A rendition record is never changed or deleted. Rendering a record again,
   for example with a new renderer version, adds a new rendition record and never replaces one.
@@ -175,6 +176,8 @@ production. pdfkit is adopted.
   `pdfkit@0.20.2;noto-sans@2.015;noto-sans-thai@2.002;scs-cap08-package@1`.
 
 ## Failure contract
+
+Errors from this service are still attributed `capabilityId: "SCS-PLATFORM"`. That value is part of the SCS naming the platform code carries, which the platform–domain separation decision leaves to extraction, after the independent dependency audit. It changes then, not with this contract's identifier.
 
 ```typescript
 interface ScsRenditionFailure {

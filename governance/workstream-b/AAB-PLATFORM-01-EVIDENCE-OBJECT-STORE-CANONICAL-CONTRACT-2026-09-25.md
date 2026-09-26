@@ -1,7 +1,8 @@
-# SCS-PLATFORM-01 — Evidence Object Store — Canonical Contract — 2026-09-25
+# AAB-PLATFORM-01 — Evidence Object Store — Canonical Contract — 2026-09-25
 
 **Status:** CANONICAL CONTRACT — NOT IMPLEMENTATION
 **Domain:** Supply Chain Sovereignty (SCS)
+**Renamed:** from SCS-PLATFORM-01 on 2026-09-27. Platform contracts are numbered AAB-PLATFORM-NN (AAB-PLATFORM-03, decision 1).
 **Authority:** DEFINES THE CONTRACT FOR THE SCS EVIDENCE OBJECT STORE, A PLATFORM SERVICE SHARED BY ALL SCS CAPABILITIES. Establishes no commissioning, production, Gate D, WP05, scientific-validity or regulatory authority. PROPOSED_NOT_ADMITTED. A pilot implementation exists in `scs-pilot/packages/api/src/platform/evidence-objects/`.
 
 ## Plain-English boundary statement
@@ -77,6 +78,8 @@ A stored object is never modified. It is not deleted by any operation in this co
 Retrieval is not yet defined; capabilities verify a cited object through its recorded digest.
 
 ## Failure contract
+
+Errors from this service are still attributed `capabilityId: "SCS-PLATFORM"`. That value is part of the SCS naming the platform code carries, which the platform–domain separation decision leaves to extraction, after the independent dependency audit. It changes then, not with this contract's identifier.
 
 ```typescript
 interface ScsEvidenceObjectFailure {
