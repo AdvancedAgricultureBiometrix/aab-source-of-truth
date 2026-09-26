@@ -73,7 +73,7 @@ services:
     build:
       context: ./packages
       dockerfile: api/Dockerfile
-    image: scs-pilot-api:local
+    image: scs-pilot-api:${SCS_API_IMAGE_TAG:-local}
     command: ["node", "dist/migrations/cli.js"]
     restart: "no"
     # a one-off command, not the API: the image's HEALTHCHECK does not apply
@@ -119,7 +119,7 @@ services:
     build:
       context: ./packages
       dockerfile: api/Dockerfile
-    image: scs-pilot-api:local
+    image: scs-pilot-api:${SCS_API_IMAGE_TAG:-local}
     networks: [internal]
     environment:
       # inside the internal network the API always listens on 3000; the host

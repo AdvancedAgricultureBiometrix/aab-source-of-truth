@@ -103,3 +103,23 @@ jobs:
       - name: Remove the stack
         if: always()
         run: docker compose -f docker-compose.yml -f docker-compose.dev.yml down -v
+
+  # The backup and restore proof: the whole procedure on throwaway
+  # environments (scs-pilot/backup/prove-backup-restore.mjs). A governed chain
+  # is created through the API, backed up, restored into a fresh environment
+  # with no volumes, and verified: migrations and checksums, receipts,
+  # packages, files, row counts, grants, and the restored API itself. It also
+  # checks that a tampered backup and a restore over an existing environment
+  # are refused.
+  backup-restore:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: scs-pilot
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.21.0'
+      - name: Prove backup and restore
+        run: node backup/prove-backup-restore.mjs
