@@ -74,6 +74,10 @@ import cap08PackageEnvelope from "./cap-08/package-envelope.schema.json" with { 
 import cap08PackageCompilationRecord from "./cap-08/package-compilation-record.schema.json" with { type: "json" };
 import cap08PackageCompilationReceipt from "./cap-08/package-compilation-receipt.schema.json" with { type: "json" };
 import cap08PackageCompilationResponse from "./cap-08/package-compilation-response.schema.json" with { type: "json" };
+import cap08PackageParams from "./cap-08/package-params.schema.json" with { type: "json" };
+import cap08PackageReadResult from "./cap-08/package-read-result.schema.json" with { type: "json" };
+import cap08PackageIntegrityResult from "./cap-08/package-integrity-result.schema.json" with { type: "json" };
+import platformRenditionParams from "./platform/rendition-params.schema.json" with { type: "json" };
 
 import { registerSchema, type JsonSchema } from "../foundation/validation.js";
 
@@ -146,6 +150,10 @@ export const SCHEMAS = {
   cap08PackageCompilationRecord,
   cap08PackageCompilationReceipt,
   cap08PackageCompilationResponse,
+  cap08PackageParams,
+  cap08PackageReadResult,
+  cap08PackageIntegrityResult,
+  platformRenditionParams,
 } as const satisfies Record<string, JsonSchema>;
 
 for (const schema of Object.values(SCHEMAS)) registerSchema(schema);

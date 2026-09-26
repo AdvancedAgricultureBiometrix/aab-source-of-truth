@@ -8,6 +8,9 @@
  *   src/schemas/cap-08/package-compilation-record.schema.json
  *   src/schemas/cap-08/package-compilation-receipt.schema.json
  *   src/schemas/cap-08/package-compilation-response.schema.json
+ *   src/schemas/cap-08/package-params.schema.json
+ *   src/schemas/cap-08/package-read-result.schema.json
+ *   src/schemas/cap-08/package-integrity-result.schema.json
  * To change these types, edit the schema(s) above, then run:
  *   npm run generate:types
  * npm test fails if this file differs from what the schemas generate.
@@ -422,4 +425,74 @@ export interface ScsPackageCompilationResponse {
   package: ScsDueDiligencePackageEnvelope;
   receipt: ScsPackageCompilationReceipt;
   receiptDigest: string;
+}
+
+/**
+ * Path parameters of GET /scs/v1/due-diligence-packages/:packageId and .../integrity.
+ */
+export interface ScsPackagePathParams {
+  packageId: string;
+}
+
+/**
+ * Body of GET /scs/v1/due-diligence-packages/:packageId (contract 700c40a): the envelope exactly as stored (what packageDigest covers) and, beside it, the currency of the decision it was compiled from, derived at read time and never part of the digested content.
+ */
+export interface ScsPackageReadResult {
+  envelope: ScsDueDiligencePackageEnvelope;
+  currency: ScsPackageDecisionCurrency;
+}
+export interface ScsPackageDecisionCurrency {
+  decisionId: string;
+  status: "CURRENT" | "POTENTIALLY_STALE" | "SUPERSEDED" | "FAIL_CLOSED";
+  assessedAt: string;
+  /**
+   * @maxItems 1000
+   */
+  stalenessReasons?: ScsPackageStalenessReason[];
+  supersededByDecisionId?: string;
+}
+export interface ScsPackageStalenessReason {
+  changeType: string;
+  changedAt: string;
+  changedEntityId: string;
+  explanation: string;
+}
+
+/**
+ * Body of GET /scs/v1/due-diligence-packages/:packageId/integrity (contract 700c40a, "Verifying a package"): always 200 for a package that exists and an authorised reader. Every check performed, each with its result, and the overall integrityStatus: the first that applies, a found change outranking UNVERIFIABLE. Nothing is recorded.
+ */
+export interface ScsPackageIntegrityVerificationResult {
+  packageId: string;
+  packageDigest: string;
+  verifiedAt: string;
+  integrityStatus:
+    | "DIGEST_MISMATCH"
+    | "EVALUATION_CHANGED"
+    | "REVIEW_DECISION_CHANGED"
+    | "EVIDENCE_RECORDS_CHANGED"
+    | "EVIDENCE_OBJECT_MISSING"
+    | "EVIDENCE_CHANGED"
+    | "UNVERIFIABLE"
+    | "INTACT";
+  /**
+   * @minItems 3
+   * @maxItems 20000
+   */
+  checks: ScsPackageIntegrityCheck[];
+  detail: string;
+}
+export interface ScsPackageIntegrityCheck {
+  check: "PACKAGE_DIGEST" | "EVALUATION_RECEIPT" | "DECISION_RECEIPT" | "EVIDENCE_RECORD" | "EVIDENCE_FILE";
+  evidenceId?: string;
+  result:
+    | "PASS"
+    | "NOT_APPLICABLE"
+    | "DIGEST_MISMATCH"
+    | "EVALUATION_CHANGED"
+    | "REVIEW_DECISION_CHANGED"
+    | "EVIDENCE_RECORDS_CHANGED"
+    | "EVIDENCE_OBJECT_MISSING"
+    | "EVIDENCE_CHANGED"
+    | "UNVERIFIABLE";
+  detail: string;
 }

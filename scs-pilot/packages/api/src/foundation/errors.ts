@@ -85,6 +85,10 @@ export const PLATFORM_ERRORS = {
   // SCS-PLATFORM-01 evidence object store (raw-body upload route)
   EVIDENCE_OBJECT_TOO_LARGE: 413,
   EVIDENCE_OBJECT_TYPE_UNSUPPORTED: 415,
+  // SCS-PLATFORM-02 rendition download
+  READER_NOT_AUTHORISED: 403,
+  RENDITION_NOT_FOUND: 404,
+  RENDITION_INTEGRITY_FAILED: 422,
 } as const;
 
 export type PlatformErrorCode = keyof typeof PLATFORM_ERRORS;

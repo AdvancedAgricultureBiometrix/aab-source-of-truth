@@ -1,5 +1,6 @@
-// SCS-CAP-08 POST /scs/v1/due-diligence-packages (contract 4b1f05b, 901a600)
-// with its SCS-PLATFORM-02 rendition (a0f8c46), end to end: real HTTP, real
+// SCS-CAP-08 packages (contract 4b1f05b, 901a600, 700c40a) — requestCompilation
+// with its SCS-PLATFORM-02 rendition (a0f8c46), getPackage,
+// verifyPackageIntegrity and the rendition download — end to end: real HTTP, real
 // PostgreSQL (the API connected as a restricted member of scs_api) and a real
 // S3-compatible object store. Every record packaged is made through its
 // endpoint — framework, parties, plot, evidence files and records, custody
@@ -15,20 +16,22 @@ import type { Server } from "node:http";
 
 import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 
+import { READER_ROLES as CAP08_READER_ROLES } from "../capabilities/cap-08/errors.js";
 import { cap08Routes } from "../capabilities/cap-08/routes.js";
 import { CAPABILITY_ROUTES } from "../capabilities/index.js";
 import { StaticTokenAuthenticator } from "../foundation/auth.js";
 import { canonicalJson, sha256Hex } from "../foundation/canonical.js";
 import { runWithCorrelation } from "../foundation/correlation.js";
 import { connectDatabase, type Database } from "../foundation/db.js";
-import { createApiServer } from "../foundation/server.js";
-import { validate } from "../foundation/validation.js";
+import { createApiServer, type Route } from "../foundation/server.js";
+import { validate, type JsonSchema } from "../foundation/validation.js";
 import { S3ObjectStore } from "../platform/evidence-objects/object-store.js";
 import { evidenceObjectRoutes } from "../platform/evidence-objects/routes.js";
+import { renditionRoutes } from "../platform/renditions/routes.js";
 import { SCHEMAS } from "../schemas/registry.js";
 import type { ScsFrameworkRegistrationRequest } from "../types/cap-01.js";
 import type { ScsSufficiencyEvaluationResult, ScsSufficiencyEvaluationSubmission } from "../types/cap-06.js";
-import type { ScsPackageCompilationResponse, ScsPackageCompilationSubmission } from "../types/cap-08.js";
+import type { ScsPackageCompilationResponse, ScsPackageCompilationSubmission, ScsPackageIntegrityVerificationResult, ScsPackageReadResult } from "../types/cap-08.js";
 import type { ScsRegulatoryReviewDecision, ScsReviewDecisionResponse, ScsReviewDecisionSubmission } from "../types/cap-09.js";
 import { frameworkRequest, partyRequest } from "./fixtures.js";
 import { createMigratedDatabase, type MigratedDatabase } from "./harness.js";
@@ -298,7 +301,11 @@ before(async () => {
   const authenticator = StaticTokenAuthenticator.fromConfig({
     actors: (Object.keys(TOKENS) as Who[]).map((k) => ({ tokenSha256: createHash("sha256").update(TOKENS[k]).digest("hex"), actor: actors[k] })),
   });
-  server = createApiServer({ routes: [...evidenceObjectRoutes(objects.store), ...CAPABILITY_ROUTES, ...cap08Routes(objects.store)], authenticator, db: api });
+  server = createApiServer({
+    routes: [...evidenceObjectRoutes(objects.store), ...renditionRoutes(objects.store, { "SCS-CAP-08": CAP08_READER_ROLES }), ...CAPABILITY_ROUTES, ...cap08Routes(objects.store)],
+    authenticator,
+    db: api,
+  });
   await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
   farmer = await verifiedParty("NATURAL_PERSON");
@@ -570,4 +577,231 @@ test("receipt write fails → 500; no package, compilation record or rendition r
     await harness.admin.query(`DROP TRIGGER test_fail_receipt_insert ON scs.decision_receipt; DROP FUNCTION scs.test_fail_receipt_insert();`);
   }
   await compile(compileBody(s));
+});
+
+// ── getPackage ───────────────────────────────────────────────────────────────
+
+const readSchema = (schema: JsonSchema, body: unknown) => {
+  const checked = runWithCorrelation("cap08-read-schema", () => validate("SCS-CAP-08", schema, body));
+  assert.ok(checked.ok, checked.ok ? "" : checked.envelope.reasons.join("; "));
+};
+
+async function readPackage(packageId: string, who: Who = "officer"): Promise<ScsPackageReadResult> {
+  const r = await get(`${PACKAGES}/${packageId}`, who);
+  assert.equal(r.status, 200, JSON.stringify(r.json));
+  readSchema(SCHEMAS.cap08PackageReadResult, r.json);
+  return r.json as unknown as ScsPackageReadResult;
+}
+
+async function verify(packageId: string, opts: { who?: Who; to?: string } = {}): Promise<ScsPackageIntegrityVerificationResult> {
+  const before = await totals();
+  const r = await send("GET", `${PACKAGES}/${packageId}/integrity`, undefined, { who: opts.who ?? "officer", ...(opts.to === undefined ? {} : { to: opts.to }) });
+  assert.equal(r.status, 200, JSON.stringify(r.json));
+  readSchema(SCHEMAS.cap08PackageIntegrityResult, r.json);
+  assert.deepEqual(await totals(), before, "verification records nothing");
+  return r.json as unknown as ScsPackageIntegrityVerificationResult;
+}
+
+const resultOf = (v: ScsPackageIntegrityVerificationResult, check: string, evidenceId?: string) =>
+  v.checks.find((c) => c.check === check && (evidenceId === undefined || c.evidenceId === evidenceId))!.result;
+
+async function readRefused(path: string, status: number, error: string, capabilityId: string, who: Who = "officer") {
+  const r = await get(path, who);
+  assert.equal(r.status, status, JSON.stringify(r.json));
+  assert.equal(r.json["error"], error);
+  assert.equal(r.json["capabilityId"], capabilityId);
+  return r.json;
+}
+
+/** A compiled package of a fresh subject. */
+async function compiled() {
+  const s = await approvedSubject();
+  const r = await compile(compileBody(s));
+  return { s, r, packageId: r.package.compilationMetadata.packageId };
+}
+
+/** A server whose object store cannot be reached. */
+async function withStoreDown<T>(routes: (store: S3ObjectStore) => readonly Route<never>[], fn: (to: string) => Promise<T>): Promise<T> {
+  const down = new S3ObjectStore({ ...objects.config, endpoint: "http://127.0.0.1:1" });
+  const authenticator = StaticTokenAuthenticator.fromConfig({ actors: [{ tokenSha256: createHash("sha256").update(TOKENS.officer).digest("hex"), actor: actors.officer }] });
+  const alt = createApiServer({ routes: routes(down), authenticator, db: api });
+  await new Promise<void>((r) => alt.listen(0, "127.0.0.1", r));
+  try {
+    return await fn(`http://127.0.0.1:${(alt.address() as AddressInfo).port}`);
+  } finally {
+    await new Promise<void>((r) => alt.close(() => r()));
+  }
+}
+
+test("getPackage: the envelope exactly as stored, with its decision's currency derived at read time beside it", async () => {
+  const { s, r, packageId } = await compiled();
+  for (const who of ["officer", "reviewer"] as const) {
+    const read = await readPackage(packageId, who);
+    assert.deepEqual(read.envelope, r.package, "exactly the envelope compiled and stored");
+    assert.equal(read.envelope.packageDigest, `sha256:${sha256Hex(canonicalJson(read.envelope.package))}`);
+    assert.equal(read.currency.decisionId, s.decision.decisionId);
+    assert.equal(read.currency.status, "CURRENT");
+    assert.equal(read.currency.stalenessReasons, undefined);
+  }
+
+  // the decision goes stale: the package is unchanged; its currency says so
+  const late = await admitEvidence(s.plot);
+  const stale = await readPackage(packageId);
+  assert.deepEqual(stale.envelope, r.package);
+  assert.equal(stale.currency.status, "POTENTIALLY_STALE");
+  assert.ok(stale.currency.stalenessReasons!.some((x) => x.changedEntityId === late.evidenceId));
+  assert.ok(!("currency" in stale.envelope.package), "currency is never inside the digested content");
+
+  // and superseded
+  const again = await evaluate(evaluationRequest(defOnly, [s.plot.plotId]));
+  const d2 = await decide(decisionBody(again.e, again.digest, (x) => (x.supersedes = { priorDecisionId: s.decision.decisionId, supersessionReason: "Re-evaluated." })), "reviewer2");
+  const superseded = await readPackage(packageId, "reviewer");
+  assert.deepEqual(superseded.envelope, r.package);
+  assert.equal(superseded.currency.status, "SUPERSEDED");
+  assert.equal(superseded.currency.supersededByDecisionId, d2.decisionId);
+});
+
+test("getPackage: other actors → 403 REQUESTOR_NOT_AUTHORISED; an unknown package → 404 PACKAGE_NOT_FOUND", async () => {
+  const { packageId } = await compiled();
+  for (const who of ["viewer", "verifier"] as const) await readRefused(`${PACKAGES}/${packageId}`, 403, "REQUESTOR_NOT_AUTHORISED", "SCS-CAP-08", who);
+  await readPackage(packageId.toUpperCase(), "reviewer2");
+  await readRefused(`${PACKAGES}/${randomUUID()}`, 404, "PACKAGE_NOT_FOUND", "SCS-CAP-08");
+  assert.equal((await get(`${PACKAGES}/not-a-uuid`)).status, 400);
+});
+
+// ── verifyPackageIntegrity ───────────────────────────────────────────────────
+
+test("verifyPackageIntegrity: INTACT — the digest recomputes, evaluation and decision match their receipts, every record and file matches", async () => {
+  const { s, packageId, r } = await compiled();
+  for (const who of ["officer", "reviewer"] as const) {
+    const v = await verify(packageId, { who });
+    assert.equal(v.integrityStatus, "INTACT");
+    assert.equal(v.packageDigest, r.package.packageDigest);
+    assert.deepEqual(v.checks.map((c) => [c.check, c.evidenceId ?? null, c.result]), [
+      ["PACKAGE_DIGEST", null, "PASS"],
+      ["EVALUATION_RECEIPT", null, "PASS"],
+      ["DECISION_RECEIPT", null, "PASS"],
+      ["EVIDENCE_RECORD", s.ev.evidenceId, "PASS"],
+      ["EVIDENCE_FILE", s.ev.evidenceId, "PASS"],
+    ]);
+  }
+});
+
+test("verifyPackageIntegrity: tampered package content → DIGEST_MISMATCH", async () => {
+  const { packageId } = await compiled();
+  await tamper("scs.due_diligence_package", `UPDATE scs.due_diligence_package SET package = jsonb_set(package, '{packageLimitations,0}', '"Tampered."') WHERE package_id = $1`, [packageId]);
+  const v = await verify(packageId);
+  assert.equal(v.integrityStatus, "DIGEST_MISMATCH");
+  assert.equal(resultOf(v, "PACKAGE_DIGEST"), "DIGEST_MISMATCH");
+  assert.match(v.checks[0]!.detail, /The stored content hashes to sha256:[0-9a-f]{64}, not its packageDigest/);
+});
+
+test("verifyPackageIntegrity: tampered evaluation → EVALUATION_CHANGED; tampered decision → REVIEW_DECISION_CHANGED", async () => {
+  const a = await compiled();
+  await tamper("scs.sufficiency_evaluation", `UPDATE scs.sufficiency_evaluation SET result = jsonb_set(result, '{evaluationExplanation,0}', '"Tampered."') WHERE evaluation_id = $1`, [a.s.e.evaluationId]);
+  const va = await verify(a.packageId);
+  assert.equal(va.integrityStatus, "EVALUATION_CHANGED");
+  assert.equal(resultOf(va, "PACKAGE_DIGEST"), "PASS", "the package itself is intact");
+
+  const b = await compiled();
+  await tamper("scs.regulatory_review_decision", `UPDATE scs.regulatory_review_decision SET basis_for_outcome = 'Tampered.' WHERE decision_id = $1`, [b.s.decision.decisionId]);
+  const vb = await verify(b.packageId);
+  assert.equal(vb.integrityStatus, "REVIEW_DECISION_CHANGED");
+  assert.match(vb.checks.find((c) => c.check === "DECISION_RECEIPT")!.detail, /is not the decision its receipt records/);
+});
+
+test("verifyPackageIntegrity: a changed evidence record → EVIDENCE_RECORDS_CHANGED", async () => {
+  const { s, packageId } = await compiled();
+  await tamper("scs.deforestation_evidence_record", `UPDATE scs.deforestation_evidence_record SET evidence_version = 2 WHERE evidence_id = $1`, [s.ev.evidenceId]);
+  const v = await verify(packageId);
+  assert.equal(v.integrityStatus, "EVIDENCE_RECORDS_CHANGED");
+  assert.equal(resultOf(v, "EVIDENCE_RECORD", s.ev.evidenceId), "EVIDENCE_RECORDS_CHANGED");
+});
+
+test("verifyPackageIntegrity: a missing file → EVIDENCE_OBJECT_MISSING; changed bytes → EVIDENCE_CHANGED", async () => {
+  const a = await compiled();
+  await objects.s3.send(new DeleteObjectCommand({ Bucket: objects.config.bucket, Key: a.s.ev.objectId }));
+  const va = await verify(a.packageId);
+  assert.equal(va.integrityStatus, "EVIDENCE_OBJECT_MISSING");
+  assert.equal(resultOf(va, "EVIDENCE_FILE", a.s.ev.evidenceId), "EVIDENCE_OBJECT_MISSING");
+
+  const b = await compiled();
+  await objects.s3.send(new PutObjectCommand({ Bucket: objects.config.bucket, Key: b.s.ev.objectId, Body: Buffer.from("corrupted") }));
+  const vb = await verify(b.packageId);
+  assert.equal(vb.integrityStatus, "EVIDENCE_CHANGED");
+  assert.match(vb.checks.find((c) => c.check === "EVIDENCE_FILE")!.detail, /hashes to [0-9a-f]{64}, not its recorded SHA-256/);
+});
+
+test("verifyPackageIntegrity: object store unreachable → 200 UNVERIFIABLE; a change found elsewhere still outranks it", async () => {
+  const { s, packageId } = await compiled();
+  await withStoreDown((store) => cap08Routes(store), async (to) => {
+    const v = await verify(packageId, { to });
+    assert.equal(v.integrityStatus, "UNVERIFIABLE");
+    assert.equal(resultOf(v, "EVIDENCE_FILE", s.ev.evidenceId), "UNVERIFIABLE");
+    assert.equal(resultOf(v, "PACKAGE_DIGEST"), "PASS");
+    await tamper("scs.regulatory_review_decision", `UPDATE scs.regulatory_review_decision SET basis_for_outcome = 'Tampered.' WHERE decision_id = $1`, [s.decision.decisionId]);
+    const both = await verify(packageId, { to });
+    assert.equal(both.integrityStatus, "REVIEW_DECISION_CHANGED", "a change found outranks a check that could not be performed");
+    assert.equal(resultOf(both, "EVIDENCE_FILE", s.ev.evidenceId), "UNVERIFIABLE");
+  });
+});
+
+test("verifyPackageIntegrity: other actors → 403; an unknown package → 404", async () => {
+  const { packageId } = await compiled();
+  for (const who of ["viewer", "verifier"] as const) await readRefused(`${PACKAGES}/${packageId}/integrity`, 403, "REQUESTOR_NOT_AUTHORISED", "SCS-CAP-08", who);
+  await readRefused(`${PACKAGES}/${randomUUID()}/integrity`, 404, "PACKAGE_NOT_FOUND", "SCS-CAP-08");
+});
+
+// ── Rendition download (SCS-PLATFORM-02) ─────────────────────────────────────
+
+async function download(renditionId: string, opts: { who?: Who; to?: string } = {}) {
+  const res = await fetch(`${opts.to ?? base}/scs/v1/renditions/${renditionId}`, { headers: { authorization: `Bearer ${TOKENS[opts.who ?? "officer"]}` } });
+  return { status: res.status, headers: res.headers, bytes: Buffer.from(await res.arrayBuffer()) };
+}
+const errorOf = (bytes: Buffer) => JSON.parse(bytes.toString("utf8")) as Record<string, unknown>;
+
+test("rendition download: the PDF bytes, re-hashed on every read, for COMPLIANCE_OFFICER and REGULATORY_REVIEWER", async () => {
+  const { r } = await compiled();
+  const rend = r.decision.rendition;
+  for (const who of ["officer", "reviewer"] as const) {
+    const d = await download(rend.renditionId, { who });
+    assert.equal(d.status, 200);
+    assert.equal(d.headers.get("content-type"), "application/pdf");
+    assert.equal(createHash("sha256").update(d.bytes).digest("hex"), rend.sha256);
+    assert.equal(d.headers.get("repr-digest"), `sha-256=:${Buffer.from(rend.sha256, "hex").toString("base64")}:`);
+    assert.match(d.headers.get("content-disposition")!, /^attachment; filename="scs-cap-08-.*\.pdf"$/);
+    assert.match(d.bytes.subarray(0, 8).toString("latin1"), /^%PDF-/);
+  }
+});
+
+test("rendition download: bytes changed or missing → RENDITION_INTEGRITY_FAILED, nothing returned; store unreachable → 503", async () => {
+  const a = await compiled();
+  await objects.s3.send(new PutObjectCommand({ Bucket: objects.config.bucket, Key: a.r.decision.rendition.sha256, Body: Buffer.from("%PDF-1.7 tampered") }));
+  const changed = await download(a.r.decision.rendition.renditionId);
+  assert.equal(changed.status, 422);
+  assert.equal(errorOf(changed.bytes)["error"], "RENDITION_INTEGRITY_FAILED");
+  assert.equal(errorOf(changed.bytes)["capabilityId"], "SCS-PLATFORM");
+  assert.match((errorOf(changed.bytes)["reasons"] as string[])[0]!, /hash to [0-9a-f]{64} .* not the recorded/);
+  assert.ok(!changed.bytes.includes(Buffer.from("tampered")), "the tampered bytes are never returned");
+
+  const b = await compiled();
+  await objects.s3.send(new DeleteObjectCommand({ Bucket: objects.config.bucket, Key: b.r.decision.rendition.sha256 }));
+  const missing = await download(b.r.decision.rendition.renditionId);
+  assert.equal(missing.status, 422);
+  assert.equal(errorOf(missing.bytes)["error"], "RENDITION_INTEGRITY_FAILED");
+
+  const c = await compiled();
+  await withStoreDown((store) => renditionRoutes(store, { "SCS-CAP-08": CAP08_READER_ROLES }), async (to) => {
+    const unavailable = await download(c.r.decision.rendition.renditionId, { to });
+    assert.equal(unavailable.status, 503);
+    assert.equal(errorOf(unavailable.bytes)["error"], "DEPENDENCY_UNAVAILABLE");
+  });
+});
+
+test("rendition download: other actors → 403 READER_NOT_AUTHORISED; an unknown rendition → 404 RENDITION_NOT_FOUND", async () => {
+  const { r } = await compiled();
+  for (const who of ["viewer", "verifier"] as const) {
+    await readRefused(`/scs/v1/renditions/${r.decision.rendition.renditionId}`, 403, "READER_NOT_AUTHORISED", "SCS-PLATFORM", who);
+  }
+  await readRefused(`/scs/v1/renditions/${randomUUID()}`, 404, "RENDITION_NOT_FOUND", "SCS-PLATFORM");
 });

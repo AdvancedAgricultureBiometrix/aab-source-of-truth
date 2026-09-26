@@ -254,6 +254,18 @@ function send(res: ServerResponse, status: number, body: unknown, extraHeaders: 
   res.end(payload);
 }
 
+/** Bytes as they are (e.g. a PDF), with the same caching and sniffing protections as JSON. */
+function sendRaw(res: ServerResponse, status: number, raw: NonNullable<OperationResult["raw"]>): void {
+  res.writeHead(status, {
+    "content-type": raw.contentType,
+    "content-length": raw.bytes.length,
+    "cache-control": "no-store",
+    "x-content-type-options": "nosniff",
+    ...raw.headers,
+  });
+  res.end(raw.bytes);
+}
+
 export function createApiServer(deps: ServerDeps): Server {
   const routes: readonly Route<never>[] = [healthRoute as Route<never>, ...deps.routes];
   checkRoutes(routes, deps.db);
@@ -344,6 +356,9 @@ export function createApiServer(deps: ServerDeps): Server {
           if (!Number.isInteger(result.status) || result.status < 200 || result.status > 299) {
             throw new Error(`handler for ${route.method} ${route.path} returned status ${result.status}; failures must be thrown`);
           }
+          if (result.raw !== undefined && route.idempotency === "required") {
+            throw new Error(`handler for ${route.method} ${route.path} returned raw bytes; an idempotent route's response must be JSON`);
+          }
           return result;
         };
 
@@ -368,7 +383,8 @@ export function createApiServer(deps: ServerDeps): Server {
         }
 
         status = result.status;
-        send(res, result.status, result.body, replayed ? { "idempotent-replayed": "true" } : {});
+        if (result.raw !== undefined) sendRaw(res, result.status, result.raw);
+        else send(res, result.status, result.body, replayed ? { "idempotent-replayed": "true" } : {});
       } catch (err) {
         const failure = asScsFailure(err, capabilityId);
         if (!(err instanceof ScsFailure)) log.error("unhandled error", { err, method: req.method, path });

@@ -7,14 +7,18 @@
 // unreferenced object). A gate failure also names the check that failed
 // (failedGateCheck) and every blocker the gate reported.
 //
-// Not returned by requestCompilation, and why:
+// Not returned, and why:
 //   FRAMEWORK_NOT_FOUND — the decision's foreign keys guarantee its framework
-//   PACKAGE_NOT_FOUND   — getPackage and verifyPackageIntegrity, not built yet
+// verifyPackageIntegrity never fails on what it finds: a change is a result
+// (contract 700c40a). Only REQUESTOR_NOT_AUTHORISED and PACKAGE_NOT_FOUND.
 
 import { ScsFailure } from "../../foundation/errors.js";
 import type { Blocker } from "../cap-09/validate-for-package.js";
 
 export const CAPABILITY_ID = "SCS-CAP-08" as const;
+
+/** Who may read a package, verify it or download its rendition (contract 4b1f05b, 700c40a). */
+export const READER_ROLES = ["COMPLIANCE_OFFICER", "REGULATORY_REVIEWER"] as const;
 
 export const CAP08_FAILURES = {
   REQUESTOR_NOT_AUTHORISED: 403,

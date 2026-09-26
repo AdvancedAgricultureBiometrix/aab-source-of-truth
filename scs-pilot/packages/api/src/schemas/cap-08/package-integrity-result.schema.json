@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-08:package-integrity-result:1",
+  "title": "ScsPackageIntegrityVerificationResult",
+  "description": "Body of GET /scs/v1/due-diligence-packages/:packageId/integrity (contract 700c40a, \"Verifying a package\"): always 200 for a package that exists and an authorised reader. Every check performed, each with its result, and the overall integrityStatus: the first that applies, a found change outranking UNVERIFIABLE. Nothing is recorded.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "packageId",
+    "packageDigest",
+    "verifiedAt",
+    "integrityStatus",
+    "checks",
+    "detail"
+  ],
+  "properties": {
+    "packageId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "packageDigest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "verifiedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "integrityStatus": {
+      "type": "string",
+      "enum": [
+        "DIGEST_MISMATCH",
+        "EVALUATION_CHANGED",
+        "REVIEW_DECISION_CHANGED",
+        "EVIDENCE_RECORDS_CHANGED",
+        "EVIDENCE_OBJECT_MISSING",
+        "EVIDENCE_CHANGED",
+        "UNVERIFIABLE",
+        "INTACT"
+      ]
+    },
+    "checks": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 20000,
+      "items": {
+        "title": "ScsPackageIntegrityCheck",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "check",
+          "result",
+          "detail"
+        ],
+        "properties": {
+          "check": {
+            "type": "string",
+            "enum": [
+              "PACKAGE_DIGEST",
+              "EVALUATION_RECEIPT",
+              "DECISION_RECEIPT",
+              "EVIDENCE_RECORD",
+              "EVIDENCE_FILE"
+            ]
+          },
+          "evidenceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "result": {
+            "type": "string",
+            "enum": [
+              "PASS",
+              "NOT_APPLICABLE",
+              "DIGEST_MISMATCH",
+              "EVALUATION_CHANGED",
+              "REVIEW_DECISION_CHANGED",
+              "EVIDENCE_RECORDS_CHANGED",
+              "EVIDENCE_OBJECT_MISSING",
+              "EVIDENCE_CHANGED",
+              "UNVERIFIABLE"
+            ]
+          },
+          "detail": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 10000
+          }
+        }
+      }
+    },
+    "detail": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 10000
+    }
+  }
+}

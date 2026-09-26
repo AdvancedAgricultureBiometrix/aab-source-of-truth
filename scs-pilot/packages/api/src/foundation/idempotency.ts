@@ -49,6 +49,11 @@ export function requestFingerprint(method: string, route: string, body: unknown)
 export interface OperationResult {
   readonly status: number;
   readonly body: unknown;
+  /**
+   * Bytes sent as they are instead of the JSON body, e.g. a PDF rendition.
+   * Only for routes without idempotency: a stored idempotent response is JSON.
+   */
+  readonly raw?: { readonly bytes: Buffer; readonly contentType: string; readonly headers?: Readonly<Record<string, string>> };
 }
 
 export interface IdempotentResult extends OperationResult {

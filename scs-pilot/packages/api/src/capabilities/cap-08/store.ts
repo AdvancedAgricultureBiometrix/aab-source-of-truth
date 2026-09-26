@@ -346,6 +346,40 @@ export async function findCustodyRecords(tx: Tx, ids: readonly string[]): Promis
   );
 }
 
+// ── Packages ────────────────────────────────────────────────────────────────
+
+export interface PackageRow {
+  readonly packageId: string;
+  readonly reviewDecisionId: string;
+  readonly evaluationId: string;
+  readonly packageContent: unknown;
+  readonly packageDigest: string;
+  readonly compiledAt: string;
+  readonly requestedByActorId: string;
+  readonly compiledByServiceIdentity: string;
+}
+
+export async function findPackage(tx: Tx, packageId: string): Promise<PackageRow | null> {
+  const rows = await q<Record<string, unknown>>(
+    tx,
+    `SELECT package_id, review_decision_id, evaluation_id, package, package_digest, compiled_at, requested_by_actor_id, compiled_by_service_identity
+       FROM scs.due_diligence_package WHERE package_id = $1`,
+    [packageId],
+  );
+  const r = rows[0];
+  if (r === undefined) return null;
+  return {
+    packageId: r["package_id"] as string,
+    reviewDecisionId: r["review_decision_id"] as string,
+    evaluationId: r["evaluation_id"] as string,
+    packageContent: r["package"],
+    packageDigest: r["package_digest"] as string,
+    compiledAt: (r["compiled_at"] as Date).toISOString(),
+    requestedByActorId: r["requested_by_actor_id"] as string,
+    compiledByServiceIdentity: r["compiled_by_service_identity"] as string,
+  };
+}
+
 // ── Writes ──────────────────────────────────────────────────────────────────
 
 export async function insertPackage(
