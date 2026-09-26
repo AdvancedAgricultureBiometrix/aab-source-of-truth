@@ -83,10 +83,14 @@ not appear selectable or activatable as though current.
 
 ## Conflict and freshness behaviour
 
-**Admission states.** `ADMISSION_STALE_REASSESSMENT_REQUIRED` means an admitted capability's contract or admitted implementation has changed since admission. `ADMISSION_WITHDRAWN` means the admission was withdrawn by a superseding decision. Both are defined in `governance/AAB-CAPABILITY-ADMISSION-AUTHORITY-DEFINITION-2026-09-27.md`, and neither counts as `ADMITTED`.
+**Admission states.** These are defined in `governance/AAB-CAPABILITY-ADMISSION-AUTHORITY-DEFINITION-2026-09-27.md` and `governance/AAB-CAPABILITY-ADMISSION-REGISTRY-DEFINITION-2026-09-27.md`. None of them counts as `ADMITTED`.
+- `ADMISSION_SUSPENDED`: a safety or authority defect affecting the admitted version itself. Use is halted pending human review, and the outcome is not yet determined. It is neither stale nor withdrawn. **A suspended admission makes any Gate D grant that includes the capability stale immediately.**
+- `ADMISSION_STALE_REASSESSMENT_REQUIRED`: the admission must be reassessed before it is relied on again.
+- `ADMISSION_WITHDRAWN`: the admission was withdrawn by a superseding decision.
 
 **How `maturityStatus` follows these admission states:**
-- **`admissionStatus: ADMISSION_STALE_REASSESSMENT_REQUIRED`.** `maturityStatus` is `IMPLEMENTED_NOT_YET_ADMITTED`. `maturityDisclosure.currentMaturityExplanation` must state that the capability was admitted, that it has changed since, and that reassessment is required. It must not read as though the capability had never been admitted.
+- **`admissionStatus: ADMISSION_STALE_REASSESSMENT_REQUIRED`.** `maturityStatus` is `IMPLEMENTED_NOT_YET_ADMITTED`. `maturityDisclosure.currentMaturityExplanation` must state that the capability was admitted, and that its admission must be reassessed before it is relied on again. It must not read as though the capability had never been admitted.
+- **`admissionStatus: ADMISSION_SUSPENDED`.** `maturityStatus` is `ADMISSION_SUSPENDED`, and the two fields agree. `maturityDisclosure.currentMaturityExplanation` must state that use is halted pending human review of a defect, and that the outcome is not yet determined. Neither `IMPLEMENTED_NOT_YET_ADMITTED` nor `ADMISSION_WITHDRAWN` is used for a suspension.
 - **`admissionStatus: ADMISSION_WITHDRAWN`.** `maturityStatus` is `ADMISSION_WITHDRAWN`, and the two fields agree. `IMPLEMENTED_NOT_YET_ADMITTED` is never used for a withdrawn admission: withdrawn and never admitted are different states, and conflating them loses information.
 
 The authoritative source always wins. CAP-20 must never present an optimistic
@@ -95,9 +99,10 @@ cached value when the authoritative source says otherwise.
 | Conflict scenario | Required behaviour |
 |---|---|
 | Catalogue says ADMITTED, admission registry says NOT_ADMITTED | Display NOT_ADMITTED |
+| Admission registry says ADMISSION_SUSPENDED | Display it, with `maturityStatus` `ADMISSION_SUSPENDED` and a disclosure that use is halted pending review; not selectable or activatable; any Gate D grant including the capability is stale |
 | Admission registry says ADMISSION_STALE_REASSESSMENT_REQUIRED | Display it, with `maturityStatus` `IMPLEMENTED_NOT_YET_ADMITTED` and a disclosure that reassessment is required; not selectable or activatable as admitted until reassessed |
 | Admission registry says ADMISSION_WITHDRAWN | Display it, with `maturityStatus` `ADMISSION_WITHDRAWN`; not selectable or activatable as admitted |
-| `maturityStatus` says OPERATIONAL_AND_ADMITTED, admission registry says stale or withdrawn | The admission registry wins: display `maturityStatus` as the rules above require |
+| `maturityStatus` says OPERATIONAL_AND_ADMITTED, admission registry says suspended, stale or withdrawn | The admission registry wins: display `maturityStatus` as the rules above require |
 | Catalogue says IMPLEMENTED, implementation authority unavailable | Display IMPLEMENTATION_STATUS_UNVERIFIABLE |
 | Entitlement exists, activation registry says inactive | Display NOT_ACTIVATED |
 | Commercially available globally, unavailable in this jurisdiction | Display jurisdiction restriction prominently |
@@ -127,6 +132,7 @@ interface AabCatalogueEntry {
     maturityStatus:
       | "OPERATIONAL_AND_ADMITTED"
       | "IMPLEMENTED_NOT_YET_ADMITTED"
+      | "ADMISSION_SUSPENDED"
       | "ADMISSION_WITHDRAWN"
       | "DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED"
       | "CONCEPT_PREVIEW_NOT_IMPLEMENTED"
@@ -159,6 +165,7 @@ interface AabCatalogueEntry {
       | "IMPLEMENTATION_STATUS_UNVERIFIABLE";
     admissionStatus:
       | "ADMITTED"
+      | "ADMISSION_SUSPENDED"
       | "ADMISSION_STALE_REASSESSMENT_REQUIRED"
       | "ADMISSION_WITHDRAWN"
       | "ADMISSION_IN_PROGRESS"

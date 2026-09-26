@@ -1,6 +1,6 @@
 # AAB Capability Admission Authority — Definition — 2026-09-27
 
-**Status:** GOVERNANCE DEFINITION — DRAFT FOR FINAL REVIEW — NOT COMMITTED
+**Status:** GOVERNANCE DEFINITION — AMENDED 2026-09-27 (see "Amendment of 2026-09-27")
 **Authority:** DEFINES WHAT CAPABILITY ADMISSION DECIDES, THE EVIDENCE IT REQUIRES, WHO MAY DECIDE IT, AND ITS FAIL-CLOSED RULE. This document admits no capability, grants Gate D to nothing, commissions nothing, and changes no control's status.
 **Sources:**
 - `governance/AAB-PLATFORM-PURPOSE-AND-VALUES-REVISION-2026-09-25.md` (the five maturity states)
@@ -16,18 +16,27 @@
 - `scs-pilot/README.md` (`TODO(actor-reference)`)
 - `governance/AAB-GATE-D-DEPLOYMENT-QUALIFICATION-DEFINITION-2026-09-27.md`
 - `governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`
+- `governance/AAB-CAPABILITY-ADMISSION-REGISTRY-DEFINITION-2026-09-27.md`
+
+## Amendment of 2026-09-27
+
+This definition was merged earlier on 2026-09-27 (PR #28) with the Platform Owner deciding alone, and admission described as platform-wide. The Platform Owner's later decisions of the same day, recorded in the capability admission registry definition, supersede both. This amendment reconciles the two documents:
+- **The pilot joint authority replaces the Platform Owner deciding alone** (section 3). For the first country pilot, admission requires two recorded human decisions: the Platform Owner, and an authorised representative of the founding country institution. Neither can admit alone.
+- **Admission is scoped.** Pilot admission is country-scoped: to one country, capability, contract version, implementation commit and scope. Platform-wide admission needs a separately established governance authority, **which does not yet exist**, and the pilot joint authority is not that body.
+- **Change is classified, not automatically stale** (section 4). The five change classifications of the registry definition replace "any change makes the admission stale", and a safety or authority defect suspends the admission.
+- **Scope includes commodities, jurisdictions and the country,** as well as operations (section 1).
 
 ## Why this definition is needed
 
 **Admission is required everywhere, and no one is named to decide it.**
-- **The maturity state is defined.** The purpose revision defines **Admitted**: "The capability has passed the ten-point admission checklist and is a canonical capability of the platform."
+- **The maturity state is defined.** The purpose revision defined **Admitted** as: "The capability has passed the ten-point admission checklist and is a canonical capability of the platform." It now points to this definition instead.
 - **Every canonical contract defers to it.** Each says it "does not admit" its capability: "that requires the ten-point admission checklist".
 - **CAP-20 names its authoritative source,** a "capability identity and admission authority" (`CAPABILITY_ADMISSION_REGISTRY`), and requires that the registry wins over any other claim: "Catalogue says ADMITTED, admission registry says NOT_ADMITTED → Display NOT_ADMITTED".
 - **Gate D depends on it.** Gate D requires every capability in a deployment to be admitted, and lists the admission authority as blocking the first Gate D assessment.
 
 **What is missing:**
 - **No document names who decides admission,** what they must see, or what happens when it is refused.
-- **No document defines the registries.** Neither the "capability admission registry" CAP-20 names, nor the "Capability Architecture and Implementation Registry" of checklist item 8, is defined anywhere in the repository.
+- **No document defined the registries.** The "capability admission registry" CAP-20 names is now defined in `governance/AAB-CAPABILITY-ADMISSION-REGISTRY-DEFINITION-2026-09-27.md`. The "Capability Architecture and Implementation Registry" of checklist item 8 is still defined nowhere.
 
 **What the sources establish, and this definition takes as given:**
 - **The ten-point checklist exists, but it tests identity.** It was written for one candidate, Governed Evidence Watch. It asks whether a proposed capability is distinct, correctly numbered and consistently registered. It asks nothing about implementation, proof or review.
@@ -45,7 +54,7 @@
 
 | | Capability admission | Record admission |
 |---|---|---|
-| What is admitted | A capability, into the platform's canonical capability set | A record (evidence, custody event, scientific memory) into a capability's governed store |
+| What is admitted | A capability, at a stated scope: country-scoped under the pilot; platform-wide once a platform-wide authority exists | A record (evidence, custody event, scientific memory) into a capability's governed store |
 | Decided by | The admission authority defined here | The capability itself, under its contract (platform primitive 5) |
 | Examples | "SCS-CAP-04 is an admitted capability" | SCS-CAP-04 `ADMITTED_WITH_LIMITATIONS`; CAP-04 `MemoryAdmissionDecision` |
 
@@ -58,22 +67,26 @@ flowchart LR
   N[named only] --> D[designed<br/>canonical contract]
   D --> I[implemented]
   I --> B[behaviourally proven]
-  B --> A[ADMISSION<br/>per capability<br/>platform-wide]
+  B --> A[ADMISSION<br/>per capability<br/>per scope]
   A --> G[Gate D<br/>per deployment]
   G --> C[Commissioning<br/>per country]
 ```
 
-- **Admission is per capability, and platform-wide.** An admitted capability is a canonical capability of AAB in every country. It does not depend on any one environment.
+- **Admission is per capability, at a stated scope.** There are two kinds, recorded in separate registries (`governance/AAB-CAPABILITY-ADMISSION-REGISTRY-DEFINITION-2026-09-27.md`):
+  - **Country-scoped admission,** under the pilot joint authority. It admits a capability for one country, contract version, implementation commit and scope, and nowhere else. It is recorded in the country's isolated tenancy, and creates no platform-wide admission or commissioning authority.
+  - **Platform-wide admission,** by a platform-wide governance authority, recorded in the governed platform control plane. **That authority does not yet exist.** When it is established, it supersedes the pilot arrangement, and it does not inherit or ratify pilot admissions automatically.
+- **Admission is not activation.** A country's activation decision is a separate record in its tenancy, references the exact admitted version, and requires its own country authority and commissioning gate.
 - **Admission comes before Gate D, and never substitutes for it.** Gate D asks whether a deployment of admitted capabilities qualifies in one environment. Admission asks whether the capability belongs in the platform at all.
 
 ## 1. What the admission authority decides
 
-**It decides one thing:** whether one capability, at a stated scope, is accepted as a canonical capability of the AAB platform.
+**It decides one thing:** whether one capability is admitted at a stated scope. Under the pilot, that scope is one country.
 
 **What an admission names:**
 - **The capability:** its identifier, name and domain (for example `SCS-CAP-04`, or `CAP-05` in the AAB landscape).
 - **The contract version:** the canonical contract at the commit assessed.
 - **The implementation:** the commit of the code assessed.
+- **The admitted scope:** the operations, and the commodities, jurisdictions and other scope dimensions the capability's contract defines, and, under the pilot, the country. Admission to a wider scope later is a `SCOPE_EXTENSION` (registry definition), assessed in its own right.
 - **The admitted operations:** the contract operations covered by the admission. A capability is admitted for what it does, at the scope proven, with every limitation and deferred operation disclosed. An operation the contract defines but that is not built or not proven is outside the admission. It stays unavailable, and must be refused at runtime, as the pilot refuses it today. Admitting only complete capabilities would be a false binary: it would exclude every SCS capability today.
 
 **The result is one of two outcomes:**
@@ -148,13 +161,18 @@ flowchart LR
 - The release workflow requires "technical validation" and "scientific/governance review where applicable" before an approved canonical release.
 - Approval is never automated ("Automate verification, not approval").
 
-**The sources do not name who decides admission. This definition establishes the same model as Gate D:**
+**The sources do not name who decides admission. This definition establishes it.**
 
-- **The admission authority is the Platform Owner,** who decides admission for the platform, in every domain.
-- **The decision requires a written admission assessment by an independent admission reviewer.**
-  - The reviewer establishes the evidence; the Platform Owner makes the governance decision.
-  - The reviewer records every item in section 2 as `SATISFIED`, `NOT SATISFIED` or `EVIDENCE REQUIRED`.
-- **The Platform Owner must refuse when any item is `NOT SATISFIED` or `EVIDENCE REQUIRED`,** and may not overrule the assessment. A satisfied assessment permits admission, but does not compel it: the Platform Owner may still refuse, recording the reason.
+**Under the first country pilot, admission is decided by a joint authority:**
+- **Two recorded human decisions are required:** the Platform Owner, and an authorised representative of the founding country institution. Each is signed, and each is `GRANT` or `REFUSE`.
+- **Neither party can admit alone.** Admission is granted only if both grant; either party's refusal refuses it.
+- **The independent admission reviewer supplies a recorded assessment,** and does not grant admission. The reviewer records every item in section 2 as `SATISFIED`, `NOT SATISFIED` or `EVIDENCE REQUIRED`.
+- **Neither party may admit against a negative assessment.** When any item is `NOT SATISFIED` or `EVIDENCE REQUIRED`, both must refuse. A satisfied assessment permits admission, but does not compel it: either party may still refuse, recording the reason.
+- **The joint decision is scoped** to that country, capability, contract version, implementation commit and scope. It creates no platform-wide admission or commissioning authority.
+- **The arrangement is time-limited and scope-limited.** It is not a permanent model. It is superseded when a platform-wide governance authority is established, and every admission record names the authority body that made it, so the transition is traceable.
+
+**Platform-wide admission needs a separately established governance authority.** It does not yet exist, and the pilot joint authority is not that body by default.
+
 - **An independent scientific reviewer is added where the capability supports scientific determinations.**
   - This applies to AGR domain capabilities.
   - It does not apply to SCS capabilities in the pilot, unless a capability directly supports a scientific determination.
@@ -169,15 +187,11 @@ flowchart LR
   - is named and accountable.
 - **How the reviewer is appointed:**
   - per admission assessment;
-  - by the Platform Owner, recorded before the assessment begins;
+  - by the admission authority (under the pilot, both parties), recorded before the assessment begins;
   - with a signed declaration against each criterion, kept in the admission evidence.
 - **A breach voids the assessment.** An assessment by a reviewer who did not meet the criteria is void, and so is any admission that rests on it.
 
-**The admission record,** kept in the capability admission registry:
-- **Immutable and append-only.**
-- **Bound by digest** to the contract version, the implementation commit and the reviewer's assessment.
-- **Naming** the capability, the admitted operations, the reviewer and their appointment, the Platform Owner, the outcome, every unsatisfied item and every disclosed limitation.
-- **Authoritative for admission status everywhere.** CAP-20, rosters, manifests and documents report admission status from the registry. A conflicting claim anywhere else is wrong, and displays as not admitted.
+**The admission record** is kept in the capability admission registry, as `governance/AAB-CAPABILITY-ADMISSION-REGISTRY-DEFINITION-2026-09-27.md` defines it: written once, digested, signed by each deciding party, and authoritative for admission status everywhere. CAP-20, rosters, manifests and documents report admission status from the registry. A conflicting claim anywhere else is wrong, and displays as not admitted.
 
 ## 4. The fail-closed rule
 
@@ -194,14 +208,16 @@ flowchart LR
 **When a missing item cannot be assessed:** it is `EVIDENCE REQUIRED`, and admission is refused.
 
 **When an admitted capability changes:**
-- A change to its contract, or to the implementation of an admitted operation, makes the admission `STALE — REASSESSMENT REQUIRED` (landscape freeze, invariant 2).
-- A stale admission cannot be included in a new Gate D assessment until it is reassessed.
-- A deployment already granted Gate D that includes the changed capability becomes stale under the Gate D definition.
+- **Every proposed change receives a signed change record,** with its classification, rationale and evidence, under the registry definition's five classifications: `NON_MATERIAL_CORRECTION`, `MATERIAL_CHANGE`, `SAFETY_OR_AUTHORITY_DEFECT`, `SCOPE_EXTENSION` and `UNDETERMINED`.
+- **A changed version is not admitted until it is reassessed,** unless a signed `NON_MATERIAL_CORRECTION` demonstrates that nothing in behaviour, authority, evidence, interfaces or dependencies changed. A new commit never inherits admission by being called a correction, and never erases the historical admission of the unchanged version.
+- **A wider scope is not admitted** until a `SCOPE_EXTENSION` has been assessed and admitted.
+- **An undetermined change fails closed:** the changed version cannot inherit admission.
 
 **When an admitted capability is found defective:**
-- The Platform Owner may withdraw the admission by a superseding decision, `ADMISSION_WITHDRAWN`, recording the reason.
-- Every Gate D grant that includes the capability becomes stale.
-- What happens to live operation is decided by each country's commissioning authority, as for any stale Gate D.
+- **A safety or authority defect suspends the admission at once:** `ADMISSION_SUSPENDED`, meaning use is halted pending human review.
+- **Every Gate D grant that includes the capability becomes stale immediately.**
+- **The suspension is resolved only by a signed resolution record:** the suspension lifted, reassessment required (`ADMISSION_STALE_REASSESSMENT_REQUIRED`), or the admission withdrawn (`ADMISSION_WITHDRAWN`). Nothing lifts it automatically.
+- **What happens to live operation** is decided by each country's commissioning authority, as for any stale Gate D.
 
 **Admission is never inferred.** It is never inferred from:
 - maturity;
@@ -217,10 +233,12 @@ flowchart LR
 **No capability is admitted, and none could be admitted today.**
 - **The strongest candidates** are SCS-CAP-01 to SCS-CAP-06, SCS-CAP-08 and SCS-CAP-09, which are `behaviourally proven` for their minimum vertical slices.
 - **Every one of them is blocked by the same missing items:**
-  - no capability admission registry;
+  - the capability admission registry is defined, but not implemented in any country's tenancy;
   - no shared `ActorReference` contract;
   - no admission reviewer appointed;
+  - no founding country institution representative identified;
   - the CAP-34 fidelity manifest does not include the SCS capabilities.
+- **No platform-wide admission is possible:** no platform-wide governance authority exists.
 
 ## Decisions recorded on 2026-09-27
 
@@ -228,23 +246,25 @@ flowchart LR
 2. **The checklist is necessary, not sufficient.** The purpose revision's definition of Admitted will point to this definition instead of summarising it incompletely. That is a documentation correction, made in a separate commit after this definition is committed.
 3. **Dependencies:** a capability can be admitted only if everything it depends on is admitted, or admitted in the same decision (section 2.2, point 5).
 4. **Checklist items 9 and 10 for SCS:** the CAP-34 fidelity manifest is extended to include the SCS capabilities. A machine-readable SCS roster is not a substitute. Extending it is required before the first SCS admission (section 2.2; "Open items").
-5. **Authority:** the Platform Owner decides, on an independent admission reviewer's written assessment, and cannot admit against a negative assessment. An independent scientific reviewer is added for AGR domain capabilities, and for an SCS capability only where it directly supports a scientific determination (section 3).
+5. **Authority:** the Platform Owner decides, on an independent admission reviewer's written assessment, and cannot admit against a negative assessment. An independent scientific reviewer is added for AGR domain capabilities, and for an SCS capability only where it directly supports a scientific determination (section 3). *Amended the same day: for the pilot, the joint authority of the Platform Owner and the founding country institution representative decides (item 8).*
 6. **Scoped admission:** a capability is admitted for a named set of operations, at the scope proven, with every limitation and deferred operation disclosed (section 1).
 7. **CAP-20's status vocabulary** gains stale and withdrawn admission states, in its own commit (see "Follow-up commits").
+8. **Amendment:** the pilot joint authority; country-scoped and platform-wide admission distinguished; the registry's change classifications; the platform-wide authority not yet established (see "Amendment of 2026-09-27").
 
 ## Follow-up commits
 
-These follow this definition, each in its own commit:
+Both were made in PR #28:
 - **The purpose revision:** its row for **Admitted** points to this definition.
-- **CAP-20:** `admissionStatus` gains a stale admission state and a withdrawn admission state, with the contract re-rendered.
+- **CAP-20:** `admissionStatus` gains stale and withdrawn admission states. It gained `ADMISSION_SUSPENDED` with the amendment of 2026-09-27.
 
 ## Open items
 
 ### Blocking the first admission, in this order
 
-1. **The capability admission registry.** It is the most foundational item: it gives admission status its authoritative record, and without it an admission decision has nowhere to land. CAP-20 names it, and no document defines what it holds, where it lives, or how it is kept append-only. It is defined first, before the other two.
+1. **The capability admission registry.** It is the most foundational item: it gives admission status its authoritative record, and without it an admission decision has nowhere to land. It is now defined (`governance/AAB-CAPABILITY-ADMISSION-REGISTRY-DEFINITION-2026-09-27.md`), and remains to be implemented in the pilot country's tenancy.
 2. **The shared `ActorReference` contract** (`TODO(actor-reference)`).
 3. **The first independent admission reviewer,** appointed under section 3.
+4. **The founding country institution representative,** identified, with the basis of their authorisation recorded. This is a country-specific decision.
 
 ### Required before the first SCS admission
 

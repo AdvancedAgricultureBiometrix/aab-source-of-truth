@@ -1,6 +1,6 @@
 # AAB Gate D — Deployment Qualification — Definition — 2026-09-27
 
-**Status:** GOVERNANCE DEFINITION — DRAFT FOR FINAL REVIEW — NOT COMMITTED
+**Status:** GOVERNANCE DEFINITION
 **Authority:** DEFINES WHAT GATE D DECIDES, THE EVIDENCE IT REQUIRES, WHO MAY DECIDE IT, AND ITS FAIL-CLOSED RULE. This document grants Gate D to nothing. It admits no capability, commissions no environment, changes no control's status, and does not authorise WP05 or any remediation.
 **Sources:**
 - `governance/phase-2/wp04/PH2_WP04_GATE_D_TRACEABILITY_AMENDMENT.md`
