@@ -42,6 +42,11 @@ jobs:
           echo "SeaweedFS did not become healthy" >&2
           docker logs seaweedfs >&2
           exit 1
+      # The api image (packages/api/Dockerfile) must build cleanly: the stack
+      # runs it, so a broken Dockerfile is caught here, not at the next
+      # docker compose up --build. It is only built, not run.
+      - name: Build the api image
+        run: docker build -f scs-pilot/packages/api/Dockerfile -t scs-pilot-api:ci scs-pilot/packages
       - run: npm ci
         working-directory: scs-pilot/packages/api
       - run: npm test

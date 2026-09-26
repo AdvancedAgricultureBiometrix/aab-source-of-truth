@@ -1,0 +1,9 @@
+# Build context for api/Dockerfile (scs-pilot/packages). Only what the image
+# needs goes in; nothing secret and nothing built on the host.
+**/node_modules
+**/dist
+**/.env
+**/.env.*
+# token digests: supplied at run time as a read-only mount, never built in
+api/config/static-actors.json
+db/schema

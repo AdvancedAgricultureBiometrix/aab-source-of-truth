@@ -1,7 +1,12 @@
 # SCS pilot — local development stack (scaffold)
 #
 #   cp .env.example .env      # then fill in local-only values
-#   docker compose up -d
+#   docker compose up -d --build
+#
+# The api and migrate services run the image built from packages/api/Dockerfile
+# (scs-pilot-api:local): dependencies installed and TypeScript compiled at build
+# time, nothing installed or fetched at start. After changing api code or a
+# migration, rebuild: docker compose up -d --build
 #
 # postgres  — the database; holds no migration logic of its own
 # migrate   — runs on every start, before the api: applies any pending
@@ -26,7 +31,7 @@
 #
 # A volume built before the migration runner (by the old first-start init
 # hook) has SCS objects but no migration history; migrate refuses it until it
-# is baselined once:  docker compose run --rm migrate npm run migrate -- --baseline 011
+# is baselined once:  docker compose run --rm migrate node dist/migrations/cli.js --baseline 011
 
 name: scs-pilot
 
@@ -49,10 +54,15 @@ services:
       retries: 20
 
   migrate:
-    image: node:24.21.0-alpine3.24@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1
-    working_dir: /app
-    command: sh -c "npm install --no-audit --no-fund && npm run migrate"
+    build:
+      context: ./packages
+      dockerfile: api/Dockerfile
+    image: scs-pilot-api:local
+    command: ["node", "dist/migrations/cli.js"]
     restart: "no"
+    # a one-off command, not the API: the image's HEALTHCHECK does not apply
+    healthcheck:
+      disable: true
     environment:
       # the owner (migration) role — never scs_api
       SCS_MIGRATE_DB_HOST: postgres
@@ -61,11 +71,8 @@ services:
       SCS_MIGRATE_DB_USER: ${POSTGRES_USER}
       SCS_MIGRATE_DB_PASSWORD: ${POSTGRES_PASSWORD}
       SCS_API_DB_PASSWORD: ${SCS_API_DB_PASSWORD:?set SCS_API_DB_PASSWORD in .env}
+      # the migrations built into the image
       SCS_MIGRATIONS_DIR: /db/migrations
-    volumes:
-      - ./packages/api:/app
-      - api-node-modules:/app/node_modules
-      - ./packages/db/migrations:/db/migrations:ro
     depends_on:
       postgres:
         condition: service_healthy
@@ -93,11 +100,11 @@ services:
       retries: 10
 
   api:
-    image: node:24.21.0-alpine3.24@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1
-    working_dir: /app
-    command: sh -c "npm install --no-audit --no-fund && npm run dev"
+    build:
+      context: ./packages
+      dockerfile: api/Dockerfile
+    image: scs-pilot-api:local
     environment:
-      NODE_ENV: development
       API_PORT: ${API_PORT:-3000}
       SCS_DB_HOST: postgres
       SCS_DB_PORT: 5432
@@ -112,8 +119,8 @@ services:
     ports:
       - "127.0.0.1:${API_PORT:-3000}:${API_PORT:-3000}"
     volumes:
-      - ./packages/api:/app
-      - api-node-modules:/app/node_modules
+      # token digests: supplied at run time, never built into the image
+      - ./packages/api/config/static-actors.json:/app/config/static-actors.json:ro
     depends_on:
       migrate:
         condition: service_completed_successfully
@@ -123,4 +130,3 @@ services:
 volumes:
   postgres-data:
   seaweedfs-data:
-  api-node-modules:
