@@ -705,28 +705,58 @@ outcomes.
 
 ### Reading and verifying
 
-- **`getPackage`** returns the package envelope exactly as stored, to a `COMPLIANCE_OFFICER` or a
-  `REGULATORY_REVIEWER`; any other actor is `REQUESTOR_NOT_AUTHORISED`. An unknown package is
-  `PACKAGE_NOT_FOUND`.
-- **`verifyPackageIntegrity`**, for the same readers, recomputes and compares, and records
-  nothing. The status is the first that applies:
-  1. `DIGEST_MISMATCH`: the stored package content no longer hashes to its `packageDigest`, or
-     the envelope differs from its receipt;
-  2. `EVIDENCE_RECORDS_CHANGED`: a packaged record's content digest, or its file's SHA-256, no
-     longer matches;
-  3. `REVIEW_DECISION_CHANGED`: the decision differs from the package's copy, apart from its
-     derived currency;
-  4. `UNVERIFIABLE`: a check could not be performed, for example because the object store is
-     unavailable;
-  5. `INTACT`.
+- **Readers.** `getPackage` and `verifyPackageIntegrity` are for a `COMPLIANCE_OFFICER` or a
+  `REGULATORY_REVIEWER`; any other actor is `REQUESTOR_NOT_AUTHORISED` (403). An unknown package
+  is `PACKAGE_NOT_FOUND` (404). Both read in one REPEATABLE READ snapshot and record nothing.
+- **`getPackage`** returns `ScsPackageReadResult`: the envelope and, beside it, the currency of
+  the decision it was compiled from.
+  - `envelope` is the envelope exactly as stored: what `packageDigest` covers.
+  - `currency` is derived when the package is read (SCS-CAP-09, "Currency — derived, never
+    stored"). It sits beside the envelope and is never part of the digested content. A package
+    stays exactly as compiled when its decision later becomes `POTENTIALLY_STALE` or
+    `SUPERSEDED`; the reader sees that in `currency`, with the reasons or the successor.
 
-  Records and decisions are append-only, so in the pilot only tampering can produce the first
-  three.
+### Verifying a package
+
+`verifyPackageIntegrity` is a verification, not a request that can fail on what it finds. For a
+package that exists, read by an authorised reader, it always answers `200` with
+`ScsPackageIntegrityVerificationResult`: every check it performed, each with its result, and an
+overall `integrityStatus`. Finding a change means the verification did its job; the result is
+what SCS-CAP-10 records and shows. Only `REQUESTOR_NOT_AUTHORISED` (403) and
+`PACKAGE_NOT_FOUND` (404) are failures.
+
+**The checks**, each reported in `checks`:
+
+| Check | Compared | Result when it does not hold |
+|---|---|---|
+| `PACKAGE_DIGEST` | the stored content hashes to its `packageDigest`; the `PACKAGE_COMPILATION` receipt still hashes to its digest, and its compilation record names that digest and the envelope's compilation metadata | `DIGEST_MISMATCH` |
+| `EVALUATION_RECEIPT` | the evaluation, as stored now, equals its receipt's result and the package's copy, and hashes to the package's `evaluationSnapshotDigest` | `EVALUATION_CHANGED` |
+| `DECISION_RECEIPT` | the decision, as stored now and apart from its derived currency, equals its receipt's decision and the package's copy | `REVIEW_DECISION_CHANGED` |
+| `EVIDENCE_RECORD`, one per evidence item | the record's version and content digest equal the package's | `EVIDENCE_RECORDS_CHANGED` |
+| `EVIDENCE_FILE`, one per evidence item | the cited file is in the object store, and its bytes hash to the recorded SHA-256 | `EVIDENCE_OBJECT_MISSING` (no file under that SHA-256), `EVIDENCE_CHANGED` (the bytes hash to something else) or `UNVERIFIABLE` (the object store could not be reached) |
+
+- **Each check's result** is `PASS`, the result in the table, or `NOT_APPLICABLE` for the file of
+  an evidence item that cites no stored file (its `fileSha256Verified` is `false` in the
+  package).
+- **The overall `integrityStatus`** is the first that applies: `DIGEST_MISMATCH`,
+  `EVALUATION_CHANGED`, `REVIEW_DECISION_CHANGED`, `EVIDENCE_RECORDS_CHANGED`,
+  `EVIDENCE_OBJECT_MISSING`, `EVIDENCE_CHANGED`, `UNVERIFIABLE`, `INTACT`. A change that was found
+  outranks a check that could not be performed: `UNVERIFIABLE` means nothing was found to have
+  changed, but not everything could be checked. `INTACT` means every check passed.
+- **An unreachable object store** makes every file check `UNVERIFIABLE`. It is never a failure
+  and never a guess.
+- Records, evaluations, decisions and receipts are append-only, so in the pilot only tampering
+  or corruption can produce a change.
+- **Not recorded.** The verification itself is not recorded; recording it as challenge
+  evidence belongs to SCS-CAP-10.
 - **Endpoints:** `POST /scs/v1/due-diligence-packages` (`requestCompilation`, `201` with
   `{ decision, package, receipt, receiptDigest }`: the compilation record, the package envelope,
   the receipt and its digest),
-  `GET /scs/v1/due-diligence-packages/:packageId` and
-  `GET /scs/v1/due-diligence-packages/:packageId/integrity`.
+  `GET /scs/v1/due-diligence-packages/:packageId` (`getPackage`, `200` with
+  `ScsPackageReadResult`) and `GET /scs/v1/due-diligence-packages/:packageId/integrity`
+  (`verifyPackageIntegrity`, `200` with `ScsPackageIntegrityVerificationResult`). A package's
+  rendition is downloaded through SCS-PLATFORM-02 (`GET /scs/v1/renditions/:renditionId`), by
+  the same readers.
 
 ### Submission request
 
@@ -809,7 +839,7 @@ interface ScsDueDiligencePackageProvider {
 
   getPackage(
     packageId: string
-  ): Promise<ScsDueDiligencePackage>;
+  ): Promise<ScsPackageReadResult>;
 
   getPackageDigest(
     packageId: string
@@ -827,15 +857,63 @@ interface ScsDueDiligencePackageProvider {
   ): Promise<ScsPackageIntegrityVerificationResult>;
 }
 
+interface ScsPackageReadResult {
+  // The envelope exactly as stored: what packageDigest covers
+  envelope: ScsDueDiligencePackageEnvelope;
+  // Derived when the package is read; never part of the digested content
+  currency: {
+    decisionId: string;
+    status: ScsDecisionCurrencyStatus;
+    assessedAt: string;
+    // When POTENTIALLY_STALE: what changed
+    stalenessReasons?: Array<{
+      changeType: string;
+      changedAt: string;
+      changedEntityId: string;
+      explanation: string;
+    }>;
+    // When SUPERSEDED: the decision that supersedes it
+    supersededByDecisionId?: string;
+  };
+}
+
+// Always returned with 200 for a package that exists, read by an authorised reader
 interface ScsPackageIntegrityVerificationResult {
   packageId: string;
+  packageDigest: string;
   verifiedAt: string;
+  // The first that applies, in this order
   integrityStatus:
-    | "INTACT"
     | "DIGEST_MISMATCH"
-    | "EVIDENCE_RECORDS_CHANGED"
+    | "EVALUATION_CHANGED"
     | "REVIEW_DECISION_CHANGED"
-    | "UNVERIFIABLE";
+    | "EVIDENCE_RECORDS_CHANGED"
+    | "EVIDENCE_OBJECT_MISSING"
+    | "EVIDENCE_CHANGED"
+    | "UNVERIFIABLE"
+    | "INTACT";
+  // Every check performed (see "Verifying a package")
+  checks: Array<{
+    check:
+      | "PACKAGE_DIGEST"
+      | "EVALUATION_RECEIPT"
+      | "DECISION_RECEIPT"
+      | "EVIDENCE_RECORD"
+      | "EVIDENCE_FILE";
+    // For EVIDENCE_RECORD and EVIDENCE_FILE
+    evidenceId?: string;
+    result:
+      | "PASS"
+      | "NOT_APPLICABLE"
+      | "DIGEST_MISMATCH"
+      | "EVALUATION_CHANGED"
+      | "REVIEW_DECISION_CHANGED"
+      | "EVIDENCE_RECORDS_CHANGED"
+      | "EVIDENCE_OBJECT_MISSING"
+      | "EVIDENCE_CHANGED"
+      | "UNVERIFIABLE";
+    detail: string;
+  }>;
   detail: string;
 }
 ```
