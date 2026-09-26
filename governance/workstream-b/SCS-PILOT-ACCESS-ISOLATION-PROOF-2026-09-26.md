@@ -2,7 +2,7 @@
 
 **Status:** PROOF RECORD — PILOT STACK
 **Authority:** RECORDS WHAT HAS BEEN VERIFIED ABOUT THE ISOLATION OF THE SCS PILOT STACK, ON WHICH PLATFORMS, AND WHAT HAS NOT. Admits no capability, grants no production, commissioning or regulatory authority, and does not satisfy Gate D or close WP05.
-**Evidence base:** branch `implementation/scs-vertical-proof`: `d25c935` (the built image), `8c00fc5` (the internal network and the edge container), `46991c3` (the tenant disclosures and the `scs_migration` test). CI run 36225055661 on `8c00fc5` and CI run 36225819409 on `46991c3` (GitHub Actions, `ubuntu-24.04`, Docker 28.0.4, Linux 6.17), and local runs on Docker Desktop (Docker 29.7.2, WSL2 Linux 6.6).
+**Evidence base:** branch `implementation/scs-vertical-proof`: `d25c935` (the built image), `8c00fc5` (the internal network and the edge container), `46991c3` (the tenant disclosures and the `scs_migration` test). CI run 36225055661, which tested `cc3cf3b`, the pull request merge of `8c00fc5` with `main` (`46995e9`), and CI run 36225819409, which tested `93b1ecf`, the pull request merge of `46991c3` with `main` (GitHub Actions, `ubuntu-24.04`, Docker 28.0.4, Linux 6.17), and local runs on Docker Desktop (Docker 29.7.2, WSL2 Linux 6.6).
 
 ## Scope and verdict
 
@@ -60,8 +60,9 @@ The proof covers four properties of one country environment: the pilot stack def
 
 ## Item 1 — Network isolation
 
-**Verified results.** CI run 36225055661 on `8c00fc5`: all 20 required checks passed in both
-modes; CI run 36225819409 on `46991c3` passed them again. The Docker Desktop results are from the
+**Verified results.** CI run 36225055661, on the pull request merge of `8c00fc5` with `main`:
+all 20 required checks passed in both modes. CI run 36225819409, on the pull request merge of
+`46991c3` with `main`, passed them again. The Docker Desktop results are from the
 local runs.
 
 | Container | Check | Required | Native Linux (CI), base | Native Linux (CI), dev | Docker Desktop |
@@ -127,7 +128,8 @@ the internal network.
 ## Item 3 — Role isolation
 
 **Verified** by `db-security.test.ts`, against a database built from every migration. In CI run
-36225819409 on `46991c3` the full suite passed, 549 of 549, on native Linux. The tests establish:
+36225819409, on the pull request merge of `46991c3` with `main`, the full suite passed, 549 of
+549, on native Linux. The tests establish:
 - every `scs` table has row-level security enabled;
 - `scs_api` has exactly SELECT and INSERT on every `scs` table, and no UPDATE, DELETE,
   TRUNCATE, REFERENCES or TRIGGER;
@@ -139,7 +141,8 @@ the internal network.
 - acting as `scs_api`, SELECT and INSERT on `scs_migration.applied_migration` are refused, and
   `scs_api` has no USAGE on the `scs_migration` schema.
 
-The last test was added in `46991c3` and passed in CI run 36225819409. The CI PostgreSQL server
+The last test was added in `46991c3` and passed in CI run 36225819409 (its pull request merge
+with `main`). The CI PostgreSQL server
 logged `permission denied for schema scs_migration` for both its SELECT and its INSERT.
 
 **Known gap: `TODO(tenant-scope)`.** The policies are `USING (true)` / `WITH CHECK (true)` for
