@@ -56,3 +56,50 @@ jobs:
           SCS_TEST_S3_ENDPOINT: http://localhost:8333
           SCS_TEST_S3_ACCESS_KEY_ID: scs-ci
           SCS_TEST_S3_SECRET_ACCESS_KEY: scs-ci-secret-key
+
+  # The access isolation proof's network checks, on the real stack: build it
+  # from docker-compose.yml, verify the country isolation model (only the API
+  # reachable from the host; api, postgres and seaweedfs with no route
+  # outside), then add docker-compose.dev.yml and verify again. Every secret
+  # is a throwaway generated for this run.
+  isolation:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: scs-pilot
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.21.0'
+      - name: Throwaway .env and actors file
+        run: |
+          r() { openssl rand -hex 24; }
+          {
+            echo "POSTGRES_DB=scs_pilot"
+            echo "POSTGRES_USER=scs_owner"
+            echo "POSTGRES_PASSWORD=$(r)"
+            echo "POSTGRES_PORT=55433"
+            echo "SCS_API_DB_PASSWORD=$(r)"
+            echo "S3_ACCESS_KEY_ID=$(r)"
+            echo "S3_SECRET_ACCESS_KEY=$(r)"
+            echo "S3_PORT=9000"
+            echo "S3_BUCKET=scs-evidence"
+            echo "API_PORT=3000"
+          } > .env
+          digest=$(r | tr -d '\n' | sha256sum | cut -d' ' -f1)
+          sed "s/REPLACE_WITH_SHA256_OF_A_RANDOM_TOKEN_OF_AT_LEAST_32_CHARACTERS/$digest/" packages/api/config/static-actors.example.json > packages/api/config/static-actors.json
+      - name: Country stack (docker-compose.yml) — verify isolation
+        run: |
+          docker compose up -d --build --wait
+          POSTGRES_PORT=55433 node isolation/verify-network-isolation.mjs base
+      - name: With docker-compose.dev.yml — verify isolation
+        run: |
+          docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build --wait
+          POSTGRES_PORT=55433 node isolation/verify-network-isolation.mjs dev
+      - name: Logs on failure
+        if: failure()
+        run: docker compose logs --no-color | tail -200
+      - name: Remove the stack
+        if: always()
+        run: docker compose -f docker-compose.yml -f docker-compose.dev.yml down -v

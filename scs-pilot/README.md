@@ -25,11 +25,18 @@ Project structure for the Supply Chain Sovereignty pilot. **No capability logic 
 cp .env.example .env    # set every change-me value, including SCS_API_DB_PASSWORD
 cp packages/api/config/static-actors.example.json packages/api/config/static-actors.json
 # replace each tokenSha256 with the SHA-256 of a random token of at least 32 characters
-docker compose up -d
+docker compose up -d --build
 curl http://127.0.0.1:3000/health
 ```
 
-After changing API code, run `docker compose restart api`. The container runs `tsx watch`, but file changes on a Windows host don't reach watchers inside the container, so the API won't reload by itself.
+After changing API code or a migration, rebuild: `docker compose up -d --build`. The API runs from an image built from `packages/api/Dockerfile`; it installs and fetches nothing at start.
+
+The API, PostgreSQL and the object store are on an internal network with no route outside (`internal: true`): they cannot reach the internet, public DNS or services on the host. The edge container (nginx, TCP forwarding only) is the one container with a route outside, and it publishes the only host port, the API on `127.0.0.1:${API_PORT}`. For the integration tests, which need PostgreSQL and the object store on the host, add the development override:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
+node isolation/verify-network-isolation.mjs dev    # or: base, without the override
+```
 
 The API connects only as `scs_api`, and refuses to start if its database role is a superuser, can bypass row-level security, can create roles or databases, or owns anything in the database. It also refuses to start without a valid static actors file; the example file in the repository is rejected until its placeholder hashes are replaced.
 

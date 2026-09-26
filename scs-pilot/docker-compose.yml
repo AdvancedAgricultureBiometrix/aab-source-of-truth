@@ -8,6 +8,21 @@
 # time, nothing installed or fetched at start. After changing api code or a
 # migration, rebuild: docker compose up -d --build
 #
+# Networks (the access isolation model for this platform):
+#   internal — internal: true. postgres, seaweedfs, migrate and api are on it
+#              and on nothing else: they reach each other, but no public
+#              address, no public DNS and no service on the host
+#              (host.docker.internal). On Docker Desktop an internal network is
+#              the only setting that blocks a container's outbound traffic.
+#   edge     — an ordinary network. Only the edge container is on it, and on
+#              internal: it is the one container with a route outside, and it
+#              publishes the only host port (127.0.0.1:${API_PORT}, the API).
+#              It forwards TCP and holds no data and no credentials.
+# A container on an internal-only network cannot publish a port, which is why
+# the edge container exists. For the tests on the host, docker-compose.dev.yml
+# also forwards PostgreSQL and the object store through the edge:
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
+#
 # postgres  — the database; holds no migration logic of its own
 # migrate   — runs on every start, before the api: applies any pending
 #             packages/db/migrations/*.sql in order as the owner role, records
@@ -24,6 +39,8 @@
 # api       — Node service; connects as the restricted role scs_api only and
 #             refuses to start if that role owns scs objects, is a superuser
 #             or can bypass row-level security
+# edge      — nginx, TCP forwarding only (edge/nginx.conf): the host's
+#             127.0.0.1:${API_PORT} to api:3000. Read-only filesystem
 #
 # Roles: POSTGRES_USER owns the database and runs migrations (the migrate
 #        service); the api uses scs_api (migration 004: SELECT + INSERT only,
@@ -43,8 +60,7 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB in .env}
       POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER in .env}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
-    ports:
-      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    networks: [internal]
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
@@ -63,6 +79,7 @@ services:
     # a one-off command, not the API: the image's HEALTHCHECK does not apply
     healthcheck:
       disable: true
+    networks: [internal]
     environment:
       # the owner (migration) role — never scs_api
       SCS_MIGRATE_DB_HOST: postgres
@@ -89,8 +106,7 @@ services:
     environment:
       S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID:?set S3_ACCESS_KEY_ID in .env}
       S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY:?set S3_SECRET_ACCESS_KEY in .env}
-    ports:
-      - "127.0.0.1:${S3_PORT:-9000}:8333"
+    networks: [internal]
     volumes:
       - seaweedfs-data:/data
     healthcheck:
@@ -104,8 +120,11 @@ services:
       context: ./packages
       dockerfile: api/Dockerfile
     image: scs-pilot-api:local
+    networks: [internal]
     environment:
-      API_PORT: ${API_PORT:-3000}
+      # inside the internal network the API always listens on 3000; the host
+      # port (API_PORT) is published by the edge
+      API_PORT: 3000
       SCS_DB_HOST: postgres
       SCS_DB_PORT: 5432
       SCS_DB_NAME: ${POSTGRES_DB}
@@ -116,8 +135,6 @@ services:
       S3_BUCKET: ${S3_BUCKET:-scs-evidence}
       S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID}
       S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY}
-    ports:
-      - "127.0.0.1:${API_PORT:-3000}:${API_PORT:-3000}"
     volumes:
       # token digests: supplied at run time, never built into the image
       - ./packages/api/config/static-actors.json:/app/config/static-actors.json:ro
@@ -126,6 +143,30 @@ services:
         condition: service_completed_successfully
       seaweedfs:
         condition: service_healthy
+
+  edge:
+    image: nginx:1.30.5-alpine3.24@sha256:bf3201ab56f23e5954646379c775d511fc466e9f11376d9725361064ad07ed35
+    restart: unless-stopped
+    networks: [internal, edge]
+    ports:
+      - "127.0.0.1:${API_PORT:-3000}:3000"
+    volumes:
+      - ./edge/nginx.conf:/etc/nginx/nginx.conf:ro
+    # it holds nothing: the filesystem is read-only, with scratch space in memory
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/cache/nginx
+    environment:
+      NGINX_ENTRYPOINT_QUIET_LOGS: "1"
+    depends_on:
+      api:
+        condition: service_healthy
+
+networks:
+  internal:
+    internal: true
+  edge: {}
 
 volumes:
   postgres-data:
