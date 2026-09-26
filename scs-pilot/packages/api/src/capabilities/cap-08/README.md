@@ -18,6 +18,20 @@ The contract is the specification. Code here implements it as written, including
 
 Tests: `src/integration/cap-08-packages.test.ts` (every endpoint, through real endpoints and a real object store) and `rendition.test.ts` (the cross-platform rendition digest, on a fixed package).
 
+## Vertical proof
+
+**`MINIMUM_VERTICAL_SLICE_PROVEN` for SCS-CAP-08**, on the same standard as SCS-CAP-06: the capability runs end to end, honestly, over real admitted evidence, not that it reaches a best-case outcome. The proof was merged to `main` in PR #25 (`9f17cc2`; CI run 36228700962). It covers `requestCompilation`, `getPackage`, `verifyPackageIntegrity` and the rendition download; the operations not built are listed under "Open items". Each criterion is met by a named test:
+
+- **A package compiles end to end from real records:** "full chain: framework → plot → evidence file → evaluation → decision → package and rendition, bound by digest, every gap disclosed" (`cap-08-packages.test.ts`), through the real endpoints, a real object store and real PostgreSQL, as `scs_api`.
+- **Only a current, valid decision to proceed can be packaged:** "staleness blocks compilation: new evidence → REVIEW_DECISION_NOT_CURRENT; after re-evaluation and a superseding decision, the new decision compiles", and the two "gate:" tests.
+- **The package is deterministic and bound by its digest:** "the same decision compiled again: a new package, the same digest; the earlier package is unchanged"; and in `rendition.test.ts`, "the same package renders to the same bytes every time" and "CROSS-PLATFORM: the rendition's SHA-256 is the stored expected value on this platform".
+- **Every gap is disclosed:** the full-chain test checks the package's limitations and the evaluation's gaps; "completeness: every mandatory entry, Thai and Vietnamese text, and the digest on every page" checks the rendition.
+- **Integrity is checked at compilation and verifiable afterwards:** the three `*_INTEGRITY_FAILED` compilation tests, and the seven "verifyPackageIntegrity:" tests (INTACT, and each kind of change detected).
+- **The receipt is written atomically:** "receipt write fails → 500; no package, compilation record or rendition record; the decision can still be compiled".
+- **The package survives backup and restore:** the backup-restore proof reads a restored package back byte-for-byte, verifies it INTACT and re-hashes its PDF (`governance/workstream-b/SCS-PILOT-BACKUP-RESTORE-PROOF-2026-09-26.md`).
+
+This is a record of implementation proof only. SCS-CAP-08 remains PROPOSED_NOT_ADMITTED.
+
 ## Known inconsistency
 
 `requestCompilation`'s response names the package envelope `package` (`{ decision, package, receipt, receiptDigest }`), while `getPackage` names it `envelope` (`{ envelope, currency }`, contract 700c40a). Both are as the contract states. Aligning them would change the already-built compilation response and its tests; it was judged not worth it for naming alone.
