@@ -6,7 +6,7 @@
   - The manifest records every evaluated item's kind, identifier, version, content digest and admission time. It is the authoritative input.
   - `evaluate.ts` is a pure function of that input, with no further reads. Gap and conflict identifiers are derived from their content, so the same input gives the same requirement results, gaps, conflicts and next steps.
 - **Failure checks,** each FAIL_CLOSED, producing no evaluation:
-  1. Authority: only `COMPLIANCE_OFFICER`, for evaluating and for reading.
+  1. Authority: only `COMPLIANCE_OFFICER` may evaluate; `COMPLIANCE_OFFICER` or `REGULATORY_REVIEWER` may read (the SCS-CAP-09 reviewer reads the evaluation it reviews).
   2. Framework: `ACTIVE`, `regulationVersion`, commodity, own specification.
   3. Period: after the specification's cut-off, and not in the future.
   4. Plots: registered, not `RETIRED`, current versions, and an `ACTIVE` association with the framework.
