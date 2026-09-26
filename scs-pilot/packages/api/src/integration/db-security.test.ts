@@ -149,6 +149,23 @@ test("acting as scs_api: SELECT and INSERT work; UPDATE, DELETE, TRUNCATE and DD
   }
 });
 
+test("acting as scs_api: the migration history schema (scs_migration) is refused", async () => {
+  // the runner's own schema exists in every migrated database, owned by the owner
+  const { rows } = await db.admin.query<{ n: string }>("SELECT count(*) AS n FROM scs_migration.applied_migration");
+  assert.ok(Number(rows[0]!.n) > 0, "the owner sees the applied migrations");
+  await db.admin.query("BEGIN");
+  try {
+    await db.admin.query("SET LOCAL ROLE scs_api");
+    const denied = "42501"; // insufficient_privilege: no USAGE on the schema
+    assert.equal(await asScsApi("SELECT * FROM scs_migration.applied_migration"), denied, "SELECT");
+    assert.equal(await asScsApi("INSERT INTO scs_migration.applied_migration DEFAULT VALUES"), denied, "INSERT");
+    const hasUsage = await db.admin.query<{ u: boolean }>("SELECT has_schema_privilege('scs_api', 'scs_migration', 'USAGE') AS u");
+    assert.equal(hasUsage.rows[0]!.u, false, "scs_api has no USAGE on scs_migration");
+  } finally {
+    await db.admin.query("ROLLBACK");
+  }
+});
+
 test("migration 004 refuses to run as scs_api", async () => {
   const sql = await readFile(new URL("../../../db/migrations/004_roles_rls.sql", import.meta.url), "utf8");
   const body = sql.slice(sql.indexOf("DO $$"), sql.indexOf("END\n$$;") + "END\n$$;".length);

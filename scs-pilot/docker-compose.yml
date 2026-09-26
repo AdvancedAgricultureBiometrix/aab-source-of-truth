@@ -163,6 +163,15 @@ services:
       api:
         condition: service_healthy
 
+# TODO(tenant-network-policy): these networks isolate the services from the
+# outside, not one environment from another on the same host. The edge
+# container has a route outside, so two environments on one host, each with
+# this architecture, can still reach each other through the host's
+# network-facing interfaces (and, on Docker Desktop, the host's loopback
+# through host.docker.internal). Cross-environment isolation on a shared host
+# needs infrastructure-level network policy, which Docker Compose cannot
+# provide: separate hosts, or host firewall / kernel-level network policy.
+# Not fixed here; disclosed.
 networks:
   internal:
     internal: true
