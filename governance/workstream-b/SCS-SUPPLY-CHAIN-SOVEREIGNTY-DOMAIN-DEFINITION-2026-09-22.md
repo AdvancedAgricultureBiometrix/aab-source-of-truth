@@ -65,13 +65,13 @@ These three capabilities are sufficient to begin a genuine institutional convers
 
 | Capability | Name | Status |
 |---|---|---|
-| SCS-CAP-01 | Regulatory Framework Registration | DESIGN IN PROGRESS |
-| SCS-CAP-03 | Plot and Land Unit Registration | DESIGN IN PROGRESS |
-| SCS-CAP-04 | Deforestation Evidence Admission | DESIGN IN PROGRESS |
+| SCS-CAP-01 | Regulatory Framework Registration | DESIGNED; PILOT IMPLEMENTATION BEHAVIOURALLY PROVEN (as of 2026-09-27) |
+| SCS-CAP-03 | Plot and Land Unit Registration | DESIGNED; PILOT IMPLEMENTATION BEHAVIOURALLY PROVEN (as of 2026-09-27) |
+| SCS-CAP-04 | Deforestation Evidence Admission | DESIGNED; PILOT IMPLEMENTATION BEHAVIOURALLY PROVEN (as of 2026-09-27) |
 
 ### Admitted but not yet implemented
 
-None. No SCS capability is currently admitted or implemented.
+None. No SCS capability is admitted. As of 2026-09-27, eight have pilot implementations on `main`: see the SCS capability roster (`SCS-CAPABILITY-IDENTITY-ROSTER-2026-09-22.md`) and `governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`.
 
 ### Full roadmap — proposed, not admitted
 
