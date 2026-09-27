@@ -63,7 +63,7 @@ Two migrations, each applied by the runner and mirrored in a current-state schem
 **Migration 024: platform receipts** (`schema/platform.sql`)
 - The receipt table's capability check widened to include `AAB-PLATFORM-09`. Nothing else in the receipt table changes.
 
-**Also in this PR:** `scripts/generate-types.mjs` resolves `urn:aab:schema:` as well as `urn:aab:scs:schema:`; `ops/verify-integrity.ts` counts the new tables.
+**Also in this PR:** `scripts/generate-types.mjs` resolves `urn:aab:schema:` as well as `urn:aab:scs:schema:`. `ops/verify-integrity.ts` needs no change here: it already counts every `scs` table. (Corrected while building PR 2.)
 
 ## Step 2 — Foundation: the registry library and historical verification
 
