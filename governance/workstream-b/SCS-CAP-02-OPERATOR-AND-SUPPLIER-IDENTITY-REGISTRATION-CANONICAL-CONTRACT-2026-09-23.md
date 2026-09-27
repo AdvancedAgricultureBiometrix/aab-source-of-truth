@@ -6,6 +6,24 @@
 production, Gate D, WP05, scientific-validity or regulatory authority. This
 capability is PROPOSED_NOT_ADMITTED. A pilot implementation exists; what it covers is recorded in `scs-pilot/packages/api/src/capabilities/cap-02/README.md`.
 
+## Amendment of 2026-09-27: links, mandate verification and representative submission
+
+This contract adopts AAB-PLATFORM-04 (Actor–Subject Link) and AAB-PLATFORM-03 (ActorReference) section 3 (mandate-based submission). Three additions:
+- **Actor–party links** ("Actor–party links", below). SCS-CAP-02 is the SCS domain that stores links to parties, and documents everything AAB-PLATFORM-04 requires of an adopting domain.
+- **Mandate verification** ("Mandate verification", under "Verification assessment recording"). AAB-PLATFORM-03 lets an actor act under a mandate only when the mandate is `VERIFIED_FOR_DECLARED_SCOPE`, and this contract defined verification for parties only, so no mandate could ever qualify.
+- **Representative submission of identity evidence** ("Representative submission"). `SUBMIT_IDENTITY_EVIDENCE` is a mandate action. It is now accepted from a `PARTY_REPRESENTATIVE` who passes every link and mandate check, closing this contract's gap on representative submission.
+
+Nothing is implemented by this amendment. Every other rule in this contract is unchanged.
+
+**Decisions recorded on 2026-09-27:**
+1. **All three additions go together.** Without mandate verification, links deliver nothing usable: an unverified mandate cannot be acted under.
+2. **`IS_SUBJECT` is for natural persons only, and `ACTS_FOR_SUBJECT` for organisations only.** A natural person acting for another natural person does so under a mandate, not a link.
+3. **Links last at most 12 months,** a domain decision that may be revised when operational experience shows a different period is needed.
+4. **Disputed parties, and parties under review, remain current.** A dispute is an unresolved question, not a determination. Treating the party as not current would stop its own people acting during the dispute, harming the party the dispute process protects.
+5. **Separation of duties:** a link's creator cannot verify a mandate that the link enables, and a mandate's verifier cannot have created a link to its representative party.
+6. **For identity evidence, the mandate scope check is geography only.** Identity evidence establishes who someone is, not which commodity or framework they operate under.
+7. **Mandate verification proceeds on unconfirmable evidence ids, disclosed.** It is a limitation, not a blocker (`TODO(evidence-id-model)`). Holding it back until the evidence-id model is fixed would block the whole representation pathway indefinitely.
+
 ## Plain-English boundary statement
 
 SCS-CAP-02 allows authorised parties to register the legal or natural persons
@@ -60,7 +78,7 @@ aggregator's assertion that a farmer supplies it is a claim until supported
 by evidence and independently assessed. Terminating one supplier relationship
 must not affect the aggregator's other relationships.
 
-## Six objects — kept separate
+## Seven objects — kept separate
 
 | Record | Purpose |
 |---|---|
@@ -70,8 +88,9 @@ must not affect the aggregator's other relationships.
 | Verification assessment | Records what was verified, by whom, and when |
 | Supply-chain relationship | Connects two parties without merging their identities |
 | Framework association | Records the framework and version under which the party participates |
+| Actor–party link | Binds an AAB actor to a party, so the actor may act as or for it (AAB-PLATFORM-04). Grants no authority. |
 
-These six objects must never be silently merged. A party's identity record is
+These seven objects must never be silently merged. An actor–party link is not a party, a role claim or a mandate: it says only that an actor may be associated with a party. A party's identity record is
 independent of any relationship record. A relationship record is independent of
 any verification assessment. One party must not alter another party's canonical
 identity record.
@@ -560,6 +579,12 @@ interface ScsIdentityEvidenceSubmissionRequest {
   evidenceIds: string[];
   evidenceLimitations: string[];
   submittingOrganizationId?: string;
+
+  // Present only for a representative submission
+  actingUnder?: {
+    representativePartyId: string;  // the party the actor is linked to
+    mandateId: string;              // the mandate from the path's party to it
+  };
 }
 ```
 
@@ -578,6 +603,8 @@ interface ScsIdentityEvidenceSubmissionDecision {
     partyNotRetired: boolean;
     submitterAuthorised: boolean;
     evidenceIdsNotAlreadyLinked: boolean;
+    // Present only for a representative submission: each check of "Representative submission"
+    representation?: ScsRepresentationChecks;
   };
 
   decisionReasons: string[];
@@ -591,8 +618,10 @@ interface ScsIdentityEvidenceSubmissionDecision {
 The checks run in this order. Each failure ends in `FAIL_CLOSED` and writes nothing: no
 submission, no evidence link, no decision, no receipt.
 
-1. **Authority.** Only a `COMPLIANCE_OFFICER` may submit identity evidence. Otherwise
-   `REGISTRANT_NOT_AUTHORISED` (403).
+1. **Authority.** A `COMPLIANCE_OFFICER` may submit identity evidence directly. A
+   `PARTY_REPRESENTATIVE` may submit it for the path's party only under a mandate, passing
+   every check in "Representative submission" first. Otherwise `REGISTRANT_NOT_AUTHORISED`
+   (403), or the representative-submission failure that applies.
 2. **Party exists.** The `partyId` must identify a registered party. Otherwise
    `PARTY_NOT_FOUND` (404).
 3. **Party not retired.** A `RETIRED` party accepts no new evidence: `PARTY_RETIRED` (422).
@@ -610,10 +639,9 @@ party identity record is not changed.
 
 ### Open gaps
 
-**Contract gap: representative submission.** `SUBMIT_IDENTITY_EVIDENCE` is a mandate
-action, so a representative party may be able to submit evidence under a mandate. This
-contract does not say how a mandate authorises a submission. Until it does, only a
-`COMPLIANCE_OFFICER` may submit, and mandate-based submission is not accepted.
+**Representative submission: specified by the amendment of 2026-09-27.** This contract
+previously did not say how a mandate authorises a submission, so only a
+`COMPLIANCE_OFFICER` could submit. "Representative submission" now specifies it.
 
 **Contract gap: party versions.** This contract gives parties a `partyVersion` but does
 not say what creates a new version. Until it does, evidence attaches to the party's
@@ -928,6 +956,98 @@ representation authority after the supply-chain context that justified it has en
 a real governance problem, but the rule is not specified here, so it is not enforced. It must
 be specified before a production implementation.
 
+## Actor–party links
+
+**SCS-CAP-02 adopts AAB-PLATFORM-04 (Actor–Subject Link) for CAP-02 parties.** Everything in AAB-PLATFORM-04 applies unchanged: the write-once link record, its four derived states, signed creation and status records, the creation rules and the use checks. This section documents what AAB-PLATFORM-04's "Adopting this contract" requires of SCS.
+
+### Subject type
+
+- **One subject type:** `domain: "SCS"`, `subjectType: "PARTY"`. The `subjectId` is a CAP-02 `partyId`.
+- **Relations by party type:**
+  - `IS_SUBJECT` links only to a `NATURAL_PERSON` party: the person acting as themselves, for example a smallholder submitting their own evidence.
+  - `ACTS_FOR_SUBJECT` links only to a party that is not a `NATURAL_PERSON`: a staff member or officer acting for a legal entity, cooperative, community group or government body.
+  - Anyone acting for a natural person does so as a separate party, under a mandate from that person. It is never done through a link.
+
+### Creating role
+
+- **`LINK_OFFICER`** creates actor–party links and writes their status records. It is a dedicated role, held in the creator's `authorityBasis` in a scope that covers the party.
+- **Separation of duties:**
+  - A `LINK_OFFICER` never creates a link for themselves (AAB-PLATFORM-04, `LINK_SELF_ASSERTED`).
+  - The actor who created a link to a party may not record a verification assessment of any mandate whose representative party is that party.
+  - The actor who verified a mandate may not create a link to its representative party.
+
+  Otherwise `LINK_CREATOR_NOT_AUTHORISED`, or `VERIFIER_NOT_AUTHORISED`.
+
+### Maximum link period
+
+**A link to a CAP-02 party is valid for at most 12 months,** from `validFrom` to `validUntil`. A longer period is `LINK_VALIDITY_INVALID`. A link that is still needed is superseded by a new link, with fresh evidence, before it expires.
+
+Twelve months is a domain decision: in a regulated supply chain, relationships and authorisations should be reviewed at least annually. It may be revised by amendment when operational experience shows that a different period is needed.
+
+### Evidence, in addition to AAB-PLATFORM-04
+
+AAB-PLATFORM-04 requires at least one stored object showing that the subject authorised the relationship. SCS adds:
+- **For `ACTS_FOR_SUBJECT`:** the stored authorisation is issued by the party (for example a letter of authority), and names the actor and the party.
+- **For `IS_SUBJECT`:** the stored evidence shows that the actor is the natural person the party records, for example an identity document matching the party's name.
+
+Link evidence is always an AAB-PLATFORM-01 stored object, cited by SHA-256. It is never a CAP-02 evidence id, because those ids are not linked to the object store (`TODO(evidence-id-model)`).
+
+### Subject resolver
+
+SCS implements AAB-PLATFORM-04's `SubjectResolver` for `subjectType: "PARTY"`, answering from the party's current record:
+
+| Party | Resolver answer |
+|---|---|
+| No party with this `partyId` | `NOT_FOUND` |
+| `registrationStatus: RETIRED` | `NOT_CURRENT` |
+| `registrationStatus: REGISTERED`, `REQUIRES_HUMAN_REVIEW` or `DISPUTED` | `CURRENT` |
+
+These are the parties that accept identity evidence (submission rule 3). A party under review or in dispute stays current, so its own people can help resolve the review.
+
+### Where links are stored
+
+- Links and their status records are stored in the SCS store, in the country's tenancy, beside the CAP-02 records.
+- Write-once is enforced as for every CAP-02 record. `scs_api` may SELECT and INSERT only, and a trigger refuses UPDATE, DELETE and TRUNCATE for every role.
+- Each link and each status record is written with its decision receipt, in one transaction.
+
+### Operations
+
+`createActorPartyLink`, `recordActorPartyLinkStatus` and `getActorPartyLink`, added to the provider interface below. Their rules are AAB-PLATFORM-04's creation rules, status-record rules and use checks, with this section's additions.
+
+## Representative submission
+
+**A representative act passes every check below, in the act's own transaction, before the act's own rules.** This implements AAB-PLATFORM-03 section 3 for SCS. It applies to every capability whose act is a mandate action. In this contract, that is `SUBMIT_IDENTITY_EVIDENCE`; SCS-CAP-03, SCS-CAP-04 and SCS-CAP-05 adopt it by their own amendments.
+
+The checks run in this order, and each failure ends in `FAIL_CLOSED` and writes nothing:
+1. **Role.** The actor holds `PARTY_REPRESENTATIVE`, in scope. Otherwise `REPRESENTATIVE_NOT_AUTHORISED`.
+2. **Link.** Exactly one `ACTIVE`, validly signed `ACTS_FOR_SUBJECT` link binds the actor to `actingUnder.representativePartyId`, and that party is current. Otherwise the AAB-PLATFORM-04 use-check failure: `LINK_NOT_FOUND`, `LINK_AMBIGUOUS`, `LINK_NOT_ACTIVE`, `LINK_SIGNATURE_INVALID`, `LINK_RELATION_NOT_PERMITTED` or `LINK_SUBJECT_NOT_CURRENT`.
+3. **Mandate parties.** The mandate exists (`MANDATE_NOT_FOUND`). Its `representativePartyId` is the linked party, and its `grantingPartyId` is the party the act is for. Otherwise `MANDATE_PARTIES_MISMATCH`.
+4. **Mandate current.** `revocationStatus: NOT_REVOKED`, and the act falls within `validFrom` and `validUntil`. Otherwise `MANDATE_NOT_CURRENT`.
+5. **Action.** The mandate's `permittedActions` include the act's action, for example `SUBMIT_IDENTITY_EVIDENCE`. Otherwise `MANDATE_ACTION_NOT_PERMITTED`.
+6. **Scope.** The act falls within the mandate's `frameworkAssociationIds`, `commodityScope` and `geographicScope`. Otherwise `MANDATE_SCOPE_MISMATCH`. Identity evidence is not tied to a framework or commodity, so for `SUBMIT_IDENTITY_EVIDENCE` only geography applies: the granting party's `countryOfOperation`, or its `countryOfRegistration` when no country of operation is recorded, is within `geographicScope`.
+7. **Relationship.** An `ACTIVE` relationship still exists between the two parties, covering every framework the mandate references. Otherwise `MANDATE_RELATIONSHIP_NOT_ACTIVE`.
+8. **Verification.** The mandate's current verification status is `VERIFIED_FOR_DECLARED_SCOPE` ("Mandate verification"). Otherwise `MANDATE_NOT_VERIFIED`. Any lesser status is refused, never accepted as a limitation.
+
+**What is recorded:**
+- The submitter's `ActorReference` carries `representation`, with the link, the representative party, the mandate and the granting party.
+- The decision's `eligibilityChecks.representation` records each check.
+- The act is otherwise recorded exactly as a direct submission is.
+
+```typescript
+interface ScsRepresentationChecks {
+  representativeRoleHeld: boolean;
+  activeLinkToRepresentativeParty: boolean;
+  mandatePartiesMatch: boolean;
+  mandateCurrent: boolean;
+  actionPermitted: boolean;
+  withinMandateScope: boolean;
+  relationshipActive: boolean;
+  mandateVerified: boolean;
+}
+```
+
+**The mandate's authority boundary still applies.** A representative never approves the granting party, alters its identity, makes legal declarations without explicit authority, or acts outside the mandate's declared scope.
+
 ## Verification assessment recording
 
 `addVerificationAssessment` records an `ScsPartyVerificationAssessment` for a party and
@@ -1072,6 +1192,72 @@ written in the same transaction. The decision states that the verifying authorit
 as declared and that the cited evidence identifiers cannot be confirmed while the evidence
 store is not built.
 
+### Mandate verification
+
+**A mandate's verification status changes only through a mandate verification assessment,** recorded by `addMandateVerificationAssessment`. It follows the party assessment's model, with these differences.
+
+```typescript
+interface ScsMandateVerificationAssessment {
+  assessmentId: string;
+  mandateId: string;
+
+  verificationStatus: ScsIdentityVerificationStatus;
+
+  // What was verified about the mandate
+  verificationScope: {
+    scopeDescription: string;
+    // For example: grantingPartyConsent, permittedActions, frameworkScope,
+    // commodityScope, geographicScope, validityPeriod
+    verifiedAttributes: string[];
+    excludedFromVerification: string[];
+  };
+
+  verifyingAuthority: {
+    authorityId: string;
+    authorityName: string;
+    authorityBasis: string;
+    jurisdictionCode: string;
+  };
+
+  verifiedAt: string;
+  expiresAt?: string;
+  // At least one, each among the mandate's mandateEvidenceIds
+  evidenceIds: string[];
+  limitations: string[];
+
+  recordedBy: ActorReference;
+  recordedAt: string;
+  supersedesAssessmentId?: string;
+
+  authorityBoundary: {
+    doesNotExtendTheMandatesScope: true;
+    doesNotVerifyEitherPartysIdentity: true;
+    doesNotGrantRegulatoryEligibility: true;
+  };
+}
+```
+
+**Recording rules**, in this order, each failing closed and writing nothing:
+1. **Authority.** The actor holds `VERIFICATION_OFFICER`. Otherwise `VERIFIER_NOT_AUTHORISED`.
+2. **Recordable status.** `PARTIALLY_VERIFIED`, `VERIFIED_FOR_DECLARED_SCOPE`, `DISPUTED` or `FAIL_CLOSED` only. Otherwise `VERIFICATION_STATUS_NOT_RECORDABLE`.
+3. **Dates.** As for a party assessment. Otherwise `VALIDITY_PERIOD_INVALID`. An `expiresAt` later than the mandate's `validUntil` is refused, because a mandate's verification cannot outlast the mandate.
+4. **Jurisdiction.** `jurisdictionCode` is an officially assigned ISO 3166-1 alpha-2 code. Otherwise `COUNTRY_CODE_UNRECOGNISED`.
+5. **Mandate.** The mandate exists (`MANDATE_NOT_FOUND`), and is `NOT_REVOKED` and not past `validUntil` (`MANDATE_NOT_CURRENT`).
+6. **Independence.** The actor did not register the mandate (its `createdBy`), is not linked to either of its parties, and did not create a link to its representative party ("Actor–party links"). Otherwise `VERIFIER_NOT_AUTHORISED`.
+7. **Evidence.** At least one evidence identifier, each among the mandate's `mandateEvidenceIds`. Otherwise `VERIFICATION_EVIDENCE_NOT_LINKED`.
+8. **Supersession.** As for a party assessment: `SUPERSEDED_ASSESSMENT_NOT_FOUND` or `CONFLICTING_RECORD`.
+
+**A mandate's current verification status is derived when read,** as a party's is:
+- from its current assessment, meaning one neither superseded nor expired;
+- `CLAIMED_UNVERIFIED` when there is none;
+- `VERIFICATION_EXPIRED` when its assessment's `expiresAt` has passed.
+
+The stored `verificationStatus` of the mandate record keeps its starting value. It is never updated.
+
+**When every check passes,** the decision is `RECORDED`, and the assessment and its receipt are written in the same transaction. As for a party assessment, the decision states that:
+- the verifying authority is recorded as declared;
+- the cited evidence identifiers cannot be confirmed against stored objects. `mandateEvidenceIds` are CAP-02 evidence ids, which predate the evidence object store (`TODO(evidence-id-model)`). A mandate is therefore verified on evidence the system discloses it cannot yet confirm. That is the same limitation, disclosed the same way, as for party and plot evidence. It does not block mandate verification.
+
 ### Open gaps
 
 **Contract gap: the party-level summary.** How several current assessments of one party, with
@@ -1093,9 +1279,9 @@ registrant. Whether the verifier must also be independent of the actors who subm
 cited evidence is not decided. It needs the submission history of each cited identifier and a
 defined submitting role, and is a future contract decision.
 
-**Contract gap: verification of role claims, relationships and mandates.** Their
-`verificationStatus` changes only through a verification assessment, but this contract defines
-verification assessments for parties only.
+**Contract gap: verification of role claims and relationships.** Their `verificationStatus`
+changes only through a verification assessment, but this contract defines verification
+assessments for parties and, since the amendment of 2026-09-27, mandates only.
 
 **Current system limit: no registry of verifying authorities.** `verifyingAuthority` is
 recorded as declared; it cannot be checked against a registry, and the decision must say so.
@@ -1159,6 +1345,25 @@ interface ScsPartyIdentityProvider {
   listParties(
     request: ScsListPartiesRequest
   ): Promise<ScsListPartiesResult>;
+
+  // Amendment of 2026-09-27
+  addMandateVerificationAssessment(
+    mandateId: string,
+    request: ScsMandateVerificationAssessmentRequest
+  ): Promise<ScsMandateVerificationAssessmentDecision>;
+
+  createActorPartyLink(
+    request: ScsActorPartyLinkRequest
+  ): Promise<ScsActorPartyLinkDecision>;
+
+  recordActorPartyLinkStatus(
+    linkId: string,
+    request: ScsActorPartyLinkStatusRequest
+  ): Promise<ScsActorPartyLinkStatusDecision>;
+
+  getActorPartyLink(
+    linkId: string
+  ): Promise<ScsActorPartyLink>;
 }
 ```
 
@@ -1198,6 +1403,29 @@ interface ScsPartyRegistrationFailure {
     | "VERIFICATION_STATUS_NOT_RECORDABLE"
     | "VERIFICATION_EVIDENCE_NOT_LINKED"
     | "SUPERSEDED_ASSESSMENT_NOT_FOUND"
+    // Amendment of 2026-09-27: links (AAB-PLATFORM-04)
+    | "LINK_CREATOR_NOT_AUTHORISED"
+    | "LINK_SELF_ASSERTED"
+    | "LINK_SUBJECT_NOT_FOUND"
+    | "LINK_SUBJECT_NOT_CURRENT"
+    | "LINK_EVIDENCE_MISSING"
+    | "LINK_VALIDITY_INVALID"
+    | "LINK_ALREADY_ACTIVE"
+    | "LINK_SIGNATURE_INVALID"
+    | "LINK_NOT_FOUND"
+    | "LINK_AMBIGUOUS"
+    | "LINK_NOT_ACTIVE"
+    | "LINK_RELATION_NOT_PERMITTED"
+    | "LINK_STATUS_NOT_PERMITTED"
+    // Amendment of 2026-09-27: representative submission and mandate verification
+    | "REPRESENTATIVE_NOT_AUTHORISED"
+    | "MANDATE_NOT_FOUND"
+    | "MANDATE_PARTIES_MISMATCH"
+    | "MANDATE_NOT_CURRENT"
+    | "MANDATE_ACTION_NOT_PERMITTED"
+    | "MANDATE_SCOPE_MISMATCH"
+    | "MANDATE_RELATIONSHIP_NOT_ACTIVE"
+    | "MANDATE_NOT_VERIFIED"
     | "DEPENDENCY_UNAVAILABLE";
 
   reasons: string[];
@@ -1231,7 +1459,9 @@ A Thai rubber cooperative managing 400 smallholder members registers 400
 bilateral relationships and 400 representation mandates. Each smallholder's
 identity, plot registration, and evidence remain individually governed. The
 cooperative's submission authority is explicit, scoped, and revocable per
-smallholder. No smallholder's record is obscured by the cooperative's
+smallholder. The cooperative's staff member who submits holds an actor–party link to the
+cooperative, and acts under each smallholder's verified mandate. A smallholder who submits
+their own evidence holds an `IS_SUBJECT` link to their own party record. No smallholder's record is obscured by the cooperative's
 registration.
 
 ## What this document does not establish
@@ -1247,5 +1477,9 @@ registration.
 - A representation mandate does not grant the representative authority to
   approve, alter, or make legal declarations on behalf of the granting party
   beyond its explicitly enumerated permitted actions
+- An actor–party link does not make the actor a party, verify either of them, or grant any
+  authority. What the actor may do is decided by their role and, for representation, a
+  verified mandate.
+- Verifying a mandate verifies the mandate only. It does not verify either party's identity.
 - It does not alter commissioning status, satisfy Gate D, close WP05, or
   grant any production or commissioning authority
