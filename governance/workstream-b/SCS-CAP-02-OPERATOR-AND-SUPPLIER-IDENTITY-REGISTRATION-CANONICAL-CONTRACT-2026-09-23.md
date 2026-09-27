@@ -15,6 +15,8 @@ This contract adopts AAB-PLATFORM-04 (Actor–Subject Link) and AAB-PLATFORM-03 
 
 Nothing is implemented by this amendment. Every other rule in this contract is unchanged.
 
+**Second amendment of 2026-09-27: request and decision types, and the party's authority representative.** Before build, this contract defines the request and decision types that the first amendment only named ("Actor–party links: requests and decisions", "Mandate verification"). It also names SCS's subject authority role, `PARTY_AUTHORITY_REPRESENTATIVE`, which AAB-PLATFORM-04 now requires ("Who may suspend a link").
+
 **Decisions recorded on 2026-09-27:**
 1. **All three additions go together.** Without mandate verification, links deliver nothing usable: an unverified mandate cannot be acted under.
 2. **`IS_SUBJECT` is for natural persons only, and `ACTS_FOR_SUBJECT` for organisations only.** A natural person acting for another natural person does so under a mandate, not a link.
@@ -1010,9 +1012,96 @@ These are the parties that accept identity evidence (submission rule 3). A party
 - Write-once is enforced as for every CAP-02 record. `scs_api` may SELECT and INSERT only, and a trigger refuses UPDATE, DELETE and TRUNCATE for every role.
 - Each link and each status record is written with its decision receipt, in one transaction.
 
+### Who may suspend a link
+
+A link to a party may be suspended by the party's authorised representative (AAB-PLATFORM-04, section 4). For CAP-02 parties, that is:
+- **for a `NATURAL_PERSON` party:** the person themselves, holding an `ACTIVE` `IS_SUBJECT` link to the party;
+- **for any other party:** an actor holding **`PARTY_AUTHORITY_REPRESENTATIVE`**, granted with `scopeType: SUBJECT` and `scopeId: "SCS:PARTY:<partyId>"`, and an `ACTIVE` `ACTS_FOR_SUBJECT` link to the party.
+
+A staff member holding only an `ACTS_FOR_SUBJECT` link, or only `PARTY_REPRESENTATIVE`, cannot suspend another actor's link to their organisation. `PARTY_AUTHORITY_REPRESENTATIVE` is a separate role from `PARTY_REPRESENTATIVE`. The first withdraws the party's authorisations; the second acts under a mandate.
+
+**Pilot limitation: how the designation is recorded.** In the pilot, `PARTY_AUTHORITY_REPRESENTATIVE` grants come from the actors file, which is operator configuration, as every pilot role assignment is. They are not signed, evidenced or receipted. In a production deployment, designating a party's authority representative must itself be a signed, evidenced act with a receipt, made on evidence that the party designated that person. Until then, every suspension by a party's representative discloses that the representative's designation is recorded as operator configuration.
+
 ### Operations
 
 `createActorPartyLink`, `recordActorPartyLinkStatus` and `getActorPartyLink`, added to the provider interface below. Their rules are AAB-PLATFORM-04's creation rules, status-record rules and use checks, with this section's additions.
+
+### Actor–party links: requests and decisions
+
+```typescript
+// POST: create a link. The creator signs linkStatement outside the server first
+interface ScsActorPartyLinkRequest {
+  // AAB-PLATFORM-04 ActorSubjectLinkStatement, with subject.domain "SCS"
+  // and subject.subjectType "PARTY"
+  linkStatement: ActorSubjectLinkStatement;
+  statementSignature: string;
+}
+
+interface ScsActorPartyLinkDecision {
+  decisionId: string;
+  linkId: string;
+  partyId: string;
+  decision: "CREATED";
+
+  eligibilityChecks: {
+    creatorAuthorised: boolean;             // LINK_OFFICER, in scope
+    notSelfAsserted: boolean;
+    partyCurrent: boolean;                  // the subject resolver answered CURRENT
+    relationFitsPartyType: boolean;         // IS_SUBJECT for NATURAL_PERSON only
+    evidenceStored: boolean;                // every evidence object is in AAB-PLATFORM-01
+    validityWithinMaximum: boolean;         // at most 12 months
+    noOverlappingActiveLink: boolean;
+    creatorIndependentOfMandateVerification: boolean;
+    statementSignatureVerified: boolean;
+  };
+
+  linkDigest: string;
+  decisionReasons: string[];
+  decidedBy: ActorReference;
+  decidedAt: string;
+}
+
+// POST: write a status record against a link. The writer signs statusStatement first
+interface ScsActorPartyLinkStatusRequest {
+  // AAB-PLATFORM-04 ActorSubjectLinkStatusStatement
+  statusStatement: ActorSubjectLinkStatusStatement;
+  statementSignature: string;
+}
+
+interface ScsActorPartyLinkStatusDecision {
+  decisionId: string;
+  statusRecordId: string;
+  linkId: string;
+  action: "SUSPEND" | "REINSTATE" | "REVOKE";
+  decision: "RECORDED";
+  writerCapacity: "CREATING_ROLE" | "SUBJECT_AUTHORITY";
+
+  eligibilityChecks: {
+    linkExists: boolean;
+    writerPermittedForAction: boolean;
+    actionPossibleFromCurrentState: boolean;
+    statementBindsCurrentLink: boolean;
+    statementSignatureVerified: boolean;
+  };
+
+  // The link's state after this record
+  resultingState: "ACTIVE" | "SUSPENDED" | "REVOKED" | "EXPIRED";
+  recordDigest: string;
+  decisionReasons: string[];
+  decidedBy: ActorReference;
+  decidedAt: string;
+}
+
+// GET: the link as recorded, with its state derived at read time
+interface ScsActorPartyLink {
+  link: ActorSubjectLink;
+  statusRecords: ActorSubjectLinkStatusRecord[];
+  currentState: "ACTIVE" | "SUSPENDED" | "REVOKED" | "EXPIRED";
+  supersededByLinkId?: string;
+}
+```
+
+Every write returns its decision with a receipt, written in the same transaction, as every CAP-02 registration does.
 
 ## Representative submission
 
@@ -1237,6 +1326,50 @@ interface ScsMandateVerificationAssessment {
 }
 ```
 
+**Request and decision:**
+
+```typescript
+// mandateId is taken from the request path
+interface ScsMandateVerificationAssessmentRequest {
+  verificationStatus: ScsIdentityVerificationStatus;
+  verificationScope: ScsMandateVerificationAssessment["verificationScope"];
+  verifyingAuthority: ScsMandateVerificationAssessment["verifyingAuthority"];
+  verifiedAt: string;
+  expiresAt?: string;
+  // At least one, each among the mandate's mandateEvidenceIds
+  evidenceIds: string[];
+  limitations: string[];
+  supersedesAssessmentId?: string;
+}
+
+interface ScsMandateVerificationAssessmentDecision {
+  decisionId: string;
+  assessmentId: string;
+  mandateId: string;
+  decision: "RECORDED";
+
+  eligibilityChecks: {
+    verifierAuthorised: boolean;
+    statusRecordable: boolean;
+    datesValid: boolean;
+    jurisdictionRecognised: boolean;
+    mandateExists: boolean;
+    mandateCurrent: boolean;
+    verifierIndependent: boolean;           // not the registrant, not linked, did not create a link to the representative
+    evidenceAmongMandateEvidence: boolean;
+    supersessionValid: boolean;
+  };
+
+  // The mandate's verification status, derived after this assessment
+  resultingVerificationStatus: ScsIdentityVerificationStatus;
+  decisionReasons: string[];
+  decidedBy: ActorReference;
+  decidedAt: string;
+}
+```
+
+The system sets `assessmentId`, `mandateId` (from the path), `recordedBy`, `recordedAt` and the `authorityBoundary` flags, which are always `true`.
+
 **Recording rules**, in this order, each failing closed and writing nothing:
 1. **Authority.** The actor holds `VERIFICATION_OFFICER`. Otherwise `VERIFIER_NOT_AUTHORISED`.
 2. **Recordable status.** `PARTIALLY_VERIFIED`, `VERIFIED_FOR_DECLARED_SCOPE`, `DISPUTED` or `FAIL_CLOSED` only. Otherwise `VERIFICATION_STATUS_NOT_RECORDABLE`.
@@ -1282,6 +1415,8 @@ defined submitting role, and is a future contract decision.
 **Contract gap: verification of role claims and relationships.** Their `verificationStatus`
 changes only through a verification assessment, but this contract defines verification
 assessments for parties and, since the amendment of 2026-09-27, mandates only.
+
+**Open item: designating a party's authority representative.** In production, designating a `PARTY_AUTHORITY_REPRESENTATIVE` must be a signed, evidenced act with a receipt. It is not defined yet; the pilot records the designation as operator configuration, disclosed ("Who may suspend a link").
 
 **Current system limit: no registry of verifying authorities.** `verifyingAuthority` is
 recorded as declared; it cannot be checked against a registry, and the decision must say so.
@@ -1417,6 +1552,7 @@ interface ScsPartyRegistrationFailure {
     | "LINK_NOT_ACTIVE"
     | "LINK_RELATION_NOT_PERMITTED"
     | "LINK_STATUS_NOT_PERMITTED"
+    | "LINK_STATUS_WRITER_NOT_AUTHORISED"
     // Amendment of 2026-09-27: representative submission and mandate verification
     | "REPRESENTATIVE_NOT_AUTHORISED"
     | "MANDATE_NOT_FOUND"

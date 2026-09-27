@@ -4,6 +4,15 @@
 **Domain:** AAB platform (shared by every domain)
 **Authority:** DEFINES THE ACTOR–SUBJECT LINK: WHAT IT ASSERTS, HOW IT IS CREATED, USED, SUSPENDED, REVOKED AND SUPERSEDED, AND WHERE IT LIVES. It creates no link, grants no role or authority to anyone, and amends no domain contract. This contract is PROPOSED_NOT_ADMITTED. No implementation exists.
 
+## Amendment of 2026-09-27: what is signed, the status record, and the subject's representative
+
+Three structural problems were found while planning the build, and are fixed here before any code:
+- **What the creator signs.** The creator signs a **link statement**: the fields they decide, and their own identity. They do not sign server-set fields such as `linkId` or `createdAt`, which they cannot know before submitting. The server verifies the statement's signature, then computes `linkDigest` over the complete record (section 1).
+- **The status record** is defined, with its own signed statement (section 4).
+- **The subject's authorised representative** is defined. Only a person who *is* the subject, or who holds a representative authority role designated for that subject, may suspend a link to it. Holding an `ACTS_FOR_SUBJECT` link is not enough: one staff member cannot suspend a colleague's link without explicit authority (section 4).
+
+Signatures are Ed25519, made by the person with their own key, outside the server. The server holds only public keys, and verifies.
+
 ## Sources
 
 - `governance/AAB-PLATFORM-03-ACTOR-REFERENCE-CANONICAL-CONTRACT-2026-09-27.md`: section 2 sets the rules this contract must keep; section 3 sets the mandate checks that use a link
@@ -86,11 +95,34 @@ interface ActorSubjectLink {
   createdAt: string;
   createdBy: ActorReference;       // AAB-PLATFORM-03: HUMAN, with accountableName; never the linked actor
 
-  // Link creation is a governance decision: signed by the named creator
-  linkDigest: string;              // SHA-256 over the canonical JSON of every field above
-  creatorSignature: string;        // the creator's signature over linkDigest
+  // Link creation is a governance decision: the named creator signs the statement
+  linkStatement: ActorSubjectLinkStatement;
+  statementSignature: string;      // Ed25519 over the statement's canonical JSON, base64
+
+  // Set by the server once the signature verifies
+  linkDigest: string;              // "sha256:" + SHA-256 over the canonical JSON of every field above
+}
+
+// What the creator decides, and signs. Every field is known before submission.
+interface ActorSubjectLinkStatement {
+  statementType: "ACTOR_SUBJECT_LINK";
+  actor: ActorSubjectLink["actor"];
+  subject: ActorSubjectLink["subject"];
+  relation: ActorSubjectLink["relation"];
+  validFrom: string;
+  validUntil: string;
+  authorisationEvidence: ActorSubjectLink["authorisationEvidence"];
+  supersedesLinkId?: string;
+  // The creator, as AAB-PLATFORM-03 identifies them
+  creator: ActorSubjectLink["actor"];
 }
 ```
+
+**What is signed.**
+- **The link statement,** as canonical JSON: object keys sorted, no insignificant whitespace, standard JSON escaping, as for every platform digest.
+- **The signature** is Ed25519 over the statement's UTF-8 bytes, encoded in base64. It is made by the creator, outside the server, with their own private key. The server verifies it against the creator's registered public key, and never holds a private key.
+- **The record takes its fields from the statement.** The link's `actor`, `subject`, `relation`, validity, evidence and `supersedesLinkId` are exactly the statement's. The statement's `creator` must be the authenticated actor creating the link.
+- **The digest covers everything.** Once the signature verifies, the server sets `linkId`, `createdAt` and `createdBy`, then computes `linkDigest` over the complete record, statement and signature included. The creator's signature binds what they decided, and the digest binds the whole record.
 
 **The link record is written once, and never changed.** Its current state is derived when it is read, from the record and the status records against it (section 4). This is the pattern of the capability admission registry, and of currency in SCS-CAP-09.
 
@@ -126,11 +158,11 @@ interface ActorSubjectLink {
 4. At least one authorisation evidence object exists in AAB-PLATFORM-01: otherwise `LINK_EVIDENCE_MISSING`.
 5. `validUntil` is after `validFrom`, and within the domain's maximum link period: otherwise `LINK_VALIDITY_INVALID`. The platform requires an expiry date, and sets no universal maximum. Each domain sets its own, from its regulatory context.
 6. There is no other `ACTIVE` link for the same actor, subject and relation whose validity overlaps: otherwise `LINK_ALREADY_ACTIVE`. To change a link, supersede it (section 4).
-7. The creator is `HUMAN`, names an `accountableName`, and signs the link: otherwise `LINK_SIGNATURE_INVALID`.
+7. The creator is `HUMAN` and names an `accountableName`; the statement's `creator` is the authenticated actor; and the statement's signature verifies against the creator's registered public key: otherwise `LINK_SIGNATURE_INVALID`.
 
 **Link creation is a governance decision.** Every mandate-based act rests on a link, so no link rests on an unsigned operational record. As for admission and Gate D:
 - **The creator is `HUMAN`,** and their `ActorReference` carries `accountableName`.
-- **The creator signs the link:** `creatorSignature` over `linkDigest`. A link without a valid signature is not a link. It is refused at creation, and unusable if found later.
+- **The creator signs the link statement** (section 1). A link whose statement signature does not verify, or whose `linkDigest` does not match its content, is not a link. It is refused at creation, and unusable if found later.
 - **The link is written with a decision receipt,** in the same transaction, as every governed write is, and is idempotent under the platform's idempotency rule. The receipt names the link, the creator and the evidence.
 
 ## 3. How a link is used
@@ -138,7 +170,7 @@ interface ActorSubjectLink {
 **When an actor claims to act as or for a subject,** the capability checks the link, in the same transaction and snapshot as the act, failing closed at the first unmet check:
 
 1. **Exactly one link applies:** one link for this actor (`issuer`, `actorId`) and this subject, with the relation the act requires. None is `LINK_NOT_FOUND`. More than one is `LINK_AMBIGUOUS`; it never picks one.
-2. **The link is `ACTIVE` at the time of the act, and its signature verifies:** otherwise `LINK_NOT_ACTIVE`, naming the state, or `LINK_SIGNATURE_INVALID`.
+2. **The link is `ACTIVE` at the time of the act, its statement signature verifies, and its `linkDigest` matches its content:** otherwise `LINK_NOT_ACTIVE`, naming the state, or `LINK_SIGNATURE_INVALID`.
 3. **The relation fits the act:**
    - acting as oneself requires `IS_SUBJECT`;
    - representation requires `ACTS_FOR_SUBJECT`.
@@ -163,6 +195,47 @@ interface ActorSubjectLink {
 | `REINSTATE` | Ends a suspension; the link is `ACTIVE` again, if still within its validity | — |
 | `REVOKE` | The link is `REVOKED`, permanently | No. A new link, created with fresh evidence, is required. |
 
+**The status record.**
+
+```typescript
+interface ActorSubjectLinkStatusRecord {
+  statusRecordId: string;
+  linkId: string;
+  schemaVersion: string;
+
+  // What the writer decides, and signs
+  statusStatement: ActorSubjectLinkStatusStatement;
+  statementSignature: string;      // Ed25519 over the statement's canonical JSON, base64
+
+  // In what capacity the writer acts (set by the server from the checks below)
+  writerCapacity: "CREATING_ROLE" | "SUBJECT_AUTHORITY";
+
+  recordedAt: string;
+  writtenBy: ActorReference;       // HUMAN, with accountableName; never the linked actor
+  recordDigest: string;            // "sha256:" + SHA-256 over the canonical JSON of every field above
+}
+
+interface ActorSubjectLinkStatusStatement {
+  statementType: "ACTOR_SUBJECT_LINK_STATUS";
+  linkId: string;
+  // The link's own digest, so the statement binds the exact link it acts on
+  linkDigest: string;
+  action: "SUSPEND" | "REINSTATE" | "REVOKE";
+  reason: string;
+  writer: ActorSubjectLink["actor"];
+}
+```
+
+The status statement is signed, and the record digested, as a link is (section 1).
+
+**The subject's authorised representative** is an actor who meets one of these two conditions, and is not the linked actor:
+- **The subject itself:** the actor holds an `ACTIVE`, validly signed `IS_SUBJECT` link to the same subject. That is the natural person who is the subject.
+- **A designated authority for the subject:** the actor holds both of these:
+  - the domain's **subject authority role**, granted with `scopeType: SUBJECT` for that subject (AAB-PLATFORM-03);
+  - an `ACTIVE`, validly signed `ACTS_FOR_SUBJECT` link to that subject.
+
+**An `ACTS_FOR_SUBJECT` link alone is never enough.** A staff member acting for an organisation cannot suspend a colleague's link without an explicit authority designated for that organisation. Each domain names its subject authority role in its own contract.
+
 **Who may write a status record:**
 
 | Status record | Creating role (for SCS, `LINK_OFFICER`) | The subject's authorised representative |
@@ -172,6 +245,11 @@ interface ActorSubjectLink {
 | `REVOKE` | Yes | No. Revocation is permanent, and affects the audit record of every act the link ever authorised, so it requires the creating role. |
 
 - **Every status record is signed** by the named human who writes it, carries a receipt, and names its reason. It is never written by the linked actor about their own link.
+- **The status rules**, each failing closed:
+  - the link exists: `LINK_NOT_FOUND`;
+  - the writer acts in a permitted capacity for the action: otherwise `LINK_STATUS_WRITER_NOT_AUTHORISED`;
+  - the action is possible from the link's current state: `SUSPEND` needs an `ACTIVE` link, `REINSTATE` a `SUSPENDED` one, and `REVOKE` one that is not already `REVOKED`. Otherwise `LINK_STATUS_NOT_PERMITTED`;
+  - the statement names the link's current `linkDigest`, and its signature verifies: otherwise `LINK_SIGNATURE_INVALID`.
 - **A representative's suspension needs the creating role to end it.** After review, the creating role either reinstates or revokes the link.
 
 **Supersession.** To change a link's relation, validity or evidence, a new link is created with `supersedesLinkId`. The superseded link is `REVOKED` from the moment its successor is recorded. There is never more than one active link for the same actor, subject and relation.
@@ -237,6 +315,14 @@ A domain that uses actor–subject links adopts this contract by amendment to it
 
 ## Decisions recorded on 2026-09-27
 
+*Amendment of 2026-09-27 (structural fixes before build):*
+- **The creator signs a link statement,** covering only the fields they decide. A signature over fields the signer did not control is not a meaningful signature.
+- **The status record** is defined, with its own signed statement.
+- **Only the subject itself, or a representative with a subject authority role designated for that subject, may suspend a link to it.** An `ACTS_FOR_SUBJECT` link alone is not enough.
+- **Signatures are Ed25519,** made by the person outside the server; the server holds only public keys.
+
+*As defined:*
+
 1. **`EXPIRED` is a fourth, distinct state.** Expiry on schedule is a different event from revocation (section 1).
 2. **SCS's creating role is `LINK_OFFICER`,** a dedicated role, separate from `VERIFICATION_OFFICER` (section 2).
 3. **The maximum link period is left to each domain.** The platform requires an expiry date, and sets no universal maximum (section 2).
@@ -249,5 +335,6 @@ A domain that uses actor–subject links adopts this contract by amendment to it
 - **SCS amendments:** SCS-CAP-02 adopts this contract, covering every item under "Adopting this contract", including `LINK_OFFICER` and the resolver's documented implementation. SCS-CAP-04 and SCS-CAP-05 adopt the link and mandate checks for representative submission.
 - **AAB-PLATFORM-03 amendment:** its list of governance decisions (section 4) gains link creation and link status records, which this contract makes signed.
 - **Implementation:** the link store and status records in the SCS pilot, the resolver, and the use checks in the platform foundation.
-- **`LINK_OFFICER` and `PARTY_REPRESENTATIVE`** in the role registry (`TODO(role-registry)`).
+- **`LINK_OFFICER`, `PARTY_REPRESENTATIVE` and each domain's subject authority role** in the role registry (`TODO(role-registry)`).
+- **Designating a subject authority representative, as a governed act.** In a production deployment, granting a subject authority role must itself be a signed, evidenced act with a receipt, on evidence that the subject designated that person. It is not defined yet. A pilot may record the grant as operator configuration, as the SCS pilot does, disclosed as a limitation.
 - **Signing keys** for link creators and status-record writers, shared with the admission and Gate D open items.
