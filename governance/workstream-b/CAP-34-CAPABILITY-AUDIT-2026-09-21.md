@@ -209,3 +209,15 @@ The version-constant addition does not touch `validateManifest()` or anything th
 ### What remains open
 
 Nothing from this audit's five GAPs or the cross-cutting NEEDS-DECISION remains open. No new gaps were identified while closing these. `capability-fidelity-manifest.json` itself (the `representationVersion` values, `lastVerifiedAgainst` prose fixture counts) was **not** touched in this pass, per "do not change anything else" — its `lastVerifiedAgainst` text for CAP-01, CAP-02, CAP-05, CAP-06 and CAP-09 now understates each one's real fixture count (e.g. CAP-01 reads "11/11 fixtures", now 13/13), and its `representationVersion` values were not bumped for the added test coverage. Whether either warrants a manifest update is a separate decision for a separate pass.
+
+---
+
+## Note added on `main` — 2026-09-27: the audited branch is not adopted
+
+This note is appended, as the closing update was. It changes none of the findings above.
+
+- **This audit concerns `claude/pensive-knuth-pdlko1`,** not `main`.
+- **The fixes for CAP-01, CAP-05, CAP-06, CAP-07 and CAP-09 are on `main`,** ported in `0150428` and recorded in `CAP-34-PR16-SCOPED-AUDIT-INTEGRATION-2026-09-21.md`.
+- **The findings and fixes for CAP-02 and CAP-04 concern simulation code that is not on `main`.** The branch's CAP-02 and CAP-04 work (Historical Scientific Memory Recovery, stages 1–7, and manifest snapshots 008 to 012) is not adopted.
+- **The branch cannot be merged as it stands.** Its `CAP34-MANIFEST-2026-09-20-SNAPSHOT-008`, version 1.7.0, is a different manifest (`sha256:ee929e7d…`) from the `SNAPSHOT-008` on `main` (`sha256:4ed00951…`). Merging it would give one snapshot identifier two meanings, and corrupt the manifest history.
+- **Whether the branch's work is ever adopted,** and how the identifier collision would then be resolved, is a separate, open decision (`governance/AAB-STOCK-TAKE-2026-09-27.md`, section 3).
