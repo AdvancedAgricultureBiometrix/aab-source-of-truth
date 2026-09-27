@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-02:actor-party-link-request:1",
+  "title": "ScsActorPartyLinkRequest",
+  "description": "SCS-CAP-02 ScsActorPartyLinkRequest (amendments of 2026-09-27): an AAB-PLATFORM-04 link statement for a CAP-02 party (subject.domain SCS, subject.subjectType PARTY, subject.subjectId a partyId), and the creator's signature over its canonical JSON, made outside the server. Identifiers in the statement are lowercase UUIDs: the statement is signed as sent, and stored beside the record's own identifiers.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "linkStatement",
+    "statementSignature"
+  ],
+  "properties": {
+    "linkStatement": {
+      "allOf": [
+        {
+          "$ref": "urn:aab:scs:schema:platform:actor-subject-link-statement:1"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "subject": {
+              "type": "object",
+              "properties": {
+                "domain": {
+                  "type": "string",
+                  "const": "SCS"
+                },
+                "subjectType": {
+                  "type": "string",
+                  "const": "PARTY"
+                },
+                "subjectId": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+                  "description": "A CAP-02 partyId, lowercase."
+                }
+              }
+            },
+            "supersedesLinkId": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+              "description": "Lowercase."
+            }
+          }
+        }
+      ]
+    },
+    "statementSignature": {
+      "description": "Ed25519 signature over the statement's canonical JSON: 64 bytes, standard base64.",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9+/]{86}==$"
+    }
+  }
+}

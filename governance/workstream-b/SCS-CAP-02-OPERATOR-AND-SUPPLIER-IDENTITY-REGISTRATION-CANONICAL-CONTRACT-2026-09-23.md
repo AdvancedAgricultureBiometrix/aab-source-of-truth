@@ -17,6 +17,8 @@ Nothing is implemented by this amendment. Every other rule in this contract is u
 
 **Second amendment of 2026-09-27: request and decision types, and the party's authority representative.** Before build, this contract defines the request and decision types that the first amendment only named ("Actor–party links: requests and decisions", "Mandate verification"). It also names SCS's subject authority role, `PARTY_AUTHORITY_REPRESENTATIVE`, which AAB-PLATFORM-04 now requires ("Who may suspend a link").
 
+**Third amendment of 2026-09-27: rules the link endpoints need.** Found while building the link endpoints. AAB-PLATFORM-04 leaves five things to the adopting domain, or does not say: who may read a link; whether a link may be recorded before its validity starts; what a superseded link must be; which failure a relation that does not fit the party's type gets; and what binds a status statement to the link it is sent to. "Link endpoints: rules this contract adds" settles each. One failure code is added, `LINK_READER_NOT_AUTHORISED`.
+
 **Decisions recorded on 2026-09-27:**
 1. **All three additions go together.** Without mandate verification, links deliver nothing usable: an unverified mandate cannot be acted under.
 2. **`IS_SUBJECT` is for natural persons only, and `ACTS_FOR_SUBJECT` for organisations only.** A natural person acting for another natural person does so under a mandate, not a link.
@@ -1026,6 +1028,40 @@ A staff member holding only an `ACTS_FOR_SUBJECT` link, or only `PARTY_REPRESENT
 
 `createActorPartyLink`, `recordActorPartyLinkStatus` and `getActorPartyLink`, added to the provider interface below. Their rules are AAB-PLATFORM-04's creation rules, status-record rules and use checks, with this section's additions.
 
+### Link endpoints: rules this contract adds
+
+Third amendment of 2026-09-27. Each adds to AAB-PLATFORM-04, as an adopting domain may, and removes nothing from it.
+
+**Routes.**
+
+| Operation | Route |
+|---|---|
+| `createActorPartyLink` | `POST /scs/v1/actor-party-links` |
+| `recordActorPartyLinkStatus` | `POST /scs/v1/actor-party-links/:linkId/status-records` |
+| `getActorPartyLink` | `GET /scs/v1/actor-party-links/:linkId` |
+
+**A link is valid when it is recorded.** `validFrom` is not after the moment the link is recorded, and `validUntil` is after it. Otherwise `LINK_VALIDITY_INVALID`, as for AAB-PLATFORM-04's creation rule 5.
+- AAB-PLATFORM-04's four states then describe every link. A link recorded before its validity started would be none of them.
+- A `validFrom` in the past is allowed. It does not authorise any past act: a link is checked when an act relies on it.
+
+**The relation fits the party's type** ("Subject type", above). An `IS_SUBJECT` link to a party that is not a `NATURAL_PERSON`, or an `ACTS_FOR_SUBJECT` link to a `NATURAL_PERSON`, is `LINK_RELATION_NOT_PERMITTED`.
+
+**Supersession, when a link is created with `supersedesLinkId`:**
+- The superseded link is a link for the same actor (`issuer`, `actorId`) and the same party. Otherwise `LINK_NOT_FOUND`.
+- It is `ACTIVE` when its successor is recorded. Otherwise `LINK_NOT_ACTIVE`, naming its state:
+  - a `SUSPENDED` link is reinstated or revoked first, so a suspension is never ended by replacing the link;
+  - a `REVOKED` or `EXPIRED` link is replaced by a new link without `supersedesLinkId`.
+- The successor may have a different relation. Supersession is how a link's relation, validity or evidence changes.
+- The superseded link does not count against AAB-PLATFORM-04's creation rule 6 (no other `ACTIVE` link), since it is `REVOKED` from the moment its successor is recorded.
+
+**A status statement binds the link it is sent to.** The statement's `linkId` is the link in the route, and its `writer` is the authenticated actor. Otherwise `LINK_SIGNATURE_INVALID`, as for a statement that names another `linkDigest`.
+
+**The order of status records** is the order of their `recordedAt`. Each status record, and each successor link, is recorded while its link is locked against other writes, so the order is never ambiguous.
+
+**Who may read a link.** A `LINK_OFFICER` or a `COMPLIANCE_OFFICER`. Anyone else is `LINK_READER_NOT_AUTHORISED`.
+- The read returns the link and its status records exactly as recorded, with `currentState` and `supersededByLinkId` derived when it is read. Nothing is written.
+- The read does not verify signatures or digests. The use checks (AAB-PLATFORM-04, section 3) verify them whenever a link is relied on, and the integrity tool verifies every stored link.
+
 ### Actor–party links: requests and decisions
 
 ```typescript
@@ -1553,6 +1589,7 @@ interface ScsPartyRegistrationFailure {
     | "LINK_RELATION_NOT_PERMITTED"
     | "LINK_STATUS_NOT_PERMITTED"
     | "LINK_STATUS_WRITER_NOT_AUTHORISED"
+    | "LINK_READER_NOT_AUTHORISED"          // third amendment of 2026-09-27
     // Amendment of 2026-09-27: representative submission and mandate verification
     | "REPRESENTATIVE_NOT_AUTHORISED"
     | "MANDATE_NOT_FOUND"

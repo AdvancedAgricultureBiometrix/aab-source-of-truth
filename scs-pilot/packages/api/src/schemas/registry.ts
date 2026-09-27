@@ -80,6 +80,22 @@ import cap08PackageParams from "./cap-08/package-params.schema.json" with { type
 import cap08PackageReadResult from "./cap-08/package-read-result.schema.json" with { type: "json" };
 import cap08PackageIntegrityResult from "./cap-08/package-integrity-result.schema.json" with { type: "json" };
 import platformRenditionParams from "./platform/rendition-params.schema.json" with { type: "json" };
+import platformSubjectKey from "./platform/subject-key.schema.json" with { type: "json" };
+import platformActorSubjectLinkActor from "./platform/actor-subject-link-actor.schema.json" with { type: "json" };
+import platformActorSubjectLinkStatement from "./platform/actor-subject-link-statement.schema.json" with { type: "json" };
+import platformActorSubjectLink from "./platform/actor-subject-link.schema.json" with { type: "json" };
+import platformActorSubjectLinkStatusStatement from "./platform/actor-subject-link-status-statement.schema.json" with { type: "json" };
+import platformActorSubjectLinkStatusRecord from "./platform/actor-subject-link-status-record.schema.json" with { type: "json" };
+import cap02ActorPartyLinkParams from "./cap-02/actor-party-link-params.schema.json" with { type: "json" };
+import cap02ActorPartyLinkRequest from "./cap-02/actor-party-link-request.schema.json" with { type: "json" };
+import cap02ActorPartyLinkDecision from "./cap-02/actor-party-link-decision.schema.json" with { type: "json" };
+import cap02ActorPartyLinkReceipt from "./cap-02/actor-party-link-receipt.schema.json" with { type: "json" };
+import cap02ActorPartyLinkResponse from "./cap-02/actor-party-link-response.schema.json" with { type: "json" };
+import cap02ActorPartyLinkStatusRequest from "./cap-02/actor-party-link-status-request.schema.json" with { type: "json" };
+import cap02ActorPartyLinkStatusDecision from "./cap-02/actor-party-link-status-decision.schema.json" with { type: "json" };
+import cap02ActorPartyLinkStatusReceipt from "./cap-02/actor-party-link-status-receipt.schema.json" with { type: "json" };
+import cap02ActorPartyLinkStatusResponse from "./cap-02/actor-party-link-status-response.schema.json" with { type: "json" };
+import cap02ActorPartyLinkRead from "./cap-02/actor-party-link-read.schema.json" with { type: "json" };
 
 import { registerSchema, type JsonSchema } from "../foundation/validation.js";
 
@@ -158,6 +174,22 @@ export const SCHEMAS = {
   cap08PackageReadResult,
   cap08PackageIntegrityResult,
   platformRenditionParams,
+  platformSubjectKey,
+  platformActorSubjectLinkActor,
+  platformActorSubjectLinkStatement,
+  platformActorSubjectLink,
+  platformActorSubjectLinkStatusStatement,
+  platformActorSubjectLinkStatusRecord,
+  cap02ActorPartyLinkParams,
+  cap02ActorPartyLinkRequest,
+  cap02ActorPartyLinkDecision,
+  cap02ActorPartyLinkReceipt,
+  cap02ActorPartyLinkResponse,
+  cap02ActorPartyLinkStatusRequest,
+  cap02ActorPartyLinkStatusDecision,
+  cap02ActorPartyLinkStatusReceipt,
+  cap02ActorPartyLinkStatusResponse,
+  cap02ActorPartyLinkRead,
 } as const satisfies Record<string, JsonSchema>;
 
 for (const schema of Object.values(SCHEMAS)) registerSchema(schema);

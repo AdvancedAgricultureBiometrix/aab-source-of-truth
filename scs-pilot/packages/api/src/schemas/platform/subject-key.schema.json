@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:platform:subject-key:1",
+  "title": "SubjectKey",
+  "description": "AAB-PLATFORM-04: a domain subject, named generically. The platform never reads what the identifiers mean; the domain's subject resolver does.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "domain",
+    "subjectType",
+    "subjectId"
+  ],
+  "properties": {
+    "domain": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9_]{0,31}$"
+    },
+    "subjectType": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9_]{0,63}$"
+    },
+    "subjectId": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[^:\\s]\\S*$"
+    }
+  }
+}

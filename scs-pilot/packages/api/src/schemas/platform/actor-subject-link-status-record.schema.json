@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:platform:actor-subject-link-status-record:1",
+  "title": "ActorSubjectLinkStatusRecord",
+  "description": "AAB-PLATFORM-04 ActorSubjectLinkStatusRecord: SUSPEND, REINSTATE or REVOKE, written once against a link and never changed. Signed by the named human who writes it, never the linked actor.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "statusRecordId",
+    "linkId",
+    "schemaVersion",
+    "statusStatement",
+    "statementSignature",
+    "writerCapacity",
+    "recordedAt",
+    "writtenBy",
+    "recordDigest"
+  ],
+  "properties": {
+    "statusRecordId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "linkId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "schemaVersion": {
+      "type": "string",
+      "const": "1"
+    },
+    "statusStatement": {
+      "$ref": "urn:aab:scs:schema:platform:actor-subject-link-status-statement:1"
+    },
+    "statementSignature": {
+      "description": "Ed25519 signature over the statement's canonical JSON: 64 bytes, standard base64.",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9+/]{86}==$"
+    },
+    "writerCapacity": {
+      "type": "string",
+      "enum": [
+        "CREATING_ROLE",
+        "SUBJECT_AUTHORITY"
+      ]
+    },
+    "recordedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "writtenBy": {
+      "$ref": "urn:aab:scs:schema:shared:actor-reference:1",
+      "description": "HUMAN, with accountableName; never the linked actor."
+    },
+    "recordDigest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "description": "\"sha256:\" and the SHA-256 of the canonical JSON of every other field of the record."
+    }
+  }
+}
