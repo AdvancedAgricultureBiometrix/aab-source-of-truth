@@ -3,7 +3,8 @@
 // transaction around the handler (foundation/server.ts).
 //
 // Every CAP-02 registration path: party identity, identity evidence,
-// relationships, mandates, role claims and verification assessments. The
+// relationships, mandates, role claims, verification assessments of parties
+// and of mandates. The actor–party link routes are in link-routes.ts. The
 // contract's reads (getParty, getRelationship, list…) are not built yet.
 
 import type { Route } from "../../foundation/server.js";
@@ -11,6 +12,7 @@ import { SCHEMAS } from "../../schemas/registry.js";
 import type {
   ScsIdentityEvidenceSubmissionRequest,
   ScsMandateRegistrationRequest,
+  ScsMandateVerificationAssessmentRequest,
   ScsPartyRegistrationRequest,
   ScsRelationshipRegistrationRequest,
   ScsRoleClaimRequest,
@@ -21,6 +23,7 @@ import { registerMandate } from "./register-mandate.js";
 import { registerParty } from "./register-party.js";
 import { registerRelationship } from "./register-relationship.js";
 import { addRoleClaim } from "./register-role-claim.js";
+import { addMandateVerificationAssessment } from "./record-mandate-verification.js";
 import { addVerificationAssessment } from "./record-verification.js";
 import { submitIdentityEvidence } from "./submit-evidence.js";
 
@@ -93,6 +96,18 @@ export const addVerificationAssessmentRoute: Route<ScsVerificationAssessmentRequ
   handle: addVerificationAssessment,
 };
 
+export const addMandateVerificationAssessmentRoute: Route<ScsMandateVerificationAssessmentRequest> = {
+  method: "POST",
+  path: "/scs/v1/mandates/:mandateId/verifications",
+  capabilityId: CAPABILITY_ID,
+  auth: "required",
+  transactional: true,
+  idempotency: "required",
+  requestSchema: SCHEMAS.cap02MandateVerificationRequest,
+  paramsSchema: SCHEMAS.cap02MandateVerificationParams,
+  handle: addMandateVerificationAssessment,
+};
+
 export const cap02Routes: readonly Route<never>[] = [
   registerPartyRoute as unknown as Route<never>,
   submitIdentityEvidenceRoute as unknown as Route<never>,
@@ -100,4 +115,5 @@ export const cap02Routes: readonly Route<never>[] = [
   registerMandateRoute as unknown as Route<never>,
   addRoleClaimRoute as unknown as Route<never>,
   addVerificationAssessmentRoute as unknown as Route<never>,
+  addMandateVerificationAssessmentRoute as unknown as Route<never>,
 ];

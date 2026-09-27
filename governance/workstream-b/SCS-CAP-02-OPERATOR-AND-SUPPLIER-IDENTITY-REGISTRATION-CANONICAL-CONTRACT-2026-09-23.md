@@ -19,6 +19,12 @@ Nothing is implemented by this amendment. Every other rule in this contract is u
 
 **Third amendment of 2026-09-27: rules the link endpoints need.** Found while building the link endpoints. AAB-PLATFORM-04 leaves five things to the adopting domain, or does not say: who may read a link; whether a link may be recorded before its validity starts; what a superseded link must be; which failure a relation that does not fit the party's type gets; and what binds a status statement to the link it is sent to. "Link endpoints: rules this contract adds" settles each. One failure code is added, `LINK_READER_NOT_AUTHORISED`.
 
+**Fourth amendment of 2026-09-27: mandate verification made exact.** Found while building mandate verification. Two rules could be read two ways, and representative submission relies on the second, so both are settled before it is built ("Mandate verification"):
+- **Independence:** a verifier "linked to either of its parties" means any link ever held, in any state.
+- **The current verification status:** the latest standing assessment decides, and a newer adverse finding is never hidden by an older positive one.
+
+It also records that a mandate verification assessment is not a governance decision. Nothing else changes.
+
 **Decisions recorded on 2026-09-27:**
 1. **All three additions go together.** Without mandate verification, links deliver nothing usable: an unverified mandate cannot be acted under.
 2. **`IS_SUBJECT` is for natural persons only, and `ACTS_FOR_SUBJECT` for organisations only.** A natural person acting for another natural person does so under a mandate, not a link.
@@ -1413,13 +1419,21 @@ The system sets `assessmentId`, `mandateId` (from the path), `recordedBy`, `reco
 4. **Jurisdiction.** `jurisdictionCode` is an officially assigned ISO 3166-1 alpha-2 code. Otherwise `COUNTRY_CODE_UNRECOGNISED`.
 5. **Mandate.** The mandate exists (`MANDATE_NOT_FOUND`), and is `NOT_REVOKED` and not past `validUntil` (`MANDATE_NOT_CURRENT`).
 6. **Independence.** The actor did not register the mandate (its `createdBy`), is not linked to either of its parties, and did not create a link to its representative party ("Actor–party links"). Otherwise `VERIFIER_NOT_AUTHORISED`.
+   - **"Linked" means any link the actor has ever held to either party, in any state** (fourth amendment of 2026-09-27). A link that is `REVOKED`, `EXPIRED` or `SUSPENDED` still disqualifies: it records a relationship the verifier had with a party to the mandate.
+   - **"Created a link" likewise means any link, in any state,** that the actor created to the representative party.
 7. **Evidence.** At least one evidence identifier, each among the mandate's `mandateEvidenceIds`. Otherwise `VERIFICATION_EVIDENCE_NOT_LINKED`.
 8. **Supersession.** As for a party assessment: `SUPERSEDED_ASSESSMENT_NOT_FOUND` or `CONFLICTING_RECORD`.
 
-**A mandate's current verification status is derived when read,** as a party's is:
-- from its current assessment, meaning one neither superseded nor expired;
-- `CLAIMED_UNVERIFIED` when there is none;
-- `VERIFICATION_EXPIRED` when its assessment's `expiresAt` has passed.
+**A mandate's current verification status is derived when read,** as a party's is. Made exact by the fourth amendment of 2026-09-27:
+1. **Superseded assessments do not count.** An assessment that another assessment of the same mandate supersedes is set aside.
+2. **None left:** `CLAIMED_UNVERIFIED`.
+3. **Otherwise the latest recorded assessment decides:** its `verificationStatus`, or `VERIFICATION_EXPIRED` once its `expiresAt` has passed.
+   - An older assessment never stands in for the latest one. If the latest has expired, the mandate's status is `VERIFICATION_EXPIRED`, even when an older assessment has not expired.
+   - Several assessments may stand at once, for example from two independent verifiers. The latest still decides, so **a newer adverse finding (`DISPUTED`, `FAIL_CLOSED`, `PARTIALLY_VERIFIED`) is never hidden by an older positive one.** A status that could be improved by choosing which assessment counts would not be an honest status.
+   - A verifier who means to replace an assessment supersedes it, which the record shows.
+4. **"Latest" is never ambiguous.** Assessments of one mandate are recorded one at a time, so each has its own `recordedAt`.
+
+**A mandate verification assessment is not a governance decision** (fourth amendment of 2026-09-27). As for a party assessment, it is not signed, and `recordedBy` is the verifier's `ActorReference` without `accountableName` (AAB-PLATFORM-03, section 4). Making it a signed governance decision would need an amendment of its own.
 
 The stored `verificationStatus` of the mandate record keeps its starting value. It is never updated.
 

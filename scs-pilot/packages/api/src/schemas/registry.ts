@@ -96,6 +96,11 @@ import cap02ActorPartyLinkStatusDecision from "./cap-02/actor-party-link-status-
 import cap02ActorPartyLinkStatusReceipt from "./cap-02/actor-party-link-status-receipt.schema.json" with { type: "json" };
 import cap02ActorPartyLinkStatusResponse from "./cap-02/actor-party-link-status-response.schema.json" with { type: "json" };
 import cap02ActorPartyLinkRead from "./cap-02/actor-party-link-read.schema.json" with { type: "json" };
+import cap02MandateVerificationParams from "./cap-02/mandate-verification-params.schema.json" with { type: "json" };
+import cap02MandateVerificationRequest from "./cap-02/mandate-verification-request.schema.json" with { type: "json" };
+import cap02MandateVerificationDecision from "./cap-02/mandate-verification-decision.schema.json" with { type: "json" };
+import cap02MandateVerificationReceipt from "./cap-02/mandate-verification-receipt.schema.json" with { type: "json" };
+import cap02MandateVerificationResponse from "./cap-02/mandate-verification-response.schema.json" with { type: "json" };
 
 import { registerSchema, type JsonSchema } from "../foundation/validation.js";
 
@@ -190,6 +195,11 @@ export const SCHEMAS = {
   cap02ActorPartyLinkStatusReceipt,
   cap02ActorPartyLinkStatusResponse,
   cap02ActorPartyLinkRead,
+  cap02MandateVerificationParams,
+  cap02MandateVerificationRequest,
+  cap02MandateVerificationDecision,
+  cap02MandateVerificationReceipt,
+  cap02MandateVerificationResponse,
 } as const satisfies Record<string, JsonSchema>;
 
 for (const schema of Object.values(SCHEMAS)) registerSchema(schema);

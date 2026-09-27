@@ -1,0 +1,119 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-02:mandate-verification-decision:1",
+  "title": "ScsMandateVerificationAssessmentDecision",
+  "description": "SCS-CAP-02 ScsMandateVerificationAssessmentDecision: an assessment was recorded. Every check was performed and passed. resultingVerificationStatus is the mandate's verification status derived after this assessment; the mandate record itself is never updated.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decisionId",
+    "assessmentId",
+    "mandateId",
+    "decision",
+    "eligibilityChecks",
+    "resultingVerificationStatus",
+    "decisionReasons",
+    "decidedBy",
+    "decidedAt"
+  ],
+  "properties": {
+    "decisionId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "assessmentId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "mandateId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "decision": {
+      "type": "string",
+      "const": "RECORDED"
+    },
+    "eligibilityChecks": {
+      "title": "ScsMandateVerificationEligibilityChecks",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "verifierAuthorised",
+        "statusRecordable",
+        "datesValid",
+        "jurisdictionRecognised",
+        "mandateExists",
+        "mandateCurrent",
+        "verifierIndependent",
+        "evidenceAmongMandateEvidence",
+        "supersessionValid"
+      ],
+      "properties": {
+        "verifierAuthorised": {
+          "type": "boolean",
+          "const": true
+        },
+        "statusRecordable": {
+          "type": "boolean",
+          "const": true
+        },
+        "datesValid": {
+          "type": "boolean",
+          "const": true
+        },
+        "jurisdictionRecognised": {
+          "type": "boolean",
+          "const": true
+        },
+        "mandateExists": {
+          "type": "boolean",
+          "const": true
+        },
+        "mandateCurrent": {
+          "type": "boolean",
+          "const": true
+        },
+        "verifierIndependent": {
+          "type": "boolean",
+          "const": true
+        },
+        "evidenceAmongMandateEvidence": {
+          "type": "boolean",
+          "const": true
+        },
+        "supersessionValid": {
+          "type": "boolean",
+          "const": true
+        }
+      }
+    },
+    "resultingVerificationStatus": {
+      "type": "string",
+      "enum": [
+        "CLAIMED_UNVERIFIED",
+        "PARTIALLY_VERIFIED",
+        "VERIFIED_FOR_DECLARED_SCOPE",
+        "VERIFICATION_EXPIRED",
+        "DISPUTED",
+        "FAIL_CLOSED"
+      ]
+    },
+    "decisionReasons": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4000,
+        "pattern": "\\S"
+      }
+    },
+    "decidedBy": {
+      "$ref": "urn:aab:scs:schema:shared:actor-reference:1"
+    },
+    "decidedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}
