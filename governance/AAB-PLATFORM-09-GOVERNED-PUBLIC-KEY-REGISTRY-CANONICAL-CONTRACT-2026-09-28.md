@@ -32,6 +32,12 @@ Found while planning the build (`scs-pilot/SIGNING-KEY-HISTORY-BUILD-PLAN.md`, s
 - **Receipts.** The registry's receipts and failures carry the capability identifier `AAB-PLATFORM-09`.
 - **Existing keys in the pilot** (section 12). The pilot holds no real data. A pilot deployment adopts the registry **from a fresh database, through the bootstrap ceremonies,** and no import tool is built. When a deployment with real data first needs its keys migrated, the import path is designed then, with its own contract and its own proof.
 
+## Third amendment of 2026-09-28: evidence timing, and the failure interface
+
+Found while building the registry library (`scs-pilot/SIGNING-KEY-HISTORY-BUILD-PLAN.md`, PR 3):
+- **When verification evidence is attested** (section 9). This contract said both that `attestedAt` is "at or after acceptedAt" and that the evidence is obtained at acceptance and stored with the record in the same transaction. Evidence arrives with the request, so it cannot be attested after the server accepts it. **Evidence must be attested at or before acceptance, and may be at most 60 minutes old at acceptance.** Section 9 is corrected to match.
+- **The failure interface** (section 13, new). The registry's refusals were described only in section 6's text ("nothing is written"). They are now defined explicitly: the capability identifier `AAB-PLATFORM-09`, the platform's fail-closed envelope, and the boundary flag `noWrites`.
+
 ## Why this contract is needed
 
 - **Today a signature is verified against the signer's current key** (`foundation/signatures.ts`, `TODO(signing-key-history)`). Rotating a key makes every record signed with the earlier key fail verification: every link and status record the signer made becomes unusable at once. AAB-PLATFORM-04 records this as blocking before any real data is admitted, and AAB-PLATFORM-08 makes it a precondition of any human decision going live with real data.
@@ -259,7 +265,7 @@ interface KeyVerificationEvidence {
   registration: KeyRegistration;        // a complete copy
   eventsAtAcceptance: KeyEvent[];       // every event recorded for the key up to acceptedAt
   compromisedAtAcceptance: false;       // a key with a compromise record is refused (section 6)
-  attestedAt: string;                   // the issuing registry's clock, at or after acceptedAt
+  attestedAt: string;                   // the issuing registry's clock: at or before acceptedAt, and at most 60 minutes before it (third amendment)
   attestation: string;                  // over the fields above, made outside the server by the holder of the registry's attestation key (second amendment)
   attestationKeyId: string;             // the issuing registry's attestation key
   evidenceDigest: string;
@@ -268,7 +274,7 @@ interface KeyVerificationEvidence {
 
 - **The copy must be enough.** Verifying the record needs the copy, the record and the attestation key the domain already holds. It never needs a live lookup across the boundary. A country that could verify its own records only by asking another issuer would not control those records.
 - **The issuing registry's attestation key is pinned in the receiving domain,** as a governed record of that domain, when the domain is provisioned. Evidence whose attestation does not verify against a pinned key is refused.
-- **The evidence is obtained at acceptance,** and stored with the record in the same transaction. A record that needs it and lacks it is not accepted.
+- **The evidence is obtained for the acceptance,** and stored with the record in the same transaction. A record that needs it and lacks it is not accepted. **Evidence must be attested at or before acceptance, and may be at most 60 minutes old at acceptance** (third amendment of 2026-09-28): older evidence, or evidence attested after acceptance, is refused.
 - **A later compromise crosses the boundary as a notice.** When a key is declared compromised, its issuer notifies every domain that holds verification evidence for it. The receiving domain records the notice, attested by the issuing registry, beside its copy. From then on its own records inside the window are `UNDER_COMPROMISE_REVIEW` (section 8). Until a notice arrives, a domain cannot know of a compromise elsewhere; that limit is disclosed with every record verified by evidence.
 - **Only public-key data crosses.** The evidence carries keys, events and actor identifiers (`issuer`, `actorId`), never an accountable name or any record of the receiving domain. It moves only as the isolation architecture and the non-return boundary permit.
 
@@ -299,6 +305,25 @@ The platform adopts this contract before any domain relies on it. **A pilot depl
 - **The code that changes, after this contract and before real data:** `foundation/signatures.ts` (verification against a registered, historical key), `platform/actor-subject-links/use.ts` (the link's signatures checked by `acceptedAt`, failing closed under compromise review), `foundation/auth.ts` (no keys from the actors file), the receipts, and the backup and integrity proofs.
 - **The roles:** the issuer's key-registration role, and its security role, for each issuer.
 - **AAB-PLATFORM-03, 04 and 08** are amended to cite this contract for keys, in place of their open items on signing-key history.
+
+## 13. Failure interface
+
+Every refusal by the registry, and every refusal because a signature cannot be accepted, uses the platform's fail-closed envelope (third amendment of 2026-09-28):
+
+```typescript
+interface KeyRegistryFailure {
+  ok: false;
+  capabilityId: "AAB-PLATFORM-09";
+  result: "FAIL_CLOSED";
+  error: string;                        // the registry's failure codes, defined with its endpoints
+  reasons: string[];                    // every reason, never more than the requester may see
+  correlationId: string;
+  noWrites: true;                       // section 6: a refusal writes nothing
+}
+```
+
+- **`noWrites` is always `true`.** A refusal writes no registration, event, compromise record, notice, assessment, evidence or receipt.
+- **The failure codes** are defined, each with its status, when the registry's endpoints are built, by amendment to this section.
 
 ## What this contract does not establish
 

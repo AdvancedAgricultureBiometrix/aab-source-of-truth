@@ -24,6 +24,9 @@ export const CAPABILITY_IDS = [
   "SCS-CAP-06",
   "SCS-CAP-08",
   "SCS-CAP-09",
+  // The public-key registry: its receipts and its own failures (AAB-PLATFORM-09,
+  // second amendment of 2026-09-28; migration 024).
+  "AAB-PLATFORM-09",
 ] as const;
 
 /**
@@ -50,6 +53,8 @@ export const CAPABILITY_BOUNDARY_FLAGS = {
   "SCS-CAP-06": { noEvaluationProduced: true },
   "SCS-CAP-08": { noPackageCompiled: true, noPartialPackage: true },
   "SCS-CAP-09": { noDecisionRecorded: true },
+  // AAB-PLATFORM-09's failure interface (section 13, third amendment of 2026-09-28).
+  "AAB-PLATFORM-09": { noWrites: true },
   "SCS-PLATFORM": { noWrites: true },
 } as const satisfies Record<CapabilityId, Readonly<Record<string, true>>>;
 
