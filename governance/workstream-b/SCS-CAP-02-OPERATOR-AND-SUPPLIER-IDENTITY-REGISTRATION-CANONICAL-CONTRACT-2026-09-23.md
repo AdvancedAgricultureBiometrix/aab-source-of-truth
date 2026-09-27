@@ -27,6 +27,13 @@ It also records that a mandate verification assessment is not a governance decis
 
 **Fifth amendment of 2026-09-27: representative submission made exact.** Found while building representative submission ("Representative submission"). Three rules are settled: whose `PARTY_REPRESENTATIVE` counts; an actor who holds both a direct role and `PARTY_REPRESENTATIVE`; and when a mandate is current. The second departs deliberately from the literal text of SCS-CAP-04 and SCS-CAP-05, and says why. Signing-key history is recorded as blocking the admission of any real data (AAB-PLATFORM-04, second amendment).
 
+**Sixth amendment of 2026-09-28: signing-key history.** AAB-PLATFORM-04's third amendment adopts AAB-PLATFORM-09 Governed Public-Key Registry, before build (`scs-pilot/SIGNING-KEY-HISTORY-BUILD-PLAN.md`, step 0). For the link endpoints:
+- **Requests carry version 2 statements,** naming `signingKeyId`. A version 1 statement is refused, with no transition period.
+- **The signer's key must be active when the server accepts the statement.** Each link and status decision records `signatureAcceptance`: `acceptedAt` (the record's `createdAt` or `recordedAt`), `signingKeyId`, and the key's `publicKeyDigest` and `registrationDigest`.
+- **`LINK_SIGNATURE_UNDER_REVIEW`** is added to the failure codes, for a link or status record inside a compromise window not yet assessed, wherever a link is used (representative submission included).
+- **Status records are verified at use,** as links are.
+- **The pilot's actors file stops holding signing keys;** it keeps actors, roles and grants.
+
 **Decisions recorded on 2026-09-27:**
 1. **All three additions go together.** Without mandate verification, links deliver nothing usable: an unverified mandate cannot be acted under.
 2. **`IS_SUBJECT` is for natural persons only, and `ACTS_FOR_SUBJECT` for organisations only.** A natural person acting for another natural person does so under a mandate, not a link.
@@ -1099,6 +1106,9 @@ interface ScsActorPartyLinkDecision {
     statementSignatureVerified: boolean;
   };
 
+  // Sixth amendment of 2026-09-28 (AAB-PLATFORM-09)
+  signatureAcceptance: { acceptedAt: string; signingKeyId: string; publicKeyDigest: string; registrationDigest: string };
+
   linkDigest: string;
   decisionReasons: string[];
   decidedBy: ActorReference;
@@ -1127,6 +1137,9 @@ interface ScsActorPartyLinkStatusDecision {
     statementBindsCurrentLink: boolean;
     statementSignatureVerified: boolean;
   };
+
+  // Sixth amendment of 2026-09-28 (AAB-PLATFORM-09)
+  signatureAcceptance: { acceptedAt: string; signingKeyId: string; publicKeyDigest: string; registrationDigest: string };
 
   // The link's state after this record
   resultingState: "ACTIVE" | "SUSPENDED" | "REVOKED" | "EXPIRED";
@@ -1475,7 +1488,7 @@ assessments for parties and, since the amendment of 2026-09-27, mandates only.
 
 **Open item: designating a party's authority representative.** In production, designating a `PARTY_AUTHORITY_REPRESENTATIVE` must be a signed, evidenced act with a receipt. It is not defined yet; the pilot records the designation as operator configuration, disclosed ("Who may suspend a link"). The same holds for `PARTY_REPRESENTATIVE` grants for a party ("Representative submission", check 1).
 
-**BLOCKING before any real data is admitted: signing-key history** (AAB-PLATFORM-04, second amendment of 2026-09-27). A signature is verified against the signer's currently registered key. Rotating a key therefore makes every record signed with the earlier key fail verification: every link and status record the signer ever made becomes unusable at once, and every act that relies on one is refused. A governed record must not stop being valid because its signer's key changed. Before any real data is admitted, each actor's signing keys must be kept with the period each was valid, and a record verified against the key that was valid when it was signed. Until then, a key is never rotated while records it signed are in use; the SCS pilot keeps one key per actor, in its actors file.
+**Signing-key history: defined by AAB-PLATFORM-09** (sixth amendment of 2026-09-28), and still BLOCKING before any real data is admitted until that contract's section 11 proof exists. As first recorded (AAB-PLATFORM-04, second amendment of 2026-09-27): A signature is verified against the signer's currently registered key. Rotating a key therefore makes every record signed with the earlier key fail verification: every link and status record the signer ever made becomes unusable at once, and every act that relies on one is refused. A governed record must not stop being valid because its signer's key changed. Before any real data is admitted, each actor's signing keys must be kept with the period each was valid, and a record verified against the key that was valid when it was signed. Until then, a key is never rotated while records it signed are in use; the SCS pilot keeps one key per actor, in its actors file.
 
 **Current system limit: no registry of verifying authorities.** `verifyingAuthority` is
 recorded as declared; it cannot be checked against a registry, and the decision must say so.
@@ -1606,6 +1619,7 @@ interface ScsPartyRegistrationFailure {
     | "LINK_VALIDITY_INVALID"
     | "LINK_ALREADY_ACTIVE"
     | "LINK_SIGNATURE_INVALID"
+    | "LINK_SIGNATURE_UNDER_REVIEW"         // sixth amendment of 2026-09-28
     | "LINK_NOT_FOUND"
     | "LINK_AMBIGUOUS"
     | "LINK_NOT_ACTIVE"

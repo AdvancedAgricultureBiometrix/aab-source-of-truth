@@ -19,6 +19,15 @@ Found while building representative submission, the first act that relies on a l
 - **Which link applies to an act** (section 3, check 1) is made exact, so that every failure code is reachable and each names what was found.
 - **Signing-key history** is recorded as an open item that blocks the admission of any real data ("Open items").
 
+## Third amendment of 2026-09-28: signing-key history
+
+AAB-PLATFORM-09 Governed Public-Key Registry defines signing-key history. This contract adopts it, before build (`scs-pilot/SIGNING-KEY-HISTORY-BUILD-PLAN.md`, step 0):
+- **Statements name their key.** Version 2 of the link statement and of the status statement adds `statementVersion: "2"` and `signingKeyId`: the key the signer signed with, registered for the signer's (`issuer`, `actorId`). **A new version 1 statement is refused;** there is no transition period. Version 1 statements already stored stay readable, and are verified as AAB-PLATFORM-09's adoption provides.
+- **A signature is verified against the key its statement names, as at the time the server accepted it** (AAB-PLATFORM-09, sections 6 and 7): for a link, its `createdAt`; for a status record, its `recordedAt`. Never against the signer's current key.
+- **Status records are verified at use,** to the same standard as links. A status record whose signature cannot be verified at use is indistinguishable from a tampered one. A link any of whose status records is not `VERIFIED` or `AFFIRMED_AFTER_COMPROMISE` cannot be used.
+- **A new failure code, `LINK_SIGNATURE_UNDER_REVIEW`,** for a link or status record accepted inside a compromise's exposure window and not yet assessed. `REPUDIATED` and `NOT_VERIFIABLE` remain `LINK_SIGNATURE_INVALID`, and the reason names which.
+- **The signing-key history open item is closed** by AAB-PLATFORM-09. What blocks real data is now that contract's section 11 proof.
+
 ## Sources
 
 - `governance/AAB-PLATFORM-03-ACTOR-REFERENCE-CANONICAL-CONTRACT-2026-09-27.md`: section 2 sets the rules this contract must keep; section 3 sets the mandate checks that use a link
@@ -117,6 +126,8 @@ interface ActorSubjectLinkStatement {
   relation: ActorSubjectLink["relation"];
   validFrom: string;
   validUntil: string;
+  statementVersion: "2";           // third amendment of 2026-09-28; absent in stored version 1 statements
+  signingKeyId: string;            // the key the creator signs with (AAB-PLATFORM-09)
   authorisationEvidence: ActorSubjectLink["authorisationEvidence"];
   supersedesLinkId?: string;
   // The creator, as AAB-PLATFORM-03 identifies them
@@ -126,7 +137,7 @@ interface ActorSubjectLinkStatement {
 
 **What is signed.**
 - **The link statement,** as canonical JSON: object keys sorted, no insignificant whitespace, standard JSON escaping, as for every platform digest.
-- **The signature** is Ed25519 over the statement's UTF-8 bytes, encoded in base64. It is made by the creator, outside the server, with their own private key. The server verifies it against the creator's registered public key, and never holds a private key.
+- **The signature** is Ed25519 over the statement's UTF-8 bytes, encoded in base64. It is made by the creator, outside the server, with their own private key. The server verifies it against the key the statement names, which must be active when the server accepts it (AAB-PLATFORM-09; third amendment of 2026-09-28), and never holds a private key.
 - **The record takes its fields from the statement.** The link's `actor`, `subject`, `relation`, validity, evidence and `supersedesLinkId` are exactly the statement's. The statement's `creator` must be the authenticated actor creating the link.
 - **The digest covers everything.** Once the signature verifies, the server sets `linkId`, `createdAt` and `createdBy`, then computes `linkDigest` over the complete record, statement and signature included. The creator's signature binds what they decided, and the digest binds the whole record.
 
@@ -183,7 +194,7 @@ interface ActorSubjectLinkStatement {
      - no current link at all, but an ended link with the act's relation: `LINK_NOT_ACTIVE`, naming its state;
      - otherwise: `LINK_NOT_FOUND`.
    - A `SUSPENDED` link applies, then fails check 2 as `LINK_NOT_ACTIVE`.
-2. **The link is `ACTIVE` at the time of the act, its statement signature verifies, and its `linkDigest` matches its content:** otherwise `LINK_NOT_ACTIVE`, naming the state, or `LINK_SIGNATURE_INVALID`.
+2. **The link is `ACTIVE` at the time of the act, its statement signature and every status record's signature verify against their keys as at their acceptance (AAB-PLATFORM-09), and its `linkDigest` matches its content:** otherwise `LINK_NOT_ACTIVE`, naming the state; `LINK_SIGNATURE_UNDER_REVIEW`, for a signature inside a compromise window not yet assessed; or `LINK_SIGNATURE_INVALID`, naming the verification result (third amendment of 2026-09-28).
 3. **The relation fits the act:**
    - acting as oneself requires `IS_SUBJECT`;
    - representation requires `ACTS_FOR_SUBJECT`.
@@ -236,6 +247,8 @@ interface ActorSubjectLinkStatusStatement {
   action: "SUSPEND" | "REINSTATE" | "REVOKE";
   reason: string;
   writer: ActorSubjectLink["actor"];
+  statementVersion: "2";           // third amendment of 2026-09-28
+  signingKeyId: string;            // the key the writer signs with (AAB-PLATFORM-09)
 }
 ```
 
@@ -351,4 +364,4 @@ A domain that uses actor–subject links adopts this contract by amendment to it
 - **`LINK_OFFICER`, `PARTY_REPRESENTATIVE` and each domain's subject authority role** in the role registry (`TODO(role-registry)`).
 - **Designating a subject authority representative, as a governed act.** In a production deployment, granting a subject authority role must itself be a signed, evidenced act with a receipt, on evidence that the subject designated that person. It is not defined yet. A pilot may record the grant as operator configuration, as the SCS pilot does, disclosed as a limitation.
 - **Signing keys** for link creators and status-record writers, shared with the admission and Gate D open items.
-- **BLOCKING before any real data is admitted: signing-key history** (second amendment of 2026-09-27). A signature is verified against the signer's currently registered key. Rotating a key therefore makes every record signed with the earlier key fail verification: every link and status record the signer ever made becomes unusable at once, and every act that relies on one is refused. A governed record must not stop being valid because its signer's key changed. Before any real data is admitted, each actor's signing keys must be kept with the period each was valid, and a record verified against the key that was valid when it was signed. Until then, a key is never rotated while records it signed are in use; the SCS pilot keeps one key per actor, in its actors file.
+- **Signing-key history: now defined by AAB-PLATFORM-09** (third amendment of 2026-09-28). It still blocks real data until that contract's section 11 proof exists. As first recorded (second amendment of 2026-09-27): A signature is verified against the signer's currently registered key. Rotating a key therefore makes every record signed with the earlier key fail verification: every link and status record the signer ever made becomes unusable at once, and every act that relies on one is refused. A governed record must not stop being valid because its signer's key changed. Before any real data is admitted, each actor's signing keys must be kept with the period each was valid, and a record verified against the key that was valid when it was signed. Until then, a key is never rotated while records it signed are in use; the SCS pilot keeps one key per actor, in its actors file.

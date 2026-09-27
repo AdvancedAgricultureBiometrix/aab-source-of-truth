@@ -8,6 +8,10 @@
 
 `authorityBasis` gains the scope type `SUBJECT`, for a grant that applies to one domain subject only. AAB-PLATFORM-04 needs it: only a representative specifically designated for a subject may suspend a link to it, and that designation is a role scoped to that subject. No other field changes.
 
+## Amendment of 2026-09-28: signing keys
+
+Signing keys, and their history, are defined by AAB-PLATFORM-09 Governed Public-Key Registry. A signature on a governance decision is verified against the key the signed statement names, registered in the signer's issuer's registry, as at the time the server accepted it. Nothing else in this contract changes.
+
 ## Sources
 
 - `scs-pilot/packages/api/src/schemas/shared/actor-reference.schema.json`: the pilot definition, recorded "because no contract defines it"
@@ -225,6 +229,6 @@ interface ActorReference {
 
 - **Protected membership records** for the SCS pilot, replacing the actors file's roles as the source of `authorityBasis`.
 - **The actor–subject link store,** once AAB-PLATFORM-04 defines it.
-- **Signing keys** for governance decisions (shared with the registry and Gate D open items).
+- **Signing keys** for governance decisions (shared with the registry and Gate D open items): defined by AAB-PLATFORM-09 (amendment of 2026-09-28); issuing them for real decisions waits on its bootstrap and its proof.
 - **Implementing version 2** in the pilot: the schema, the authenticator and the readers of version 1 records.
 - **`PARTY_REPRESENTATIVE`** added to the role registry (`TODO(role-registry)`) when the role registry exists.
