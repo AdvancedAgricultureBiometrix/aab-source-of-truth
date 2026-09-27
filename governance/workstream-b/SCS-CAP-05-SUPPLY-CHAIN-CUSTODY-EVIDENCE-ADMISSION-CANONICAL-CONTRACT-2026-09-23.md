@@ -28,6 +28,8 @@ This closes this contract's gaps on submission under a mandate, the two mandate 
 - **Who submits as a representative** is as SCS-CAP-02 settles it ("Representative submission", fifth amendment): `actingUnder` makes a submission representative, whatever other roles the actor holds, and it is then checked in full. The decision above, read literally, would refuse an actor holding both `COMPLIANCE_OFFICER` and `PARTY_REPRESENTATIVE` for the party; this departs from that reading deliberately, for the reason SCS-CAP-02 records. An actor without `PARTY_REPRESENTATIVE` for the party, a compliance officer included, is still refused.
 - **The two mandates are current at different times.** The submission's mandate (`actingUnder`) is current at the time of the submission, from `validFrom` up to, not including, `validUntil`. The event's mandate (`sourceParty.actingUnderMandateId`) is checked against the event's date, as before.
 
+**Third amendment of 2026-09-28: signing-key history.** AAB-PLATFORM-04's third amendment adopts AAB-PLATFORM-09 Governed Public-Key Registry. For representative submission, the link and its status records are verified against their signers' keys as at acceptance, not current keys, and **`LINK_SIGNATURE_UNDER_REVIEW`** is added to the failure codes, for a link or status record inside a compromise window not yet assessed. Nothing else changes.
+
 ## Plain-English boundary statement
 
 SCS-CAP-05 admits genuine, attributable, and usable supply chain custody
@@ -898,6 +900,7 @@ interface ScsCustodyEventAdmissionFailure {
     | "LINK_AMBIGUOUS"
     | "LINK_NOT_ACTIVE"
     | "LINK_SIGNATURE_INVALID"
+    | "LINK_SIGNATURE_UNDER_REVIEW"   // third amendment of 2026-09-28
     | "LINK_RELATION_NOT_PERMITTED"
     | "LINK_SUBJECT_NOT_CURRENT"
     | "MANDATE_NOT_FOUND"

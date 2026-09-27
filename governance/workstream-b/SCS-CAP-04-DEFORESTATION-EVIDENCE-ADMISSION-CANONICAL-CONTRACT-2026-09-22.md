@@ -16,6 +16,8 @@ This contract adopts the representative submission defined in SCS-CAP-02 ("Repre
 - **Who submits as a representative** is as SCS-CAP-02 settles it ("Representative submission", fifth amendment): `actingUnder` makes a submission representative, whatever other roles the actor holds, and it is then checked in full. The decision above, read literally, would refuse an actor holding both `COMPLIANCE_OFFICER` and `PARTY_REPRESENTATIVE` for the party; this departs from that reading deliberately, for the reason SCS-CAP-02 records. An actor without `PARTY_REPRESENTATIVE` for the party, a compliance officer included, is still refused.
 - **A tenure claimant** is a party holding a tenure claim on the plot's current version.
 
+**Third amendment of 2026-09-28: signing-key history.** AAB-PLATFORM-04's third amendment adopts AAB-PLATFORM-09 Governed Public-Key Registry. For representative submission, the link and its status records are verified against their signers' keys as at acceptance, not current keys, and **`LINK_SIGNATURE_UNDER_REVIEW`** is added to the failure codes, for a link or status record inside a compromise window not yet assessed. Nothing else changes.
+
 ## Plain-English boundary statement
 
 SCS-CAP-04 admits genuine, attributable, and usable deforestation evidence — satellite imagery, remote sensing analysis, land cover data products, forestry authority certificates, government records, field verification, and expert assessments — and records precisely what each item observed, analysed, and attested, including every temporal gap, spatial limitation, and claim boundary. It does not determine whether admitted evidence is sufficient for any regulatory framework. It does not make compliance determinations. It does not strengthen a source's claim beyond what the source actually declared.
@@ -813,6 +815,7 @@ interface ScsDeforestationEvidenceAdmissionFailure {
     | "LINK_AMBIGUOUS"
     | "LINK_NOT_ACTIVE"
     | "LINK_SIGNATURE_INVALID"
+    | "LINK_SIGNATURE_UNDER_REVIEW"   // third amendment of 2026-09-28
     | "LINK_RELATION_NOT_PERMITTED"
     | "LINK_SUBJECT_NOT_CURRENT"
     | "MANDATE_NOT_FOUND"

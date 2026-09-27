@@ -4,6 +4,10 @@
 **Domain:** AAB platform (shared by every domain)
 **Authority:** DEFINES ATTRIBUTABLE HUMAN DECISIONS: WHO MAY MAKE ONE, HOW IT IS ATTRIBUTED, AUTHORISED, SIGNED AND BOUND TO EXACTLY WHAT WAS DECIDED ON, WHAT REASONS IT MUST GIVE, HOW IT IS CHALLENGED AND SUPERSEDED WITHOUT BEING CHANGED, AND HOW THE CURRENCY OF A DECISION ON AN EVALUATION IS DERIVED OVER TIME. It makes no decision, grants no authority to anyone, amends no domain contract and changes no stored record. This contract is PROPOSED_NOT_ADMITTED. No implementation exists.
 
+## Amendment of 2026-09-28: signing-key history
+
+Signing-key history, on which this contract's signatures depend (sections 4 and 13), is defined by AAB-PLATFORM-09 Governed Public-Key Registry. The condition in section 13 is that contract's section 11 proof. Nothing else in this contract changes.
+
 ## What "decision", "review" and "currency" mean here
 
 **A human decision is a permanent record of one named person's judgement on exactly one governed object.** The words are used on the platform for other things, and this contract means none of them:
@@ -265,7 +269,7 @@ A domain adopts this contract by amendment to its human decision contracts. The 
   - an existing trigger reported as unchanged because no operation could fire it is read as `UNCHANGED` with the basis `NO_OPERATION_EXISTS`;
   - an existing digest of an evaluation's result is the `resultDigest` of the binding; an existing decision that is not bound to a snapshot digest is disclosed as such.
 
-**No domain adoption of this contract can go live with real data until the platform's signing-key history is implemented,** so that a signature can be verified against the key the decider held when they signed. Until then, no human decision's signature can be verified over time.
+**No domain adoption of this contract can go live with real data until the platform's signing-key history (AAB-PLATFORM-09) is implemented and proven,** so that a signature can be verified against the key the decider held when they signed. Until then, no human decision's signature can be verified over time.
 
 ## What this contract does not establish
 

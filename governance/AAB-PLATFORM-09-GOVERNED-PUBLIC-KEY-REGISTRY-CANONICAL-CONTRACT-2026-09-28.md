@@ -13,6 +13,25 @@ Recorded after this contract merged, before the signing-key history build plan i
 - **It can happen only once the representative is identified.** Identifying the founding country institution's authorised representative is a country decision that has not yet been made. Until it is, no country registry can start.
 - **It is a pilot position, disclosed, not a production solution,** as for the Platform Owner's first key.
 
+## Second amendment of 2026-09-28: settled before build
+
+Found while planning the build (`scs-pilot/SIGNING-KEY-HISTORY-BUILD-PLAN.md`, step 0). Each is settled here before any code.
+- **Where the Platform Owner's registry runs in the pilot.** The pilot has no platform control plane. The control plane's registry runs as a **separate instance of the same registry code, with its own database,** configured for the issuer `PLATFORM_CONTROL_PLANE`, holding no country data. One implementation, two deployments: a second implementation of the same contract, such as a registry kept as a signed file, is not allowed. **The country stack never connects to it;** it is air-gapped from country environments by design. What crosses is verification evidence and compromise notices, carried by the operator, as section 9 requires.
+- **Who makes an attestation** (sections 1 and 9). An attestation is made **outside the server,** by the holder of the registry's attestation key, over evidence the registry exports. The registry never holds the attestation private key, as section 1 requires of every private key.
+- **The attestation key, pilot position.** The control plane's attestation public key is declared in the Platform Owner's bootstrap ceremony record, and pinned in a country by that country's bootstrap ceremony. Its rotation and replacement stay open ("Open items").
+- **What a bootstrap ceremony record holds** (section 3a):
+  - **the Platform Owner's:** the self-attested registration, with proof of possession; the attestation public key declared; who was present, what was done and when; signed with the new key;
+  - **a country's:** the representative's self-attested registration, with proof of possession; the control plane's attestation key, pinned; attested verification evidence for the Platform Owner's key; who was present, what was done and when; signed by the representative with the new key, and co-signed by the Platform Owner with their control-plane key.
+
+  A bootstrap ceremony is accepted only while its registry is empty.
+- **The registration challenge** (section 3). Requested by a registration authority for a named actor; single use; valid for 30 minutes. Its use is recorded by the registration that consumes it, never by changing the challenge.
+- **`acceptedAt`** (section 6) is the database clock, read after the lock that serialises the write, and is the same value as the record's own creation time. It is recorded in the decision the receipt carries. The receipt's issuing time is not `acceptedAt`.
+- **A key holder declaring their own key compromised** (section 8). They hold one active key, the compromised one, and a declaration must never need it. **A key holder's declaration is accepted unsigned,** authenticated as the key holder, and records that it is unsigned. Any other declaration is signed with the declarer's own key.
+- **The compromise assessment** (section 8): one signed record per affected record, `AFFIRM` or `REPUDIATE`, with reasons and the evidence considered, by a person holding the issuer's security role who is not the key holder. It follows AAB-PLATFORM-08's rules for an attributable human decision.
+- **Roles.** The issuer's key-registration role is `KEY_REGISTRAR`; its security role is `KEY_SECURITY_OFFICER`. Both are `HUMAN` only.
+- **Receipts.** The registry's receipts and failures carry the capability identifier `AAB-PLATFORM-09`.
+- **Existing keys in the pilot** (section 12). The pilot holds no real data. A pilot deployment adopts the registry **from a fresh database, through the bootstrap ceremonies,** and no import tool is built. When a deployment with real data first needs its keys migrated, the import path is designed then, with its own contract and its own proof.
+
 ## Why this contract is needed
 
 - **Today a signature is verified against the signer's current key** (`foundation/signatures.ts`, `TODO(signing-key-history)`). Rotating a key makes every record signed with the earlier key fail verification: every link and status record the signer made becomes unusable at once. AAB-PLATFORM-04 records this as blocking before any real data is admitted, and AAB-PLATFORM-08 makes it a precondition of any human decision going live with real data.
@@ -224,7 +243,7 @@ interface KeyCompromiseRecord {
 - **Records accepted inside the window are flagged for human assessment.** They are neither automatically invalidated nor automatically validated. Until assessed, each is `UNDER_COMPROMISE_REVIEW`, and fails closed wherever its authority is required: for example, a link signed inside the window cannot be used for a new act.
 - **The assessment is an attributable human decision** (AAB-PLATFORM-08), one per record, affirming or repudiating it, with reasons and the evidence considered. The assessor is never the key holder. A repudiated record stays on the record; it is never deleted.
 - **Records accepted before the window are unaffected.**
-- **Declaring a compromise must never be harder than it needs to be.** The key holder, a registration authority, or the issuer's security role may declare one, and a declaration never requires a signature with the compromised key. A suspicion is enough: a declaration can be made before an investigation, and the evidence added later by a further record that widens nothing and removes nothing.
+- **Declaring a compromise must never be harder than it needs to be.** The key holder, a registration authority, or the issuer's security role may declare one, and a declaration never requires a signature with the compromised key: a key holder's own declaration is accepted unsigned (second amendment). A suspicion is enough: a declaration can be made before an investigation, and the evidence added later by a further record that widens nothing and removes nothing.
 - **The evidence is preserved,** by digest, with the record.
 
 ## 9. Keys from another issuer: verification evidence
@@ -241,7 +260,7 @@ interface KeyVerificationEvidence {
   eventsAtAcceptance: KeyEvent[];       // every event recorded for the key up to acceptedAt
   compromisedAtAcceptance: false;       // a key with a compromise record is refused (section 6)
   attestedAt: string;                   // the issuing registry's clock, at or after acceptedAt
-  attestation: string;                  // the issuing registry's signature over the fields above
+  attestation: string;                  // over the fields above, made outside the server by the holder of the registry's attestation key (second amendment)
   attestationKeyId: string;             // the issuing registry's attestation key
   evidenceDigest: string;
 }
@@ -273,7 +292,7 @@ These replace `TODO(signing-key-history)` as the condition for real data. Until 
 
 ## 12. Adopting this contract
 
-The platform adopts this contract before any domain relies on it. The adoption must document:
+The platform adopts this contract before any domain relies on it. **A pilot deployment adopts it from a fresh database, with no import** (second amendment); the first three items below apply when an import path is designed. The adoption must document:
 - **The move out of the actors file.** Each deployment's existing keys are registered in its issuer's registry, with proof of possession from each key holder, by a registration authority. Each such registration discloses that the key was in use before it was registered: `activeFrom` is the time of that use's first record, and the registration says so. The actors file then holds no signing keys. It remains for actors, roles and grants.
 - **Existing signatures.** Statements signed before adoption name no `keyId`. Each is verified against the one key its signer held, as registered on import, and discloses that the key was resolved by the signer's identity, not named in the statement. Stored records are never rewritten.
 - **Existing receipts** record no `keyId`. The key is resolved from the signer and the receipt's time, and that is disclosed.
