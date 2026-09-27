@@ -22,7 +22,7 @@ const typesDir = path.join(root, "src", "types");
  * exactly one file; its type name is its "title".
  */
 const TARGETS = [
-  { out: "shared.ts", schemas: ["shared/actor-reference.schema.json"] },
+  { out: "shared.ts", schemas: ["shared/actor-reference.schema.json", "shared/actor-reference-v1.schema.json", "shared/actor-reference-v2.schema.json"] },
   { out: "platform.ts", schemas: ["platform/evidence-object.schema.json", "platform/rendition-params.schema.json"] },
   {
     out: "cap-01.ts",

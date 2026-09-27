@@ -34,6 +34,7 @@
 
 import { randomUUID } from "node:crypto";
 
+import { holdsRole } from "../../foundation/actor.js";
 import { canonicalJson, sha256Hex } from "../../foundation/canonical.js";
 import { capabilityPlatformFailure } from "../../foundation/errors.js";
 import type { OperationResult } from "../../foundation/idempotency.js";
@@ -85,7 +86,7 @@ export async function evaluateSufficiency(ctx: RouteContext<ScsSufficiencyEvalua
   const { subject, framework: fw, evaluationPeriod: period } = req;
 
   // 1. Authority
-  if (!actor.roles.includes(REQUESTOR_ROLE)) {
+  if (!holdsRole(actor, REQUESTOR_ROLE)) {
     throw cap06Failure("REQUESTOR_NOT_AUTHORISED", [`Requesting a sufficiency evaluation requires the ${REQUESTOR_ROLE} role; actor ${actor.actorId} does not hold it.`]);
   }
 

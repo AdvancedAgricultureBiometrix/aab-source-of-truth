@@ -35,6 +35,7 @@
 
 import { randomUUID } from "node:crypto";
 
+import { holdsRole } from "../../foundation/actor.js";
 import { capabilityPlatformFailure } from "../../foundation/errors.js";
 import type { OperationResult } from "../../foundation/idempotency.js";
 import { writeReceipt } from "../../foundation/receipts.js";
@@ -202,7 +203,7 @@ export async function submitEvidence(ctx: RouteContext<ScsDeforestationEvidenceS
   const method = req.analyticalMethod;
 
   // 1. Authority
-  if (!actor.roles.includes(SUBMITTER_ROLE)) {
+  if (!holdsRole(actor, SUBMITTER_ROLE)) {
     throw cap04Failure("SUBMITTER_NOT_AUTHORISED", [`Submitting deforestation evidence requires the ${SUBMITTER_ROLE} role; actor ${actor.actorId} does not hold it.`]);
   }
 

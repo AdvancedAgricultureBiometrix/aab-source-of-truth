@@ -19,7 +19,7 @@ import { createApiServer } from "../foundation/server.js";
 import { validate } from "../foundation/validation.js";
 import { SCHEMAS } from "../schemas/registry.js";
 import type { RegisterPlotRequest, ScsPlotFrameworkAssociationInput, ScsPlotRegistrationResponse } from "../types/cap-03.js";
-import { frameworkRequest, partyRequest } from "./fixtures.js";
+import { frameworkRequest, issuedReference, partyRequest } from "./fixtures.js";
 import { createMigratedDatabase, type MigratedDatabase } from "./harness.js";
 
 const TOKENS = {
@@ -77,7 +77,7 @@ before(async () => {
   api = await connectDatabase(harness.configFor(role.user, role.password));
   const authenticator = StaticTokenAuthenticator.fromConfig({
     actors: (Object.keys(TOKENS) as Array<keyof typeof TOKENS>).map((k) => ({ tokenSha256: createHash("sha256").update(TOKENS[k]).digest("hex"), actor: actors[k] })),
-  });
+  }, { issuerCountry: "TH" });
   server = createApiServer({ routes: CAPABILITY_ROUTES, authenticator, db: api });
   await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
@@ -208,8 +208,8 @@ test("valid POLYGON → 201 REGISTERED_WITH_GAPS; plot, tenure claim and associa
   assert.equal(p["coordinate_reference_system"], "EPSG:4326");
   assert.equal(Number(p["area_hectares"]), 1.2);
   assert.equal(p["plot_version"], 1);
-  assert.deepEqual(p["registered_by"], actors.officer);
-  assert.deepEqual(p["provenance_submitted_by"], actors.officer);
+  assert.deepEqual(p["registered_by"], issuedReference(actors.officer));
+  assert.deepEqual(p["provenance_submitted_by"], issuedReference(actors.officer));
   assert.deepEqual(p["administrative_areas"], ["Rayong", "Ban Khai"]);
   assert.equal((p["registered_at"] as Date).toISOString(), d.decidedAt);
 
@@ -218,7 +218,7 @@ test("valid POLYGON → 201 REGISTERED_WITH_GAPS; plot, tenure claim and associa
   assert.equal(claim[0]!["claimant_party_id"], smallholder);
   assert.equal(claim[0]!["claimant_type"], "INDIVIDUAL");
   assert.equal(claim[0]!["verification_status"], "UNVERIFIED");
-  assert.deepEqual(claim[0]!["recorded_by"], actors.officer);
+  assert.deepEqual(claim[0]!["recorded_by"], issuedReference(actors.officer));
 
   const assoc = (await harness.admin.query(`SELECT * FROM scs.plot_framework_association WHERE plot_id = $1`, [d.plotId])).rows[0] as Record<string, unknown>;
   assert.equal(assoc["association_id"], d.frameworkAssociationResults[0]!.associationId);

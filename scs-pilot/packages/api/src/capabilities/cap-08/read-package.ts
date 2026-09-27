@@ -18,6 +18,7 @@
 
 import { createHash } from "node:crypto";
 
+import { holdsRole } from "../../foundation/actor.js";
 import { canonicalJson, sha256Hex } from "../../foundation/canonical.js";
 import { ScsFailure } from "../../foundation/errors.js";
 import type { OperationResult } from "../../foundation/idempotency.js";
@@ -47,7 +48,7 @@ const PRECEDENCE: readonly Finding[] = [
 
 async function readable(ctx: RouteContext<undefined>, action: string): Promise<{ row: PackageRow; at: Date }> {
   const actor = ctx.actor!;
-  if (!READER_ROLES.some((r) => actor.roles.includes(r))) {
+  if (!READER_ROLES.some((r) => holdsRole(actor, r))) {
     throw cap08Failure("REQUESTOR_NOT_AUTHORISED", [`${action} requires the ${READER_ROLES.join(" or ")} role; actor ${actor.actorId} holds neither.`]);
   }
   const packageId = ctx.params["packageId"]!.toLowerCase();

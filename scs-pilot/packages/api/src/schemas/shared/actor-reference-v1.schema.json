@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:shared:actor-reference-v1:1",
+  "title": "ActorReferenceV1",
+  "description": "ActorReference version 1: the SCS pilot's definition, with no referenceVersion field (AAB-PLATFORM-03, 'The pilot definition'). Every record stored before version 2 keeps it, unchanged, and it stays readable. New records are written as version 2. A reader treats roles as grants with scopeType DEPLOYMENT, organizationId as unverified, and the issuer as the deployment's own.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["actorId", "actorType", "roles", "authenticationMethod"],
+  "properties": {
+    "actorId": {
+      "description": "Stable identifier of the person or service. Unique within the deployment.",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._:@-]{1,128}$"
+    },
+    "actorType": {
+      "description": "Whether the actor is a person or an automated service.",
+      "type": "string",
+      "enum": ["HUMAN", "SERVICE"]
+    },
+    "roles": {
+      "description": "Roles held by the actor, e.g. COMPLIANCE_OFFICER, unscoped. Capabilities decide which roles they accept.",
+      "type": "array",
+      "uniqueItems": true,
+      "maxItems": 32,
+      "items": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]{1,63}$" }
+    },
+    "organizationId": {
+      "description": "Organisation the actor declared it acts for, if any. Unverified.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "\\S"
+    },
+    "authenticationMethod": {
+      "description": "How the actor was authenticated for this request.",
+      "type": "string",
+      "enum": ["STATIC_TOKEN", "OIDC"]
+    }
+  }
+}

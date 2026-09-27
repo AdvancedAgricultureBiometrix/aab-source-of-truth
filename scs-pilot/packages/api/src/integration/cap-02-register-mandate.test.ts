@@ -18,7 +18,7 @@ import { createApiServer } from "../foundation/server.js";
 import { validate } from "../foundation/validation.js";
 import { SCHEMAS } from "../schemas/registry.js";
 import type { ScsMandateRegistrationRequest, ScsMandateRegistrationResponse, ScsRelationshipRegistrationRequest } from "../types/cap-02.js";
-import { frameworkRequest, partyRequest } from "./fixtures.js";
+import { frameworkRequest, issuedReference, partyRequest } from "./fixtures.js";
 import { createMigratedDatabase, type MigratedDatabase } from "./harness.js";
 
 const TOKENS = {
@@ -96,7 +96,7 @@ before(async () => {
       tokenSha256: createHash("sha256").update(TOKENS[k]).digest("hex"),
       actor: actors[k],
     })),
-  });
+  }, { issuerCountry: "TH" });
   server = createApiServer({ routes: CAPABILITY_ROUTES, authenticator, db: api });
   await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
@@ -189,7 +189,7 @@ test("valid mandate → 201; CLAIMED_UNVERIFIED, NOT_REVOKED, boundary flags tru
   assert.equal(row["revocation_status"], "NOT_REVOKED");
   assert.equal(row["revoked_at"], null);
   assert.equal(row["schema_version"], "1");
-  assert.deepEqual(row["created_by"], actors.officer);
+  assert.deepEqual(row["created_by"], issuedReference(actors.officer));
   for (const flag of Object.keys(row).filter((k) => k.startsWith("boundary_"))) assert.equal(row[flag], true, flag);
   assert.equal(Object.keys(row).filter((k) => k.startsWith("boundary_")).length, 6);
 

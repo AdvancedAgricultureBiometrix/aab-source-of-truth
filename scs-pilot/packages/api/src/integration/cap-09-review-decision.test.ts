@@ -23,7 +23,7 @@ import { SCHEMAS } from "../schemas/registry.js";
 import type { ScsFrameworkRegistrationRequest } from "../types/cap-01.js";
 import type { ScsConflictResolutionSubmission, ScsSufficiencyEvaluationResult, ScsSufficiencyEvaluationSubmission } from "../types/cap-06.js";
 import type { ScsDecisionCurrencyAssessment, ScsRegulatoryReviewDecision, ScsReviewDecisionResponse, ScsReviewDecisionSubmission } from "../types/cap-09.js";
-import { frameworkRequest, partyRequest } from "./fixtures.js";
+import { frameworkRequest, issuedReference, partyRequest } from "./fixtures.js";
 import { createMigratedDatabase, type MigratedDatabase } from "./harness.js";
 
 const TOKENS = {
@@ -278,7 +278,7 @@ async function assess(id: string, who: Who = "reviewer"): Promise<ScsDecisionCur
   const a = r.json as unknown as ScsDecisionCurrencyAssessment;
   const row = (await harness.admin.query(`SELECT * FROM scs.decision_currency_assessment WHERE assessment_id = $1`, [a.assessmentId])).rows[0] as Record<string, unknown>;
   assert.equal(row["currency_status"], a.currencyStatus);
-  assert.deepEqual(row["assessed_by"], actors[who]);
+  assert.deepEqual(row["assessed_by"], issuedReference(actors[who]));
   assert.deepEqual(row["checks_performed"], a.checksPerformed);
   assert.deepEqual(row["material_changes"], a.materialChanges);
   assert.equal(row["superseded_by_decision_id"], a.supersededByDecisionId ?? null);
@@ -336,7 +336,7 @@ before(async () => {
   api = await connectDatabase(harness.configFor(role.user, role.password));
   const authenticator = StaticTokenAuthenticator.fromConfig({
     actors: (Object.keys(TOKENS) as Who[]).map((k) => ({ tokenSha256: createHash("sha256").update(TOKENS[k]).digest("hex"), actor: actors[k] })),
-  });
+  }, { issuerCountry: "TH" });
   server = createApiServer({ routes: CAPABILITY_ROUTES, authenticator, db: api });
   await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;

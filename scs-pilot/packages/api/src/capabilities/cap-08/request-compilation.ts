@@ -37,6 +37,7 @@
 
 import { createHash, randomUUID } from "node:crypto";
 
+import { holdsRole, sameActor } from "../../foundation/actor.js";
 import { canonicalJson, sha256Hex } from "../../foundation/canonical.js";
 import { ScsFailure } from "../../foundation/errors.js";
 import type { OperationResult } from "../../foundation/idempotency.js";
@@ -95,7 +96,7 @@ export function requestCompilation(objectStore: ObjectStore) {
     const req = ctx.body;
 
     // 1. Role
-    if (!actor.roles.includes(COMPILER_ROLE)) {
+    if (!holdsRole(actor, COMPILER_ROLE)) {
       throw cap08Failure("REQUESTOR_NOT_AUTHORISED", [`Compiling a due diligence package requires the ${COMPILER_ROLE} role; actor ${actor.actorId} does not hold it.`]);
     }
     const at = await transactionStart(tx);
@@ -107,7 +108,7 @@ export function requestCompilation(objectStore: ObjectStore) {
       throw cap08Failure("REVIEW_DECISION_NOT_FOUND", [first!.explanation], { failedGateCheck: "reviewDecisionFound", blockers: v.result.blockers });
     }
     const decisionRow = v.decision!;
-    if (decisionRow.reviewer.actorId === actor.actorId) {
+    if (sameActor(decisionRow.reviewer, actor)) {
       throw cap08Failure("REQUESTOR_NOT_AUTHORISED", [`Actor ${actor.actorId} made review decision ${decisionRow.decisionId} and cannot compile it: the reviewer authorises the step, someone else takes it.`]);
     }
     if (first !== undefined) {

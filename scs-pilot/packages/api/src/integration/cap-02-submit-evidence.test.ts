@@ -17,6 +17,7 @@ import { createApiServer } from "../foundation/server.js";
 import { validate } from "../foundation/validation.js";
 import { SCHEMAS } from "../schemas/registry.js";
 import type { ScsIdentityEvidenceSubmissionRequest, ScsIdentityEvidenceSubmissionResponse } from "../types/cap-02.js";
+import { issuedReference } from "./fixtures.js";
 import { createMigratedDatabase, type MigratedDatabase } from "./harness.js";
 
 const TOKENS = {
@@ -44,7 +45,7 @@ before(async () => {
       tokenSha256: createHash("sha256").update(TOKENS[k]).digest("hex"),
       actor: actors[k],
     })),
-  });
+  }, { issuerCountry: "TH" });
   server = createApiServer({ routes: CAPABILITY_ROUTES, authenticator, db: api });
   await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
@@ -139,7 +140,7 @@ test("valid submission → 201; submission row, evidence links with submission_i
   assert.equal(d.decision, "RECORDED");
   assert.equal(d.partyId, partyId);
   assert.equal(d.partyVersion, 1);
-  assert.deepEqual(d.decidedBy, actors.officer);
+  assert.deepEqual(d.decidedBy, issuedReference(actors.officer));
   for (const check of ["partyExists", "partyNotRetired", "submitterAuthorised", "evidenceIdsNotAlreadyLinked"] as const) {
     assert.equal(d.eligibilityChecks[check], true, check);
     assert.ok(d.decisionReasons.some((x) => x.startsWith(`${check}: evaluated`)), `${check} has an evaluated reason`);
@@ -154,7 +155,7 @@ test("valid submission → 201; submission row, evidence links with submission_i
   assert.equal(sub["party_id"], partyId);
   assert.equal(sub["party_version"], 1);
   assert.deepEqual(sub["evidence_limitations"], body.evidenceLimitations);
-  assert.deepEqual(sub["submitted_by"], actors.officer);
+  assert.deepEqual(sub["submitted_by"], issuedReference(actors.officer));
   assert.equal(sub["submitting_organization_id"], "org-evidence-test");
   assert.equal((sub["submitted_at"] as Date).toISOString(), d.decidedAt);
 

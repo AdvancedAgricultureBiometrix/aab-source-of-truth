@@ -23,7 +23,7 @@ import { createApiServer } from "../foundation/server.js";
 import { validate } from "../foundation/validation.js";
 import { SCHEMAS } from "../schemas/registry.js";
 import type { ScsCustodyEventAdmissionDecision, ScsCustodyEventAdmissionResponse, ScsCustodyEventSubmissionRequest } from "../types/cap-05.js";
-import { frameworkRequest, partyRequest } from "./fixtures.js";
+import { frameworkRequest, issuedReference, partyRequest } from "./fixtures.js";
 import { createMigratedDatabase, type MigratedDatabase } from "./harness.js";
 
 const TOKENS = {
@@ -185,7 +185,7 @@ before(async () => {
   api = await connectDatabase(harness.configFor(role.user, role.password));
   const authenticator = StaticTokenAuthenticator.fromConfig({
     actors: (Object.keys(TOKENS) as Array<keyof typeof TOKENS>).map((k) => ({ tokenSha256: createHash("sha256").update(TOKENS[k]).digest("hex"), actor: actors[k] })),
-  });
+  }, { issuerCountry: "TH" });
   server = createApiServer({ routes: CAPABILITY_ROUTES, authenticator, db: api });
   await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
@@ -311,7 +311,7 @@ test("fully documented event between verified parties with a stored, matching do
   assert.deepEqual(d.decisionReasons, []);
   assert.ok(Object.values(d.admissionChecks).every((v) => v === true), JSON.stringify(d.admissionChecks));
   assert.equal(d.frameworkAssociationId, rubber);
-  assert.deepEqual(d.decidedBy, actors.officer);
+  assert.deepEqual(d.decidedBy, issuedReference(actors.officer));
 
   const row = await eventRow(d.eventId);
   const spec = (await harness.admin.query(`SELECT evidence_spec_id FROM scs.regulatory_framework WHERE framework_id = $1`, [rubber])).rows[0]!;

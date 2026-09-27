@@ -36,6 +36,7 @@
 
 import { randomUUID } from "node:crypto";
 
+import { holdsRole } from "../../foundation/actor.js";
 import { capabilityPlatformFailure } from "../../foundation/errors.js";
 import type { OperationResult } from "../../foundation/idempotency.js";
 import { writeReceipt } from "../../foundation/receipts.js";
@@ -72,7 +73,7 @@ export async function registerPlot(ctx: RouteContext<RegisterPlotRequest>): Prom
   const { geometry } = plot;
 
   // 1. Authority
-  if (!actor.roles.includes(REGISTRANT_ROLE)) {
+  if (!holdsRole(actor, REGISTRANT_ROLE)) {
     throw cap03Failure("REGISTRANT_NOT_AUTHORISED", [`Registering a plot requires the ${REGISTRANT_ROLE} role; actor ${actor.actorId} does not hold it.`]);
   }
 

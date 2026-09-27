@@ -86,6 +86,7 @@ jobs:
             echo "S3_PORT=9000"
             echo "S3_BUCKET=scs-evidence"
             echo "API_PORT=3000"
+            echo "SCS_ACTOR_ISSUER_COUNTRY=TH"
           } > .env
           digest=$(r | tr -d '\n' | sha256sum | cut -d' ' -f1)
           sed "s/REPLACE_WITH_SHA256_OF_A_RANDOM_TOKEN_OF_AT_LEAST_32_CHARACTERS/$digest/" packages/api/config/static-actors.example.json > packages/api/config/static-actors.json

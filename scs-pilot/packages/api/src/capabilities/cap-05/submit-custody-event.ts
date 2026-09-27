@@ -30,6 +30,7 @@
 
 import { randomUUID } from "node:crypto";
 
+import { holdsRole } from "../../foundation/actor.js";
 import type { OperationResult } from "../../foundation/idempotency.js";
 import { writeReceipt } from "../../foundation/receipts.js";
 import type { RouteContext } from "../../foundation/server.js";
@@ -194,7 +195,7 @@ export async function submitCustodyEvent(ctx: RouteContext<ScsCustodyEventSubmis
   const { sourceParty: sp, destinationParty: dp, commodity, supportingDocument: doc, eventTime: t } = req;
 
   // 1. Authority
-  if (!actor.roles.includes(SUBMITTER_ROLE)) {
+  if (!holdsRole(actor, SUBMITTER_ROLE)) {
     throw cap05Failure("SUBMITTER_NOT_AUTHORISED", [`Submitting a custody event requires the ${SUBMITTER_ROLE} role; actor ${actor.actorId} does not hold it.`]);
   }
 

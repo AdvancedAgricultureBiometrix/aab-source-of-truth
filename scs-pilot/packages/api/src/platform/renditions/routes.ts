@@ -19,6 +19,7 @@
 
 import { createHash } from "node:crypto";
 
+import { holdsRole } from "../../foundation/actor.js";
 import { withDatabaseErrors } from "../../foundation/db-errors.js";
 import { platformFailure, ScsFailure } from "../../foundation/errors.js";
 import type { OperationResult } from "../../foundation/idempotency.js";
@@ -35,7 +36,7 @@ function downloadRendition(objectStore: ObjectStore, readers: RenditionReaders) 
   const anyReader = new Set(Object.values(readers).flat());
   return async (ctx: RouteContext<undefined>): Promise<OperationResult> => {
     const actor = ctx.actor!;
-    if (!actor.roles.some((r) => anyReader.has(r))) {
+    if (![...anyReader].some((r) => holdsRole(actor, r))) {
       throw platformFailure("READER_NOT_AUTHORISED", [`Downloading a rendition requires a reader role of its capability; actor ${actor.actorId} holds none.`]);
     }
     const renditionId = ctx.params["renditionId"]!.toLowerCase();
@@ -49,7 +50,7 @@ function downloadRendition(objectStore: ObjectStore, readers: RenditionReaders) 
     if (r === undefined) throw platformFailure("RENDITION_NOT_FOUND", [`No rendition is recorded with renditionId ${renditionId}.`]);
     const row: RenditionRow = { sourceCapabilityId: r.source_capability_id, sourceRecordId: r.source_record_id, sha256: r.sha256, byteLength: Number(r.byte_length) };
     const allowed = readers[row.sourceCapabilityId] ?? [];
-    if (!actor.roles.some((x) => allowed.includes(x))) {
+    if (!allowed.some((r) => holdsRole(actor, r))) {
       throw platformFailure("READER_NOT_AUTHORISED", [
         `Renditions of ${row.sourceCapabilityId} records are for ${allowed.join(" or ") || "no role"}; actor ${actor.actorId} holds neither.`,
       ]);

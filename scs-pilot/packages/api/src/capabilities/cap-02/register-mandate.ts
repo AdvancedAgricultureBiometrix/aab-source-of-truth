@@ -40,6 +40,7 @@
 
 import { randomUUID } from "node:crypto";
 
+import { holdsRole } from "../../foundation/actor.js";
 import { capabilityPlatformFailure } from "../../foundation/errors.js";
 import type { OperationResult } from "../../foundation/idempotency.js";
 import { writeReceipt } from "../../foundation/receipts.js";
@@ -69,7 +70,7 @@ export async function registerMandate(ctx: RouteContext<ScsMandateRegistrationRe
   const { grantingPartyId, representativePartyId, permittedActions } = request;
 
   // 1. Authority
-  if (!actor.roles.includes(REGISTRANT_ROLE)) {
+  if (!holdsRole(actor, REGISTRANT_ROLE)) {
     throw cap02Failure("REGISTRANT_NOT_AUTHORISED", [
       `Registering a mandate requires the ${REGISTRANT_ROLE} role; actor ${actor.actorId} does not hold it.`,
     ]);

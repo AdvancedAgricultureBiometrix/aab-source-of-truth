@@ -232,7 +232,7 @@ test("end to end: transactional, idempotent route writes one receipt; replay and
   const token = "e2e-token-0123456789-abcdefghijklmnop";
   const authenticator = StaticTokenAuthenticator.fromConfig({
     actors: [{ tokenSha256: createHash("sha256").update(token).digest("hex"), actor }],
-  });
+  }, { issuerCountry: "TH" });
   const requestSchema = {
     $id: "urn:aab:scs:schema:test:e2e-register:1",
     type: "object", additionalProperties: false, required: ["name"],

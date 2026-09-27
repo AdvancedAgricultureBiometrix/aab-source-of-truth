@@ -15,6 +15,7 @@
 //                  → REVIEWER_NOT_AUTHORISED (403)
 //   2. lookup    — an unknown decisionId → DECISION_NOT_FOUND (404)
 
+import { holdsRole } from "../../foundation/actor.js";
 import type { OperationResult } from "../../foundation/idempotency.js";
 import type { RouteContext } from "../../foundation/server.js";
 import type { ScsDecisionCurrencyAssessment } from "../../types/cap-09.js";
@@ -29,7 +30,7 @@ export const READER_ROLES = [REVIEWER_ROLE, "COMPLIANCE_OFFICER"] as const;
 async function derive(ctx: RouteContext<unknown>, action: string): Promise<{ row: DecisionRow; prior: DecisionRow | null; currency: Currency }> {
   const tx = ctx.tx!;
   const actor = ctx.actor!;
-  if (!READER_ROLES.some((r) => actor.roles.includes(r))) {
+  if (!READER_ROLES.some((r) => holdsRole(actor, r))) {
     throw cap09Failure("REVIEWER_NOT_AUTHORISED", [`${action} requires the ${READER_ROLES.join(" or ")} role; actor ${actor.actorId} holds neither.`]);
   }
   const decisionId = ctx.params["decisionId"]!.toLowerCase();

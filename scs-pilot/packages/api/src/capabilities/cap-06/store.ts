@@ -383,15 +383,15 @@ export async function findReportedConflict(tx: Tx, evaluationId: string, conflic
   return rows[0] === undefined ? null : { conflict: rows[0].conflict };
 }
 
-/** The actorId that submitted each of `ids`, whether an SCS-CAP-04 record or an SCS-CAP-05 event. */
-export async function findSubmitters(tx: Tx, ids: readonly string[]): Promise<Map<string, string>> {
-  const rows = await q<{ id: string; actor_id: string }>(
+/** The actor that submitted each of `ids`, whether an SCS-CAP-04 record or an SCS-CAP-05 event. */
+export async function findSubmitters(tx: Tx, ids: readonly string[]): Promise<Map<string, ActorReference>> {
+  const rows = await q<{ id: string; submitted_by: ActorReference }>(
     tx,
-    `SELECT evidence_id AS id, submitted_by ->> 'actorId' AS actor_id FROM scs.deforestation_evidence_record WHERE evidence_id = ANY($1::uuid[])
-     UNION ALL SELECT event_id, submitted_by ->> 'actorId' FROM scs.custody_event WHERE event_id = ANY($1::uuid[])`,
+    `SELECT evidence_id AS id, submitted_by FROM scs.deforestation_evidence_record WHERE evidence_id = ANY($1::uuid[])
+     UNION ALL SELECT event_id, submitted_by FROM scs.custody_event WHERE event_id = ANY($1::uuid[])`,
     [ids],
   );
-  return new Map(rows.map((r) => [r.id, r.actor_id]));
+  return new Map(rows.map((r) => [r.id, r.submitted_by]));
 }
 
 /** The resolution already recorded for `conflictKey`, if any. */

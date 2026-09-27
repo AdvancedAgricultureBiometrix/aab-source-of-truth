@@ -38,6 +38,7 @@
 
 import { randomUUID } from "node:crypto";
 
+import { holdsRole, sameActor } from "../../foundation/actor.js";
 import type { OperationResult } from "../../foundation/idempotency.js";
 import { writeReceipt } from "../../foundation/receipts.js";
 import type { RouteContext } from "../../foundation/server.js";
@@ -78,7 +79,7 @@ export async function addVerificationAssessment(ctx: RouteContext<ScsVerificatio
   const status = request.verificationStatus;
 
   // 1. Authority
-  if (!actor.roles.includes(VERIFIER_ROLE)) {
+  if (!holdsRole(actor, VERIFIER_ROLE)) {
     throw cap02Failure("VERIFIER_NOT_AUTHORISED", [
       `Recording a verification assessment requires the ${VERIFIER_ROLE} role; actor ${actor.actorId} does not hold it.`,
     ]);
@@ -125,7 +126,7 @@ export async function addVerificationAssessment(ctx: RouteContext<ScsVerificatio
   }
 
   // 6. Independence
-  if (party.registeredByActorId === actor.actorId) {
+  if (sameActor(party.registeredBy, actor)) {
     throw cap02Failure("VERIFIER_NOT_AUTHORISED", [
       `Actor ${actor.actorId} registered party ${party.partyId} and cannot also verify it (separation of duties).`,
     ]);

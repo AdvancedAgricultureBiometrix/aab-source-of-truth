@@ -17,18 +17,23 @@ import { createApiServer } from "../foundation/server.js";
 import { validate } from "../foundation/validation.js";
 import { SCHEMAS } from "../schemas/registry.js";
 import type { ScsPartyRegistrationRequest, ScsPartyRegistrationResponse } from "../types/cap-02.js";
+import { issuedReference } from "./fixtures.js";
 import { createMigratedDatabase, type MigratedDatabase } from "./harness.js";
 
 const TOKENS = {
   officer: "cap02-officer-token-0123456789abcdef",
   admin: "cap02-sysadmin-token-0123456789abcdef",
   viewer: "cap02-viewer-token-0123456789abcdefgh",
+  scoped: "cap02-scoped-token-0123456789abcdefgh",
 };
 const actors = {
   officer: { actorId: "officer-cap02", actorType: "HUMAN", roles: ["COMPLIANCE_OFFICER"], authenticationMethod: "STATIC_TOKEN" },
   admin: { actorId: "sysadmin-cap02", actorType: "HUMAN", roles: ["SYSTEM_ADMIN"], authenticationMethod: "STATIC_TOKEN" },
   viewer: { actorId: "viewer-cap02", actorType: "HUMAN", roles: ["VIEWER"], authenticationMethod: "STATIC_TOKEN" },
+  // COMPLIANCE_OFFICER for one party only (scopeType SUBJECT), and no deployment-wide role
+  scoped: { actorId: "scoped-cap02", actorType: "HUMAN", roles: [], authenticationMethod: "STATIC_TOKEN" },
 } as const;
+const SCOPED_GRANT = { role: "COMPLIANCE_OFFICER", scopeId: `SCS:PARTY:${randomUUID()}` };
 
 const PARTY_TYPES = ["NATURAL_PERSON", "LEGAL_ENTITY", "COOPERATIVE", "COMMUNITY_GROUP", "GOVERNMENT_BODY", "OTHER"] as const;
 const CONFLICT_CHECKED = ["LEGAL_ENTITY", "COOPERATIVE", "COMMUNITY_GROUP", "GOVERNMENT_BODY"] as const;
@@ -47,8 +52,9 @@ before(async () => {
     actors: (Object.keys(TOKENS) as Array<keyof typeof TOKENS>).map((k) => ({
       tokenSha256: createHash("sha256").update(TOKENS[k]).digest("hex"),
       actor: actors[k],
+      ...(k === "scoped" ? { subjectGrants: [SCOPED_GRANT] } : {}),
     })),
-  });
+  }, { issuerCountry: "TH" });
   server = createApiServer({ routes: CAPABILITY_ROUTES, authenticator, db: api });
   await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
   url = `http://127.0.0.1:${(server.address() as AddressInfo).port}/scs/v1/parties`;
@@ -119,7 +125,7 @@ for (const partyType of PARTY_TYPES) {
     const d = res.decision;
     assert.equal(d.decision, "REGISTERED");
     assert.deepEqual(d.gaps, []);
-    assert.deepEqual(d.decidedBy, actors.officer);
+    assert.deepEqual(d.decidedBy, issuedReference(actors.officer));
     for (const check of ["partyTypeValid", "partyNameProvided", "countryCodeValid", "registrantAuthorised"] as const) {
       assert.equal(d.eligibilityChecks[check], true, `${check} ran, so it is true`);
       assert.ok(d.decisionReasons.some((x) => x.startsWith(`${check}: evaluated`)), `${check} has an evaluated reason`);
@@ -141,8 +147,8 @@ for (const partyType of PARTY_TYPES) {
     assert.equal(p["registration_status"], "REGISTERED");
     assert.equal(p["party_version"], 1);
     assert.equal(p["schema_version"], "1");
-    assert.deepEqual(p["registered_by"], actors.officer);
-    assert.deepEqual(p["provenance_submitted_by"], actors.officer);
+    assert.deepEqual(p["registered_by"], issuedReference(actors.officer));
+    assert.deepEqual(p["provenance_submitted_by"], issuedReference(actors.officer));
     assert.equal(p["provenance_submitting_organization_id"], "org-cap02-test");
     assert.deepEqual(p["identity_evidence_limitations"], body.identityEvidence.evidenceLimitations);
     assert.equal((p["registered_at"] as Date).toISOString(), d.decidedAt);
@@ -296,6 +302,15 @@ test("actor without COMPLIANCE_OFFICER (VIEWER, SYSTEM_ADMIN) → 403 REGISTRANT
     assert.match((r.json["reasons"] as string[])[0]!, new RegExp(`requires the COMPLIANCE_OFFICER role; actor ${actors[who].actorId} does not hold it`));
     assert.deepEqual(await writes(body.partyName, key), NOTHING, who);
   }
+});
+
+test("a role granted for one party only is not the deployment-wide role registration requires → 403, nothing written", async () => {
+  const body = request();
+  const key = `cap02-${randomUUID()}`;
+  const r = await post(body, { key, who: "scoped" });
+  assertFailClosed(r, 403, "REGISTRANT_NOT_AUTHORISED");
+  assert.match((r.json["reasons"] as string[])[0]!, /requires the COMPLIANCE_OFFICER role; actor scoped-cap02 does not hold it/);
+  assert.deepEqual(await writes(body.partyName, key), NOTHING);
 });
 
 test("authority is checked before the country code: unauthorised actor with a bad code → 403, not 422", async () => {
