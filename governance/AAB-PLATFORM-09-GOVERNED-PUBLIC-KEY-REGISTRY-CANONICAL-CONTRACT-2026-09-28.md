@@ -4,6 +4,15 @@
 **Domain:** AAB platform (shared by every domain)
 **Authority:** DEFINES THE GOVERNED PUBLIC-KEY REGISTRY: WHERE AN ACTOR'S SIGNING KEYS ARE REGISTERED, WHAT A KEY REGISTRATION RECORDS, HOW A KEY IS RETIRED, SUSPENDED OR DECLARED COMPROMISED WITHOUT ITS HISTORY BEING LOST, HOW A SIGNATURE IS ACCEPTED AND LATER VERIFIED AGAINST THE KEY THAT WAS ACTIVE WHEN THE SERVER ACCEPTED IT, AND WHAT EVIDENCE A RECORD KEEPS WHEN ITS SIGNER'S KEY BELONGS TO ANOTHER ISSUER. It registers no key, grants no authority to anyone, amends no contract and changes no stored record. This contract is PROPOSED_NOT_ADMITTED. No implementation exists.
 
+## Amendment of 2026-09-28: the pilot position for a country registry's first key
+
+Recorded after this contract merged, before the signing-key history build plan is written. Section 3a left the first key of a country registry open. **The pilot position for a country registry follows the same logic as the Platform Owner's first key, with one difference: the country performs its own ceremony.**
+- **The country institution's authorised representative performs the ceremony** for the country registry's first key: they register their own key, with proof of possession, self-attested, and the ceremony is recorded and referenced by the registration's `bootstrapCeremonyId`.
+- **The Platform Owner witnesses. The ceremony record is co-signed:** by the representative, with the key being registered, and by the Platform Owner, with their key registered in the platform control plane's registry. The country keeps verification evidence for the Platform Owner's key with the ceremony record (section 9), so the co-signature can be verified inside the country.
+- **The Platform Owner never registers, holds or controls a country key.** Witnessing is not registration authority. The country's keys are the country's keys from the first registration, which keeps the sovereignty model intact.
+- **It can happen only once the representative is identified.** Identifying the founding country institution's authorised representative is a country decision that has not yet been made. Until it is, no country registry can start.
+- **It is a pilot position, disclosed, not a production solution,** as for the Platform Owner's first key.
+
 ## Why this contract is needed
 
 - **Today a signature is verified against the signer's current key** (`foundation/signatures.ts`, `TODO(signing-key-history)`). Rotating a key makes every record signed with the earlier key fail verification: every link and status record the signer made becomes unusable at once. AAB-PLATFORM-04 records this as blocking before any real data is admitted, and AAB-PLATFORM-08 makes it a precondition of any human decision going live with real data.
@@ -96,7 +105,7 @@ Every registration is made by a registration authority, signing with their own r
 - **The Platform Owner's first key is self-attested,** in a documented ceremony: the Platform Owner registers their own key, with proof of possession, and the ceremony is recorded (who was present, what was done, the key's digest, the time) and referenced by the registration's `bootstrapCeremonyId`.
 - **It is the only registration made without separation** of registration authority and key holder, and it says so. Every record that relies on it, directly or through keys it registered, can be traced to it.
 - **This is not a production solution.** It is an honest pilot position: the trust in the first key is the trust in the ceremony record and in the Platform Owner, and nothing more.
-- **The first key of a country registry** is not settled by the pilot position. How it is registered must be decided before any country registry starts.
+- **The first key of a country registry** is registered by the country's own authorised representative, in a ceremony the Platform Owner witnesses and co-signs (amendment of 2026-09-28, above). The same limits apply: it is self-attested, disclosed, and not a production solution.
 
 **For production,** the bootstrap must be settled by its own decision (for example, a witnessed ceremony with independent parties, or a first key attested by an authority outside AAB), before any registry holds keys for real data ("Open items").
 
@@ -301,7 +310,7 @@ Confirmed in review:
 
 ## Open items
 
-- **The bootstrap problem — the most important open item. Without solving it, no registry can start** (section 3a). For the pilot, the Platform Owner's first key is self-attested in a documented ceremony, disclosed. Still open: the bootstrap for production, and the first key of every country registry, including the pilot's.
+- **The bootstrap problem — the most important open item. Without solving it, no registry can start** (section 3a). For the pilot, the Platform Owner's first key is self-attested in a documented ceremony, and a country registry's first key is self-attested by the country's authorised representative in a ceremony the Platform Owner witnesses and co-signs (amendment of 2026-09-28); both are disclosed. Still open: the bootstrap for production.
 - **Attestation keys:** how each registry's attestation key is created, pinned, rotated and, if compromised, replaced, across every domain that pinned it.
 - **Compromise notices across the boundary:** the channel, and what a domain does if a notice cannot reach it.
 - **Algorithms beyond Ed25519,** and how an algorithm is withdrawn.

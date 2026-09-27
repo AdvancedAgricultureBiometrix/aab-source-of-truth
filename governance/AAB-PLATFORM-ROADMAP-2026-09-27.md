@@ -5,11 +5,12 @@
 **Updated (2026-09-27):** to `main` at `634295a`, after PRs #27 to #35, from the stock-take `governance/AAB-STOCK-TAKE-2026-09-27.md`, section 8. Open PRs, unmerged branches and open decisions are recorded in the stock-take, not here.
 **Updated again (2026-09-27):** to `main` at `67b6ba8`, after the representation path, PRs #37 to #43 (`scs-pilot/REPRESENTATION-PATH-BUILD-PLAN.md`): ActorReference version 2, actor–party links, mandate verification and representative submission are built.
 **Updated again (2026-09-28):** to `main` at `c1586c6`, after PRs #44 to #49, from the stock-take `governance/AAB-STOCK-TAKE-2026-09-28.md`, section 11: the platform dependency audit, a completed working document (PR #45), and the platform contracts AAB-PLATFORM-05 to 08 (PRs #46 to #49), all `designed`.
-**Authority:** RECORDS THE STATE OF EVERY AAB PLATFORM PRIMITIVE AND CAPABILITY, AS DEMONSTRATED BY THE CONTRACTS, CODE, TESTS AND PROOFS ON `main` AT `9f17cc2`, UPDATED TO `634295a`, TO `67b6ba8` AND TO `c1586c6`, AND WHAT MUST EXIST BEFORE WHAT. Admits no capability, grants no implementation, commissioning, production, regulatory or scientific authority, changes no control's status, and does not satisfy Gate D or begin WP05.
+**Updated again (2026-09-28):** to `main` at `fa84240`, after PRs #50 and #51: AAB-PLATFORM-09 Governed Public-Key Registry (`designed`) contracts signing-key history.
+**Authority:** RECORDS THE STATE OF EVERY AAB PLATFORM PRIMITIVE AND CAPABILITY, AS DEMONSTRATED BY THE CONTRACTS, CODE, TESTS AND PROOFS ON `main` AT `9f17cc2`, UPDATED TO `634295a`, TO `67b6ba8`, TO `c1586c6` AND TO `fa84240`, AND WHAT MUST EXIST BEFORE WHAT. Admits no capability, grants no implementation, commissioning, production, regulatory or scientific authority, changes no control's status, and does not satisfy Gate D or begin WP05.
 **Sources:**
 - `governance/AAB-PLATFORM-PURPOSE-AND-VALUES-REVISION-2026-09-25.md`
 - `governance/AAB-PLATFORM-DOMAIN-SEPARATION-DECISION-2026-09-25.md`
-- the platform contracts AAB-PLATFORM-03 to 08 in `governance/`
+- the platform contracts AAB-PLATFORM-03 to 09 in `governance/`
 - `governance/AAB-PLATFORM-DEPENDENCY-AUDIT-2026-09-27.md`
 - every contract and record in `governance/workstream-b/`
 - `governance/AAB-CAP-20-…` and `governance/AAB-CAP-21-…`
@@ -59,7 +60,7 @@ The domain separation decision (25 September) names eleven platform primitives. 
 | # | Primitive | Where it exists | Current state | What it does not yet do |
 |---|---|---|---|---|
 | 1 | Canonical runtime schemas | JSON Schema 2020-12 with strict Ajv; generated types; the whole registry compiled up front (`foundation/validation.ts`) | `implemented`, exercised by every endpoint and the 666-test suite | No platform-level schema registry; schemas live in `scs-pilot` |
-| 2 | Governed identity and authority | `foundation/auth.ts`: static bearer tokens stored as SHA-256; ActorReference version 2 (AAB-PLATFORM-03) with issuer and scoped authority, read through `holdsRole` and `sameActor`; Ed25519 signatures made outside the server; actor–subject links (AAB-PLATFORM-04) and representation under a verified mandate | `implemented`; links and representative submission `behaviourally proven` (SCS-CAP-02 README, PR #43) | `TODO(oidc)`; `TODO(role-registry)`; **`TODO(signing-key-history)`, blocking before any real data**; party-scoped grants are operator configuration, not signed, evidenced acts; AAB-PLATFORM-03 and 04 are proposed, not admitted |
+| 2 | Governed identity and authority | `foundation/auth.ts`: static bearer tokens stored as SHA-256; ActorReference version 2 (AAB-PLATFORM-03) with issuer and scoped authority, read through `holdsRole` and `sameActor`; Ed25519 signatures made outside the server; actor–subject links (AAB-PLATFORM-04) and representation under a verified mandate | `implemented`; links and representative submission `behaviourally proven` (SCS-CAP-02 README, PR #43) | `TODO(oidc)`; `TODO(role-registry)`; **`TODO(signing-key-history)`, blocking before any real data:** contracted as **AAB-PLATFORM-09 Governed Public-Key Registry** (`designed`, PR #51), not built; keys still live in the actors file, one per actor; party-scoped grants are operator configuration, not signed, evidenced acts; AAB-PLATFORM-03, 04 and 09 are proposed, not admitted |
 | 3 | Immutable evidence objects | AAB-PLATFORM-01: content-addressed by SHA-256, conditional write, never overwritten | `implemented` (upload only) | Retrieval, retention and read access are undefined in the contract; `TODO(object-store-credentials)`; SCS-CAP-02 and SCS-CAP-03 evidence ids are not linked to stored objects (`TODO(evidence-id-model)`) |
 | 4 | Provenance | Submitter, submission time, cited and linked lineage, recorded at admission | `implemented` | **Contract: AAB-PLATFORM-05 (`designed`, PR #46).** Not adopted by any domain; each capability still records its own provenance, and no gaps are carried into what is built from a record |
 | 5 | Admission decisions | SCS-CAP-02 to SCS-CAP-05: admit, or admit with limitations, fail closed | `implemented` | **Contract: AAB-PLATFORM-06 (`designed`, PR #47).** Not adopted. `REJECTED` and `QUARANTINED` are reserved everywhere; under the contract, `REJECTED` is only a reviewer's decision on a held record, and quarantine is a status record after admission. No hold or quarantine operation exists |
@@ -99,8 +100,11 @@ The domain separation decision allows extraction only after an independent depen
 | AAB-PLATFORM-06 Admission Decisions | `designed` | Primitive 5 | Contract only (PR #47) |
 | AAB-PLATFORM-07 Frozen Evaluation Snapshots | `designed` | Primitive 6 | Contract only (PR #48) |
 | AAB-PLATFORM-08 Attributable Human Review with Currency | `designed` | Primitive 7 | Contract only (PR #49) |
+| AAB-PLATFORM-09 Governed Public-Key Registry | `designed` | Primitive 2 (signing keys) | Contract only (PR #51). The pilot's keys are in the actors file, one per actor |
 
-**All eight are proposed, not admitted.** AAB-PLATFORM-05 to 08 are written domain-neutrally: each domain adopts them by amendment to its own contracts, mapping its existing records when read and never rewriting them. No domain has adopted them yet. **No adoption of AAB-PLATFORM-08 can go live with real data until signing-key history is implemented** (section 6.1).
+**All nine are proposed, not admitted.** AAB-PLATFORM-05 to 08 are written domain-neutrally: each domain adopts them by amendment to its own contracts, mapping its existing records when read and never rewriting them. No domain has adopted them yet. **No adoption of AAB-PLATFORM-08 can go live with real data until signing-key history is implemented** (section 6.1).
+
+**AAB-PLATFORM-09** defines signing-key history: an issuer-owned, append-only registry of public keys, verification against the key active at the server's `acceptedAt`, and compromise as its own record. **No registry can start until its first key is registered** (its section 3a). The pilot positions, both disclosed and neither a production solution: the Platform Owner's first key is self-attested in a documented ceremony; a country registry's first key is self-attested by the country's authorised representative, in a ceremony the Platform Owner witnesses and co-signs.
 
 **The naming rule** (the dependency audit's step 0, decided on 2026-09-27): what is already stored or externally visible keeps its SCS name; everything new takes an AAB name. `/scs/v1` platform routes are kept as aliases and new ones use `/aab/v1/`; the `scs` schema is kept; new platform schemas use `urn:aab:schema:`; `SCS-PLATFORM` stays in error envelopes until a platform envelope contract exists.
 
@@ -466,7 +470,7 @@ flowchart LR
 **Prerequisites the diagram does not show:**
 - **Before SCS-CAP-02 and SCS-CAP-03 evidence can be confirmed as stored files,** the evidence-id model needs a contract change and a migration (`TODO(evidence-id-model)`).
 - **Before any SCS evaluation can be `SUFFICIENT`,** a spatial database is needed (`TODO(postgis)`), with country boundary data (`TODO(country-boundary-check)`).
-- **Mandate-based submission is built** (PRs #37 to #43). **Before it is used with real data,** signing-key history is needed (`TODO(signing-key-history)`): today a replaced key would invalidate every link and status record it signed.
+- **Mandate-based submission is built** (PRs #37 to #43). **Before it is used with real data,** signing-key history is needed (`TODO(signing-key-history)`): today a replaced key would invalidate every link and status record it signed. It is contracted as AAB-PLATFORM-09 (PR #51), and must be built, with its section 11 proof, first.
 
 ### 5.2 AGR
 
@@ -554,7 +558,7 @@ Gate D is not an admission prerequisite. It follows admission, and blocks commis
 | `TODO(tenant-scope)` | RLS is `USING (true)`: no organisation-level row filtering | "Sufficient only while each country deployment serves one organisation" |
 | `TODO(tenant-network-policy)` | Environments on one host are not isolated from each other | Separate hosts, or host firewall or kernel-level network policy |
 | `TODO(actor-reference)` | The contract exists (AAB-PLATFORM-03), and version 2 is implemented (PR #39); the contract is proposed, not admitted | "Before any capability is admitted" |
-| `TODO(signing-key-history)` | A signature is verified against the signer's current key: a replaced key invalidates every link and status record it signed | "Before any real data is admitted" (AAB-PLATFORM-04, second amendment of 2026-09-27). **Also:** no domain adoption of AAB-PLATFORM-08 can go live with real data until it is implemented (AAB-PLATFORM-08, section 13) |
+| `TODO(signing-key-history)` | A signature is verified against the signer's current key: a replaced key invalidates every link and status record it signed | "Before any real data is admitted" (AAB-PLATFORM-04, second amendment of 2026-09-27). **Also:** no domain adoption of AAB-PLATFORM-08 can go live with real data until it is implemented (AAB-PLATFORM-08, section 13). **Contracted as AAB-PLATFORM-09** (PR #51): the condition for real data is its section 11, rotation, restoration, compromise and cross-issuer tests passing, with a proof record |
 | Actor-directory history (no tag yet) | The accountable name held for a decider at the time of a human decision cannot be established later, within the country | Raised by AAB-PLATFORM-08 ("Open items"). **Blocking for production:** without it, a human decision cannot be fully verified after the fact. **For the pilot,** with its fixed actors file, a disclosed limitation, not an immediate blocker (stock-take of 2026-09-28, section 5) |
 
 ### 6.2 Limits what the pilot can conclude (disclosed in every result)
