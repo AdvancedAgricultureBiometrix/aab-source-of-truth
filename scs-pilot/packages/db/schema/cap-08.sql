@@ -50,8 +50,8 @@
 -- evaluation's rows (scs.sufficiency_evaluation_evidence and _plot), reached
 -- through evaluation_id, record what every package of it contains.
 --
--- NOT YET IMPLEMENTED
---   TODO(actor-reference): ActorReference stored as a jsonb object.
+-- ActorReference is stored as a jsonb object, in the shape AAB-PLATFORM-03
+-- defines: version 2 for new records; version 1 records stay readable.
 -- ============================================================================
 
 

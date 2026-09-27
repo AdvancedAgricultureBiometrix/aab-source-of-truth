@@ -6,6 +6,17 @@
 production, Gate D, WP05, scientific-validity or regulatory authority. This 
 capability is PROPOSED_NOT_ADMITTED. A pilot implementation exists; what it covers is recorded in `scs-pilot/packages/api/src/capabilities/cap-09/README.md`.
 
+## Amendment of 2026-09-28: currency is derived, never updated
+
+This contract said two different things about a superseded decision. "Superseding decision" said that the earlier decision's `currencyStatus` "is updated to `SUPERSEDED`". "One decision per evaluation, and supersession" and "Currency — derived, never stored" say that the earlier decision is never changed, and that its `SUPERSEDED` status is derived when read. The pilot implementation derives it.
+
+**Settled, as AAB-PLATFORM-08 settles it for the platform** (`governance/AAB-PLATFORM-08-ATTRIBUTABLE-HUMAN-REVIEW-WITH-CURRENCY-CANONICAL-CONTRACT-2026-09-28.md`, sections 5, 6 and 9):
+- **A decision's currency, `SUPERSEDED` included, is derived each time it is read.** It is never stored on the decision, and never updated.
+- **Superseding a decision never changes the earlier decision.** Its outcome and reasoning stand. That it is superseded is derived from the later decision.
+- **A currency assessment is recorded only as an append-only assessment** of the currency derived at a time, and is never read as the decision's current status.
+
+The sentence in "Superseding decision" is corrected to match. Nothing else in this contract changes, and no implementation changes: the pilot already behaves this way. **This amendment does not adopt AAB-PLATFORM-08 as a whole.** That adoption is its own amendment.
+
 ## Plain-English boundary statement
 
 SCS-CAP-09 is the human gate before any due diligence package can be compiled. 
@@ -305,8 +316,9 @@ interface ScsSupersedingReviewDecision extends ScsRegulatoryReviewDecision {
 }
 ```
 
-The earlier decision's `currencyStatus` is updated to `SUPERSEDED`. Its 
-`decisionOutcome` and `reviewReasoning` remain permanently unchanged.
+The earlier decision is never changed. Its `currencyStatus` is derived as `SUPERSEDED`
+when read (amendment of 2026-09-28). Its `decisionOutcome` and `reviewReasoning` remain
+permanently unchanged.
 
 ### Currency assessment — system generated
 
