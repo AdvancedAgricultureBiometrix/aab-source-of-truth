@@ -4,6 +4,14 @@
 **Domain:** Supply Chain Sovereignty (SCS)
 **Authority:** DEFINES THE CONTRACT FOR SCS-CAP-04. Establishes no commissioning, production, Gate D, WP05, scientific-validity or regulatory authority. This capability is PROPOSED_NOT_ADMITTED. A pilot implementation exists; what it covers is recorded in `scs-pilot/packages/api/src/capabilities/cap-04/README.md`.
 
+## Amendment of 2026-09-27: representative submission
+
+This contract adopts the representative submission defined in SCS-CAP-02 ("Representative submission"), which implements AAB-PLATFORM-03 section 3 and AAB-PLATFORM-04. Deforestation evidence may now be submitted by a `PARTY_REPRESENTATIVE` acting under a verified SCS-CAP-02 mandate that permits `SUBMIT_DEFORESTATION_EVIDENCE`, after every link and mandate check passes. This closes this contract's gap on submission under a mandate ("Authority", below). Nothing is implemented by this amendment, and every other rule is unchanged.
+
+**Decisions recorded on 2026-09-27:**
+- **The party a representative acts for** is the plot's producer or operator, or any party holding a tenure claim on the plot. The narrower reading, the producer or operator only, would exclude cooperative members who hold tenure claims but are not named on the association: exactly the smallholders AAB is designed to include.
+- **A `COMPLIANCE_OFFICER` sending `actingUnder` is refused.** Only a `PARTY_REPRESENTATIVE` submits under a mandate. This is intentional.
+
 ## Plain-English boundary statement
 
 SCS-CAP-04 admits genuine, attributable, and usable deforestation evidence — satellite imagery, remote sensing analysis, land cover data products, forestry authority certificates, government records, field verification, and expert assessments — and records precisely what each item observed, analysed, and attested, including every temporal gap, spatial limitation, and claim boundary. It does not determine whether admitted evidence is sufficient for any regulatory framework. It does not make compliance determinations. It does not strengthen a source's claim beyond what the source actually declared.
@@ -505,8 +513,23 @@ framework association, never from the client), `provenance.submittedBy`,
 
 ### Authority
 
-Only a `COMPLIANCE_OFFICER` may submit deforestation evidence. Otherwise
-`SUBMITTER_NOT_AUTHORISED`.
+- **Directly:** a `COMPLIANCE_OFFICER` may submit deforestation evidence.
+- **As a representative:** a `PARTY_REPRESENTATIVE` may submit it only under a mandate, named in
+  `actingUnder`, after every check of SCS-CAP-02 "Representative submission" passes. For this
+  capability, those checks read as follows:
+  - **Action:** the mandate permits `SUBMIT_DEFORESTATION_EVIDENCE`.
+  - **The party the act is for** is the mandate's `grantingPartyId`. It must be connected to the
+    plot: either the framework association's `producerOrOperatorId`, or a party holding a
+    tenure claim on the plot. Otherwise `MANDATE_PARTIES_MISMATCH`.
+  - **Scope:** the association's framework is among the mandate's `frameworkAssociationIds`; the
+    association's `commodityCode` is within `commodityScope`; and the plot's `countryCode` is
+    within `geographicScope`. Otherwise `MANDATE_SCOPE_MISMATCH`.
+- **Anyone else** is refused with `SUBMITTER_NOT_AUTHORISED`. A `PARTY_REPRESENTATIVE` without
+  `actingUnder`, or anyone else sending `actingUnder`, is refused with
+  `REPRESENTATIVE_NOT_AUTHORISED`.
+
+The role is checked first, with authority. The link and mandate checks run after the plot and
+framework association are resolved, because the scope check needs them.
 
 ### Plot and framework association
 
@@ -624,6 +647,12 @@ interface ScsDeforestationEvidenceSubmissionRequest {
   plotId: string;
   frameworkAssociationId: string;
 
+  // Present only for a representative submission (SCS-CAP-02, "Representative submission")
+  actingUnder?: {
+    representativePartyId: string;  // the party the actor is linked to
+    mandateId: string;              // the mandate from the plot's party to it
+  };
+
   evidenceType:
     | "SATELLITE_IMAGE"
     | "REMOTE_SENSING_ANALYSIS"
@@ -683,8 +712,8 @@ the record.
 ### Checks and the decision
 
 The failure checks run in this order: authority; dates; coverage geometry; the plot and
-framework association; the evidence object and integrity; relation to the plot; evidence type
-compatibility; parties. The admission checks in the decision record the outcome of each:
+framework association; for a representative submission, the link and mandate checks; the
+evidence object and integrity; relation to the plot; evidence type compatibility; parties. The admission checks in the decision record the outcome of each:
 
 - `submitterAuthorised`, `sourceIdentifiable`, `attributionEstablished`,
   `temporalDatesInternallyConsistent` and `evidenceTypeCompatibleWithRequirement` are `true`
@@ -701,14 +730,21 @@ compatibility; parties. The admission checks in the decision record the outcome 
   `CHAIN_OF_CUSTODY_INCOMPLETE` is recorded.
 
 The decision gains `limitationCodes`, the codes recorded, alongside the human-readable
-`limitations`.
+`limitations`. For a representative submission, the admission checks also carry
+`representation`, SCS-CAP-02's `ScsRepresentationChecks`, recording each link and mandate check,
+and the submitter's `ActorReference` carries `representation`, naming the link, the mandate and
+both parties.
 
 ### Open gaps
 
-**Contract gap: submission under a mandate.** An SCS-CAP-02 mandate may permit
-`SUBMIT_DEFORESTATION_EVIDENCE`, but an authenticated actor is not linked to a CAP-02 party:
-`ActorReference` has no `partyId`. Until that link exists, only a `COMPLIANCE_OFFICER` may
-submit, and mandate-based submission is deferred.
+**Submission under a mandate: specified by the amendment of 2026-09-27** ("Authority"). An
+actor is linked to a CAP-02 party through an actor–party link (AAB-PLATFORM-04, SCS-CAP-02), and
+acts under a verified mandate after every SCS-CAP-02 representative check passes.
+
+**Contract gap: an organisation's own staff.** A representative submits for another party
+under that party's mandate. How a party's own staff submit on its behalf, as the party itself
+rather than under a mandate, is not defined. Until it is, they submit only as a
+`COMPLIANCE_OFFICER`.
 
 **Contract gap: two attested periods.** The record carries an attested period in
 `temporalCoverage` (`attestedPeriodStart`, `attestedPeriodEnd`) and another in
@@ -767,6 +803,21 @@ interface ScsDeforestationEvidenceAdmissionFailure {
   // not failures: see "Admission rules for the pilot"
   error:
     | "SUBMITTER_NOT_AUTHORISED"
+    // Amendment of 2026-09-27: representative submission (SCS-CAP-02)
+    | "REPRESENTATIVE_NOT_AUTHORISED"
+    | "LINK_NOT_FOUND"
+    | "LINK_AMBIGUOUS"
+    | "LINK_NOT_ACTIVE"
+    | "LINK_SIGNATURE_INVALID"
+    | "LINK_RELATION_NOT_PERMITTED"
+    | "LINK_SUBJECT_NOT_CURRENT"
+    | "MANDATE_NOT_FOUND"
+    | "MANDATE_PARTIES_MISMATCH"
+    | "MANDATE_NOT_CURRENT"
+    | "MANDATE_ACTION_NOT_PERMITTED"
+    | "MANDATE_SCOPE_MISMATCH"
+    | "MANDATE_RELATIONSHIP_NOT_ACTIVE"
+    | "MANDATE_NOT_VERIFIED"
     | "PLOT_NOT_FOUND"
     | "PLOT_RETIRED"
     | "FRAMEWORK_ASSOCIATION_NOT_FOUND"
@@ -790,6 +841,10 @@ interface ScsDeforestationEvidenceAdmissionFailure {
 ```
 
 ## What this document does not establish
+
+- A representative submission does not make the representative responsible for the evidence's
+  truth, and does not verify the plot's party. It records who submitted, for whom, under which
+  mandate.
 
 - It does not admit SCS-CAP-04 as a canonical capability — that requires the ten-point admission checklist
 - It does not implement, deploy or migrate anything

@@ -6,6 +6,24 @@
 production, Gate D, WP05, scientific-validity or regulatory authority. This
 capability is PROPOSED_NOT_ADMITTED. A pilot implementation exists; what it covers is recorded in `scs-pilot/packages/api/src/capabilities/cap-05/README.md`.
 
+## Amendment of 2026-09-27: representative submission, and the two mandate fields
+
+This contract adopts the representative submission defined in SCS-CAP-02 ("Representative submission"), which implements AAB-PLATFORM-03 section 3 and AAB-PLATFORM-04. It also settles what distinguishes its two mandate fields ("Authority and mandates", below):
+- **`provenance.submissionMandateId`** is the authority for the *submission*: the mandate under which a `PARTY_REPRESENTATIVE` put the record into SCS. It is present exactly when the submission is representative, and every link and mandate check must pass. A failure refuses the submission.
+- **`sourceParty.actingUnderMandateId`** is a fact about the *event*: the source party was represented at the transaction itself, for example by a cooperative selling its members' produce. It never authorises a submission. It is checked, including against the mandate's scope, and a failure is recorded as the limitation `MANDATE_NOT_VALID`, as before.
+
+This closes this contract's gaps on submission under a mandate, the two mandate fields, and mandate scope. Nothing is implemented by this amendment, and every other rule is unchanged.
+
+**A breaking interface change.** The submission request's `submissionMandateId` is replaced by `actingUnder`, with the same shape as SCS-CAP-02 and SCS-CAP-04. A request that sends `submissionMandateId` is no longer valid. Records already stored keep their `provenance.submissionMandateId` unchanged. The pilot implementation changes when this amendment is built.
+
+**An intentional behaviour change.** A `COMPLIANCE_OFFICER` who cites a submission mandate is refused, where before the pilot recorded a limitation. Only a `PARTY_REPRESENTATIVE` submits under a mandate. A compliance officer still records the event's representation through `sourceParty.actingUnderMandateId`.
+
+**Decisions recorded on 2026-09-27:**
+- **`actingUnder` replaces the request's `submissionMandateId`,** for one shape across SCS-CAP-02, 04 and 05. A broken interface now is better than a permanent inconsistency in the contract.
+- **A representative acts for the source party only.** A destination party's own staff submitting for their own organisation is a direct submission, not representation. How an organisation's own staff submit on its behalf is recorded as a gap.
+- **A `COMPLIANCE_OFFICER` sending `actingUnder` is refused;** they record an event's representation through `sourceParty.actingUnderMandateId`.
+- **No mandate action for representation in a transaction is added now.** The gap is recorded. It is addressed when SCS-CAP-02's mandate action vocabulary is reviewed deliberately, as its own contract change.
+
 ## Plain-English boundary statement
 
 SCS-CAP-05 admits genuine, attributable, and usable supply chain custody
@@ -107,7 +125,8 @@ interface ScsCustodyEventRecord {
       | "PROCESSOR"
       | "EXPORTER"
       | "OTHER";
-    // Representation mandate if submitting on behalf of another party
+    // The mandate under which the source party was represented at the event itself.
+    // A fact about the event, never the submission's authority (amendment of 2026-09-27)
     actingUnderMandateId?: string;
   };
 
@@ -226,7 +245,9 @@ interface ScsCustodyEventRecord {
   provenance: {
     submittedBy: ActorReference;
     submittedAt: string;
-    // Mandate under which submission was made — links to CAP-02
+    // The mandate under which a PARTY_REPRESENTATIVE made the submission. Set by the
+    // system from the request's actingUnder; present exactly for a representative
+    // submission (amendment of 2026-09-27)
     submissionMandateId?: string;
     chainOfCustodyComplete: boolean;
   };
@@ -488,18 +509,40 @@ whole `admission` block.
 
 ### Authority and mandates
 
-- Only a `COMPLIANCE_OFFICER` may submit a custody event. Otherwise `SUBMITTER_NOT_AUTHORISED`.
-  The actor's role is what authorises the submission, not a mandate.
-- A cited mandate (`sourceParty.actingUnderMandateId` or `provenance.submissionMandateId`) is
-  checked but never refuses the event. It must:
-  - be a registered SCS-CAP-02 representation mandate;
-  - be in force: `revocationStatus` `NOT_REVOKED`, and the event date within `validFrom` to
-    `validUntil`;
-  - permit `SUBMIT_CUSTODY_EVIDENCE`;
-  - name the source party as its `grantingPartyId`, the party it acts for.
+**The submission's authority.**
+- **Directly:** a `COMPLIANCE_OFFICER` may submit a custody event. Their role is the authority,
+  not a mandate.
+- **As a representative:** a `PARTY_REPRESENTATIVE` may submit it only under a mandate, named in
+  `actingUnder`, after every check of SCS-CAP-02 "Representative submission" passes. For this
+  capability, those checks read as follows:
+  - **Action:** the mandate permits `SUBMIT_CUSTODY_EVIDENCE`.
+  - **The party the act is for** is the source party. The mandate's `grantingPartyId` is
+    `sourceParty.partyId`. Otherwise `MANDATE_PARTIES_MISMATCH`.
+  - **Scope:** the event's framework is among the mandate's `frameworkAssociationIds`; the
+    event's `commodity.commodityCode` is within `commodityScope`; and
+    `eventLocation.countryCode` is within `geographicScope`. Otherwise
+    `MANDATE_SCOPE_MISMATCH`.
 
-  A cited mandate that fails any of these is recorded as cited, and the limitation
-  `MANDATE_NOT_VALID` is recorded, naming each failed condition.
+  The system sets `provenance.submissionMandateId` from `actingUnder.mandateId`.
+- **Anyone else** is refused with `SUBMITTER_NOT_AUTHORISED`. A `PARTY_REPRESENTATIVE` without
+  `actingUnder`, or anyone else sending `actingUnder`, is refused with
+  `REPRESENTATIVE_NOT_AUTHORISED`.
+- The role is checked first. The link and mandate checks run after the framework, commodity and
+  parties are resolved, because the scope check needs them.
+
+**The event's representation** (`sourceParty.actingUnderMandateId`), when given, records that
+the source party was represented at the transaction itself. It never authorises the
+submission, and never refuses the event. It must:
+- be a registered SCS-CAP-02 representation mandate;
+- be in force: `revocationStatus` `NOT_REVOKED`, and the event date within `validFrom` to
+  `validUntil`;
+- permit `SUBMIT_CUSTODY_EVIDENCE`;
+- name the source party as its `grantingPartyId`, the party it acts for;
+- cover the event: its framework, commodity code and location country within the mandate's
+  `frameworkAssociationIds`, `commodityScope` and `geographicScope`.
+
+A mandate cited here that fails any of these is recorded as cited, and the limitation
+`MANDATE_NOT_VALID` is recorded, naming each failed condition.
 
 ### Parties
 
@@ -691,6 +734,13 @@ interface ScsCustodyEventSubmissionRequest {
   splitFromEventId?: string;
   consolidatedFromEventIds?: string[];
 
+  // Present only for a representative submission (SCS-CAP-02, "Representative submission").
+  // Replaces the request's former submissionMandateId (amendment of 2026-09-27)
+  actingUnder?: {
+    representativePartyId: string;  // the party the actor is linked to
+    mandateId: string;              // the source party's mandate to it
+  };
+
   supportingDocument: {
     // The AAB-PLATFORM-01 objectId of the stored document, when one is cited
     objectId?: string;
@@ -703,7 +753,6 @@ interface ScsCustodyEventSubmissionRequest {
     contentDigest: string;
   };
 
-  submissionMandateId?: string;
   chainOfCustodyComplete: boolean;
 
   uncertainties: string[];
@@ -715,7 +764,8 @@ interface ScsCustodyEventSubmissionRequest {
 ### Checks and the decision
 
 The failure checks run in this order: authority; internal consistency; the framework; the
-commodity; the parties; the supporting document and integrity. The admission checks in the
+commodity; the parties; for a representative submission, the link and mandate checks; the
+supporting document and integrity. The admission checks in the
 decision record the outcome of each:
 
 - `submitterAuthorised`, `sourcePartyIdentifiable`, `destinationPartyIdentifiable`,
@@ -730,7 +780,10 @@ decision record the outcome of each:
 
 The decision carries `limitationCodes`, the codes recorded, alongside the human-readable
 `limitations`; `decisionReasons`, which is never a limitation; and the fixed
-`authorityBoundary`.
+`authorityBoundary`. For a representative submission, the admission checks also carry
+`representation`, SCS-CAP-02's `ScsRepresentationChecks`, recording each link and mandate check,
+and the submitter's `ActorReference` carries `representation`, naming the link, the mandate and
+both parties.
 
 ### Deferred operations
 
@@ -744,17 +797,25 @@ The decision carries `limitationCodes`, the codes recorded, alongside the human-
 
 ### Open gaps
 
-**Contract gap: submission under a mandate.** An SCS-CAP-02 mandate may permit
-`SUBMIT_CUSTODY_EVIDENCE`, but an authenticated actor is not linked to a CAP-02 party:
-`ActorReference` has no `partyId`. Until that link exists, only a `COMPLIANCE_OFFICER` may
-submit, and a cited mandate is checked and recorded but never authorises the submission.
+**Settled by the amendment of 2026-09-27** ("Authority and mandates"):
+- **Submission under a mandate:** a `PARTY_REPRESENTATIVE` submits under a verified mandate,
+  through an actor–party link, after every SCS-CAP-02 representative check passes.
+- **The two mandate fields:** `provenance.submissionMandateId` is the submission's authority;
+  `sourceParty.actingUnderMandateId` is a fact about the event.
+- **Mandate scope:** both mandates are checked against the event's framework, commodity code
+  and location country. The submission mandate is refused on a mismatch; the event mandate
+  records `MANDATE_NOT_VALID`.
 
-**Contract gap: two mandate fields.** The record carries `sourceParty.actingUnderMandateId` and
-`provenance.submissionMandateId`. What distinguishes them is not defined. Both are checked in
-the same way.
+**Contract gap: an action for representation at the event.** SCS-CAP-02's mandate actions are
+all submissions. None names conducting a transaction for the granting party, so an event's
+representation is checked against `SUBMIT_CUSTODY_EVIDENCE`, the nearest action. A mandate
+action for representing a party in a transaction is not defined. It is addressed when
+SCS-CAP-02's mandate action vocabulary is reviewed, as its own change.
 
-**Contract gap: mandate scope.** Whether a cited mandate's `frameworkAssociationIds`,
-`commodityScope` and `geographicScope` must cover the event is not defined, and is not checked.
+**Contract gap: an organisation's own staff.** A representative submits for another party
+under that party's mandate. How a party's own staff submit on its behalf, as the party itself
+rather than under a mandate, is not defined. Until it is, they submit only as a
+`COMPLIANCE_OFFICER`.
 
 **Contract gap: producer role.** `sourceParty.partyRoleAtEvent` has no producer role. A
 smallholder selling their own harvest is recorded as `SUPPLIER`.
@@ -827,6 +888,21 @@ interface ScsCustodyEventAdmissionFailure {
   // failure: see "Admission rules for the pilot"
   error:
     | "SUBMITTER_NOT_AUTHORISED"
+    // Amendment of 2026-09-27: representative submission (SCS-CAP-02)
+    | "REPRESENTATIVE_NOT_AUTHORISED"
+    | "LINK_NOT_FOUND"
+    | "LINK_AMBIGUOUS"
+    | "LINK_NOT_ACTIVE"
+    | "LINK_SIGNATURE_INVALID"
+    | "LINK_RELATION_NOT_PERMITTED"
+    | "LINK_SUBJECT_NOT_CURRENT"
+    | "MANDATE_NOT_FOUND"
+    | "MANDATE_PARTIES_MISMATCH"
+    | "MANDATE_NOT_CURRENT"
+    | "MANDATE_ACTION_NOT_PERMITTED"
+    | "MANDATE_SCOPE_MISMATCH"
+    | "MANDATE_RELATIONSHIP_NOT_ACTIVE"
+    | "MANDATE_NOT_VERIFIED"
     | "SOURCE_PARTY_NOT_IDENTIFIABLE"
     | "DESTINATION_PARTY_NOT_IDENTIFIABLE"
     // A registered party that is RETIRED
@@ -888,6 +964,12 @@ package is sufficiently supported — without any single capability claiming
 more than it can honestly deliver.
 
 ## What this document does not establish
+
+- A representative submission does not make the representative responsible for the event's
+  truth, and does not verify either party. It records who submitted, for whom, under which
+  mandate.
+- An event's representation (`sourceParty.actingUnderMandateId`) is recorded as a fact about the
+  event. It is never authority to submit.
 
 - It does not admit SCS-CAP-05 as a canonical capability — that requires
   the ten-point admission checklist
