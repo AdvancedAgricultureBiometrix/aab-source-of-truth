@@ -11,8 +11,8 @@
 // defines them.
 //
 // Not yet listed, because nothing built returns them: LINK_AMBIGUOUS (the link
-// use checks, with representative submission) and the representative and
-// mandate verification codes. Each is added with the operation that returns it.
+// use checks, with representative submission) and the representative
+// submission codes. Each is added with the operation that returns it.
 
 import { ScsFailure } from "../../foundation/errors.js";
 
@@ -61,6 +61,9 @@ export const CAP02_FAILURES = {
   LINK_STATUS_NOT_PERMITTED: 409,
   LINK_STATUS_WRITER_NOT_AUTHORISED: 403,
   LINK_READER_NOT_AUTHORISED: 403,
+  // Mandate verification (amendment of 2026-09-27)
+  MANDATE_NOT_FOUND: 404,
+  MANDATE_NOT_CURRENT: 422,
   DEPENDENCY_UNAVAILABLE: 503,
 } as const;
 

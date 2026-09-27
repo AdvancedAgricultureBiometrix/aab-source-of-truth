@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-02:mandate-verification-params:1",
+  "title": "ScsMandateVerificationPathParams",
+  "description": "Path parameters of POST /scs/v1/mandates/:mandateId/verifications.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "mandateId"
+  ],
+  "properties": {
+    "mandateId": {
+      "type": "string",
+      "format": "uuid"
+    }
+  }
+}

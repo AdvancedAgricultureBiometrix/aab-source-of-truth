@@ -85,6 +85,11 @@ const TARGETS = [
       "cap-02/actor-party-link-status-receipt.schema.json",
       "cap-02/actor-party-link-status-response.schema.json",
       "cap-02/actor-party-link-read.schema.json",
+      "cap-02/mandate-verification-params.schema.json",
+      "cap-02/mandate-verification-request.schema.json",
+      "cap-02/mandate-verification-decision.schema.json",
+      "cap-02/mandate-verification-receipt.schema.json",
+      "cap-02/mandate-verification-response.schema.json",
     ],
   },
   {

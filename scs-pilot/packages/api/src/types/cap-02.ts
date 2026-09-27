@@ -39,6 +39,11 @@
  *   src/schemas/cap-02/actor-party-link-status-receipt.schema.json
  *   src/schemas/cap-02/actor-party-link-status-response.schema.json
  *   src/schemas/cap-02/actor-party-link-read.schema.json
+ *   src/schemas/cap-02/mandate-verification-params.schema.json
+ *   src/schemas/cap-02/mandate-verification-request.schema.json
+ *   src/schemas/cap-02/mandate-verification-decision.schema.json
+ *   src/schemas/cap-02/mandate-verification-receipt.schema.json
+ *   src/schemas/cap-02/mandate-verification-response.schema.json
  * To change these types, edit the schema(s) above, then run:
  *   npm run generate:types
  * npm test fails if this file differs from what the schemas generate.
@@ -910,4 +915,146 @@ export interface ScsActorPartyLink {
   statusRecords: ActorSubjectLinkStatusRecord[];
   currentState: "ACTIVE" | "SUSPENDED" | "REVOKED" | "EXPIRED";
   supersededByLinkId?: string;
+}
+
+/**
+ * Path parameters of POST /scs/v1/mandates/:mandateId/verifications.
+ */
+export interface ScsMandateVerificationPathParams {
+  mandateId: string;
+}
+
+/**
+ * SCS-CAP-02 ScsMandateVerificationAssessmentRequest (amendments of 2026-09-27, "Mandate verification"). mandateId is taken from the request path. The system sets assessmentId, recordedBy, recordedAt and the authorityBoundary flags (always true). verificationStatus accepts every ScsIdentityVerificationStatus value; the capability refuses the two that are derived, not recorded, with VERIFICATION_STATUS_NOT_RECORDABLE. Dates, the jurisdiction, evidence and supersession are checked by the capability, so that the contract's failure codes are returned.
+ */
+export interface ScsMandateVerificationAssessmentRequest {
+  verificationStatus:
+    | "CLAIMED_UNVERIFIED"
+    | "PARTIALLY_VERIFIED"
+    | "VERIFIED_FOR_DECLARED_SCOPE"
+    | "VERIFICATION_EXPIRED"
+    | "DISPUTED"
+    | "FAIL_CLOSED";
+  verificationScope: ScsMandateVerificationScopeInput;
+  verifyingAuthority: ScsMandateVerifyingAuthorityInput;
+  /**
+   * Not in the future.
+   */
+  verifiedAt: string;
+  /**
+   * When given, strictly after verifiedAt, and not after the mandate's validUntil; may already have passed.
+   */
+  expiresAt?: string;
+  /**
+   * At least one; each among the mandate's mandateEvidenceIds.
+   *
+   * @minItems 1
+   * @maxItems 200
+   */
+  evidenceIds: string[];
+  /**
+   * @maxItems 200
+   */
+  limitations: string[];
+  /**
+   * An earlier assessment of the same mandate, not already superseded.
+   */
+  supersedesAssessmentId?: string;
+}
+export interface ScsMandateVerificationScopeInput {
+  scopeDescription: string;
+  /**
+   * What was verified about the mandate, for example grantingPartyConsent, permittedActions, frameworkScope, commodityScope, geographicScope, validityPeriod.
+   *
+   * @maxItems 200
+   */
+  verifiedAttributes: string[];
+  /**
+   * Explicit exclusions: what was NOT verified.
+   *
+   * @maxItems 200
+   */
+  excludedFromVerification: string[];
+}
+/**
+ * Recorded as declared: there is no registry of verifying authorities to check it against.
+ */
+export interface ScsMandateVerifyingAuthorityInput {
+  authorityId: string;
+  authorityName: string;
+  authorityBasis: string;
+  /**
+   * ISO 3166-1 alpha-2, uppercase (checked by the capability).
+   */
+  jurisdictionCode: string;
+}
+
+/**
+ * SCS-CAP-02 ScsMandateVerificationAssessmentDecision: an assessment was recorded. Every check was performed and passed. resultingVerificationStatus is the mandate's verification status derived after this assessment; the mandate record itself is never updated.
+ */
+export interface ScsMandateVerificationAssessmentDecision {
+  decisionId: string;
+  assessmentId: string;
+  mandateId: string;
+  decision: "RECORDED";
+  eligibilityChecks: ScsMandateVerificationEligibilityChecks;
+  resultingVerificationStatus:
+    | "CLAIMED_UNVERIFIED"
+    | "PARTIALLY_VERIFIED"
+    | "VERIFIED_FOR_DECLARED_SCOPE"
+    | "VERIFICATION_EXPIRED"
+    | "DISPUTED"
+    | "FAIL_CLOSED";
+  /**
+   * @minItems 1
+   */
+  decisionReasons: string[];
+  decidedBy: ActorReference;
+  decidedAt: string;
+}
+export interface ScsMandateVerificationEligibilityChecks {
+  verifierAuthorised: true;
+  statusRecordable: true;
+  datesValid: true;
+  jurisdictionRecognised: true;
+  mandateExists: true;
+  mandateCurrent: true;
+  verifierIndependent: true;
+  evidenceAmongMandateEvidence: true;
+  supersessionValid: true;
+}
+
+/**
+ * Immutable receipt for an SCS-CAP-02 MANDATE_VERIFICATION decision, written in the same transaction as the decision (foundation/receipts.ts). Its SHA-256 over canonical JSON is returned alongside it as receiptDigest.
+ */
+export interface ScsMandateVerificationReceipt {
+  receiptId: string;
+  receiptVersion: "1";
+  capabilityId: "SCS-CAP-02";
+  decisionType: "MANDATE_VERIFICATION";
+  /**
+   * assessmentId of the recorded assessment.
+   */
+  subjectId: string;
+  correlationId: string;
+  /**
+   * SHA-256 (hex) of the canonical request: method, concrete path (mandateId included) and body.
+   */
+  requestDigest: string;
+  idempotencyKey: string | null;
+  issuedAt: string;
+  /**
+   * The authenticated actor whose request produced this decision.
+   */
+  issuedFor: ActorReference;
+  decision: ScsMandateVerificationAssessmentDecision;
+}
+
+/**
+ * Body of a successful POST /scs/v1/mandates/:mandateId/verifications (201): the decision, the immutable receipt that records it, and the receipt's SHA-256 over canonical JSON.
+ */
+export interface ScsMandateVerificationResponse {
+  decision: ScsMandateVerificationAssessmentDecision;
+  receipt: ScsMandateVerificationReceipt;
+  receiptDigest: string;
 }

@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-02:mandate-verification-request:1",
+  "title": "ScsMandateVerificationAssessmentRequest",
+  "description": "SCS-CAP-02 ScsMandateVerificationAssessmentRequest (amendments of 2026-09-27, \"Mandate verification\"). mandateId is taken from the request path. The system sets assessmentId, recordedBy, recordedAt and the authorityBoundary flags (always true). verificationStatus accepts every ScsIdentityVerificationStatus value; the capability refuses the two that are derived, not recorded, with VERIFICATION_STATUS_NOT_RECORDABLE. Dates, the jurisdiction, evidence and supersession are checked by the capability, so that the contract's failure codes are returned.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "verificationStatus",
+    "verificationScope",
+    "verifyingAuthority",
+    "verifiedAt",
+    "evidenceIds",
+    "limitations"
+  ],
+  "properties": {
+    "verificationStatus": {
+      "type": "string",
+      "enum": [
+        "CLAIMED_UNVERIFIED",
+        "PARTIALLY_VERIFIED",
+        "VERIFIED_FOR_DECLARED_SCOPE",
+        "VERIFICATION_EXPIRED",
+        "DISPUTED",
+        "FAIL_CLOSED"
+      ]
+    },
+    "verificationScope": {
+      "title": "ScsMandateVerificationScopeInput",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scopeDescription",
+        "verifiedAttributes",
+        "excludedFromVerification"
+      ],
+      "properties": {
+        "scopeDescription": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "verifiedAttributes": {
+          "type": "array",
+          "maxItems": 200,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000,
+            "pattern": "\\S"
+          },
+          "description": "What was verified about the mandate, for example grantingPartyConsent, permittedActions, frameworkScope, commodityScope, geographicScope, validityPeriod."
+        },
+        "excludedFromVerification": {
+          "description": "Explicit exclusions: what was NOT verified.",
+          "type": "array",
+          "maxItems": 200,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000,
+            "pattern": "\\S"
+          }
+        }
+      }
+    },
+    "verifyingAuthority": {
+      "title": "ScsMandateVerifyingAuthorityInput",
+      "description": "Recorded as declared: there is no registry of verifying authorities to check it against.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authorityId",
+        "authorityName",
+        "authorityBasis",
+        "jurisdictionCode"
+      ],
+      "properties": {
+        "authorityId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "authorityName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "authorityBasis": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        },
+        "jurisdictionCode": {
+          "description": "ISO 3166-1 alpha-2, uppercase (checked by the capability).",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "\\S"
+        }
+      }
+    },
+    "verifiedAt": {
+      "description": "Not in the future.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "expiresAt": {
+      "description": "When given, strictly after verifiedAt, and not after the mandate's validUntil; may already have passed.",
+      "type": "string",
+      "format": "date-time"
+    },
+    "evidenceIds": {
+      "description": "At least one; each among the mandate's mandateEvidenceIds.",
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 200,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "format": "uuid",
+        "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "maxItems": 200,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1000,
+        "pattern": "\\S"
+      }
+    },
+    "supersedesAssessmentId": {
+      "description": "An earlier assessment of the same mandate, not already superseded.",
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    }
+  }
+}
