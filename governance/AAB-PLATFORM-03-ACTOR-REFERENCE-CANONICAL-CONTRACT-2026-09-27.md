@@ -4,6 +4,10 @@
 **Domain:** AAB platform (shared by every domain)
 **Authority:** DEFINES THE SHARED `ActorReference` TYPE: WHAT IT RECORDS AND ASSERTS, HOW IT RELATES TO DOMAIN PARTIES, HOW REPRESENTATION UNDER A MANDATE IS RECORDED, AND ITS USE IN PLATFORM RECORDS. It grants no role, membership or authority to anyone, admits no capability, and changes no stored record. This contract is PROPOSED_NOT_ADMITTED. Version 1 of the type is the SCS pilot's definition; version 2, defined here, is not implemented.
 
+## Amendment of 2026-09-27: the `SUBJECT` scope
+
+`authorityBasis` gains the scope type `SUBJECT`, for a grant that applies to one domain subject only. AAB-PLATFORM-04 needs it: only a representative specifically designated for a subject may suspend a link to it, and that designation is a role scoped to that subject. No other field changes.
+
 ## Sources
 
 - `scs-pilot/packages/api/src/schemas/shared/actor-reference.schema.json`: the pilot definition, recorded "because no contract defines it"
@@ -66,7 +70,8 @@ interface ActorReference {
   // Authority basis: the grants resolved when the act was accepted
   authorityBasis: Array<{
     role: string;                      // e.g. COMPLIANCE_OFFICER
-    scopeType: "PLATFORM" | "COUNTRY" | "INSTITUTION" | "DOMAIN" | "DEPLOYMENT";
+    scopeType: "PLATFORM" | "COUNTRY" | "INSTITUTION" | "DOMAIN" | "DEPLOYMENT" | "SUBJECT";
+    // For SUBJECT: "<domain>:<subjectType>:<subjectId>", for example "SCS:PARTY:<partyId>"
     scopeId: string;
     grantId?: string;                  // the membership or grant record, where one exists
   }>;
@@ -92,7 +97,8 @@ interface ActorReference {
 - **`actorType: SERVICE`** is an automated service, for example SCS-CAP-08's compilation service identity. A service never makes a governance decision (section 4).
 - **`authenticationMethod`** records how. Changing from static tokens to OIDC changes only this value.
 - **`authorityBasis`** replaces the pilot's unscoped `roles`.
-  - Each grant names its scope, using the ID-03 scope types plus `DEPLOYMENT` for the pilot.
+  - Each grant names its scope, using the ID-03 scope types plus `DEPLOYMENT` for the pilot, and `SUBJECT` for a grant that applies to one domain subject only (amendment of 2026-09-27).
+  - A `SUBJECT` grant names the subject as `<domain>:<subjectType>:<subjectId>`. It is how a role applies to one party and no other, for example the subject's authority representative (AAB-PLATFORM-04, section 4).
   - In the pilot, grants come from the actors file with `scopeType: DEPLOYMENT`. They have no `grantId`.
   - Once protected membership records exist, grants come from them, and carry their `grantId`.
   - The authority basis is resolved by the server from protected records. It is never taken from the client, from user metadata or from the request.
