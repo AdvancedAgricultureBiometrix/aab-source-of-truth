@@ -35,8 +35,8 @@
 -- receipt, that the superseded decision is the subject's current one, and the
 -- text of decisionReasons.
 --
--- NOT YET IMPLEMENTED
---   TODO(actor-reference): ActorReference stored as a jsonb object.
+-- ActorReference is stored as a jsonb object, in the shape AAB-PLATFORM-03
+-- defines: version 2 for new records; version 1 records stay readable.
 -- ============================================================================
 
 

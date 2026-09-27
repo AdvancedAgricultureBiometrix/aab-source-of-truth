@@ -82,9 +82,6 @@
 --                SELECT + INSERT only — no UPDATE, DELETE or TRUNCATE — so the
 --                child tables cannot be deleted from either; RESTRICT covers
 --                the owner.
---   TODO(actor-reference): ActorReference is referenced but never defined in
---                CAP-02 (as in CAP-01). Stored as a jsonb object. Shared type
---                recurring in CAP-01, CAP-02, CAP-05 and CAP-06.
 --   TODO(party-versions): records reference a party by (partyId, partyVersion).
 --                Only the current party version is stored; earlier versions
 --                are not kept, so party_version on child rows is recorded but
@@ -103,6 +100,9 @@
 --   Decisions: every CAP-02 decision is persisted inside its immutable
 --                receipt (scs.decision_receipt, platform.sql), written in the
 --                same transaction as the record it decides on.
+--
+-- ActorReference is stored as a jsonb object, in the shape AAB-PLATFORM-03
+-- defines: version 2 for new records; version 1 records stay readable.
 -- ============================================================================
 
 

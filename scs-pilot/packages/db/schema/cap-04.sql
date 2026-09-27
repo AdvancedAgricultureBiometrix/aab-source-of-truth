@@ -33,7 +33,9 @@
 -- NOT YET IMPLEMENTED
 --   TODO(postgis): coverage geometry is jsonb; intersection_with_plot is
 --                NOT_VERIFIED for every pilot record.
---   TODO(actor-reference): ActorReference stored as a jsonb object.
+--
+-- ActorReference is stored as a jsonb object, in the shape AAB-PLATFORM-03
+-- defines: version 2 for new records; version 1 records stay readable.
 -- ============================================================================
 
 
