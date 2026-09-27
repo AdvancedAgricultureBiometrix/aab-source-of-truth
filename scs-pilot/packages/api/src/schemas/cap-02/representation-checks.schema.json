@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-02:representation-checks:1",
+  "title": "ScsRepresentationChecks",
+  "description": "SCS-CAP-02 ScsRepresentationChecks: each check of \"Representative submission\", recorded in the decision of a representative act. Every check passed, so each is true: a failed check refuses the act and writes nothing.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "representativeRoleHeld",
+    "activeLinkToRepresentativeParty",
+    "mandatePartiesMatch",
+    "mandateCurrent",
+    "actionPermitted",
+    "withinMandateScope",
+    "relationshipActive",
+    "mandateVerified"
+  ],
+  "properties": {
+    "representativeRoleHeld": {
+      "type": "boolean",
+      "const": true
+    },
+    "activeLinkToRepresentativeParty": {
+      "type": "boolean",
+      "const": true
+    },
+    "mandatePartiesMatch": {
+      "type": "boolean",
+      "const": true
+    },
+    "mandateCurrent": {
+      "type": "boolean",
+      "const": true
+    },
+    "actionPermitted": {
+      "type": "boolean",
+      "const": true
+    },
+    "withinMandateScope": {
+      "type": "boolean",
+      "const": true
+    },
+    "relationshipActive": {
+      "type": "boolean",
+      "const": true
+    },
+    "mandateVerified": {
+      "type": "boolean",
+      "const": true
+    }
+  }
+}

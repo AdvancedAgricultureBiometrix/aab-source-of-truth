@@ -12,8 +12,7 @@
 // Routes: GET /health, POST /scs/v1/evidence-objects (platform/evidence-objects)
 // and every capability route in capabilities/index.ts.
 
-import { CAPABILITY_ROUTES } from "./capabilities/index.js";
-import { cap02LinkRoutes } from "./capabilities/cap-02/link-routes.js";
+import { capabilityRoutes } from "./capabilities/index.js";
 import { READER_ROLES as CAP08_READER_ROLES } from "./capabilities/cap-08/errors.js";
 import { cap08Routes } from "./capabilities/cap-08/routes.js";
 import { StaticTokenAuthenticator } from "./foundation/auth.js";
@@ -68,8 +67,7 @@ async function main(): Promise<void> {
   const server = createApiServer({ routes: [
       ...evidenceObjectRoutes(objectStore),
       ...renditionRoutes(objectStore, { "SCS-CAP-08": CAP08_READER_ROLES }),
-      ...CAPABILITY_ROUTES,
-      ...cap02LinkRoutes(authenticator),
+      ...capabilityRoutes(authenticator),
       ...cap08Routes(objectStore),
     ], authenticator, db });
   server.listen(port, () => log.info("scs-pilot-api listening", { port }));

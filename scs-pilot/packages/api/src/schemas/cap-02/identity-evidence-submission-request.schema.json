@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:aab:scs:schema:cap-02:identity-evidence-submission-request:1",
   "title": "ScsIdentityEvidenceSubmissionRequest",
-  "description": "SCS-CAP-02 ScsIdentityEvidenceSubmissionRequest: evidence submitted for an already registered party. partyId is taken from the request path. Not in the request, because the system sets them: submissionId (database-generated), partyVersion (the party's current version), submittedBy (the authenticated actor) and submittedAt. Evidence ids are lowercase canonical UUIDs, so a duplicate within one request is always caught here.",
+  "description": "SCS-CAP-02 ScsIdentityEvidenceSubmissionRequest: evidence submitted for an already registered party. partyId is taken from the request path. Not in the request, because the system sets them: submissionId (database-generated), partyVersion (the party's current version), submittedBy (the authenticated actor) and submittedAt. Evidence ids are lowercase canonical UUIDs, so a duplicate within one request is always caught here. actingUnder is present only for a representative submission (amendment of 2026-09-27).",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -38,6 +38,10 @@
       "minLength": 1,
       "maxLength": 1000,
       "pattern": "\\S"
+    },
+    "actingUnder": {
+      "$ref": "urn:aab:scs:schema:cap-02:acting-under:1",
+      "description": "Present only for a representative submission: the mandate from the path's party to the representative party."
     }
   }
 }

@@ -424,11 +424,9 @@
         }
       }
     },
-    "submissionMandateId": {
-      "description": "An SCS-CAP-02 mandateId; checked, never authorising.",
-      "type": "string",
-      "format": "uuid",
-      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    "actingUnder": {
+      "$ref": "urn:aab:scs:schema:cap-02:acting-under:1",
+      "description": "Present only for a representative submission. Replaces the former submissionMandateId (amendment of 2026-09-27): a request that sends submissionMandateId is refused as invalid. The system sets the record's provenance.submissionMandateId from actingUnder.mandateId."
     },
     "chainOfCustodyComplete": {
       "description": "As declared by the submitter.",

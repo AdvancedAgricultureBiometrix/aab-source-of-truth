@@ -11,6 +11,7 @@
  * npm test fails if this file differs from what the schemas generate.
  */
 
+import type { ScsActingUnder, ScsRepresentationChecks } from "./cap-02.js";
 import type { ActorReference } from "./shared.js";
 
 export type ScsCustodyQuantityUnit = "KG" | "TONNE" | "LITRE" | "M3" | "BALE" | "SACK" | "UNIT" | "OTHER";
@@ -58,9 +59,9 @@ export interface ScsCustodyEventSubmissionRequest {
   consolidatedFromEventIds?: string[];
   supportingDocument: ScsCustodySupportingDocumentInput;
   /**
-   * An SCS-CAP-02 mandateId; checked, never authorising.
+   * Present only for a representative submission. Replaces the former submissionMandateId (amendment of 2026-09-27): a request that sends submissionMandateId is refused as invalid. The system sets the record's provenance.submissionMandateId from actingUnder.mandateId.
    */
-  submissionMandateId?: string;
+  actingUnder?: ScsActingUnder;
   /**
    * As declared by the submitter.
    */
@@ -230,6 +231,10 @@ export interface ScsCustodyEventAdmissionChecks {
   documentIntegrityVerified: boolean;
   submitterAuthorised: boolean;
   internallyConsistent: boolean;
+  /**
+   * Present only for a representative submission.
+   */
+  representation?: ScsRepresentationChecks;
 }
 export interface ScsCustodyEventAuthorityBoundary {
   admissionIsNotSufficiency: true;

@@ -9,7 +9,7 @@ import { createHash, randomUUID } from "node:crypto";
 import type { AddressInfo } from "node:net";
 import type { Server } from "node:http";
 
-import { CAPABILITY_ROUTES } from "../capabilities/index.js";
+import { capabilityRoutes } from "../capabilities/index.js";
 import { StaticTokenAuthenticator } from "../foundation/auth.js";
 import { canonicalJson, sha256Hex } from "../foundation/canonical.js";
 import { runWithCorrelation } from "../foundation/correlation.js";
@@ -122,7 +122,7 @@ before(async () => {
       actor: actors[k],
     })),
   }, { issuerCountry: "TH" });
-  server = createApiServer({ routes: CAPABILITY_ROUTES, authenticator, db: api });
+  server = createApiServer({ routes: capabilityRoutes(authenticator), authenticator, db: api });
   await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
   rubberTH = await registerFramework();

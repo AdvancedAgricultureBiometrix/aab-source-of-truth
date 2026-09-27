@@ -14,7 +14,7 @@ import { createHash, randomBytes, randomUUID } from "node:crypto";
 import type { AddressInfo } from "node:net";
 import type { Server } from "node:http";
 
-import { CAPABILITY_ROUTES } from "../capabilities/index.js";
+import { capabilityRoutes } from "../capabilities/index.js";
 import { StaticTokenAuthenticator } from "../foundation/auth.js";
 import { canonicalJson, sha256Hex } from "../foundation/canonical.js";
 import { runWithCorrelation } from "../foundation/correlation.js";
@@ -186,7 +186,7 @@ before(async () => {
   const authenticator = StaticTokenAuthenticator.fromConfig({
     actors: (Object.keys(TOKENS) as Array<keyof typeof TOKENS>).map((k) => ({ tokenSha256: createHash("sha256").update(TOKENS[k]).digest("hex"), actor: actors[k] })),
   }, { issuerCountry: "TH" });
-  server = createApiServer({ routes: CAPABILITY_ROUTES, authenticator, db: api });
+  server = createApiServer({ routes: capabilityRoutes(authenticator), authenticator, db: api });
   await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
   rubber = await registerFramework();
@@ -456,19 +456,21 @@ test("CHAIN_OF_CUSTODY_INCOMPLETE: as declared by the submitter", async () => {
   assert.deepEqual(await codesOf(eventRequest(await storedObject(), (r) => (r.chainOfCustodyComplete = false))), ["CHAIN_OF_CUSTODY_INCOMPLETE"]);
 });
 
-test("mandates: a valid mandate is linked with no limitation; otherwise MANDATE_NOT_VALID names each failed condition", async () => {
-  const ok = await admitOk(eventRequest(await storedObject(), (r) => ((r.sourceParty.actingUnderMandateId = validMandate), (r.submissionMandateId = validMandate))));
+test("the event's mandate: a valid one is linked with no limitation; otherwise MANDATE_NOT_VALID names each failed condition", async () => {
+  const ok = await admitOk(eventRequest(await storedObject(), (r) => (r.sourceParty.actingUnderMandateId = validMandate)));
   assert.deepEqual(ok.limitationCodes, []);
   const row = await eventRow(ok.eventId);
   assert.equal(row["source_mandate_linked_id"], validMandate);
-  assert.equal(row["submission_mandate_linked_id"], validMandate);
+  // a direct submission names no submission mandate (amendment of 2026-09-27)
+  assert.equal(row["submission_mandate_cited_id"], null);
+  assert.equal(row["submission_mandate_linked_id"], null);
 
   const ghost = randomUUID();
-  const missing = await admitOk(eventRequest(await storedObject(), (r) => (r.submissionMandateId = ghost)));
+  const missing = await admitOk(eventRequest(await storedObject(), (r) => (r.sourceParty.actingUnderMandateId = ghost)));
   assert.deepEqual(missing.limitationCodes, ["MANDATE_NOT_VALID"]);
-  assert.match(missing.limitations[0]!, new RegExp(`/submissionMandateId cites ${ghost}, but no SCS-CAP-02 mandate is registered with that id\\. The submission is authorised by the actor's COMPLIANCE_OFFICER role`));
-  assert.equal((await eventRow(missing.eventId))["submission_mandate_linked_id"], null);
-  assert.equal((await eventRow(missing.eventId))["submission_mandate_cited_id"], ghost);
+  assert.match(missing.limitations[0]!, new RegExp(`/sourceParty/actingUnderMandateId cites ${ghost}, but no SCS-CAP-02 mandate is registered with that id\\. It records the source party's representation at the event, and never authorises the submission\\.`));
+  assert.equal((await eventRow(missing.eventId))["source_mandate_linked_id"], null);
+  assert.equal((await eventRow(missing.eventId))["source_mandate_cited_id"], ghost);
 
   // outside its period
   const early = await admitOk(eventRequest(await storedObject(), (r) => ((r.sourceParty.actingUnderMandateId = validMandate), (r.eventTime.eventDate = "2025-06-30"))));

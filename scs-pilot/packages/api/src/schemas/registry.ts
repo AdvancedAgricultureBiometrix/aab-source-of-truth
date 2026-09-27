@@ -14,6 +14,8 @@ import cap01FrameworkRegistrationRequest from "./cap-01/framework-registration-r
 import cap01FrameworkRegistrationDecision from "./cap-01/framework-registration-decision.schema.json" with { type: "json" };
 import cap01FrameworkRegistrationReceipt from "./cap-01/framework-registration-receipt.schema.json" with { type: "json" };
 import cap01FrameworkRegistrationResponse from "./cap-01/framework-registration-response.schema.json" with { type: "json" };
+import cap02ActingUnder from "./cap-02/acting-under.schema.json" with { type: "json" };
+import cap02RepresentationChecks from "./cap-02/representation-checks.schema.json" with { type: "json" };
 import cap02PartyRegistrationRequest from "./cap-02/party-registration-request.schema.json" with { type: "json" };
 import cap02PartyRegistrationDecision from "./cap-02/party-registration-decision.schema.json" with { type: "json" };
 import cap02PartyRegistrationReceipt from "./cap-02/party-registration-receipt.schema.json" with { type: "json" };
@@ -113,6 +115,8 @@ export const SCHEMAS = {
   cap01FrameworkRegistrationDecision,
   cap01FrameworkRegistrationReceipt,
   cap01FrameworkRegistrationResponse,
+  cap02ActingUnder,
+  cap02RepresentationChecks,
   cap02PartyRegistrationRequest,
   cap02PartyRegistrationDecision,
   cap02PartyRegistrationReceipt,

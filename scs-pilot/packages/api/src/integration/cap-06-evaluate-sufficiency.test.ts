@@ -15,7 +15,7 @@ import { createHash, randomBytes, randomUUID } from "node:crypto";
 import type { AddressInfo } from "node:net";
 import type { Server } from "node:http";
 
-import { CAPABILITY_ROUTES } from "../capabilities/index.js";
+import { capabilityRoutes } from "../capabilities/index.js";
 import { StaticTokenAuthenticator } from "../foundation/auth.js";
 import { canonicalJson, sha256Hex } from "../foundation/canonical.js";
 import { runWithCorrelation } from "../foundation/correlation.js";
@@ -203,7 +203,7 @@ before(async () => {
   const authenticator = StaticTokenAuthenticator.fromConfig({
     actors: (Object.keys(TOKENS) as Array<keyof typeof TOKENS>).map((k) => ({ tokenSha256: createHash("sha256").update(TOKENS[k]).digest("hex"), actor: actors[k] })),
   }, { issuerCountry: "TH" });
-  server = createApiServer({ routes: CAPABILITY_ROUTES, authenticator, db: api });
+  server = createApiServer({ routes: capabilityRoutes(authenticator), authenticator, db: api });
   await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
   farmer = await verifiedParty("NATURAL_PERSON");
