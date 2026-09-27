@@ -1,8 +1,9 @@
 # AAB Stock-Take — 2026-09-28
 
 **Status:** STOCK-TAKE RECORD
-**Authority:** RECORDS THE STATE OF THE REPOSITORY ON 2026-09-28, READ FROM `main` AT `c1586c6`, FROM GITHUB (OPEN PRS AND BRANCHES) AND FROM THE CI RUNS. It admits, commissions and decides nothing. Where a fact comes from anywhere other than the repository, it says so.
+**Authority:** RECORDS THE STATE OF THE REPOSITORY ON 2026-09-28, READ FROM `main` AT `c1586c6` AND UPDATED TO `fa84240`, FROM GITHUB (OPEN PRS AND BRANCHES) AND FROM THE CI RUNS. It admits, commissions and decides nothing. Where a fact comes from anywhere other than the repository, it says so.
 **Supersedes, as the current stock-take:** `governance/AAB-STOCK-TAKE-2026-09-27.md` (at `634295a`), which stays unchanged as the record of that date. This stock-take covers everything merged since that record merged (`5d4edfe`, PR #36).
+**Updated (2026-09-28):** to `main` at `fa84240`, after PR #50 (this stock-take, the roadmap update and the SCS-CAP-09 amendment) and PR #51 (AAB-PLATFORM-09 Governed Public-Key Registry). The rest of this record is as it was at `c1586c6`, except where marked.
 **Read from:** every canonical contract and governance record on `main`; the SCS pilot READMEs; the proof records; every `TODO(` marker; `gh pr list`, `git branch -r` and `gh run list` on 2026-09-28; and, where marked, the session notes kept outside the repository.
 
 ## Summary
@@ -16,7 +17,8 @@
 - **Nothing that was open at the last stock-take has closed:** the same twelve PRs are open, the same five branches hold work with no PR, and the three open decisions are unchanged (section 4).
 - **Two items block real data** (section 5): signing-key history and object-store credentials. **A third, actor-directory history, blocks production** and is new, raised by AAB-PLATFORM-08. For the pilot, with its fixed actors file, it is a limitation disclosed here, not an immediate blocker.
 - **Also in this change:** an amendment to SCS-CAP-09, removing its contradiction on currency, and the stale `TODO(actor-reference)` comments cleared from the schema mirror files (section 11).
-- **Outreach is tracked separately,** outside the repository (section 9).
+- **Outreach is tracked separately,** outside the repository (section 10).
+- **Updated to `fa84240`:** AAB-PLATFORM-09 Governed Public-Key Registry (PR #51) contracts signing-key history. It is `designed`, not built, so signing-key history still blocks real data. Its bootstrap, how each registry's first key is registered, has a disclosed pilot position for both the Platform Owner and a country registry (section 9).
 
 ## 1. What merged since `5d4edfe`
 
@@ -35,14 +37,16 @@
 | #47 | `dab6749` | AAB-PLATFORM-06 Admission Decisions | Contract |
 | #48 | `172ac36` | AAB-PLATFORM-07 Frozen Evaluation Snapshots | Contract |
 | #49 | `c1586c6` | AAB-PLATFORM-08 Attributable Human Review with Currency | Contract |
+| #50 | `738ede4` | This stock-take; the roadmap at `c1586c6`; the SCS-CAP-09 currency amendment; stale schema-mirror comments cleared (update of `fa84240`) | Governance, contract, comments |
+| #51 | `fa84240` | AAB-PLATFORM-09 Governed Public-Key Registry (update of `fa84240`) | Contract |
 
-Every one of them passed all three CI jobs before it merged.
+Every one of them passed all three CI jobs before it merged, and so did #50 and #51.
 
 ## 2. What is on `main`
 
 State labels are the platform's maturity states: `named only`, `designed`, `implemented`, `behaviourally proven`, `admitted`, `commissioned`.
 
-### 2.1 Canonical contracts: 20
+### 2.1 Canonical contracts: 21
 
 | Contract | State | Change since the last stock-take |
 |---|---|---|
@@ -53,7 +57,7 @@ State labels are the platform's maturity states: `named only`, `designed`, `impl
 | SCS-CAP-05 Supply Chain Custody Evidence Admission | `behaviourally proven` | **Second amendment** (#42). Representative submission **built and proven**, with the breaking change to the request |
 | SCS-CAP-06 Due Diligence Sufficiency Evaluation | `behaviourally proven` | None. 4 of 5 |
 | SCS-CAP-08 Due Diligence Package Compilation | `behaviourally proven` | None. 3 of 5; no export bundle |
-| SCS-CAP-09 Regulatory Review and Promotion | `behaviourally proven` | None. 4 of 6. See drift item 4 |
+| SCS-CAP-09 Regulatory Review and Promotion | `behaviourally proven` | 4 of 6. **Amended** (#50): currency is derived when read, never updated (drift item 4) |
 | AAB-PLATFORM-01 Evidence Object Store | `implemented` (upload) | None |
 | AAB-PLATFORM-02 Governed Document Rendition | `implemented` | None |
 | AAB-PLATFORM-03 ActorReference | **`implemented`** (was `designed`) | Version 2 issued for every new record (PR #39); version 1 records stay readable. No proof record names it yet |
@@ -62,6 +66,7 @@ State labels are the platform's maturity states: `named only`, `designed`, `impl
 | **AAB-PLATFORM-06 Admission Decisions** | `designed` | **New** (#47) |
 | **AAB-PLATFORM-07 Frozen Evaluation Snapshots** | `designed` | **New** (#48) |
 | **AAB-PLATFORM-08 Attributable Human Review with Currency** | `designed` | **New** (#49) |
+| **AAB-PLATFORM-09 Governed Public-Key Registry** | `designed` | **New** (#51; update of `fa84240`). Amended on 2026-09-28 with the pilot position for a country registry's first key |
 | CAP-04 Governed Scientific Memory | `designed` | None |
 | CAP-05 Governed Scientific Reasoning | `designed` | None |
 | CAP-20 Country Capability Catalogue & Selection | `designed` | None |
@@ -116,7 +121,7 @@ New:
 
 | Item | Source | Why |
 |---|---|---|
-| **Signing-key history** (`TODO(signing-key-history)`, 8 uses) | AAB-PLATFORM-04, second amendment; `foundation/signatures.ts`; AAB-PLATFORM-08, section 13 | A signature is verified against the signer's current key, so a replaced key invalidates every link and status record it signed. **AAB-PLATFORM-08 adds:** no domain adoption of it can go live with real data until signing-key history is implemented, because no human decision's signature could be verified over time |
+| **Signing-key history** (`TODO(signing-key-history)`, 8 uses) | **AAB-PLATFORM-09 Governed Public-Key Registry** (PR #51), which contracts it; AAB-PLATFORM-04, second amendment; `foundation/signatures.ts`; AAB-PLATFORM-08, section 13 | A signature is verified against the signer's current key, so a replaced key invalidates every link and status record it signed. **AAB-PLATFORM-08 adds:** no domain adoption of it can go live with real data until signing-key history is implemented. **Updated to `fa84240`:** the design is now contracted, not built. The condition for real data is AAB-PLATFORM-09's section 11: rotation, restoration, compromise and cross-issuer tests passing, with a proof record. Until then, keys stay in the actors file, one per actor, never rotated while records they signed are in use |
 | **Object-store credentials** (`TODO(object-store-credentials)`, 10 uses) | AAB-PLATFORM-01; SCS-CAP-04 and 05 | The API's object store identity has admin rights. It needs a put/read-only identity with object locking "before any real data is stored" |
 
 **Before production: actor-directory history** (no tag yet; AAB-PLATFORM-08, "Open items"). **New.**
@@ -131,6 +136,7 @@ New:
 |---|---|---|
 | **Independent verification of the dependency audit** | **Due now.** It precedes any extraction | The audit exists as a working document (#45); the independent reviewer is not appointed |
 | Extraction of the platform primitives | The independent verification, and, for primitives 4 to 7, their platform contracts (now on `main`) | The contracts precondition is met for primitives 4 to 7 |
+| **The signing-key history build** (update of `fa84240`) | AAB-PLATFORM-09 is on `main`, and both bootstrap pilot positions are recorded. Next: a build plan, for review before any code | **New** |
 | **Domain adoption of AAB-PLATFORM-05 to 08** | An amendment to each domain's contracts, mapping existing records when read, never rewriting them | **New.** No domain has adopted them. For AAB-PLATFORM-08, also signing-key history (section 5) |
 | **A platform error envelope contract** | Before `SCS-PLATFORM` can change in error envelopes (the naming rule) | **New** |
 | **The AAB-PLATFORM-03 proof record** | Before AAB-PLATFORM-03 can be raised from `implemented` | **New.** The behaviour is tested; no record names it |
@@ -154,7 +160,7 @@ Unchanged from the last stock-take, except item 2:
 2. **ActorReference version 2 is now implemented** (PR #39). What remains is the contract itself: AAB-PLATFORM-03 is proposed, not admitted (`TODO(actor-reference)`, "before any capability is admitted").
 3. The founding country institution's authorised representative, identified. A country decision.
 4. The first independent admission reviewer, appointed jointly. A country decision.
-5. Signing keys for the Platform Owner, the representative and the reviewer. **Signing-key history** (section 5) now also bears on these.
+5. Signing keys for the Platform Owner, the representative and the reviewer. **Signing-key history** (section 5) now also bears on these, and **AAB-PLATFORM-09** defines how they are registered: in the platform control plane's registry for the Platform Owner, and in the country's registry for the representative and any country-issued reviewer.
 6. The CAP-34 fidelity manifest extended to the SCS capabilities.
 7. The capability itself, ready for assessment, with its documents agreeing with its code.
 8. Its dependencies admitted first, or in the same decision.
@@ -172,7 +178,7 @@ Unchanged from the last stock-take, except item 2:
 | Hardening | `role-registry` (12; now also `LINK_OFFICER` and `PARTY_REPRESENTATIVE`), `multi-issuer-idempotency` (11), `oidc` (4), `idempotency-retention` (6), `immutability` (7), `append-only` (7), `party-versions` (4), `framework-association-arrays` (6) |
 | Resolved; the tag remains in immutable migrations or dated notes | `migration-runner` (4), `docker-e2e` (3), `framework-association` (6), `other-action` (4) |
 
-## 9. Open items raised by the four platform contracts
+## 9. Open items raised by the platform contracts
 
 **From AAB-PLATFORM-08 (new):**
 - **Signing-key history** is now a precondition of any adoption going live with real data (section 5).
@@ -181,6 +187,18 @@ Unchanged from the last stock-take, except item 2:
 - **The named-only CAP-25 Governed Human Decision & Approval Control** may become this primitive's implementation. Not decided.
 - **The capability-number collision:** SCS-CAP-09 (regulatory review) and the AGR landscape's CAP-09 (scientific learning) are both human decision capabilities. Each domain's adoption names its capability in full.
 - **Implementation:** a shared human decision and currency module, separated from SCS's staleness rules (V12).
+
+**From AAB-PLATFORM-09 (update of `fa84240`):**
+- **The bootstrap problem: the most important open item.** No registry can start until its first key is registered, and the first registration authority has no one to register it.
+  - **Pilot position, Platform Owner:** the Platform Owner's first key is self-attested in a documented ceremony, disclosed.
+  - **Pilot position, country registry** (amendment of 2026-09-28): the country institution's authorised representative performs the ceremony for the country registry's first key; the Platform Owner witnesses; the ceremony record is co-signed. The Platform Owner never registers or holds a country key. It waits on the representative being identified (section 7, item 3).
+  - **Open:** the bootstrap for production.
+- **Attestation keys:** how each registry's attestation key is created, pinned, rotated and replaced.
+- **Compromise notices across the boundary:** the channel, and what a domain does if a notice cannot reach it.
+- **Algorithms beyond Ed25519,** and how one is withdrawn.
+- **A trusted timestamp mechanism,** if independent proof of signing time is ever needed.
+- **Private-key custody,** including the WP05 hardware key.
+- **Implementation:** a registry per issuer; the changes to `signatures.ts`, `use.ts`, `auth.ts`, the receipts and the proofs; and the proof its section 11 requires.
 
 **From AAB-PLATFORM-05 to 07:**
 - **05:** contribution attribution; offline capture (how a device's own time is recorded); cross-boundary sharing arrangements, which the contract relies on and does not define.
@@ -200,6 +218,8 @@ Unchanged from the last stock-take, except item 2:
 - **SCS-CAP-09 is amended** ("Amendment of 2026-09-28: currency is derived, never updated"). Its section on superseding decisions said the earlier decision's `currencyStatus` "is updated to `SUPERSEDED`"; its rules elsewhere, and the code, derive it when read. The amendment settles it as AAB-PLATFORM-08 does, corrects the sentence, and changes no implementation. It does not adopt AAB-PLATFORM-08 as a whole. HTML re-rendered.
 - **The stale `TODO(actor-reference)` comments are cleared** from the eight schema mirror files (`scs-pilot/packages/db/schema/cap-01.sql` to `cap-09.sql`). Each now says that ActorReference is stored as a jsonb object in the shape AAB-PLATFORM-03 defines. Comments only: the migrations are generated from each file's first statement onward, so no migration and no behaviour changes. The migrations themselves, which are immutable, are not touched.
 
+**Updated to `fa84240`,** in a later change: the contract table (AAB-PLATFORM-09 added, SCS-CAP-09's amendment noted), the signing-key history blocker, the deferred signing-key history build, the AAB-PLATFORM-09 open items with both bootstrap pilot positions, and the roadmap (below). The same change amends AAB-PLATFORM-09 with the pilot position for a country registry's first key.
+
 **The roadmap,** updated in the same change:
 - **Header:** `main` at `c1586c6`, after PRs #44 to #49.
 - **A platform contracts table** (new section 1.1): AAB-PLATFORM-01 to 08, with AAB-PLATFORM-03 `implemented`, AAB-PLATFORM-04 `behaviourally proven`, and AAB-PLATFORM-05 to 08 `designed`.
@@ -210,6 +230,7 @@ Unchanged from the last stock-take, except item 2:
 - **Section 5.3:** the dependency audit is a completed working document; its independent verification is what is due.
 - **Section 6:** `TODO(signing-key-history)` states AAB-PLATFORM-08's precondition; actor-directory history added, as blocking for production and a disclosed limitation for the pilot.
 - **Decisions and "What this document does not establish":** brought into line with the above.
+- **Updated to `fa84240`:** AAB-PLATFORM-09 in the platform contracts table; primitive 2 points to it; the signing-key history rows in sections 5.1 and 6.1 reference it.
 
 ## Items that appear forgotten or drifted
 
