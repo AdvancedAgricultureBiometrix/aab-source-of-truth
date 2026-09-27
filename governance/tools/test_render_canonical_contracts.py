@@ -84,5 +84,15 @@ class AlwaysProgresses(unittest.TestCase):
         self.assertEqual(report, ["code block at line 1 is not closed"])
 
 
+class StatusBadges(unittest.TestCase):
+    def test_each_confirmed_rule(self):
+        self.assertEqual(r.status_badge("CANONICAL CONTRACT — NOT IMPLEMENTATION"), ("DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED", "design"))
+        self.assertEqual(r.status_badge("PUBLIC-FACING OVERVIEW — NOT A CANONICAL CONTRACT"), ("PUBLIC_OVERVIEW", "overview"))
+        self.assertEqual(r.status_badge("CANDIDATE — PROPOSED"), ("PROPOSED", "proposed"))
+
+    def test_anything_else_is_unmapped(self):
+        self.assertEqual(r.status_badge("GOVERNANCE DEFINITION"), ("UNMAPPED", "proposed"))
+
+
 if __name__ == "__main__":
     unittest.main()

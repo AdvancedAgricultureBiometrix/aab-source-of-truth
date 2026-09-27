@@ -573,6 +573,23 @@ def block_html(kind, payload, boundary, report, stats):
     raise ValueError(kind)
 
 
+def status_badge(status):
+    """The badge and its CSS class for a **Status:** value.
+
+    Confirmed rules: a not-implemented design contract → DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED;
+    a public-facing overview (never a contract) → PUBLIC_OVERVIEW; PROPOSED only when the source
+    says PROPOSED and nothing stronger; anything else → UNMAPPED. Nothing is ADMITTED here.
+    """
+    su = status.upper()
+    if "NOT IMPLEMENT" in su and "CONTRACT" in su:
+        return "DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED", "design"
+    if "PUBLIC-FACING OVERVIEW" in su:
+        return "PUBLIC_OVERVIEW", "overview"
+    if "PROPOSED" in su:
+        return "PROPOSED", "proposed"
+    return "UNMAPPED", "proposed"
+
+
 def convert(md_path):
     report = []
     stats = {"mermaid": 0, "ts": 0, "ts_structured": 0}
@@ -608,15 +625,8 @@ def convert(md_path):
     status = meta_d.get("Status", "")
     if not status:
         report.append("no **Status:** field")
-    # badge rule (confirmed): not-implemented design contracts → DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED;
-    # PROPOSED only when the source says PROPOSED and nothing stronger; nothing is ADMITTED here.
-    su = status.upper()
-    if "NOT IMPLEMENT" in su and "CONTRACT" in su:
-        badge, bcls = "DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED", "design"
-    elif "PROPOSED" in su:
-        badge, bcls = "PROPOSED", "proposed"
-    else:
-        badge, bcls = "UNMAPPED", "proposed"
+    badge, bcls = status_badge(status)
+    if badge == "UNMAPPED":
         report.append(f"status {status!r} does not match a confirmed badge rule")
 
     # body
