@@ -26,7 +26,7 @@ import type {
   ScsDeforestationEvidenceAdmissionResponse,
   ScsDeforestationEvidenceSubmissionRequest,
 } from "../types/cap-04.js";
-import { frameworkRequest, partyRequest } from "./fixtures.js";
+import { frameworkRequest, issuedReference, partyRequest } from "./fixtures.js";
 import { createMigratedDatabase, type MigratedDatabase } from "./harness.js";
 
 const TOKENS = {
@@ -130,7 +130,7 @@ before(async () => {
   api = await connectDatabase(harness.configFor(role.user, role.password));
   const authenticator = StaticTokenAuthenticator.fromConfig({
     actors: (Object.keys(TOKENS) as Array<keyof typeof TOKENS>).map((k) => ({ tokenSha256: createHash("sha256").update(TOKENS[k]).digest("hex"), actor: actors[k] })),
-  });
+  }, { issuerCountry: "TH" });
   server = createApiServer({ routes: CAPABILITY_ROUTES, authenticator, db: api });
   await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
@@ -275,7 +275,7 @@ test("cited stored object → 201 ADMITTED_WITH_LIMITATIONS: integrity VERIFIED;
   assert.ok(d.limitations.some((l) => l.startsWith("Known gap declared by the source: 2021-01-05T00:00:00Z")));
   assert.equal(d.plotId, strict.plotId);
   assert.equal(d.frameworkAssociationId, strict.associationId);
-  assert.deepEqual(d.decidedBy, actors.officer);
+  assert.deepEqual(d.decidedBy, issuedReference(actors.officer));
 
   const row = await recordRow(d.evidenceId);
   assert.equal(row["integrity_status"], "VERIFIED");

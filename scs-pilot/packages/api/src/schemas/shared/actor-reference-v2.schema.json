@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:shared:actor-reference-v2:1",
+  "title": "ActorReferenceV2",
+  "description": "ActorReference version 2 (AAB-PLATFORM-03, section 1): who performed an act, which identity domain issued them, how they were authenticated, the authority grants resolved when the act was accepted, and, when present, the subject they acted for. Recorded with the act and never changed. The pair (issuer, actorId) identifies an actor across the platform.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["referenceVersion", "actorId", "issuer", "actorType", "authenticationMethod", "authorityBasis"],
+  "properties": {
+    "referenceVersion": {
+      "description": "Always \"2\". A reference without this field is version 1.",
+      "const": "2"
+    },
+    "actorId": {
+      "description": "Stable identifier of the person or service, unique within its issuer.",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._:@-]{1,128}$"
+    },
+    "issuer": {
+      "description": "The identity domain that authenticated the actor.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["issuerType"],
+      "properties": {
+        "issuerType": { "type": "string", "enum": ["PLATFORM_CONTROL_PLANE", "COUNTRY_TENANCY"] },
+        "countryCode": {
+          "description": "ISO 3166-1 alpha-2. Required for COUNTRY_TENANCY, absent for PLATFORM_CONTROL_PLANE.",
+          "type": "string",
+          "pattern": "^[A-Z]{2}$"
+        }
+      },
+      "if": { "properties": { "issuerType": { "const": "COUNTRY_TENANCY" } } },
+      "then": { "properties": { "countryCode": true }, "required": ["countryCode"] },
+      "else": { "properties": { "countryCode": false } }
+    },
+    "actorType": {
+      "description": "Whether the actor is a person or an automated service. A service never makes a governance decision.",
+      "type": "string",
+      "enum": ["HUMAN", "SERVICE"]
+    },
+    "authenticationMethod": {
+      "description": "How the actor was authenticated for this request.",
+      "type": "string",
+      "enum": ["STATIC_TOKEN", "OIDC"]
+    },
+    "accountableName": {
+      "description": "The actor's name as the issuer records it. Present only for acts that require a named, accountable person (governance decisions); personal data otherwise left out.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "\\S"
+    },
+    "authorityBasis": {
+      "description": "The authority grants resolved by the server when the act was accepted. Never taken from the client.",
+      "type": "array",
+      "uniqueItems": true,
+      "maxItems": 64,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["role", "scopeType", "scopeId"],
+        "properties": {
+          "role": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]{1,63}$" },
+          "scopeType": { "type": "string", "enum": ["PLATFORM", "COUNTRY", "INSTITUTION", "DOMAIN", "DEPLOYMENT", "SUBJECT"] },
+          "scopeId": {
+            "description": "For SUBJECT: <domain>:<subjectType>:<subjectId>, for example SCS:PARTY:<partyId>.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "^\\S+$"
+          },
+          "grantId": {
+            "description": "The membership or grant record, where one exists. None in the pilot.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "pattern": "^\\S+$"
+          }
+        },
+        "if": { "properties": { "scopeType": { "const": "SUBJECT" } } },
+        "then": { "properties": { "scopeId": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]{0,31}:[A-Z][A-Z0-9_]{0,63}:[^:\\s]\\S{0,127}$" } } }
+      }
+    },
+    "representation": {
+      "description": "Present only when the actor acts for a domain subject, under a basis the capability verified in the same transaction (AAB-PLATFORM-03, section 3).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["domain", "subjectType", "subjectId", "actorLinkId"],
+      "properties": {
+        "domain": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]{0,31}$" },
+        "subjectType": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]{0,63}$" },
+        "subjectId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^\\S+$" },
+        "actorLinkId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^\\S+$" },
+        "basis": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["basisType", "basisId", "onBehalfOfSubjectId"],
+          "properties": {
+            "basisType": { "type": "string", "pattern": "^[A-Z][A-Z0-9_]{0,63}$" },
+            "basisId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^\\S+$" },
+            "onBehalfOfSubjectId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^\\S+$" }
+          }
+        }
+      }
+    }
+  }
+}

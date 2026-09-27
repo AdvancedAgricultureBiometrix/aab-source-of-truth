@@ -300,7 +300,7 @@ before(async () => {
   api = await connectDatabase(harness.configFor(role.user, role.password));
   const authenticator = StaticTokenAuthenticator.fromConfig({
     actors: (Object.keys(TOKENS) as Who[]).map((k) => ({ tokenSha256: createHash("sha256").update(TOKENS[k]).digest("hex"), actor: actors[k] })),
-  });
+  }, { issuerCountry: "TH" });
   server = createApiServer({
     routes: [...evidenceObjectRoutes(objects.store), ...renditionRoutes(objects.store, { "SCS-CAP-08": CAP08_READER_ROLES }), ...CAPABILITY_ROUTES, ...cap08Routes(objects.store)],
     authenticator,
@@ -534,7 +534,7 @@ test("RENDITION_FAILED: text in a script no recorded font covers is refused, and
 test("the object store unavailable → 503 DEPENDENCY_UNAVAILABLE (SCS-CAP-08); nothing is recorded", async () => {
   const s = await approvedSubject();
   const down = new S3ObjectStore({ ...objects.config, endpoint: "http://127.0.0.1:1" });
-  const authenticator = StaticTokenAuthenticator.fromConfig({ actors: [{ tokenSha256: createHash("sha256").update(TOKENS.officer).digest("hex"), actor: actors.officer }] });
+  const authenticator = StaticTokenAuthenticator.fromConfig({ actors: [{ tokenSha256: createHash("sha256").update(TOKENS.officer).digest("hex"), actor: actors.officer }] }, { issuerCountry: "TH" });
   const alt = createApiServer({ routes: cap08Routes(down), authenticator, db: api });
   await new Promise<void>((r) => alt.listen(0, "127.0.0.1", r));
   try {
@@ -623,7 +623,7 @@ async function compiled() {
 /** A server whose object store cannot be reached. */
 async function withStoreDown<T>(routes: (store: S3ObjectStore) => readonly Route<never>[], fn: (to: string) => Promise<T>): Promise<T> {
   const down = new S3ObjectStore({ ...objects.config, endpoint: "http://127.0.0.1:1" });
-  const authenticator = StaticTokenAuthenticator.fromConfig({ actors: [{ tokenSha256: createHash("sha256").update(TOKENS.officer).digest("hex"), actor: actors.officer }] });
+  const authenticator = StaticTokenAuthenticator.fromConfig({ actors: [{ tokenSha256: createHash("sha256").update(TOKENS.officer).digest("hex"), actor: actors.officer }] }, { issuerCountry: "TH" });
   const alt = createApiServer({ routes: routes(down), authenticator, db: api });
   await new Promise<void>((r) => alt.listen(0, "127.0.0.1", r));
   try {

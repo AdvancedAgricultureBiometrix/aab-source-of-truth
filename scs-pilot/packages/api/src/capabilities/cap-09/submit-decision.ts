@@ -55,6 +55,7 @@
 
 import { randomUUID } from "node:crypto";
 
+import { holdsRole, sameActor } from "../../foundation/actor.js";
 import { canonicalJson, sha256Hex } from "../../foundation/canonical.js";
 import type { OperationResult } from "../../foundation/idempotency.js";
 import { writeReceipt } from "../../foundation/receipts.js";
@@ -95,7 +96,7 @@ export async function submitDecision(ctx: RouteContext<ScsReviewDecisionSubmissi
   const req = ctx.body;
 
   // 1. Role
-  if (!actor.roles.includes(REVIEWER_ROLE)) {
+  if (!holdsRole(actor, REVIEWER_ROLE)) {
     throw cap09Failure("REVIEWER_NOT_AUTHORISED", [`Submitting a review decision requires the ${REVIEWER_ROLE} role; actor ${actor.actorId} does not hold it.`]);
   }
   const at = await transactionStart(tx);
@@ -108,9 +109,9 @@ export async function submitDecision(ctx: RouteContext<ScsReviewDecisionSubmissi
   // 3. Independence
   const resolvers = await findAppliedResolutionReviewers(tx, req.evaluationId);
   const dependence = [
-    ...(found.requestedBy.actorId === actor.actorId ? [`Actor ${actor.actorId} requested evaluation ${req.evaluationId} and cannot review it.`] : []),
+    ...(sameActor(found.requestedBy, actor) ? [`Actor ${actor.actorId} requested evaluation ${req.evaluationId} and cannot review it.`] : []),
     ...resolvers
-      .filter((r) => r.actorId === actor.actorId)
+      .filter((r) => sameActor(r.reviewer, actor))
       .map((r) => `Actor ${actor.actorId} recorded conflict resolution ${r.resolutionId}, which evaluation ${req.evaluationId} applied, and cannot review it.`),
   ];
   if (dependence.length > 0) throw cap09Failure("REVIEWER_NOT_AUTHORISED", dependence);

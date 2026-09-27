@@ -19,7 +19,7 @@ import { createApiServer } from "../foundation/server.js";
 import { validate } from "../foundation/validation.js";
 import { SCHEMAS } from "../schemas/registry.js";
 import type { ScsVerificationAssessmentRequest, ScsVerificationAssessmentResponse } from "../types/cap-02.js";
-import { partyRequest } from "./fixtures.js";
+import { issuedReference, partyRequest } from "./fixtures.js";
 import { createMigratedDatabase, type MigratedDatabase } from "./harness.js";
 
 const TOKENS = {
@@ -67,7 +67,7 @@ before(async () => {
   api = await connectDatabase(harness.configFor(role.user, role.password));
   const authenticator = StaticTokenAuthenticator.fromConfig({
     actors: (Object.keys(TOKENS) as Who[]).map((k) => ({ tokenSha256: createHash("sha256").update(TOKENS[k]).digest("hex"), actor: actors[k] })),
-  });
+  }, { issuerCountry: "TH" });
   server = createApiServer({ routes: CAPABILITY_ROUTES, authenticator, db: api });
   await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
@@ -160,7 +160,7 @@ test("each recordable status → 201; recorded by the verifier; registrationStat
     assert.deepEqual(row["scope_excluded_from_verification"], ["sanctions status", "beneficial ownership", "land title"]);
     assert.equal(row["verifying_authority_id"], "TH-DOPA");
     assert.deepEqual(row["evidence_ids"], [evidence[0]]);
-    assert.deepEqual(row["recorded_by"], actors.verifier);
+    assert.deepEqual(row["recorded_by"], issuedReference(actors.verifier));
     assert.equal((row["recorded_at"] as Date).toISOString(), d.decidedAt);
     assert.equal((row["verified_at"] as Date).toISOString(), "2026-03-01T00:00:00.000Z");
     assert.equal(row["supersedes_assessment_id"], null);
@@ -285,6 +285,21 @@ test("the party's registrant → 403 VERIFIER_NOT_AUTHORISED, even holding VERIF
   // the same dual-role actor may verify a party someone else registered
   const other = await registerParty();
   assert.equal((await post(verificationsPath(other.partyId), assessment(other.evidence), { who: "dual" })).status, 201);
+});
+
+test("a party registered before ActorReference version 2 keeps its version 1 registrant, who still cannot verify it", async () => {
+  // Parties registered before version 2 hold a version 1 registered_by, with no issuer.
+  // The registrant now authenticates with a version 2 reference: the same actor (AAB-PLATFORM-03, sameActor).
+  const { partyId, evidence } = await registerParty("dual");
+  await harness.admin.query(`UPDATE scs.party_identity SET registered_by = $2 WHERE party_id = $1`, [partyId, JSON.stringify(actors.dual)]);
+  const stored = (await harness.admin.query<{ registered_by: Record<string, unknown> }>(`SELECT registered_by FROM scs.party_identity WHERE party_id = $1`, [partyId])).rows[0]!.registered_by;
+  assert.equal("referenceVersion" in stored, false, "the stored registrant is version 1");
+  const r = await assertRefused(partyId, assessment(evidence), 403, "VERIFIER_NOT_AUTHORISED", { who: "dual" });
+  assert.deepEqual(r.json["reasons"], [`Actor dual-cap02v registered party ${partyId} and cannot also verify it (separation of duties).`]);
+  // another verifier may verify it; the version 1 record is read, not rewritten
+  assert.equal((await post(verificationsPath(partyId), assessment(evidence), { who: "verifier" })).status, 201);
+  const after = (await harness.admin.query<{ registered_by: Record<string, unknown> }>(`SELECT registered_by FROM scs.party_identity WHERE party_id = $1`, [partyId])).rows[0]!.registered_by;
+  assert.deepEqual(after, actors.dual);
 });
 
 // ── Evidence ─────────────────────────────────────────────────────────────────

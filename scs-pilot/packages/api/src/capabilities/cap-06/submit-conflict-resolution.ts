@@ -24,6 +24,7 @@
 // RESOLVED), in one transaction. Recording a resolution never triggers an
 // evaluation: the next evaluation of the subject applies it.
 
+import { holdsRole, sameActor } from "../../foundation/actor.js";
 import type { OperationResult } from "../../foundation/idempotency.js";
 import { writeReceipt } from "../../foundation/receipts.js";
 import type { RouteContext } from "../../foundation/server.js";
@@ -41,7 +42,7 @@ export async function submitConflictResolution(ctx: RouteContext<ScsConflictReso
   const req = ctx.body;
 
   // 1. Role
-  if (!actor.roles.includes(RESOLVER_ROLE)) {
+  if (!holdsRole(actor, RESOLVER_ROLE)) {
     throw cap06Failure("RESOLVER_NOT_AUTHORISED", [`Resolving a conflict requires the ${RESOLVER_ROLE} role; actor ${actor.actorId} does not hold it.`]);
   }
 
@@ -57,7 +58,10 @@ export async function submitConflictResolution(ctx: RouteContext<ScsConflictReso
 
   // 3. Independence
   const submitters = await findSubmitters(tx, items);
-  const own = items.filter((id) => submitters.get(id) === actor.actorId);
+  const own = items.filter((id) => {
+    const submitter = submitters.get(id);
+    return submitter !== undefined && sameActor(submitter, actor);
+  });
   if (own.length > 0) {
     throw cap06Failure("RESOLVER_NOT_AUTHORISED", own.map((id) => `Actor ${actor.actorId} submitted ${id}, one of the items in conflict, and cannot resolve the conflict.`));
   }

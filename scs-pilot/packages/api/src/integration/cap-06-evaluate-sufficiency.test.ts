@@ -202,7 +202,7 @@ before(async () => {
   api = await connectDatabase(harness.configFor(role.user, role.password));
   const authenticator = StaticTokenAuthenticator.fromConfig({
     actors: (Object.keys(TOKENS) as Array<keyof typeof TOKENS>).map((k) => ({ tokenSha256: createHash("sha256").update(TOKENS[k]).digest("hex"), actor: actors[k] })),
-  });
+  }, { issuerCountry: "TH" });
   server = createApiServer({ routes: CAPABILITY_ROUTES, authenticator, db: api });
   await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;

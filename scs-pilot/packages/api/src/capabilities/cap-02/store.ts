@@ -549,15 +549,15 @@ export async function transactionTime(tx: Tx): Promise<Date> {
 }
 
 export interface PartyForVerification extends PartyForEvidence {
-  /** registeredBy.actorId: the party's registrant, who may not verify it. */
-  readonly registeredByActorId: string;
+  /** The party's registrant, who may not verify it. */
+  readonly registeredBy: ActorReference;
 }
 
 /** The party with its registrant, or null if no party has this id. */
 export async function findPartyForVerification(tx: Tx, partyId: string): Promise<PartyForVerification | null> {
   const { rows } = await withDatabaseErrors(CAPABILITY_ID, () =>
-    tx.query<{ party_id: string; party_version: number; registration_status: string; registered_by_actor_id: string }>(
-      `SELECT party_id, party_version, registration_status, registered_by ->> 'actorId' AS registered_by_actor_id
+    tx.query<{ party_id: string; party_version: number; registration_status: string; registered_by: ActorReference }>(
+      `SELECT party_id, party_version, registration_status, registered_by
          FROM scs.party_identity WHERE party_id = $1::uuid`,
       [partyId],
     ),
@@ -565,7 +565,7 @@ export async function findPartyForVerification(tx: Tx, partyId: string): Promise
   const r = rows[0];
   return r === undefined
     ? null
-    : { partyId: r.party_id, partyVersion: r.party_version, registrationStatus: r.registration_status, registeredByActorId: r.registered_by_actor_id };
+    : { partyId: r.party_id, partyVersion: r.party_version, registrationStatus: r.registration_status, registeredBy: r.registered_by };
 }
 
 /** The assessment's party, or null if no assessment has this id. */

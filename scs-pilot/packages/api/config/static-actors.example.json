@@ -6,9 +6,9 @@
         "actorId": "compliance-officer-01",
         "actorType": "HUMAN",
         "roles": ["COMPLIANCE_OFFICER"],
-        "organizationId": "example-organisation",
         "authenticationMethod": "STATIC_TOKEN"
-      }
+      },
+      "accountableName": "Example Compliance Officer"
     }
   ]
 }

@@ -18,6 +18,7 @@ import { createApiServer } from "../foundation/server.js";
 import { validate } from "../foundation/validation.js";
 import { SCHEMAS } from "../schemas/registry.js";
 import type { ScsRelationshipRegistrationRequest, ScsRelationshipRegistrationResponse } from "../types/cap-02.js";
+import { issuedReference } from "./fixtures.js";
 import { createMigratedDatabase, type MigratedDatabase } from "./harness.js";
 
 const TOKENS = {
@@ -120,7 +121,7 @@ before(async () => {
       tokenSha256: createHash("sha256").update(TOKENS[k]).digest("hex"),
       actor: actors[k],
     })),
-  });
+  }, { issuerCountry: "TH" });
   server = createApiServer({ routes: CAPABILITY_ROUTES, authenticator, db: api });
   await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
@@ -185,7 +186,7 @@ test("valid registration → 201; relationship CLAIMED_UNVERIFIED and ACTIVE; re
 
   const d = res.decision;
   assert.equal(d.decision, "REGISTERED");
-  assert.deepEqual(d.decidedBy, actors.officer);
+  assert.deepEqual(d.decidedBy, issuedReference(actors.officer));
   for (const [check, value] of Object.entries(d.eligibilityChecks)) {
     assert.equal(value, true, check);
     assert.ok(d.decisionReasons.some((x) => x.startsWith(`${check}: evaluated`)), `${check} has an evaluated reason`);
@@ -213,7 +214,7 @@ test("valid registration → 201; relationship CLAIMED_UNVERIFIED and ACTIVE; re
   assert.deepEqual(row["relationship_evidence_ids"], body.relationshipEvidenceIds);
   assert.equal((row["valid_from"] as Date).toISOString(), "2026-01-01T00:00:00.000Z");
   assert.equal((row["valid_until"] as Date).toISOString(), "2027-01-01T00:00:00.000Z");
-  assert.deepEqual(row["created_by"], actors.officer);
+  assert.deepEqual(row["created_by"], issuedReference(actors.officer));
   assert.equal((row["claimed_at"] as Date).toISOString(), d.decidedAt);
 
   const receipt = (await harness.admin.query(`SELECT * FROM scs.decision_receipt WHERE receipt_id = $1`, [res.receipt.receiptId])).rows[0] as Record<string, unknown>;

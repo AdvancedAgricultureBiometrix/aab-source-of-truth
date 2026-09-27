@@ -50,16 +50,16 @@ export async function findEvaluationReceipts(tx: Tx, evaluationId: string): Prom
 }
 
 /** The actor who recorded each conflict resolution the evaluation applied. */
-export async function findAppliedResolutionReviewers(tx: Tx, evaluationId: string): Promise<Array<{ resolutionId: string; actorId: string }>> {
-  const rows = await q<{ resolution_id: string; actor_id: string }>(
+export async function findAppliedResolutionReviewers(tx: Tx, evaluationId: string): Promise<Array<{ resolutionId: string; reviewer: ActorReference }>> {
+  const rows = await q<{ resolution_id: string; reviewer: ActorReference }>(
     tx,
-    `SELECT r.resolution_id, r.reviewer ->> 'actorId' AS actor_id
+    `SELECT r.resolution_id, r.reviewer
        FROM scs.sufficiency_evaluation_resolution er
        JOIN scs.conflict_resolution r ON r.resolution_id = er.resolution_id
       WHERE er.evaluation_id = $1 ORDER BY r.resolution_id`,
     [evaluationId],
   );
-  return rows.map((r) => ({ resolutionId: r.resolution_id, actorId: r.actor_id }));
+  return rows.map((r) => ({ resolutionId: r.resolution_id, reviewer: r.reviewer }));
 }
 
 /**

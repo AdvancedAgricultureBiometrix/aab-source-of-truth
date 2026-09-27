@@ -21,7 +21,7 @@ const authenticator = StaticTokenAuthenticator.fromConfig({
       actor: { actorId: "tester", actorType: "HUMAN", roles: ["COMPLIANCE_OFFICER"], authenticationMethod: "STATIC_TOKEN" },
     },
   ],
-});
+}, { issuerCountry: "TH" });
 
 const echoSchema: JsonSchema = {
   $id: "urn:aab:scs:schema:test:server-echo:1",

@@ -17,6 +17,7 @@ import { createApiServer } from "../foundation/server.js";
 import { validate } from "../foundation/validation.js";
 import { SCHEMAS } from "../schemas/registry.js";
 import type { ScsFrameworkRegistrationRequest, ScsFrameworkRegistrationResponse } from "../types/cap-01.js";
+import { issuedReference } from "./fixtures.js";
 import { createMigratedDatabase, type MigratedDatabase } from "./harness.js";
 
 const TOKENS = {
@@ -44,7 +45,7 @@ before(async () => {
       tokenSha256: createHash("sha256").update(TOKENS[k]).digest("hex"),
       actor: actors[k],
     })),
-  });
+  }, { issuerCountry: "TH" });
   server = createApiServer({ routes: CAPABILITY_ROUTES, authenticator, db: api });
   await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
   url = `http://127.0.0.1:${(server.address() as AddressInfo).port}/scs/v1/frameworks`;
@@ -140,7 +141,7 @@ test("valid registration → 201; framework and receipt in the database", async 
 
   const d = res.decision;
   assert.equal(d.decision, "REGISTERED");
-  assert.deepEqual(d.decidedBy, actors.officer);
+  assert.deepEqual(d.decidedBy, issuedReference(actors.officer));
   assert.equal(d.eligibilityChecks.registrantAuthorised, true);
   assert.equal(d.eligibilityChecks.noConflictingFrameworkExists, true);
   assert.equal(d.eligibilityChecks.applicableLawsConfirmed, true, "evaluated from the registrant's attestation");
@@ -160,7 +161,7 @@ test("valid registration → 201; framework and receipt in the database", async 
   assert.equal(f["evidence_spec_generated_from_version"], "1");
   assert.match(String(f["evidence_spec_id"]), /^[0-9a-f-]{36}$/);
   assert.deepEqual(f["version_history"], []);
-  assert.deepEqual(f["registered_by"], actors.officer);
+  assert.deepEqual(f["registered_by"], issuedReference(actors.officer));
 
   const receipt = (await harness.admin.query(`SELECT * FROM scs.decision_receipt WHERE receipt_id = $1`, [res.receipt.receiptId])).rows[0] as Record<string, unknown>;
   assert.equal(receipt["subject_id"], d.frameworkId);

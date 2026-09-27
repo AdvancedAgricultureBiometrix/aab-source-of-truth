@@ -236,6 +236,7 @@ try {
   writeFileSync(join(src.dir, ".env"), [
     "POSTGRES_DB=scs_pilot", "POSTGRES_USER=scs_owner", `POSTGRES_PASSWORD=${random()}`, "POSTGRES_PORT=5432",
     `SCS_API_DB_PASSWORD=${random()}`, `S3_ACCESS_KEY_ID=${random()}`, `S3_SECRET_ACCESS_KEY=${random()}`, "S3_PORT=9000", "S3_BUCKET=scs-evidence", "API_PORT=3000",
+    "SCS_ACTOR_ISSUER_COUNTRY=TH",
   ].join("\n") + "\n");
   writeFileSync(join(src.dir, "packages/api/config/static-actors.json"), JSON.stringify({
     actors: Object.keys(tokens).map((who) => ({

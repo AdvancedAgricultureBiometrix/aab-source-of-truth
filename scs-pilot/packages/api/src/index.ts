@@ -41,7 +41,10 @@ async function main(): Promise<void> {
   try {
     const file = process.env["SCS_AUTH_STATIC_ACTORS_FILE"];
     if (file === undefined || file.trim() === "") throw new Error("SCS_AUTH_STATIC_ACTORS_FILE is not set");
-    authenticator = await StaticTokenAuthenticator.fromFile(file);
+    // The pilot's single issuer: a country tenancy (AAB-PLATFORM-03). No default.
+    const issuerCountry = process.env["SCS_ACTOR_ISSUER_COUNTRY"];
+    if (issuerCountry === undefined || issuerCountry.trim() === "") throw new Error("SCS_ACTOR_ISSUER_COUNTRY is not set");
+    authenticator = await StaticTokenAuthenticator.fromFile(file, { issuerCountry });
   } catch (err) {
     log.error("startup failed: authentication is not configured", { err });
     await db.close();

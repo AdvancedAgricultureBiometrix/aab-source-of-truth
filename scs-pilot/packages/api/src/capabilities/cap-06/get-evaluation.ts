@@ -7,6 +7,7 @@
 //                  → REQUESTOR_NOT_AUTHORISED (403)
 //   2. lookup    — an unknown evaluationId → EVALUATION_NOT_FOUND (404)
 
+import { holdsRole } from "../../foundation/actor.js";
 import type { OperationResult } from "../../foundation/idempotency.js";
 import type { RouteContext } from "../../foundation/server.js";
 import { cap06Failure } from "./errors.js";
@@ -18,7 +19,7 @@ export const READER_ROLES = [REQUESTOR_ROLE, "REGULATORY_REVIEWER"] as const;
 
 export async function getEvaluationResult(ctx: RouteContext<undefined>): Promise<OperationResult> {
   const actor = ctx.actor!;
-  if (!READER_ROLES.some((r) => actor.roles.includes(r))) {
+  if (!READER_ROLES.some((r) => holdsRole(actor, r))) {
     throw cap06Failure("REQUESTOR_NOT_AUTHORISED", [
       `Reading a sufficiency evaluation requires the ${READER_ROLES.join(" or ")} role; actor ${actor.actorId} holds neither.`,
     ]);

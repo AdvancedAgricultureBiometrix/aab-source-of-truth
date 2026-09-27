@@ -23,6 +23,7 @@ import { type ObjectStoreConfig, S3ObjectStore } from "../platform/evidence-obje
 import { ACCEPTED_MEDIA_TYPES, evidenceObjectRoutes, MAX_EVIDENCE_OBJECT_BYTES } from "../platform/evidence-objects/routes.js";
 import { SCHEMAS } from "../schemas/registry.js";
 import type { ScsEvidenceObject } from "../types/platform.js";
+import { issuedReference } from "./fixtures.js";
 import { createMigratedDatabase, type MigratedDatabase } from "./harness.js";
 
 const TOKENS = { officer: "evobj-officer-token-0123456789abcdefgh", viewer: "evobj-viewer-token-0123456789abcdefghi" };
@@ -66,7 +67,7 @@ before(async () => {
   api = await connectDatabase(harness.configFor(role.user, role.password));
   authenticator = StaticTokenAuthenticator.fromConfig({
     actors: (Object.keys(TOKENS) as Array<keyof typeof TOKENS>).map((k) => ({ tokenSha256: createHash("sha256").update(TOKENS[k]).digest("hex"), actor: actors[k] })),
-  });
+  }, { issuerCountry: "TH" });
   const store = new S3ObjectStore(config);
   await store.ensureBucket();
   server = createApiServer({ routes: evidenceObjectRoutes(store), authenticator, db: api });
@@ -124,7 +125,7 @@ test("upload → 201; SCS computes the SHA-256; bytes stored under it; row recor
   assert.deepEqual(o.contentDigest, { algorithm: "SHA-256", value: digest });
   assert.equal(o.sizeBytes, bytes.length);
   assert.equal(o.mediaType, "application/pdf");
-  assert.deepEqual(o.storedBy, actors.officer);
+  assert.deepEqual(o.storedBy, issuedReference(actors.officer));
 
   assert.deepEqual(await storedBytes(digest), bytes, "the exact bytes are in the object store under their digest");
   const row = (await harness.admin.query(`SELECT * FROM scs.evidence_object WHERE content_sha256 = $1`, [digest])).rows[0] as Record<string, unknown>;
