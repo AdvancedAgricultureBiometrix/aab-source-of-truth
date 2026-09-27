@@ -122,7 +122,7 @@ interface ActorReference {
 
 **When an actor acts for a party, the link is an actor–subject link:** a governed record binding one actor to one domain subject (for SCS, one CAP-02 party). It is a platform concept, defined in its own contract, **AAB-PLATFORM-04 Actor–Subject Link**, which is written after this one. This contract relies on the rules below, which AAB-PLATFORM-04 must keep.
 - **It is created by an authorised role, with evidence,** and never by the actor, the browser or user metadata. This follows ID-02: "browser cannot create or alter link".
-- **It has a state:** `ACTIVE`, `SUSPENDED` or `REVOKED`. Only an `ACTIVE` link can be used. A missing, ambiguous, suspended or revoked link fails closed.
+- **It has a state:** `ACTIVE`, `SUSPENDED`, `REVOKED` or `EXPIRED` (AAB-PLATFORM-04 adds `EXPIRED`, because every link expires). Only an `ACTIVE` link can be used. A missing, ambiguous, suspended, revoked or expired link fails closed.
 - **It grants no authority.** It establishes that the actor may act *as or for* the subject. What they may do is decided by the capability, from the actor's authority basis and, for representation, the mandate (ID-02: "account link does not grant authority"; ID-03: "identity link is not authority").
 - **One actor may hold links to several subjects** (for example, a staff member of two cooperatives). Each act names the one it is performed for.
 - **The link is a platform concept, and domains reference it.** AAB-PLATFORM-04 defines it, naming the subject generically (domain, subject type, subject id). SCS references it for CAP-02 parties, and the platform never reads CAP-02. Specifying it inside a CAP-02 amendment would embed a platform primitive in a domain contract, reversing the dependency direction the separation decision requires.
@@ -169,10 +169,11 @@ interface ActorReference {
 | **Change and resolution records** (admission registry) | the signing parties | **Governance decision** |
 | **Independent reviewer assessments** (admission and Gate D) | the reviewer | **Governance decision** |
 | **Gate D decisions** | the Platform Owner, the reviewer | **Governance decision** |
+| **Actor–subject link creation and status records** (AAB-PLATFORM-04) | `createdBy`, and the writer of each status record | **Governance decision** |
 | Commercial and catalogue records (CAP-20, CAP-21) | `decidedBy`, `createdBy`, `changedBy` | As each contract requires |
 
 **Governance decisions and operational acts.**
-- **Governance decisions** create permanent platform records: admission decisions, Gate D decisions, change classifications, resolutions and reviewer assessments. They require a named, accountable human.
+- **Governance decisions** create permanent platform records: admission decisions, Gate D decisions, change classifications, resolutions, reviewer assessments, and actor–subject link creation and status records (AAB-PLATFORM-04). They require a named, accountable human.
 - **Operational acts** within a country's tenancy (receipts, submissions, capability decisions) are identified by `actorId` and `issuer`. That is sufficient for audit, and no personal name leaves the country's boundary for them.
 
 **For a governance decision:**
@@ -211,7 +212,7 @@ interface ActorReference {
 
 - **Rename `SCS-PLATFORM-01` and `SCS-PLATFORM-02`** to `AAB-PLATFORM-01` (Evidence Object Store) and `AAB-PLATFORM-02` (Governed Document Rendition), in a follow-up commit. The rename covers the contract files, their HTML, and every reference to them in contracts, READMEs, code comments and error attributions. Records already stored keep the identifiers they were written with. *Done on 2026-09-27, with migration 020 reissuing the two table comments. Left for their own changes: the runtime error attribution `SCS-PLATFORM`, which waits for extraction, and the PDF metadata below.*
 - **The PDF metadata written by the AAB-PLATFORM-02 renderer** (`Producer` and `Creator`) still reads `SCS-PLATFORM-02`, with the matching font-check error message. Changing it changes the bytes of every new PDF and the cross-platform rendition digest, so it is its own change: a new expected digest, a renderer version bump, and the digest re-verified across platforms.
-- **AAB-PLATFORM-04 Actor–Subject Link:** its own contract, defined after this one is committed.
+- **AAB-PLATFORM-04 Actor–Subject Link:** its own contract. *Defined on 2026-09-27; it makes link creation and link status records governance decisions, added to section 4.*
 - **Amendments adopting section 3** in SCS-CAP-02, SCS-CAP-04 and SCS-CAP-05.
 
 ## Open items

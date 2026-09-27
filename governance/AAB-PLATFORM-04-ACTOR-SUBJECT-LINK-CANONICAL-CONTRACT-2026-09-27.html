@@ -1,0 +1,232 @@
+<!doctype html>
+<!-- Generated from governance/AAB-PLATFORM-04-ACTOR-SUBJECT-LINK-CANONICAL-CONTRACT-2026-09-27.md using governance/canonical-contract-template.html. Do not edit by hand; edit the markdown source and re-render. -->
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AAB-PLATFORM-04 — Actor–Subject Link</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,500;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+/* ── Tokens ─────────────────────────────────────────────────────────── */
+:root{
+  --green:#06271f;          /* primary accent: header band, headings, labels, badges */
+  --green-2:#0d3b2f;
+  --mint:#78ecad;           /* secondary accent: status indicators, callouts */
+  --mint-tint:#eefbf4;      /* mint at low strength, for callout fills */
+  --mint-edge:#b8ecd0;
+  --ink:#17211d;
+  --muted:#5f6d67;
+  --faint:#8a9791;
+  --rule:#dde5e1;
+  --code-bg:#f6f8f7;
+  --paper:#ffffff;
+  --mono:"JetBrains Mono",Consolas,"SFMono-Regular",monospace;
+  --sans:"Inter","Segoe UI",system-ui,sans-serif;
+  --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+}
+*{box-sizing:border-box}
+html{background:#e7ece9}
+body{margin:0;color:var(--ink);font:400 10pt/1.62 var(--sans);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+mark.ph{background:#fff4c2;color:#6b4e00;border:1px dashed #d9b300;border-radius:3px;padding:0 3px;font:600 .92em var(--mono)}
+
+/* ── Sheet ──────────────────────────────────────────────────────────── */
+.sheet{background:var(--paper);max-width:210mm;margin:22px auto;box-shadow:0 2px 26px rgba(6,39,31,.13)}
+.content{padding:10mm 19mm 16mm}
+.screen-note{max-width:210mm;margin:14px auto 0;font:9pt/1.5 var(--sans);color:var(--muted);text-align:center}
+
+/* ── Header band ───────────────────────────────────────────────────── */
+.band{background:var(--green);color:#fff;padding:13mm 19mm 11mm;position:relative}
+.band-top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:12mm}
+.brand{display:flex;align-items:center;gap:11px}
+.brand svg{width:30px;height:30px;flex:none}
+.brand b{display:block;font:700 12pt/1 var(--sans);letter-spacing:.06em}
+.brand small{display:block;margin-top:4px;font:500 6.8pt/1 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:#a9c9bb}
+.ref-code{font:600 9.5pt/1 var(--mono);letter-spacing:.05em;color:var(--mint);border:1px solid rgba(120,236,173,.55);border-radius:4px;padding:7px 10px}
+.kind{font:600 7pt/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--mint);margin:0 0 9px}
+.band h1{font:600 22pt/1.14 var(--serif);letter-spacing:-.01em;margin:0 0 14px;max-width:150mm}
+.badge{display:inline-flex;align-items:center;gap:8px;font:600 7.6pt/1 var(--mono);letter-spacing:.06em;border-radius:999px;padding:7px 12px 7px 10px}
+.badge::before{content:"";width:8px;height:8px;border-radius:50%;flex:none}
+.badge.design{background:var(--mint);color:var(--green)}
+.badge.design::before{background:var(--green)}
+.badge.proposed{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.6)}
+.badge.proposed::before{background:transparent;border:1.5px solid var(--mint)}
+.badge.admitted{background:#fff;color:var(--green)}
+.badge.admitted::before{background:var(--mint);box-shadow:0 0 0 2px var(--green)}
+.badge.overview{background:transparent;color:#fff;border:1px solid var(--mint)}
+.badge.overview::before{background:var(--mint)}
+
+/* ── Metadata ──────────────────────────────────────────────────────── */
+.meta{display:grid;grid-template-columns:31mm 1fr;margin:9mm 0 0;border-top:2px solid var(--green)}
+.meta dt,.meta dd{margin:0;padding:6px 0;border-bottom:1px solid var(--rule)}
+.meta dt{font:600 6.9pt/1.9 var(--sans);letter-spacing:.15em;text-transform:uppercase;color:var(--green)}
+.meta dd{font-size:9pt;color:var(--ink)}
+.meta dd.verbatim{font-size:8.8pt}
+.meta dd .unstated{color:var(--faint);font-style:italic}
+.meta dd code{font-size:8pt}
+
+/* ── Contents ──────────────────────────────────────────────────────── */
+nav.toc{margin:7mm 0 2mm;break-inside:avoid}
+nav.toc h2{all:unset;display:block;font:600 6.9pt/1 var(--sans);letter-spacing:.15em;text-transform:uppercase;color:var(--green);margin-bottom:8px}
+nav.toc ol{list-style:none;margin:0;padding:0;columns:2;column-gap:10mm;font-size:8.8pt}
+nav.toc li{padding:2.5px 0;break-inside:avoid;display:flex;gap:9px}
+nav.toc a{color:var(--ink);text-decoration:none}
+nav.toc .n{font:500 8pt var(--mono);color:var(--faint);min-width:18px}
+
+/* ── Sections & clauses ────────────────────────────────────────────── */
+section.sec{margin-top:9mm}
+.head-keep{break-inside:avoid;page-break-inside:avoid}
+.head-keep.head-only{break-after:avoid;page-break-after:avoid} /* heading directly above a long definition */
+h2.sec-h{display:flex;align-items:baseline;gap:10px;font:600 13pt/1.3 var(--serif);color:var(--green);margin:0 0 9px;padding-bottom:6px;border-bottom:1.5px solid var(--green);break-after:avoid;page-break-after:avoid}
+h2.sec-h .n{font:500 8.5pt var(--mono);color:var(--faint);letter-spacing:.02em}
+h3.sub-h{display:flex;align-items:baseline;gap:9px;font:600 8pt/1.35 var(--sans);letter-spacing:.11em;text-transform:uppercase;color:var(--green);margin:16px 0 8px;break-after:avoid;page-break-after:avoid}
+h3.sub-h .n{font:500 8pt var(--mono);color:var(--faint);letter-spacing:0;text-transform:none}
+.clause{position:relative;padding-left:11mm;margin:0 0 9px}
+.clause>.cn{position:absolute;left:0;top:0;font:500 7.4pt/2.05 var(--mono);color:var(--faint)}
+.clause>.cb{min-width:0}
+.clause p{margin:0;orphans:3;widows:3}
+.clause ul,.clause ol{margin:0;padding-left:16px}
+.clause li{margin:2px 0;break-inside:avoid}
+.clause ul li::marker{color:var(--green)}
+.clause ol li::marker{font:600 8.5pt var(--mono);color:var(--green)}
+code{font:500 8.3pt var(--mono);color:var(--green-2);background:var(--code-bg);border:1px solid #e3eae6;border-radius:3px;padding:0 3.5px}
+strong{font-weight:650;color:var(--green)}
+
+/* ── Callouts ──────────────────────────────────────────────────────── */
+.rule-callout{margin:0;border-left:3px solid var(--mint);background:var(--mint-tint);padding:11px 14px;border-radius:0 5px 5px 0;break-inside:avoid}
+.rule-callout .lbl{display:block;font:600 6.6pt/1 var(--sans);letter-spacing:.17em;text-transform:uppercase;color:var(--green);margin-bottom:6px}
+.rule-callout p{font:italic 400 10.5pt/1.55 var(--serif);color:var(--green)}
+.rule-callout strong{font-style:italic}
+.boundary{border:1px solid var(--rule);border-top:3px solid var(--green);border-radius:4px;padding:10px 14px 8px;break-inside:avoid}
+.boundary ul{list-style:none;padding:0}
+.boundary li{position:relative;padding-left:18px}
+.boundary li::before{content:"";position:absolute;left:2px;top:.62em;width:8px;height:1.5px;background:var(--green)}
+
+/* ── Tables ────────────────────────────────────────────────────────── */
+table.grid{width:100%;border-collapse:collapse;font-size:8.8pt;break-inside:avoid}
+table.grid th{text-align:left;font:600 6.8pt/1.4 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--green);border-bottom:1.5px solid var(--green);padding:5px 8px 5px 0}
+table.grid td{padding:6px 8px 6px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+table.grid td:first-child{font-weight:600;color:var(--green)}
+
+/* ── Structured definitions (from TypeScript) ──────────────────────── */
+.def{border:1px solid var(--rule);border-radius:5px;overflow:hidden;background:#fff}
+.def.short{break-inside:avoid}
+.def-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:7px 11px;background:var(--green);color:#fff;break-after:avoid}
+.def-head .dn{font:600 9pt var(--mono);letter-spacing:.01em}
+.def-head .dn .extends{font-weight:400;color:#a9c9bb}
+.def-head .dk{font:600 6.4pt/1 var(--sans);letter-spacing:.17em;text-transform:uppercase;color:var(--mint)}
+.f{display:grid;grid-template-columns:minmax(40mm,38%) 1fr;gap:12px;padding:5px 11px;border-top:1px solid #edf1ef;break-inside:avoid;page-break-inside:avoid}
+.f:first-of-type{border-top:0}
+.fn{font:500 8.4pt/1.6 var(--mono);color:var(--green);overflow-wrap:anywhere} /* renderer inserts <wbr> at camelCase humps */
+.f.flag{grid-template-columns:1fr auto}
+.fn .opt{font:500 6.2pt/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--faint);border:1px solid var(--rule);border-radius:3px;padding:2px 4px;margin-left:6px;vertical-align:1px}
+.ft{font:400 8.2pt/1.6 var(--mono);color:var(--muted);word-break:break-word}
+.ft .lit{color:var(--green);font-weight:600}
+.ft .tref{color:#2f5d8a}
+.enum{list-style:none;margin:1px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:3px 4px}
+.enum li{font:500 7.6pt/1 var(--mono);color:var(--green);background:var(--mint-tint);border:1px solid var(--mint-edge);border-radius:3px;padding:3px 5px}
+.enum-note{display:block;font:500 6.4pt/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin:0 0 4px}
+.fixed{font:600 7.6pt/1 var(--mono);color:var(--green);background:var(--mint);border-radius:3px;padding:3px 6px}
+.grp{padding:6px 11px 3px;font:italic 400 8.6pt/1.45 var(--serif);color:var(--muted);border-top:1px solid #edf1ef;break-after:avoid}
+.nest{grid-column:1 / -1;margin:3px 0 2px;border-left:2px solid var(--mint-edge);padding-left:0}
+.nest .f{padding-left:12px;border-top-color:#f1f4f2}
+.nest .grp{padding-left:12px}
+.f.has-nest{grid-template-columns:1fr;gap:0;break-inside:auto;page-break-inside:auto} /* a group may break between its fields; each field stays whole */
+.f.has-nest>.fn,.f.has-nest>.enum-note{break-after:avoid;page-break-after:avoid}
+.def.provider .f{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}
+.m-sig,.m-ret{overflow-wrap:anywhere} /* renderer inserts <wbr> at camelCase humps */
+.m-sig{font:500 8.3pt/1.6 var(--mono);color:var(--green)}
+.m-sig .p{color:var(--muted);font-weight:400}
+.m-ret{font:400 8.2pt/1.6 var(--mono);color:var(--muted)}
+.m-ret::before{content:"→ ";color:var(--faint)}
+
+/* ── Verbatim blocks & diagrams ────────────────────────────────────── */
+.verbatim-block{background:var(--code-bg);border:1px solid var(--rule);border-radius:5px;break-inside:avoid}
+.verbatim-block .lbl{display:block;font:600 6.4pt/1 var(--sans);letter-spacing:.17em;text-transform:uppercase;color:var(--faint);padding:8px 11px 0}
+.verbatim-block pre{margin:0;padding:6px 11px 10px;font:400 8pt/1.55 var(--mono);color:var(--ink);white-space:pre-wrap;word-break:break-word}
+figure.diagram{margin:0;border:1px solid var(--rule);border-radius:5px;padding:12px;text-align:center;break-inside:avoid}
+figure.diagram pre.mermaid{margin:0;text-align:left;font:400 7.8pt/1.45 var(--mono);color:var(--muted);white-space:pre-wrap}
+figure.diagram pre.mermaid[data-processed]{text-align:center}
+figure.diagram svg{max-width:100%;height:auto}
+figure.diagram figcaption{font:600 6.4pt/1 var(--sans);letter-spacing:.17em;text-transform:uppercase;color:var(--faint);margin-top:9px}
+
+/* ── End matter ────────────────────────────────────────────────────── */
+.end{margin-top:12mm;padding-top:8px;border-top:1.5px solid var(--green);display:flex;justify-content:space-between;gap:14px;font:500 7pt/1.5 var(--sans);color:var(--muted)}
+.end code{font-size:7pt}
+
+/* ── Print ─────────────────────────────────────────────────────────── */
+@page{
+  size:A4;
+  margin:16mm 17mm 19mm;
+  @bottom-left{content:"AAB-PLATFORM-04  ·  Page " counter(page) " of " counter(pages);font:600 7pt "JetBrains Mono",Consolas,monospace;color:#06271f;border-top:1px solid #06271f;padding-top:4mm;vertical-align:top;white-space:nowrap}
+  @bottom-right{content:"Adaptive Agricultural Brain — Governed Scientific Intelligence Infrastructure";font:500 6.8pt "Inter",sans-serif;color:#5f6d67;border-top:1px solid #06271f;padding-top:4mm;vertical-align:top;white-space:nowrap}
+}
+@media print{
+  html{background:#fff}
+  .screen-note{display:none}
+  .sheet{margin:0;max-width:none;box-shadow:none}
+  .band{border-radius:6px;padding:11mm 12mm 10mm}
+  .band-top{margin-bottom:10mm}
+  .content{padding:0}
+  .end{display:none}
+  nav.toc{break-after:page;page-break-after:always} /* page 1 is the cover: header, details, contents */
+  a{color:inherit;text-decoration:none}
+  mark.ph{background:none;border:0;color:inherit;padding:0}
+}
+</style>
+</head>
+<body>
+<p class="screen-note">A4 print-ready. Print → Save as PDF, paper A4, margins Default, and turn off “Headers and footers” — each page carries its own footer.</p>
+<article class="sheet">
+
+<header class="band">
+  <div class="band-top">
+    <div class="brand">
+      <svg viewBox="0 0 30 30" aria-hidden="true"><rect x="3" y="5" width="24" height="4.4" rx="2.2" fill="#78ecad"/><rect x="3" y="12.8" width="24" height="4.4" rx="2.2" fill="#ffffff"/><rect x="3" y="20.6" width="24" height="4.4" rx="2.2" fill="#ffffff"/></svg>
+      <div><b>AAB</b><small>Adaptive Agricultural Brain</small></div>
+    </div>
+    <span class="ref-code">AAB-PLATFORM-04</span>
+  </div>
+  <p class="kind">Canonical Contract</p>
+  <h1>Actor–Subject Link</h1>
+  <span class="badge design">DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED</span>
+</header>
+
+<div class="content">
+  <dl class="meta">
+    <dt>Reference</dt><dd><code>AAB-PLATFORM-04</code></dd>
+    <dt>Status</dt><dd class="verbatim">CANONICAL CONTRACT — NOT IMPLEMENTATION</dd>
+    <dt>Version</dt><dd><span class="unstated">Not stated in source</span></dd>
+    <dt>Date</dt><dd>2026-09-27</dd>
+    <dt>Domain</dt><dd class="verbatim">AAB platform (shared by every domain)</dd><dt>Authority</dt><dd class="verbatim">DEFINES THE ACTOR–SUBJECT LINK: WHAT IT ASSERTS, HOW IT IS CREATED, USED, SUSPENDED, REVOKED AND SUPERSEDED, AND WHERE IT LIVES. It creates no link, grants no role or authority to anyone, and amends no domain contract. This contract is PROPOSED_NOT_ADMITTED. No implementation exists.</dd>
+  </dl>
+
+  <nav class="toc" aria-label="Contents"><h2>Contents</h2><ol>
+    <li><span class="n">01</span><a href="#sources">Sources</a></li><li><span class="n">02</span><a href="#why-this-contract-is-needed">Why this contract is needed</a></li><li><span class="n">03</span><a href="#1-what-an-actor-subject-link-is">1. What an actor–subject link is</a></li><li><span class="n">04</span><a href="#2-how-a-link-is-created">2. How a link is created</a></li><li><span class="n">05</span><a href="#3-how-a-link-is-used">3. How a link is used</a></li><li><span class="n">06</span><a href="#4-suspension-revocation-and-supersession">4. Suspension, revocation and supersession</a></li><li><span class="n">07</span><a href="#5-where-the-link-lives-and-the-dependency-direction">5. Where the link lives, and the dependency direction</a></li><li><span class="n">08</span><a href="#adopting-this-contract">Adopting this contract</a></li><li><span class="n">09</span><a href="#what-this-contract-does-not-establish">What this contract does not establish</a></li><li><span class="n">10</span><a href="#decisions-recorded-on-2026-09-27">Decisions recorded on 2026-09-27</a></li><li><span class="n">11</span><a href="#open-items">Open items</a></li>
+  </ol></nav>
+
+<section class="sec" id="sources"><div class="head-keep"><h2 class="sec-h"><span class="n">01</span>Sources</h2><div class="clause"><span class="cn">1.1</span><div class="cb"><ul><li><code>governance/AAB-PLATFORM-03-ACTOR-REFERENCE-CANONICAL-CONTRACT-2026-09-27.md</code>: section 2 sets the rules this contract must keep; section 3 sets the mandate checks that use a link</li><li><code>identity/contracts/AAB-ID-02-IDENTITY-ACTOR-LINK-CONTRACT.js</code> and <code>AAB-ID-03-PROTECTED-MEMBERSHIP-AUTHORITY-RESOLVER-CONTRACT.js</code>: the identity doctrine ("account link does not grant authority"; "browser cannot create or alter link"; "missing or ambiguous link fails closed")</li><li><code>governance/AAB-PLATFORM-DOMAIN-SEPARATION-DECISION-2026-09-25.md</code>: "SCS domain → AAB platform primitives. Never the reverse."</li><li><code>governance/workstream-b/SCS-CAP-02-OPERATOR-AND-SUPPLIER-IDENTITY-REGISTRATION-CANONICAL-CONTRACT-2026-09-23.md</code>: parties, mandates, and the separation of duties for verification</li><li><code>governance/AAB-CAPABILITY-ADMISSION-REGISTRY-DEFINITION-2026-09-27.md</code>: write-once records, with status derived at read time</li></ul></div></div></div></section>
+<section class="sec" id="why-this-contract-is-needed"><div class="head-keep"><h2 class="sec-h"><span class="n">02</span>Why this contract is needed</h2><div class="clause"><span class="cn">2.1</span><div class="cb"><p><strong>AAB-PLATFORM-03 relies on a link it does not define.</strong></p></div></div></div><div class="clause"><span class="cn">2.2</span><div class="cb"><ul><li><strong>Mandate-based submission needs it.</strong> An authenticated actor is not linked to any CAP-02 party, so no mandate can authorise a submission. SCS-CAP-02, SCS-CAP-04 and SCS-CAP-05 each record this as an open gap.</li><li><strong>AAB-PLATFORM-03 fixed its rules, but left the definition to its own contract,</strong> because the link is a platform concept that domains use. Defining it in a CAP-02 amendment would put a platform primitive inside a domain contract.</li></ul></div></div><div class="clause"><span class="cn">2.3</span><div class="cb"><p><strong>Two links, at two layers.</strong></p></div></div><div class="clause"><span class="cn">2.4</span><div class="cb"><table class="grid"><thead><tr><th></th><th>Account–actor link (ID-02)</th><th>Actor–subject link (this contract)</th></tr></thead><tbody><tr><td>Binds</td><td>A login account to an AAB actor</td><td>An AAB actor to a domain subject, such as a CAP-02 party</td></tr><tr><td>Answers</td><td>"Which actor is this login?"</td><td>"May this actor act as, or for, this subject?"</td></tr><tr><td>Cardinality</td><td>One account to one actor</td><td>One actor to many subjects; one subject to many actors</td></tr></tbody></table></div></div><div class="clause"><span class="cn">2.5</span><div class="cb"><p>Neither grants authority. This contract concerns only the second.</p></div></div></section>
+<section class="sec" id="1-what-an-actor-subject-link-is"><div class="head-keep"><h2 class="sec-h"><span class="n">03</span>1. What an actor–subject link is</h2><div class="clause"><span class="cn">3.1</span><div class="cb"><p><strong>An actor–subject link is a governed record that binds one actor to one domain subject,</strong> establishing that the actor may act <em>as</em> or <em>for</em> that subject.</p></div></div></div><div class="clause"><span class="cn">3.2</span><div class="cb"><p><strong>It asserts:</strong></p></div></div><div class="clause"><span class="cn">3.3</span><div class="cb"><ul><li><strong>Who:</strong> the actor, identified as AAB-PLATFORM-03 identifies it, by (<code>issuer</code>, <code>actorId</code>).</li><li><strong>For whom:</strong> the subject, identified generically, by (<code>domain</code>, <code>subjectType</code>, <code>subjectId</code>).</li><li><strong>How they are related:</strong> either the actor <em>is</em> the subject (a natural person acting as themselves), or the actor acts <em>for</em> the subject (a staff member of an organisation).</li><li><strong>On what evidence:</strong> the evidence that the subject authorised the relationship.</li><li><strong>Who recorded it, and when:</strong> the creating actor, a named, accountable human who signs the link, and is never the linked actor.</li></ul></div></div><div class="clause"><span class="cn">3.4</span><div class="cb"><p><strong>It does not assert, and never grants:</strong></p></div></div><div class="clause"><span class="cn">3.5</span><div class="cb"><ul><li><strong>Any authority to perform an act.</strong> What an actor may do is decided by the capability, from the actor's <code>authorityBasis</code> and, for representation, the mandate. A link says only that the actor may be <em>associated</em> with the subject.</li><li><strong>That the subject exists or is current.</strong> That is checked, when the link is used, by the domain that owns the subject (section 3).</li><li><strong>Anything about the actor's legal identity.</strong></li></ul></div></div><div class="head-keep head-only"><h3 class="sub-h"><span class="n">3.6</span>The link record</h3></div><div class="clause"><span class="cn">3.6.1</span><div class="cb"><div class="def"><div class="def-head"><span class="dn">ActorSubjectLink</span><span class="dk">Interface</span></div><div class="f"><span class="fn">linkId</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">schemaVersion</span><span class="ft"><span>string</span></span></div><div class="grp">Who: the actor, as AAB-PLATFORM-03 identifies it</div><div class="f has-nest"><span class="fn">actor</span><div class="nest"><div class="f has-nest"><span class="fn">issuer</span><div class="nest"><div class="f"><span class="fn">issuerType</span><span class="ft"><span class="enum-note">One of</span><ul class="enum"><li>&quot;PLATFORM_CONTROL_PLANE&quot;</li><li>&quot;COUNTRY_TENANCY&quot;</li></ul></span></div><div class="f"><span class="fn">countryCode<span class=opt>optional</span></span><span class="ft"><span>string</span></span></div></div></div><div class="f"><span class="fn">actorId</span><span class="ft"><span>string</span></span></div></div></div><div class="grp">For whom: named generically; the domain defines what the identifiers mean</div><div class="f has-nest"><span class="fn">subject</span><div class="nest"><div class="f"><span class="fn">domain</span><span class="ft"><span>string</span></span></div><div class="grp">e.g. "SCS"</div><div class="f"><span class="fn">subjectType</span><span class="ft"><span>string</span></span></div><div class="grp">e.g. "PARTY"</div><div class="f"><span class="fn">subjectId</span><span class="ft"><span>string</span></span></div><div class="grp">e.g. a CAP-02 party id</div></div></div><div class="grp">How they are related</div><div class="f"><span class="fn">relation</span><span class="ft"><span class="enum-note">One of</span><ul class="enum"><li>&quot;IS_SUBJECT&quot;</li><li>&quot;ACTS_FOR_SUBJECT&quot;</li></ul></span></div><div class="grp">Validity: a link always expires</div><div class="f"><span class="fn">validFrom</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">validUntil</span><span class="ft"><span>string</span></span></div><div class="grp">Evidence that the subject authorised this relationship: at least one</div><div class="f has-nest"><span class="fn">authorisationEvidence</span><span class="enum-note" style="margin:2px 0 0">Array of objects</span><div class="nest"><div class="f"><span class="fn">evidenceObjectSha256</span><span class="ft"><span>string</span></span></div><div class="grp">an AAB-PLATFORM-01 stored object</div><div class="f"><span class="fn">description</span><span class="ft"><span>string</span></span></div></div></div><div class="grp">Replaces an earlier link, if any</div><div class="f"><span class="fn">supersedesLinkId<span class=opt>optional</span></span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">createdAt</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">createdBy</span><span class="ft"><span class="tref">ActorReference</span></span></div><div class="grp">AAB-PLATFORM-03: HUMAN, with accountableName; never the linked actor<br>Link creation is a governance decision: signed by the named creator</div><div class="f"><span class="fn">linkDigest</span><span class="ft"><span>string</span></span></div><div class="grp">SHA-256 over the canonical JSON of every field above</div><div class="f"><span class="fn">creatorSignature</span><span class="ft"><span>string</span></span></div><div class="grp">the creator's signature over linkDigest</div></div></div></div><div class="clause"><span class="cn">3.6.2</span><div class="cb"><p><strong>The link record is written once, and never changed.</strong> Its current state is derived when it is read, from the record and the status records against it (section 4). This is the pattern of the capability admission registry, and of currency in SCS-CAP-09.</p></div></div><div class="clause"><span class="cn">3.6.3</span><div class="cb"><p><strong>States</strong>, derived at read time:</p></div></div><div class="clause"><span class="cn">3.6.4</span><div class="cb"><table class="grid"><thead><tr><th>State</th><th>When</th><th>Usable</th></tr></thead><tbody><tr><td><code>ACTIVE</code></td><td>Within its validity period, and not suspended, revoked or superseded</td><td>Yes</td></tr><tr><td><code>SUSPENDED</code></td><td>A suspension record is in effect</td><td>No</td></tr><tr><td><code>REVOKED</code></td><td>A revocation record exists, or a later link supersedes it</td><td>No</td></tr><tr><td><code>EXPIRED</code></td><td>Its <code>validUntil</code> has passed</td><td>No</td></tr></tbody></table></div></div><div class="clause"><span class="cn">3.6.5</span><div class="cb"><p><code>ACTIVE</code>, <code>SUSPENDED</code> and <code>REVOKED</code> are the states AAB-PLATFORM-03 fixed. <code>EXPIRED</code> is a fourth, distinct state. Every link expires, and ending on schedule is a different event from being withdrawn; recording them the same way would make audit records less meaningful.</p></div></div></section>
+<section class="sec" id="2-how-a-link-is-created"><div class="head-keep"><h2 class="sec-h"><span class="n">04</span>2. How a link is created</h2><div class="clause"><span class="cn">4.1</span><div class="cb"><p><strong>Who may create a link.</strong></p></div></div></div><div class="clause"><span class="cn">4.2</span><div class="cb"><ul><li><strong>A holder of the role the subject's domain designates.</strong> The platform defines no creator role of its own. Each domain names the role, in its own contract.<ul><li>For SCS, the creating role is <strong><code>LINK_OFFICER</code></strong>, a dedicated role. It is not <code>VERIFICATION_OFFICER</code>: a verifier who could also create the links they later rely on would have a conflict, so link creation and verification stay separate duties.</li><li>The creating role is held in the creator's <code>authorityBasis</code>, in a scope that covers the subject.</li></ul></li><li><strong>Never the linked actor.</strong> A link whose <code>createdBy</code> is the linked actor is refused. A link is never self-asserted.</li><li><strong>Never the browser, the request or user metadata.</strong> Only a server-side operation, performed by an authenticated actor holding the creating role, creates a link.</li></ul></div></div><div class="clause"><span class="cn">4.3</span><div class="cb"><p><strong>What evidence is required:</strong></p></div></div><div class="clause"><span class="cn">4.4</span><div class="cb"><ul><li><strong>Authorisation by the subject:</strong> at least one stored object, in AAB-PLATFORM-01, showing that the subject authorised the relationship. For <code>ACTS_FOR_SUBJECT</code>, for example, a letter of authority from the organisation. For <code>IS_SUBJECT</code>, evidence that the person is the natural-person subject.</li><li><strong>The subject exists and is current,</strong> confirmed by the subject's domain when the link is created: for SCS, the CAP-02 party exists and is not <code>RETIRED</code>.</li><li><strong>The actor exists,</strong> confirmed by its issuer.</li></ul></div></div><div class="clause"><span class="cn">4.5</span><div class="cb"><p><strong>The creation rules</strong>, each failing closed:</p></div></div><div class="clause"><span class="cn">4.6</span><div class="cb"><ol><li>The creator holds the domain's creating role, in scope: otherwise <code>LINK_CREATOR_NOT_AUTHORISED</code>.</li><li>The creator is not the linked actor: otherwise <code>LINK_SELF_ASSERTED</code>.</li><li>The subject exists and is current: otherwise <code>LINK_SUBJECT_NOT_FOUND</code> or <code>LINK_SUBJECT_NOT_CURRENT</code>.</li><li>At least one authorisation evidence object exists in AAB-PLATFORM-01: otherwise <code>LINK_EVIDENCE_MISSING</code>.</li><li><code>validUntil</code> is after <code>validFrom</code>, and within the domain's maximum link period: otherwise <code>LINK_VALIDITY_INVALID</code>. The platform requires an expiry date, and sets no universal maximum. Each domain sets its own, from its regulatory context.</li><li>There is no other <code>ACTIVE</code> link for the same actor, subject and relation whose validity overlaps: otherwise <code>LINK_ALREADY_ACTIVE</code>. To change a link, supersede it (section 4).</li><li>The creator is <code>HUMAN</code>, names an <code>accountableName</code>, and signs the link: otherwise <code>LINK_SIGNATURE_INVALID</code>.</li></ol></div></div><div class="clause"><span class="cn">4.7</span><div class="cb"><p><strong>Link creation is a governance decision.</strong> Every mandate-based act rests on a link, so no link rests on an unsigned operational record. As for admission and Gate D:</p></div></div><div class="clause"><span class="cn">4.8</span><div class="cb"><ul><li><strong>The creator is <code>HUMAN</code>,</strong> and their <code>ActorReference</code> carries <code>accountableName</code>.</li><li><strong>The creator signs the link:</strong> <code>creatorSignature</code> over <code>linkDigest</code>. A link without a valid signature is not a link. It is refused at creation, and unusable if found later.</li><li><strong>The link is written with a decision receipt,</strong> in the same transaction, as every governed write is, and is idempotent under the platform's idempotency rule. The receipt names the link, the creator and the evidence.</li></ul></div></div></section>
+<section class="sec" id="3-how-a-link-is-used"><div class="head-keep"><h2 class="sec-h"><span class="n">05</span>3. How a link is used</h2><div class="clause"><span class="cn">5.1</span><div class="cb"><p><strong>When an actor claims to act as or for a subject,</strong> the capability checks the link, in the same transaction and snapshot as the act, failing closed at the first unmet check:</p></div></div></div><div class="clause"><span class="cn">5.2</span><div class="cb"><ol><li><strong>Exactly one link applies:</strong> one link for this actor (<code>issuer</code>, <code>actorId</code>) and this subject, with the relation the act requires. None is <code>LINK_NOT_FOUND</code>. More than one is <code>LINK_AMBIGUOUS</code>; it never picks one.</li><li><strong>The link is <code>ACTIVE</code> at the time of the act, and its signature verifies:</strong> otherwise <code>LINK_NOT_ACTIVE</code>, naming the state, or <code>LINK_SIGNATURE_INVALID</code>.</li><li><strong>The relation fits the act:</strong><ul><li>acting as oneself requires <code>IS_SUBJECT</code>;</li><li>representation requires <code>ACTS_FOR_SUBJECT</code>.</li></ul></li></ol></div></div><div class="clause"><span class="cn">5.3</span><div class="cb"><p>Otherwise <code>LINK_RELATION_NOT_PERMITTED</code>.</p></div></div><div class="clause"><span class="cn">5.4</span><div class="cb"><ol><li><strong>The subject is still current,</strong> confirmed by its domain at the time of the act: otherwise <code>LINK_SUBJECT_NOT_CURRENT</code>. A link to a party that has since been retired cannot be used, whatever the link's own state.</li></ol></div></div><div class="clause"><span class="cn">5.5</span><div class="cb"><p><strong>Then the capability's own checks apply.</strong> A link never ends the checking. For representation under a mandate, the capability continues with AAB-PLATFORM-03's eight checks:</p></div></div><div class="clause"><span class="cn">5.6</span><div class="cb"><ul><li>the mandate names the linked subject as its representative party;</li><li>the mandate is current, verified, and permits the act;</li><li>the actor holds <code>PARTY_REPRESENTATIVE</code>.</li></ul></div></div><div class="clause"><span class="cn">5.7</span><div class="cb"><p><strong>The act records the link.</strong> The act's <code>ActorReference</code> carries <code>representation.actorLinkId</code>, so every representative act names the exact link it relied on.</p></div></div></section>
+<section class="sec" id="4-suspension-revocation-and-supersession"><div class="head-keep"><h2 class="sec-h"><span class="n">06</span>4. Suspension, revocation and supersession</h2><div class="clause"><span class="cn">6.1</span><div class="cb"><p><strong>Status records.</strong> A link's state changes only through status records, which are written once against the link and never changed:</p></div></div></div><div class="clause"><span class="cn">6.2</span><div class="cb"><table class="grid"><thead><tr><th>Status record</th><th>Effect</th><th>Reversible</th></tr></thead><tbody><tr><td><code>SUSPEND</code></td><td>The link is <code>SUSPENDED</code>: authorisation is withdrawn temporarily, or pending review</td><td>Yes: by <code>REINSTATE</code></td></tr><tr><td><code>REINSTATE</code></td><td>Ends a suspension; the link is <code>ACTIVE</code> again, if still within its validity</td><td>—</td></tr><tr><td><code>REVOKE</code></td><td>The link is <code>REVOKED</code>, permanently</td><td>No. A new link, created with fresh evidence, is required.</td></tr></tbody></table></div></div><div class="clause"><span class="cn">6.3</span><div class="cb"><p><strong>Who may write a status record:</strong></p></div></div><div class="clause"><span class="cn">6.4</span><div class="cb"><table class="grid"><thead><tr><th>Status record</th><th>Creating role (for SCS, <code>LINK_OFFICER</code>)</th><th>The subject's authorised representative</th></tr></thead><tbody><tr><td><code>SUSPEND</code></td><td>Yes</td><td>Yes: the subject withdraws its authorisation, temporarily or pending review</td></tr><tr><td><code>REINSTATE</code></td><td>Yes, including after a suspension by the subject's representative</td><td>No. The representative can never reinstate unilaterally.</td></tr><tr><td><code>REVOKE</code></td><td>Yes</td><td>No. Revocation is permanent, and affects the audit record of every act the link ever authorised, so it requires the creating role.</td></tr></tbody></table></div></div><div class="clause"><span class="cn">6.5</span><div class="cb"><ul><li><strong>Every status record is signed</strong> by the named human who writes it, carries a receipt, and names its reason. It is never written by the linked actor about their own link.</li><li><strong>A representative's suspension needs the creating role to end it.</strong> After review, the creating role either reinstates or revokes the link.</li></ul></div></div><div class="clause"><span class="cn">6.6</span><div class="cb"><p><strong>Supersession.</strong> To change a link's relation, validity or evidence, a new link is created with <code>supersedesLinkId</code>. The superseded link is <code>REVOKED</code> from the moment its successor is recorded. There is never more than one active link for the same actor, subject and relation.</p></div></div><div class="clause"><span class="cn">6.7</span><div class="cb"><p><strong>Automatic effects, derived rather than written:</strong></p></div></div><div class="clause"><span class="cn">6.8</span><div class="cb"><ul><li><strong>Expiry:</strong> the link is <code>EXPIRED</code> after <code>validUntil</code>. There is no grace period.</li><li><strong>The subject ends:</strong> if the subject is retired, the link cannot be used (section 3, check 4). It is not rewritten.</li><li><strong>The actor's identity ends:</strong> if the issuer no longer recognises the actor (for example, the account link in ID-02 is revoked), the actor cannot authenticate, so the link cannot be used.</li></ul></div></div><div class="clause"><span class="cn">6.9</span><div class="cb"><p><strong>Past acts are unchanged.</strong> Revoking, suspending or superseding a link never changes an act already recorded. That act's <code>ActorReference</code> still names the link it relied on at the time, which was valid then.</p></div></div></section>
+<section class="sec" id="5-where-the-link-lives-and-the-dependency-direction"><div class="head-keep"><h2 class="sec-h"><span class="n">07</span>5. Where the link lives, and the dependency direction</h2><div class="clause"><span class="cn">7.1</span><div class="cb"><p><strong>The platform defines the link. Domains store and resolve it.</strong></p></div></div></div><div class="clause"><span class="cn">7.2</span><div class="cb"><table class="grid"><thead><tr><th>Concern</th><th>Platform (this contract)</th><th>Domain (for example SCS)</th></tr></thead><tbody><tr><td>The record's shape, states, status records and failure codes</td><td>Defined here</td><td>Used as defined</td></tr><tr><td>Where link records are stored</td><td>—</td><td>In the domain's store, in the country's tenancy</td></tr><tr><td>What a subject is, and whether it exists and is current</td><td>Never</td><td>The domain answers, through a subject resolver</td></tr><tr><td>The creating role</td><td>Requires one</td><td>Names it, in its own contract</td></tr><tr><td>Evidence requirements beyond section 2</td><td>—</td><td>May add to them, never remove</td></tr><tr><td>The use checks (section 3, checks 1–3)</td><td>Defined here</td><td>Applied as defined</td></tr><tr><td>Check 4, whether the subject is current</td><td>Asks through the subject resolver</td><td>Answers</td></tr></tbody></table></div></div><div class="clause"><span class="cn">7.3</span><div class="cb"><p><strong>Subject resolver.</strong> The platform defines one interface, which each domain implements:</p></div></div><div class="clause"><span class="cn">7.4</span><div class="cb"><div style="display:grid;gap:10px"><div class="def short"><div class="def-head"><span class="dn">SubjectKey</span><span class="dk">Interface</span></div><div class="f"><span class="fn">domain</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">subjectType</span><span class="ft"><span>string</span></span></div><div class="f"><span class="fn">subjectId</span><span class="ft"><span>string</span></span></div></div><div class="def short provider"><div class="def-head"><span class="dn">SubjectResolver</span><span class="dk">Provider interface</span></div><div class="grp">Is this subject known to the domain, and current at this time?</div><div class="f"><span class="m-sig">resolve<span class="p">(subject: Subject<wbr>Key, <wbr>at: string)</span></span><span class="m-ret">Promise&lt;<wbr>&quot;CURRENT&quot; | &quot;NOT_CURRENT&quot; | &quot;NOT_FOUND&quot;&gt;</span></div></div></div></div></div><div class="clause"><span class="cn">7.5</span><div class="cb"><p><strong>Direction:</strong></p></div></div><div class="clause"><span class="cn">7.6</span><div class="cb"><ul><li><strong>Platform code never imports domain types.</strong> It does not import SCS types, and never reads CAP-02 tables. It sees only the generic subject triple and the resolver's answer.</li><li><strong>SCS implements the resolver for <code>domain: "SCS"</code>, <code>subjectType: "PARTY"</code>.</strong> It answers from CAP-02 parties: <code>NOT_FOUND</code> if no party has the id, <code>NOT_CURRENT</code> if the party is <code>RETIRED</code>, <code>CURRENT</code> otherwise.</li><li><strong>SCS stores its link records</strong> in its own store, in the country's tenancy, with the subject's CAP-02 party id recorded as the generic <code>subjectId</code>.</li><li><strong>A domain that stores links keeps the platform's rules.</strong> Write-once link records, status records, derived state, receipts and the use checks all apply unchanged.</li></ul></div></div></section>
+<section class="sec" id="adopting-this-contract"><div class="head-keep"><h2 class="sec-h"><span class="n">08</span>Adopting this contract</h2><div class="clause"><span class="cn">8.1</span><div class="cb"><p>A domain that uses actor–subject links adopts this contract by amendment to its own contracts. That amendment must document:</p></div></div></div><div class="clause"><span class="cn">8.2</span><div class="cb"><ul><li><strong>its subject types,</strong> and the identifiers each uses as <code>subjectId</code>;</li><li><strong>its creating role,</strong> named and held only in scope (for SCS, <code>LINK_OFFICER</code>);</li><li><strong>its maximum link period,</strong> from its regulatory context;</li><li><strong>any evidence it requires beyond section 2.</strong> It may add requirements, never remove them;</li><li><strong>its subject resolver:</strong> which records it reads, and exactly when it answers <code>CURRENT</code>, <code>NOT_CURRENT</code> and <code>NOT_FOUND</code>. The platform defines one resolver interface and nothing more, so documenting the implementation is a required adoption step, not optional;</li><li><strong>where it stores links and status records,</strong> and how write-once is enforced there.</li></ul></div></div></section>
+<section class="sec" id="what-this-contract-does-not-establish"><div class="head-keep"><h2 class="sec-h"><span class="n">09</span>What this contract does not establish</h2><div class="clause"><span class="cn">9.1</span><div class="cb"><ul><li>It creates no link, and grants no role, membership or authority to anyone.</li><li>It does not amend SCS-CAP-02, SCS-CAP-04 or SCS-CAP-05. Their adoption of links and mandates is by their own amendments.</li><li>It does not implement anything, or change any stored record.</li><li>It does not replace the account–actor link of ID-02.</li></ul></div></div></div></section>
+<section class="sec" id="decisions-recorded-on-2026-09-27"><div class="head-keep"><h2 class="sec-h"><span class="n">10</span>Decisions recorded on 2026-09-27</h2><div class="clause"><span class="cn">10.1</span><div class="cb"><ol><li><strong><code>EXPIRED</code> is a fourth, distinct state.</strong> Expiry on schedule is a different event from revocation (section 1).</li><li><strong>SCS's creating role is <code>LINK_OFFICER</code>,</strong> a dedicated role, separate from <code>VERIFICATION_OFFICER</code> (section 2).</li><li><strong>The maximum link period is left to each domain.</strong> The platform requires an expiry date, and sets no universal maximum (section 2).</li><li><strong>The subject's representative may suspend, but not revoke or reinstate.</strong> Revocation and reinstatement require the creating role (section 4).</li><li><strong>Link creation is a governance decision,</strong> signed by a named, accountable human, as for admission and Gate D (section 2). Status records are signed by whoever writes them (section 4).</li><li><strong>One subject resolver interface.</strong> Each adopting domain must document how it implements it, as a required adoption step ("Adopting this contract").</li></ol></div></div></div></section>
+<section class="sec" id="open-items"><div class="head-keep"><h2 class="sec-h"><span class="n">11</span>Open items</h2><div class="clause"><span class="cn">11.1</span><div class="cb"><ul><li><strong>SCS amendments:</strong> SCS-CAP-02 adopts this contract, covering every item under "Adopting this contract", including <code>LINK_OFFICER</code> and the resolver's documented implementation. SCS-CAP-04 and SCS-CAP-05 adopt the link and mandate checks for representative submission.</li><li><strong>AAB-PLATFORM-03 amendment:</strong> its list of governance decisions (section 4) gains link creation and link status records, which this contract makes signed.</li><li><strong>Implementation:</strong> the link store and status records in the SCS pilot, the resolver, and the use checks in the platform foundation.</li><li><strong><code>LINK_OFFICER</code> and <code>PARTY_REPRESENTATIVE</code></strong> in the role registry (<code>TODO(role-registry)</code>).</li><li><strong>Signing keys</strong> for link creators and status-record writers, shared with the admission and Gate D open items.</li></ul></div></div></div></section>
+
+  <footer class="end"><span><code>AAB-PLATFORM-04</code> · Source: <code>governance/AAB-PLATFORM-04-ACTOR-SUBJECT-LINK-CANONICAL-CONTRACT-2026-09-27.md</code></span><span>Adaptive Agricultural Brain — Governed Scientific Intelligence Infrastructure</span></footer>
+</div>
+</article>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+mermaid.initialize({startOnLoad:true,securityLevel:"strict",theme:"base",fontFamily:"Inter, Segoe UI, sans-serif",
+  themeVariables:{primaryColor:"#eefbf4",primaryBorderColor:"#06271f",primaryTextColor:"#06271f",lineColor:"#3f8f6a",
+  secondaryColor:"#f6f8f7",tertiaryColor:"#ffffff",actorBkg:"#06271f",actorTextColor:"#ffffff",actorBorder:"#06271f",
+  signalColor:"#17211d",signalTextColor:"#17211d",noteBkgColor:"#eefbf4",noteBorderColor:"#78ecad",noteTextColor:"#06271f",fontSize:"12px"}});
+</script>
+</body>
+</html>
