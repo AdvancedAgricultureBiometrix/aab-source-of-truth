@@ -1,4 +1,4 @@
-// Migration 018: the SCS-CAP-08 package tables and the SCS-PLATFORM-02
+// Migration 018: the SCS-CAP-08 package tables and the AAB-PLATFORM-02
 // rendition table, tested against a database built from every migration. The
 // framework, parties and a plot are registered through the API; evaluation,
 // decision, rendition, package, compilation and receipt rows are inserted

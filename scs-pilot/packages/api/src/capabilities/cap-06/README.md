@@ -33,7 +33,7 @@ This is what the `implementation/scs-vertical-proof` branch was built to prove. 
 1. a framework registered in SCS-CAP-01;
 2. parties registered and verified in SCS-CAP-02;
 3. a plot registered and associated with the framework in SCS-CAP-03;
-4. deforestation evidence admitted in SCS-CAP-04, with a stored and verified file (SCS-PLATFORM-01);
+4. deforestation evidence admitted in SCS-CAP-04, with a stored and verified file (AAB-PLATFORM-01);
 5. a custody event admitted in SCS-CAP-05;
 6. a sufficiency evaluation in SCS-CAP-06 that produces a deterministic, frozen, reproducible result: `GAPS_REQUIRE_HUMAN_DECISION`, the honest pilot outcome, whose only gaps are the pilot's own limits (spatial coverage and plot overlap not evaluated).
 

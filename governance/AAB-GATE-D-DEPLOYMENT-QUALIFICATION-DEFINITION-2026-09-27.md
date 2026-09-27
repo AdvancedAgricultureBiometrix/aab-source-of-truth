@@ -111,7 +111,7 @@ This definition separates them, so that one party's approval is never read as th
   - behavioural proof;
   - independent review;
   - a shared `ActorReference` contract, which `TODO(actor-reference)` requires "before any capability is admitted".
-- **Every capability's declared dependencies are in the set, or already deployed and qualified.** For example, SCS-CAP-08 requires SCS-CAP-09 and SCS-PLATFORM-02.
+- **Every capability's declared dependencies are in the set, or already deployed and qualified.** For example, SCS-CAP-08 requires SCS-CAP-09 and AAB-PLATFORM-02.
 - **Every limitation each capability discloses is recorded in the Gate D evidence.** Examples: no pilot evaluation can be `SUFFICIENT` without a spatial database; every pilot plot is `REGISTERED_WITH_GAPS`. A limitation does not refuse Gate D by itself. It must be disclosed to the country before commissioning, and the capability's README requires that pilot partners be told.
 
 ### 2.2 The release

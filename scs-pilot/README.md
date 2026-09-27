@@ -1,6 +1,6 @@
 # SCS pilot — vertical proof
 
-The Supply Chain Sovereignty pilot: the SCS vertical proof, merged to `main` in PRs #22 to #25. It implements SCS-CAP-01 to SCS-CAP-06, SCS-CAP-08 and SCS-CAP-09, each for its minimum vertical slice, with SCS-PLATFORM-01 (evidence object store) and SCS-PLATFORM-02 (governed document rendition). Each capability README records which operations are built and what is proven. Every capability remains `PROPOSED_NOT_ADMITTED`; nothing here is admitted or commissioned. Current state across the platform: `governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`.
+The Supply Chain Sovereignty pilot: the SCS vertical proof, merged to `main` in PRs #22 to #25. It implements SCS-CAP-01 to SCS-CAP-06, SCS-CAP-08 and SCS-CAP-09, each for its minimum vertical slice, with AAB-PLATFORM-01 (evidence object store) and AAB-PLATFORM-02 (governed document rendition). Each capability README records which operations are built and what is proven. Every capability remains `PROPOSED_NOT_ADMITTED`; nothing here is admitted or commissioned. Current state across the platform: `governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`.
 
 | Path | What it is |
 |---|---|
@@ -9,7 +9,7 @@ The Supply Chain Sovereignty pilot: the SCS vertical proof, merged to `main` in 
 | `packages/api` | Node.js 24 + TypeScript API. Serves `GET /health` and the capability and platform routes; anything else gets the canonical 404 envelope |
 | `packages/api/src/capabilities/` | Capability code, one folder per capability; `README.md` there sets out the pattern every capability follows, with `cap-01/` as the reference implementation |
 | `packages/api/src/foundation/` | Shared runtime used by every capability: `server.ts` (node:http routing, parsing, responses), `errors.ts` (canonical failure envelope), `correlation.ts` (correlation IDs, JSON logs), `validation.ts` (strict Ajv), `auth.ts` (bearer token → ActorReference), `db.ts` (restricted-role pool, startup guard, transactions), `receipts.ts` (immutable decision receipts), `idempotency.ts` (Idempotency-Key replay and conflict), `canonical.ts` (canonical JSON, SHA-256) |
-| `packages/api/src/platform/` | SCS-PLATFORM-01 (`evidence-objects/`) and SCS-PLATFORM-02 (`renditions/`) |
+| `packages/api/src/platform/` | AAB-PLATFORM-01 (`evidence-objects/`) and AAB-PLATFORM-02 (`renditions/`) |
 | `packages/api/src/ops/` | Operator tools built into the image: `object-store-archive.ts` (export and import) and `verify-integrity.ts` (the integrity check used by backup and restore) |
 | `packages/api/src/schemas/` | JSON Schemas for every request, record and receipt, and the shared ActorReference (pilot definition) |
 | `packages/api/src/types/` | TypeScript types **generated** from the schemas (`npm run generate:types`). Never edit these by hand; `npm test` fails if they drift |

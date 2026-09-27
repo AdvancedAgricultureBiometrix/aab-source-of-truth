@@ -82,10 +82,10 @@ export const PLATFORM_ERRORS = {
   IDEMPOTENCY_KEY_CONFLICT: 409,
   DEPENDENCY_UNAVAILABLE: 503,
   INTERNAL_ERROR: 500,
-  // SCS-PLATFORM-01 evidence object store (raw-body upload route)
+  // AAB-PLATFORM-01 evidence object store (raw-body upload route)
   EVIDENCE_OBJECT_TOO_LARGE: 413,
   EVIDENCE_OBJECT_TYPE_UNSUPPORTED: 415,
-  // SCS-PLATFORM-02 rendition download
+  // AAB-PLATFORM-02 rendition download
   READER_NOT_AUTHORISED: 403,
   RENDITION_NOT_FOUND: 404,
   RENDITION_INTEGRITY_FAILED: 422,

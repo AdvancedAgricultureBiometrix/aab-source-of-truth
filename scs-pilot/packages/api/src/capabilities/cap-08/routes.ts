@@ -9,7 +9,7 @@
 // in CAPABILITY_ROUTES. getPackage and verifyPackageIntegrity read in one
 // REPEATABLE READ snapshot and record nothing; verifyPackageIntegrity re-hashes
 // cited files through the object store. A package's rendition is downloaded
-// through SCS-PLATFORM-02 (platform/renditions/routes.ts).
+// through AAB-PLATFORM-02 (platform/renditions/routes.ts).
 
 import type { Route } from "../../foundation/server.js";
 import type { ObjectStore } from "../../platform/evidence-objects/object-store.js";

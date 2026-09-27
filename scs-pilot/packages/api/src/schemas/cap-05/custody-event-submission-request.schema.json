@@ -378,7 +378,7 @@
       ],
       "properties": {
         "objectId": {
-          "description": "The SCS-PLATFORM-01 objectId of the stored document, when one is cited.",
+          "description": "The AAB-PLATFORM-01 objectId of the stored document, when one is cited.",
           "type": "string",
           "pattern": "^[0-9a-f]{64}$"
         },

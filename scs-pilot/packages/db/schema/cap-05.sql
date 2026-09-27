@@ -124,7 +124,7 @@ CREATE TABLE scs.custody_event (
   document_issuing_authority        text,
   document_date                     date,
   content_digest                    text        NOT NULL,   -- declared by the submitter
-  evidence_object_sha256            text,                   -- the cited SCS-PLATFORM-01 object, if any
+  evidence_object_sha256            text,                   -- the cited AAB-PLATFORM-01 object, if any
   integrity_status                  text        NOT NULL,
 
   -- provenance

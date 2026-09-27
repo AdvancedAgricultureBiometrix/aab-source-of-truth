@@ -181,7 +181,7 @@ export interface DeforestationRow {
   readonly issuingAuthority: string | undefined;
   readonly submittedBy: string;
   readonly submittedAt: string;
-  /** The cited SCS-PLATFORM-01 object, if any. */
+  /** The cited AAB-PLATFORM-01 object, if any. */
   readonly objectSha256: string | null;
   readonly contentDigest: string;
   readonly integrityStatus: string;
@@ -283,7 +283,7 @@ export interface CustodyRow {
   readonly quantityMeasurementMethod: string | undefined;
   readonly documentType: string;
   readonly documentReference: string;
-  /** The cited SCS-PLATFORM-01 object, if any. */
+  /** The cited AAB-PLATFORM-01 object, if any. */
   readonly objectSha256: string | null;
   readonly contentDigest: string;
   readonly submittedBy: string;

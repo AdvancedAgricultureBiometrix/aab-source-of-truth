@@ -1,4 +1,4 @@
-// SCS-PLATFORM-02 rendition download — GET /scs/v1/renditions/:renditionId
+// AAB-PLATFORM-02 rendition download — GET /scs/v1/renditions/:renditionId
 // (contract e99ff4f/8e64e33, "Retrieval").
 //
 //   1. authority — the actor holds a reader role of some rendering capability,

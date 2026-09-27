@@ -1,4 +1,4 @@
-// SCS-PLATFORM-01 POST /scs/v1/evidence-objects — store one evidence file.
+// AAB-PLATFORM-01 POST /scs/v1/evidence-objects — store one evidence file.
 //
 // The server layer has authenticated the actor (any authenticated actor may
 // upload: contract gap, recorded), checked the media type (one of

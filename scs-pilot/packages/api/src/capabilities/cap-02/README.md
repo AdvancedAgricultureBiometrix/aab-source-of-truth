@@ -24,7 +24,7 @@
 - **Request validation:** the schema accepts 1–200 evidence ids, as lowercase UUIDs, so any duplicate within one request is refused with 400. `partyId` in the path must be a UUID, also 400.
 - **What is written:** one `party_identity_evidence_submission` row, one evidence link per id naming that submission, and the receipt (decision type `IDENTITY_EVIDENCE_SUBMISSION`, subject = `submissionId`), all in one transaction. The response is 201 `{ decision, receipt, receiptDigest }`.
 - **Decision:** always `RECORDED`. All four checks are performed, so all four are `true`.
-- **Evidence ids:** CAP-02's evidence ids are uuids and predate the SCS evidence object store (SCS-PLATFORM-01), which identifies files by SHA-256 digest. So every decision's reasons say the cited ids are not linked to the object store and cannot be confirmed against it. Aligning the two needs a contract change and a migration (contract gap). The code marks this `TODO(evidence-id-model)`.
+- **Evidence ids:** CAP-02's evidence ids are uuids and predate the SCS evidence object store (AAB-PLATFORM-01), which identifies files by SHA-256 digest. So every decision's reasons say the cited ids are not linked to the object store and cannot be confirmed against it. Aligning the two needs a contract change and a migration (contract gap). The code marks this `TODO(evidence-id-model)`.
 
 
 ## registerRelationship

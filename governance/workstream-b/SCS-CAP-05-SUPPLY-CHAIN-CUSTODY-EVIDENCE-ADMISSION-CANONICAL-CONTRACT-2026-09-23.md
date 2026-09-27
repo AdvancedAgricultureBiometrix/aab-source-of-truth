@@ -550,7 +550,7 @@ type ScsCustodyQuantityUnit =
 
 ### Supporting document and integrity
 
-The document itself may be stored in the SCS evidence object store (SCS-PLATFORM-01), which
+The document itself may be stored in the SCS evidence object store (AAB-PLATFORM-01), which
 computes its SHA-256.
 
 - **Always required:** `documentReference`, `documentType` and `contentDigest`. Their absence
@@ -692,7 +692,7 @@ interface ScsCustodyEventSubmissionRequest {
   consolidatedFromEventIds?: string[];
 
   supportingDocument: {
-    // The SCS-PLATFORM-01 objectId of the stored document, when one is cited
+    // The AAB-PLATFORM-01 objectId of the stored document, when one is cited
     objectId?: string;
     documentId: string;
     documentType: ScsCustodyEventRecord["supportingDocument"]["documentType"];

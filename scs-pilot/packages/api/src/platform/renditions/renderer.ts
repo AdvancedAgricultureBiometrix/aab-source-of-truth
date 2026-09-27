@@ -1,4 +1,4 @@
-// SCS-PLATFORM-02 renderer: a governed record, laid out by a capability's
+// AAB-PLATFORM-02 renderer: a governed record, laid out by a capability's
 // template as a list of blocks, rendered to PDF bytes (contract a0f8c46, "The
 // pilot renderer").
 //
@@ -24,7 +24,7 @@ import { fileURLToPath } from "node:url";
 import { create as createFont, type Font } from "fontkit";
 import PDFDocument from "pdfkit";
 
-/** The fonts recorded in SCS-PLATFORM-02, by file, with their SHA-256. */
+/** The fonts recorded in AAB-PLATFORM-02, by file, with their SHA-256. */
 export const PINNED_FONTS = {
   "NotoSans-Regular.ttf": "f3961a9cde016d41a4879aecda1474d3a36d6bf54fa0e4643de029cc2248b0e8",
   "NotoSans-Bold.ttf": "87cb2d84472a7d66da659ee47b6cdb9552326e8c128245231f191b6ac72529d9",

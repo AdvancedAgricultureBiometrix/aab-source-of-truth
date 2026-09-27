@@ -5,7 +5,7 @@
 // admitted through its own endpoint first — parties and verifications
 // (CAP-02), frameworks (CAP-01), plots and associations (CAP-03), deforestation
 // evidence (CAP-04) and custody events (CAP-05) — so these tests run the
-// vertical proof chain. Stored documents are SCS-PLATFORM-01 rows inserted
+// vertical proof chain. Stored documents are AAB-PLATFORM-01 rows inserted
 // directly (no object store is needed). A SUPERSEDED framework and a RETIRED
 // party are set by SQL as the owner: no endpoint reaches those states yet.
 

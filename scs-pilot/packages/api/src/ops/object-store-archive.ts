@@ -1,4 +1,4 @@
-// Backup and restore of the object store (SCS-PLATFORM-01): every stored
+// Backup and restore of the object store (AAB-PLATFORM-01): every stored
 // object — evidence files and PDF renditions — exported to, or imported from,
 // a directory. Run inside the api image, on the stack's internal network, with
 // the api service's object store environment (S3_*):

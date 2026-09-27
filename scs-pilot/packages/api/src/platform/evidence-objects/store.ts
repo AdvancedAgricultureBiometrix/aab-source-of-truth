@@ -1,4 +1,4 @@
-// SCS-PLATFORM-01 persistence — the scs.evidence_object rows. All functions
+// AAB-PLATFORM-01 persistence — the scs.evidence_object rows. All functions
 // take the request's transaction; database errors are mapped to canonical
 // failures (foundation/db-errors.ts).
 

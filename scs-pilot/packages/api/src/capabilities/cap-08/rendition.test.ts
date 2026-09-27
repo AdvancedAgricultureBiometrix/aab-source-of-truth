@@ -1,4 +1,4 @@
-// The SCS-CAP-08 package rendition (SCS-PLATFORM-02, contract a0f8c46), with
+// The SCS-CAP-08 package rendition (AAB-PLATFORM-02, contract a0f8c46), with
 // no database or object store: a fixed package envelope — a real one, compiled
 // by the full-chain integration test, with Thai and Vietnamese text — rendered
 // by the pinned renderer.

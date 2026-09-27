@@ -5,7 +5,7 @@
 //      refuses owner, superuser, BYPASSRLS and other elevated roles
 //   2. authentication — the static actors file (SCS_AUTH_STATIC_ACTORS_FILE)
 //      is loaded and every entry validated
-//   3. evidence object store (SCS-PLATFORM-01): configuration from S3_*, and
+//   3. evidence object store (AAB-PLATFORM-01): configuration from S3_*, and
 //      the bucket created if missing — an unreachable store stops startup
 //   4. listen — foundation/server.ts
 //

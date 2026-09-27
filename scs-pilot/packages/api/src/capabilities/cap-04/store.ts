@@ -2,7 +2,7 @@
 // nothing else. All functions take the request's transaction; they never open
 // their own. Database errors are mapped to canonical failures
 // (foundation/db-errors.ts). Plots and associations (SCS-CAP-03), frameworks
-// (SCS-CAP-01), parties (SCS-CAP-02) and stored objects (SCS-PLATFORM-01) are
+// (SCS-CAP-01), parties (SCS-CAP-02) and stored objects (AAB-PLATFORM-01) are
 // read from their tables, never written.
 
 import type { Tx } from "../../foundation/db.js";
@@ -92,7 +92,7 @@ export async function findAssociation(tx: Tx, associationId: string): Promise<As
       };
 }
 
-/** True if SCS-PLATFORM-01 holds an object with this SHA-256 (the objectId). */
+/** True if AAB-PLATFORM-01 holds an object with this SHA-256 (the objectId). */
 export async function objectExists(tx: Tx, sha256: string): Promise<boolean> {
   const { rows } = await withDatabaseErrors(CAPABILITY_ID, () =>
     tx.query(`SELECT 1 FROM scs.evidence_object WHERE content_sha256 = $1`, [sha256]),

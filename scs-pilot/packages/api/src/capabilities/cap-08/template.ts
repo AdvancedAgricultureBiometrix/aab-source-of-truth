@@ -1,4 +1,4 @@
-// SCS-CAP-08 package template for SCS-PLATFORM-02: the stored package
+// SCS-CAP-08 package template for AAB-PLATFORM-02: the stored package
 // envelope, laid out as blocks. It presents the package and adds nothing but
 // headings, labels and the notices PLATFORM-02 requires. Sections 7 (gap
 // disclosure), 8 (limitations) and 9 (authority boundary) are mandatory: every

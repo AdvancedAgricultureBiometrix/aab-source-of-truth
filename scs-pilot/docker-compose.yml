@@ -30,7 +30,7 @@
 #             password from SCS_API_DB_PASSWORD. Idempotent; exits non-zero on
 #             any failure, and the api does not start (src/migrations/runner.ts)
 # seaweedfs — S3-compatible object storage: the evidence object store
-#             (SCS-PLATFORM-01). The api stores evidence files there under
+#             (AAB-PLATFORM-01). The api stores evidence files there under
 #             their SHA-256, never overwriting (conditional PUT, If-None-Match);
 #             it creates the bucket at startup. Pinned to a release tag: an
 #             unpinned "latest" image is how the MinIO image broke. Its S3

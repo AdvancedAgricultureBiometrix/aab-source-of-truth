@@ -148,7 +148,7 @@ export async function addRoleClaim(ctx: RouteContext<ScsRoleClaimRequest>): Prom
         : "validityPeriodValid: evaluated — the validity period is open-ended on at least one side.",
       "noConflictingRecord: evaluated — no role claim for this party, role and framework that is not SUPERSEDED or EXPIRED overlaps this validity period.",
       `Registration is not verification: REGISTERED records a claimed ${claimedRole} role (verificationStatus CLAIMED_UNVERIFIED). Neither the role nor the party is verified.`,
-      // TODO(evidence-id-model): evidence ids predate the SCS-PLATFORM-01 object store (contract gap); replace this disclosure with an existence check once ids cite stored objects.
+      // TODO(evidence-id-model): evidence ids predate the AAB-PLATFORM-01 object store (contract gap); replace this disclosure with an existence check once ids cite stored objects.
       `Evidence ids not confirmed: the ${evidenceCount} cited role evidence id(s) are not linked to the SCS evidence object store; the store identifies files by SHA-256 digest, so these ids cannot be confirmed against it. They are recorded as submitted.`,
     ],
     decidedBy: actor,
