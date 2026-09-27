@@ -37,6 +37,7 @@ Re-render after any change to a contract's markdown or to the template. Never ed
 | Source `**Status:**` says | Badge |
 |---|---|
 | a contract that is not implemented (contains `CONTRACT` and `NOT IMPLEMENT…`) | `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED` |
+| a public-facing overview (contains `PUBLIC-FACING OVERVIEW`); never a contract | `PUBLIC_OVERVIEW` |
 | `PROPOSED` and nothing stronger | `PROPOSED` |
 | anything else | `UNMAPPED`, and the file is flagged |
 

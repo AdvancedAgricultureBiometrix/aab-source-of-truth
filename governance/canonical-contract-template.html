@@ -85,7 +85,9 @@ mark.ph{background:#fff4c2;color:#6b4e00;border:1px dashed #d9b300;border-radius
 .badge.proposed::before{background:transparent;border:1.5px solid var(--mint)}
 .badge.admitted{background:#fff;color:var(--green)}
 .badge.admitted::before{background:var(--mint);box-shadow:0 0 0 2px var(--green)}
-.badge:not(.design):not(.proposed):not(.admitted){background:var(--mint);color:var(--green)} /* template preview only */
+.badge.overview{background:transparent;color:#fff;border:1px solid var(--mint)}
+.badge.overview::before{background:var(--mint)}
+.badge:not(.design):not(.proposed):not(.admitted):not(.overview){background:var(--mint);color:var(--green)} /* template preview only */
 
 /* ── Metadata ──────────────────────────────────────────────────────── */
 .meta{display:grid;grid-template-columns:31mm 1fr;margin:9mm 0 0;border-top:2px solid var(--green)}

@@ -1,6 +1,6 @@
 # SCS-CAP-01 — Regulatory Framework Registration — Canonical Contract Design — 2026-09-22
 
-**Status:** CANONICAL CONTRACT DESIGN — NOT ADMITTED
+**Status:** CANONICAL CONTRACT — NOT IMPLEMENTATION
 **Authority:** DEFINES THE PROPOSED CANONICAL CONTRACT FOR SCS-CAP-01. Does not admit SCS-CAP-01 as a canonical capability. Establishes no commissioning, production, Gate D, WP05, scientific-validity or regulatory authority. A pilot implementation exists; what it covers is recorded in `scs-pilot/packages/api/src/capabilities/cap-01/README.md`.
 **Domain:** Supply Chain Sovereignty (SCS)
 **Depends on:** `governance/workstream-b/SCS-SUPPLY-CHAIN-SOVEREIGNTY-DOMAIN-DEFINITION-2026-09-22.md`
