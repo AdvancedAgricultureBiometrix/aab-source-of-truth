@@ -143,6 +143,21 @@ export async function findParty(tx: Tx, partyId: string): Promise<PartyForEviden
 }
 
 /**
+ * The party's country for a mandate's geographic scope: its countryOfOperation,
+ * or its countryOfRegistration when none is recorded (SCS-CAP-02,
+ * "Representative submission", check 6). Null if no party has this id.
+ */
+export async function findPartyCountry(tx: Tx, partyId: string): Promise<string | null> {
+  const { rows } = await withDatabaseErrors(CAPABILITY_ID, () =>
+    tx.query<{ country: string }>(
+      `SELECT coalesce(country_of_operation, country_of_registration) AS country FROM scs.party_identity WHERE party_id = $1::uuid`,
+      [partyId],
+    ),
+  );
+  return rows[0]?.country ?? null;
+}
+
+/**
  * Serialise evidence submissions for one party until the transaction ends, so
  * two concurrent submissions of the same evidence id cannot both pass the
  * duplicate check (the second gets EVIDENCE_ALREADY_LINKED, not a constraint error).

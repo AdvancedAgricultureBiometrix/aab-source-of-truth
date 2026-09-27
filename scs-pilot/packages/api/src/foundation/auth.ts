@@ -37,6 +37,9 @@
 //     scopeType SUBJECT. None has a grantId: the pilot has no grant records.
 //     Pilot limitation (SCS-CAP-02): these grants are operator configuration,
 //     not signed, evidenced or receipted.
+//   * One signing key per actor. TODO(signing-key-history), BLOCKING before
+//     any real data: a changed key invalidates every record signed with the
+//     old one (see foundation/signatures.ts). Never rotate a key in use.
 //   * accountableName and the signing key are NOT put in the reference. The
 //     name is personal data, recorded only on governance decisions; a
 //     capability asks the ActorDirectory for it, and for the key, when it
@@ -107,6 +110,12 @@ export interface ActorDirectory {
   /** The actor's registered Ed25519 public key, or null if none is registered. */
   signingKeyOf(actor: ActorReference): KeyObject | null;
 }
+
+/**
+ * Only the signing keys: what an act that relies on a signed record needs to
+ * verify it. It gives no access to accountable names.
+ */
+export type SigningKeyDirectory = Pick<ActorDirectory, "signingKeyOf">;
 
 // ── Pilot: static tokens ─────────────────────────────────────────────────────
 

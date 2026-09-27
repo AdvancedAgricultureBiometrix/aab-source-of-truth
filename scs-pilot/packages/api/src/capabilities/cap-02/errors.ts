@@ -9,10 +9,7 @@
 // (enum and required non-blank), so the server layer refuses them first with
 // REQUEST_VALIDATION_FAILED (400); the codes stay listed because the contract
 // defines them.
-//
-// Not yet listed, because nothing built returns them: LINK_AMBIGUOUS (the link
-// use checks, with representative submission) and the representative
-// submission codes. Each is added with the operation that returns it.
+
 
 import { ScsFailure } from "../../foundation/errors.js";
 
@@ -64,6 +61,14 @@ export const CAP02_FAILURES = {
   // Mandate verification (amendment of 2026-09-27)
   MANDATE_NOT_FOUND: 404,
   MANDATE_NOT_CURRENT: 422,
+  // Representative submission (amendment of 2026-09-27); the same statuses in SCS-CAP-04 and SCS-CAP-05
+  REPRESENTATIVE_NOT_AUTHORISED: 403,
+  LINK_AMBIGUOUS: 409,
+  MANDATE_PARTIES_MISMATCH: 422,
+  MANDATE_ACTION_NOT_PERMITTED: 422,
+  MANDATE_SCOPE_MISMATCH: 422,
+  MANDATE_RELATIONSHIP_NOT_ACTIVE: 422,
+  MANDATE_NOT_VERIFIED: 422,
   DEPENDENCY_UNAVAILABLE: 503,
 } as const;
 

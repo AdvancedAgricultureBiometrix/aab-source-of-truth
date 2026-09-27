@@ -18,7 +18,7 @@ import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 
 import { READER_ROLES as CAP08_READER_ROLES } from "../capabilities/cap-08/errors.js";
 import { cap08Routes } from "../capabilities/cap-08/routes.js";
-import { CAPABILITY_ROUTES } from "../capabilities/index.js";
+import { capabilityRoutes } from "../capabilities/index.js";
 import { StaticTokenAuthenticator } from "../foundation/auth.js";
 import { canonicalJson, sha256Hex } from "../foundation/canonical.js";
 import { runWithCorrelation } from "../foundation/correlation.js";
@@ -302,7 +302,7 @@ before(async () => {
     actors: (Object.keys(TOKENS) as Who[]).map((k) => ({ tokenSha256: createHash("sha256").update(TOKENS[k]).digest("hex"), actor: actors[k] })),
   }, { issuerCountry: "TH" });
   server = createApiServer({
-    routes: [...evidenceObjectRoutes(objects.store), ...renditionRoutes(objects.store, { "SCS-CAP-08": CAP08_READER_ROLES }), ...CAPABILITY_ROUTES, ...cap08Routes(objects.store)],
+    routes: [...evidenceObjectRoutes(objects.store), ...renditionRoutes(objects.store, { "SCS-CAP-08": CAP08_READER_ROLES }), ...capabilityRoutes(authenticator), ...cap08Routes(objects.store)],
     authenticator,
     db: api,
   });

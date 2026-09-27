@@ -11,7 +11,7 @@ import { createHash, randomUUID } from "node:crypto";
 import type { AddressInfo } from "node:net";
 import type { Server } from "node:http";
 
-import { CAPABILITY_ROUTES } from "../capabilities/index.js";
+import { capabilityRoutes } from "../capabilities/index.js";
 import { StaticTokenAuthenticator } from "../foundation/auth.js";
 import { connectDatabase, type Database } from "../foundation/db.js";
 import { createApiServer } from "../foundation/server.js";
@@ -62,7 +62,7 @@ before(async () => {
   const role = await harness.createLoginRole("NOSUPERUSER NOCREATEDB NOCREATEROLE NOBYPASSRLS IN ROLE scs_api");
   api = await connectDatabase(harness.configFor(role.user, role.password));
   const authenticator = StaticTokenAuthenticator.fromConfig({ actors: [{ tokenSha256: createHash("sha256").update(TOKEN).digest("hex"), actor: ACTOR }] }, { issuerCountry: "TH" });
-  server = createApiServer({ routes: CAPABILITY_ROUTES, authenticator, db: api });
+  server = createApiServer({ routes: capabilityRoutes(authenticator), authenticator, db: api });
   await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
   farmer = (await post("/scs/v1/parties", partyRequest("NATURAL_PERSON")))["partyId"] as string;

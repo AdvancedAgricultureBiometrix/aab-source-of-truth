@@ -22,17 +22,18 @@ export interface PlotForEvidence {
   readonly plotVersion: number;
   readonly registrationStatus: string;
   readonly geometryCoordinates: unknown;
+  readonly countryCode: string;
 }
 
 export async function findPlot(tx: Tx, plotId: string): Promise<PlotForEvidence | null> {
   const { rows } = await withDatabaseErrors(CAPABILITY_ID, () =>
-    tx.query<{ plot_id: string; plot_version: number; registration_status: string; geometry_coordinates: unknown }>(
-      `SELECT plot_id, plot_version, registration_status, geometry_coordinates FROM scs.plot WHERE plot_id = $1`,
+    tx.query<{ plot_id: string; plot_version: number; registration_status: string; geometry_coordinates: unknown; country_code: string }>(
+      `SELECT plot_id, plot_version, registration_status, geometry_coordinates, country_code FROM scs.plot WHERE plot_id = $1`,
       [plotId],
     ),
   );
   const r = rows[0];
-  return r === undefined ? null : { plotId: r.plot_id, plotVersion: r.plot_version, registrationStatus: r.registration_status, geometryCoordinates: r.geometry_coordinates };
+  return r === undefined ? null : { plotId: r.plot_id, plotVersion: r.plot_version, registrationStatus: r.registration_status, geometryCoordinates: r.geometry_coordinates, countryCode: r.country_code };
 }
 
 /** A plot framework association with its SCS-CAP-01 framework's deforestation evidence requirements. */
@@ -43,6 +44,8 @@ export interface AssociationForEvidence {
   readonly evidenceRequirementSpecId: string;
   readonly frameworkId: string;
   readonly frameworkStatus: string;
+  readonly commodityCode: string;
+  readonly producerOrOperatorId: string | null;
   readonly acceptedSourceTypes: readonly string[];
   readonly minimumResolutionMetres: number | null;
   readonly minimumRecencyDays: number | null;
@@ -59,6 +62,8 @@ export async function findAssociation(tx: Tx, associationId: string): Promise<As
       evidence_requirement_spec_id: string;
       framework_id: string;
       status: string;
+      commodity_code: string;
+      producer_or_operator_party_id: string | null;
       deforestation_accepted_source_types: string[];
       deforestation_minimum_resolution_metres: string | null;
       deforestation_minimum_recency_days: number | null;
@@ -66,6 +71,7 @@ export async function findAssociation(tx: Tx, associationId: string): Promise<As
       deforestation_authority_confirmation_required: boolean;
     }>(
       `SELECT a.association_id, a.plot_id, a.lifecycle_status, a.evidence_requirement_spec_id, a.framework_id, f.status,
+              a.commodity_code, a.producer_or_operator_party_id,
               f.deforestation_accepted_source_types, f.deforestation_minimum_resolution_metres, f.deforestation_minimum_recency_days,
               f.deforestation_integrity_requirement, f.deforestation_authority_confirmation_required
          FROM scs.plot_framework_association a
@@ -84,12 +90,25 @@ export async function findAssociation(tx: Tx, associationId: string): Promise<As
         evidenceRequirementSpecId: r.evidence_requirement_spec_id,
         frameworkId: r.framework_id,
         frameworkStatus: r.status,
+        commodityCode: r.commodity_code,
+        producerOrOperatorId: r.producer_or_operator_party_id,
         acceptedSourceTypes: r.deforestation_accepted_source_types,
         minimumResolutionMetres: r.deforestation_minimum_resolution_metres === null ? null : Number(r.deforestation_minimum_resolution_metres),
         minimumRecencyDays: r.deforestation_minimum_recency_days,
         integrityRequirement: r.deforestation_integrity_requirement,
         authorityConfirmationRequired: r.deforestation_authority_confirmation_required,
       };
+}
+
+/** The parties holding a tenure claim on the plot at this version (SCS-CAP-03). */
+export async function findTenureClaimants(tx: Tx, plotId: string, plotVersion: number): Promise<string[]> {
+  const { rows } = await withDatabaseErrors(CAPABILITY_ID, () =>
+    tx.query<{ claimant_party_id: string }>(
+      `SELECT DISTINCT claimant_party_id FROM scs.plot_tenure_claim WHERE plot_id = $1 AND plot_version = $2 ORDER BY claimant_party_id`,
+      [plotId, plotVersion],
+    ),
+  );
+  return rows.map((r) => r.claimant_party_id);
 }
 
 /** True if AAB-PLATFORM-01 holds an object with this SHA-256 (the objectId). */

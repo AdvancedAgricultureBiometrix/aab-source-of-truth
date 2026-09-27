@@ -48,6 +48,8 @@ const TARGETS = [
   {
     out: "cap-02.ts",
     schemas: [
+      "cap-02/acting-under.schema.json",
+      "cap-02/representation-checks.schema.json",
       "cap-02/party-registration-request.schema.json",
       "cap-02/party-registration-decision.schema.json",
       "cap-02/party-registration-receipt.schema.json",

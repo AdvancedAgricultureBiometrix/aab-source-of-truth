@@ -10,7 +10,11 @@ This contract adopts the representative submission defined in SCS-CAP-02 ("Repre
 
 **Decisions recorded on 2026-09-27:**
 - **The party a representative acts for** is the plot's producer or operator, or any party holding a tenure claim on the plot. The narrower reading, the producer or operator only, would exclude cooperative members who hold tenure claims but are not named on the association: exactly the smallholders AAB is designed to include.
-- **A `COMPLIANCE_OFFICER` sending `actingUnder` is refused.** Only a `PARTY_REPRESENTATIVE` submits under a mandate. This is intentional.
+- **A `COMPLIANCE_OFFICER` sending `actingUnder` is refused.** Only a `PARTY_REPRESENTATIVE` submits under a mandate. This is intentional. As made exact by SCS-CAP-02's fifth amendment, below.
+
+**Second amendment of 2026-09-27: representative submission made exact.** Found while building it:
+- **Who submits as a representative** is as SCS-CAP-02 settles it ("Representative submission", fifth amendment): `actingUnder` makes a submission representative, whatever other roles the actor holds, and it is then checked in full. The decision above, read literally, would refuse an actor holding both `COMPLIANCE_OFFICER` and `PARTY_REPRESENTATIVE` for the party; this departs from that reading deliberately, for the reason SCS-CAP-02 records. An actor without `PARTY_REPRESENTATIVE` for the party, a compliance officer included, is still refused.
+- **A tenure claimant** is a party holding a tenure claim on the plot's current version.
 
 ## Plain-English boundary statement
 
@@ -520,7 +524,7 @@ framework association, never from the client), `provenance.submittedBy`,
   - **Action:** the mandate permits `SUBMIT_DEFORESTATION_EVIDENCE`.
   - **The party the act is for** is the mandate's `grantingPartyId`. It must be connected to the
     plot: either the framework association's `producerOrOperatorId`, or a party holding a
-    tenure claim on the plot. Otherwise `MANDATE_PARTIES_MISMATCH`.
+    tenure claim on the plot's current version. Otherwise `MANDATE_PARTIES_MISMATCH`.
   - **Scope:** the association's framework is among the mandate's `frameworkAssociationIds`; the
     association's `commodityCode` is within `commodityScope`; and the plot's `countryCode` is
     within `geographicScope`. Otherwise `MANDATE_SCOPE_MISMATCH`.

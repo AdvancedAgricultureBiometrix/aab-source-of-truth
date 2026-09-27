@@ -14,6 +14,12 @@
 //
 // Platform code: statements are opaque JSON here. What a statement contains
 // is defined by the contract that uses it.
+//
+// TODO(signing-key-history) — BLOCKING before any real data is admitted
+// (AAB-PLATFORM-04, second amendment of 2026-09-27): a signature is verified
+// against the signer's current key, so rotating a key invalidates every
+// record signed with the earlier one. Keys must be kept with the period each
+// was valid, and a record verified against the key valid when it was signed.
 
 import { createPublicKey, verify, type KeyObject } from "node:crypto";
 

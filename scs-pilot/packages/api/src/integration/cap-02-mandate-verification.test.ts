@@ -10,8 +10,7 @@ import { createHash, generateKeyPairSync, randomBytes, randomUUID, sign, type Ke
 import type { AddressInfo } from "node:net";
 import type { Server } from "node:http";
 
-import { CAPABILITY_ROUTES } from "../capabilities/index.js";
-import { cap02LinkRoutes } from "../capabilities/cap-02/link-routes.js";
+import { capabilityRoutes } from "../capabilities/index.js";
 import { StaticTokenAuthenticator } from "../foundation/auth.js";
 import { canonicalJson } from "../foundation/canonical.js";
 import { connectDatabase, type Database } from "../foundation/db.js";
@@ -57,7 +56,7 @@ before(async () => {
   const authenticator = StaticTokenAuthenticator.fromConfig({
     actors: WHO.map((w) => ({ tokenSha256: createHash("sha256").update(token(w)).digest("hex"), actor: actors[w], accountableName: `Named ${w}`, signingPublicKey: keys[w].publicKey.export({ format: "der", type: "spki" }).toString("base64") })),
   }, { issuerCountry: "TH" });
-  server = createApiServer({ routes: [...CAPABILITY_ROUTES, ...cap02LinkRoutes(authenticator)], authenticator, db: api });
+  server = createApiServer({ routes: capabilityRoutes(authenticator), authenticator, db: api });
   await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
   const register = async (type: "NATURAL_PERSON" | "COOPERATIVE") => {

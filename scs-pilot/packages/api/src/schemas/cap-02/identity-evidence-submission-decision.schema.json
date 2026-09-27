@@ -59,6 +59,10 @@
         },
         "evidenceIdsNotAlreadyLinked": {
           "type": "boolean"
+        },
+        "representation": {
+          "$ref": "urn:aab:scs:schema:cap-02:representation-checks:1",
+          "description": "Present only for a representative submission."
         }
       }
     },

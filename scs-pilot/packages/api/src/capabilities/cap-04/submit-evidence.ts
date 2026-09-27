@@ -9,7 +9,10 @@
 //
 // Failure checks, in the contract's order (5c6a263, "Checks and the
 // decision"); each is FAIL_CLOSED and writes nothing:
-//   1. authority     — COMPLIANCE_OFFICER only → SUBMITTER_NOT_AUTHORISED (403)
+//   1. authority     — directly: COMPLIANCE_OFFICER, without actingUnder
+//                      → SUBMITTER_NOT_AUTHORISED (403). A PARTY_REPRESENTATIVE
+//                      without actingUnder, or anyone without it sending
+//                      actingUnder → REPRESENTATIVE_NOT_AUTHORISED (403)
 //   2. request rules — attestation details need attestationProvided
 //                      → REQUEST_VALIDATION_FAILED (400)
 //   3. dates         — TEMPORAL_DATES_INCONSISTENT (400), naming every problem
@@ -19,6 +22,12 @@
 //   5. plot and association — PLOT_NOT_FOUND, PLOT_RETIRED,
 //                      FRAMEWORK_ASSOCIATION_NOT_FOUND,
 //                      FRAMEWORK_ASSOCIATION_NOT_ACTIVE
+//      representation — for a representative: every check of SCS-CAP-02
+//                      "Representative submission"
+//                      (capabilities/shared/representation.ts). The act is for
+//                      the association's producer or operator, or a tenure
+//                      claimant on the plot; its scope is the association's
+//                      framework and commodity and the plot's country
 //   6. object and integrity — EVIDENCE_OBJECT_NOT_FOUND, OBJECT_INTEGRITY_FAILED
 //   7. relation to the plot — bounding boxes → EVIDENCE_NOT_RELATED_TO_PLOT
 //   8. evidence type — EVIDENCE_TYPE_INCOMPATIBLE
@@ -35,7 +44,7 @@
 
 import { randomUUID } from "node:crypto";
 
-import { holdsRole } from "../../foundation/actor.js";
+import type { SigningKeyDirectory } from "../../foundation/auth.js";
 import { capabilityPlatformFailure } from "../../foundation/errors.js";
 import type { OperationResult } from "../../foundation/idempotency.js";
 import { writeReceipt } from "../../foundation/receipts.js";
@@ -50,10 +59,11 @@ import type {
   ScsEvidenceAdmissionChecks,
 } from "../../types/cap-04.js";
 import { boundingBox, boxesIntersect, validateGeometry } from "../cap-03/geometry.js";
+import { checkRepresentation, RepresentationRefused, submissionAuthority, type Representation } from "../shared/representation.js";
 import { CAPABILITY_ID, cap04Failure } from "./errors.js";
-import { type LineageType, databaseNow, findAssociation, findEvidenceForPlot, findParties, findPlot, insertEvidence, objectExists } from "./store.js";
+import { type LineageType, databaseNow, findAssociation, findEvidenceForPlot, findParties, findPlot, findTenureClaimants, insertEvidence, objectExists } from "./store.js";
 
-/** The only role that may submit deforestation evidence (contract 5c6a263). Mandate-based submission is a contract gap. */
+/** The role that submits deforestation evidence directly (contract 5c6a263). A PARTY_REPRESENTATIVE submits under a mandate. */
 export const SUBMITTER_ROLE = "COMPLIANCE_OFFICER";
 
 /** The only coordinate reference system accepted: WGS 84. */
@@ -195,17 +205,19 @@ export function attestationExcesses(req: ScsDeforestationEvidenceSubmissionReque
   return out;
 }
 
-export async function submitEvidence(ctx: RouteContext<ScsDeforestationEvidenceSubmissionRequest>): Promise<OperationResult> {
+export const submitEvidence = (keys: SigningKeyDirectory) => async (ctx: RouteContext<ScsDeforestationEvidenceSubmissionRequest>): Promise<OperationResult> => {
   const tx = ctx.tx!;
-  const actor = ctx.actor!;
+  let actor = ctx.actor!;
   const req = ctx.body;
   const { temporalCoverage: t, spatialCoverage: sc, evidenceObject: o, coverageAttestation: att } = req;
   const method = req.analyticalMethod;
 
-  // 1. Authority
-  if (!holdsRole(actor, SUBMITTER_ROLE)) {
+  // 1. Authority: directly, or as a representative (checked in full once the plot and association are resolved)
+  const authority = submissionAuthority(actor, SUBMITTER_ROLE, req.actingUnder);
+  if (authority.kind === "REFUSED_DIRECT") {
     throw cap04Failure("SUBMITTER_NOT_AUTHORISED", [`Submitting deforestation evidence requires the ${SUBMITTER_ROLE} role; actor ${actor.actorId} does not hold it.`]);
   }
+  if (authority.kind === "REFUSED_REPRESENTATIVE") throw cap04Failure("REPRESENTATIVE_NOT_AUTHORISED", authority.reasons);
 
   // 2. Request rules that span fields
   if (!att.attestationProvided) {
@@ -246,6 +258,25 @@ export async function submitEvidence(ctx: RouteContext<ScsDeforestationEvidenceS
     ...(association.frameworkStatus === "ACTIVE" ? [] : [`Framework ${association.frameworkId} of association ${association.associationId} is ${association.frameworkStatus}; it must be ACTIVE.`]),
   ];
   if (inactive.length > 0) throw cap04Failure("FRAMEWORK_ASSOCIATION_NOT_ACTIVE", inactive);
+
+  // Representation: for a representative, every check, for the plot's parties
+  let representation: Representation | null = null;
+  if (authority.kind === "REPRESENTATIVE") {
+    const plotParties = [...new Set([...(association.producerOrOperatorId === null ? [] : [association.producerOrOperatorId]), ...(await findTenureClaimants(tx, plot.plotId, plot.plotVersion))])];
+    try {
+      representation = await checkRepresentation(CAPABILITY_ID, tx, keys, actor, authority.actingUnder, {
+        action: "SUBMIT_DEFORESTATION_EVIDENCE",
+        forParties: plotParties,
+        forDescription: `the plot's producer or operator, or a party holding a tenure claim on plot ${plot.plotId}`,
+        scope: { frameworkId: association.frameworkId, commodityCode: association.commodityCode, countryCode: plot.countryCode, countryDescription: "the plot's country" },
+      });
+    } catch (err) {
+      if (err instanceof RepresentationRefused) throw cap04Failure(err.code, err.reasons);
+      throw err;
+    }
+    // The actor as recorded for this act carries its representation
+    actor = representation.reference;
+  }
 
   // 6. Evidence object and integrity
   const codes: ScsDeforestationEvidenceLimitationCode[] = [];
@@ -403,6 +434,7 @@ export async function submitEvidence(ctx: RouteContext<ScsDeforestationEvidenceS
     provenanceComplete: !codes.includes("PROVENANCE_INCOMPLETE") && !codes.includes("CHAIN_OF_CUSTODY_INCOMPLETE"),
     evidenceTypeCompatibleWithRequirement: true,
     submitterAuthorised: true,
+    ...(representation === null ? {} : { representation: representation.checks }),
   };
   const decision: ScsDeforestationEvidenceAdmissionDecision = {
     decisionId: randomUUID(),
@@ -433,4 +465,4 @@ export async function submitEvidence(ctx: RouteContext<ScsDeforestationEvidenceS
 
   const body: ScsDeforestationEvidenceAdmissionResponse = { decision, receipt: written.receipt, receiptDigest: written.receiptDigest };
   return { status: 201, body };
-}
+};

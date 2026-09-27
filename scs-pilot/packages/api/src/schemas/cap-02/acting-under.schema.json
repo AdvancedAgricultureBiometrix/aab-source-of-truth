@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-02:acting-under:1",
+  "title": "ScsActingUnder",
+  "description": "SCS-CAP-02 \"Representative submission\" (amendments of 2026-09-27): present only when a PARTY_REPRESENTATIVE submits for another party under a mandate. The same shape in SCS-CAP-02, SCS-CAP-04 and SCS-CAP-05. The link, the mandate and the party the act is for are checked by the capability, which refuses the act on any failure.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "representativePartyId",
+    "mandateId"
+  ],
+  "properties": {
+    "representativePartyId": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "description": "The party the actor is linked to (ACTS_FOR_SUBJECT): the mandate's representative party."
+    },
+    "mandateId": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "description": "The SCS-CAP-02 mandate from the party the act is for to the representative party."
+    }
+  }
+}

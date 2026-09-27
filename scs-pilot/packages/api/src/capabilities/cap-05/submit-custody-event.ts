@@ -10,7 +10,12 @@
 //
 // Failure checks, in the contract's order (7b4fc02, "Checks and the
 // decision"); each is FAIL_CLOSED and writes nothing:
-//   1. authority     — COMPLIANCE_OFFICER only → SUBMITTER_NOT_AUTHORISED (403)
+//   1. authority     — directly: COMPLIANCE_OFFICER, without actingUnder
+//                      → SUBMITTER_NOT_AUTHORISED (403). A PARTY_REPRESENTATIVE
+//                      without actingUnder, or anyone without it sending
+//                      actingUnder → REPRESENTATIVE_NOT_AUTHORISED (403).
+//                      submissionMandateId is no longer accepted (amendment
+//                      of 2026-09-27): the request schema refuses it (400)
 //   2. consistency   — INTERNAL_INCONSISTENCY (400), naming every material
 //                      inconsistency (dates against the database clock)
 //   3. framework     — FRAMEWORK_ASSOCIATION_NOT_FOUND (404),
@@ -18,6 +23,12 @@
 //   4. commodity     — the framework's code → COMMODITY_CODE_UNRECOGNISED (422)
 //   5. parties       — SOURCE_/DESTINATION_PARTY_NOT_IDENTIFIABLE,
 //                      PARTY_RETIRED (422)
+//      representation — for a representative: every check of SCS-CAP-02
+//                      "Representative submission"
+//                      (capabilities/shared/representation.ts), for the source
+//                      party; its scope is the event's framework, commodity
+//                      and location country. provenance.submissionMandateId
+//                      is set from actingUnder.mandateId
 //   6. document      — EVIDENCE_OBJECT_NOT_FOUND, DOCUMENT_INTEGRITY_FAILED (422)
 //
 // Everything else is admitted, each shortfall recorded as a limitation code
@@ -30,7 +41,7 @@
 
 import { randomUUID } from "node:crypto";
 
-import { holdsRole } from "../../foundation/actor.js";
+import type { SigningKeyDirectory } from "../../foundation/auth.js";
 import type { OperationResult } from "../../foundation/idempotency.js";
 import { writeReceipt } from "../../foundation/receipts.js";
 import type { RouteContext } from "../../foundation/server.js";
@@ -44,6 +55,7 @@ import type {
   ScsCustodyEventLimitationCode,
   ScsCustodyEventSubmissionRequest,
 } from "../../types/cap-05.js";
+import { checkRepresentation, RepresentationRefused, submissionAuthority, type Representation } from "../shared/representation.js";
 import { CAPABILITY_ID, cap05Failure } from "./errors.js";
 import {
   type LinkType,
@@ -59,7 +71,7 @@ import {
   objectExists,
 } from "./store.js";
 
-/** The only role that may submit a custody event (contract 7b4fc02). A mandate never authorises. */
+/** The role that submits a custody event directly (contract 7b4fc02). A PARTY_REPRESENTATIVE submits under a mandate, in actingUnder. */
 export const SUBMITTER_ROLE = "COMPLIANCE_OFFICER";
 
 /** ScsCustodyEventRecord.schemaVersion written by this implementation. */
@@ -166,10 +178,13 @@ export function inconsistencies(req: ScsCustodyEventSubmissionRequest, now: Date
 }
 
 /**
- * Why a cited mandate is not valid for this event (contract "Authority and
- * mandates"); empty if it is. In force means not revoked and the event within
- * the validity period: the exact instant when eventTimeUTC is given, otherwise
- * any part of the event date's span (across time zones).
+ * Why the event's mandate (sourceParty.actingUnderMandateId) is not valid for
+ * this event (contract "Authority and mandates", "The event's
+ * representation"); empty if it is. In force means not revoked and the event
+ * within the validity period: the exact instant when eventTimeUTC is given,
+ * otherwise any part of the event date's span (across time zones). Covering
+ * the event means its framework, commodity code and location country within
+ * the mandate's scope (amendment of 2026-09-27).
  */
 export function mandateProblems(mandate: MandateForCustody | undefined, req: ScsCustodyEventSubmissionRequest): string[] {
   if (mandate === undefined) return ["no SCS-CAP-02 mandate is registered with that id"];
@@ -185,19 +200,24 @@ export function mandateProblems(mandate: MandateForCustody | undefined, req: Scs
   if (!inPeriod) problems.push(`the event (${t.eventTimeUTC ?? t.eventDate}) is outside its validity period (${mandate.validFrom.toISOString()} to ${mandate.validUntil.toISOString()})`);
   if (!mandate.permittedActions.includes("SUBMIT_CUSTODY_EVIDENCE")) problems.push("it does not permit SUBMIT_CUSTODY_EVIDENCE");
   if (mandate.grantingPartyId !== req.sourceParty.partyId) problems.push(`it is granted by party ${mandate.grantingPartyId}, not by the source party ${req.sourceParty.partyId}`);
+  if (!mandate.frameworkAssociationIds.includes(req.frameworkAssociationId)) problems.push(`the event's framework ${req.frameworkAssociationId} is not among its frameworkAssociationIds`);
+  if (!mandate.commodityScope.includes(req.commodity.commodityCode)) problems.push(`the event's commodity ${req.commodity.commodityCode} is not within its commodityScope (${mandate.commodityScope.join(", ")})`);
+  if (!mandate.geographicScope.includes(req.eventLocation.countryCode)) problems.push(`the event's location country ${req.eventLocation.countryCode} is not within its geographicScope (${mandate.geographicScope.join(", ")})`);
   return problems;
 }
 
-export async function submitCustodyEvent(ctx: RouteContext<ScsCustodyEventSubmissionRequest>): Promise<OperationResult> {
+export const submitCustodyEvent = (keys: SigningKeyDirectory) => async (ctx: RouteContext<ScsCustodyEventSubmissionRequest>): Promise<OperationResult> => {
   const tx = ctx.tx!;
-  const actor = ctx.actor!;
+  let actor = ctx.actor!;
   const req = ctx.body;
   const { sourceParty: sp, destinationParty: dp, commodity, supportingDocument: doc, eventTime: t } = req;
 
-  // 1. Authority
-  if (!holdsRole(actor, SUBMITTER_ROLE)) {
+  // 1. Authority: directly, or as a representative (checked in full once the framework and parties are resolved)
+  const authority = submissionAuthority(actor, SUBMITTER_ROLE, req.actingUnder);
+  if (authority.kind === "REFUSED_DIRECT") {
     throw cap05Failure("SUBMITTER_NOT_AUTHORISED", [`Submitting a custody event requires the ${SUBMITTER_ROLE} role; actor ${actor.actorId} does not hold it.`]);
   }
+  if (authority.kind === "REFUSED_REPRESENTATIVE") throw cap05Failure("REPRESENTATIVE_NOT_AUTHORISED", authority.reasons);
 
   // 2. Internal consistency, against the database clock
   const now = await databaseNow(tx);
@@ -233,6 +253,24 @@ export async function submitCustodyEvent(ctx: RouteContext<ScsCustodyEventSubmis
     ...(destination.registrationStatus === "RETIRED" && dp.partyId !== sp.partyId ? [`Destination party ${dp.partyId} is RETIRED.`] : []),
   ];
   if (retired.length > 0) throw cap05Failure("PARTY_RETIRED", retired);
+
+  // Representation: for a representative, every check, for the source party
+  let representation: Representation | null = null;
+  if (authority.kind === "REPRESENTATIVE") {
+    try {
+      representation = await checkRepresentation(CAPABILITY_ID, tx, keys, actor, authority.actingUnder, {
+        action: "SUBMIT_CUSTODY_EVIDENCE",
+        forParties: [sp.partyId],
+        forDescription: "the source party",
+        scope: { frameworkId: framework.frameworkId, commodityCode: commodity.commodityCode, countryCode: req.eventLocation.countryCode, countryDescription: "the event location's country" },
+      });
+    } catch (err) {
+      if (err instanceof RepresentationRefused) throw cap05Failure(err.code, err.reasons);
+      throw err;
+    }
+    // The actor as recorded for this act carries its representation
+    actor = representation.reference;
+  }
 
   // 6. Supporting document and integrity
   let integrityStatus: "VERIFIED" | "UNVERIFIED" = "UNVERIFIED";
@@ -325,14 +363,13 @@ export async function submitCustodyEvent(ctx: RouteContext<ScsCustodyEventSubmis
   }
   if (!req.chainOfCustodyComplete) limit("CHAIN_OF_CUSTODY_INCOMPLETE", "Chain of custody incomplete, as declared by the submitter.");
 
-  const citedMandates: Array<[string, string]> = [
-    ...(sp.actingUnderMandateId === undefined ? [] : [["/sourceParty/actingUnderMandateId", sp.actingUnderMandateId] as [string, string]]),
-    ...(req.submissionMandateId === undefined ? [] : [["/submissionMandateId", req.submissionMandateId] as [string, string]]),
-  ];
-  const mandates = citedMandates.length === 0 ? new Map<string, MandateForCustody>() : await findMandates(tx, citedMandates.map(([, id]) => id));
-  for (const [at, id] of citedMandates) {
-    const why = mandateProblems(mandates.get(id), req);
-    if (why.length > 0) limit("MANDATE_NOT_VALID", `Mandate not valid: ${at} cites ${id}, but ${why.join("; ")}. The submission is authorised by the actor's ${SUBMITTER_ROLE} role, not by the mandate.`);
+  // The event's representation: a fact about the event, never the submission's authority
+  const mandates = sp.actingUnderMandateId === undefined ? new Map<string, MandateForCustody>() : await findMandates(tx, [sp.actingUnderMandateId]);
+  if (sp.actingUnderMandateId !== undefined) {
+    const why = mandateProblems(mandates.get(sp.actingUnderMandateId), req);
+    if (why.length > 0) {
+      limit("MANDATE_NOT_VALID", `Mandate not valid: /sourceParty/actingUnderMandateId cites ${sp.actingUnderMandateId}, but ${why.join("; ")}. It records the source party's representation at the event, and never authorises the submission.`);
+    }
   }
 
   const x = req.transformation;
@@ -359,7 +396,7 @@ export async function submitCustodyEvent(ctx: RouteContext<ScsCustodyEventSubmis
       sourcePartyVersion: source.partyVersion,
       destinationPartyVersion: destination.partyVersion,
       sourceMandateLinked: sp.actingUnderMandateId !== undefined && mandates.has(sp.actingUnderMandateId),
-      submissionMandateLinked: req.submissionMandateId !== undefined && mandates.has(req.submissionMandateId),
+      submissionMandateId: authority.kind === "REPRESENTATIVE" ? authority.actingUnder.mandateId : null,
       integrityStatus,
       admissionStatus,
       limitations,
@@ -387,11 +424,13 @@ export async function submitCustodyEvent(ctx: RouteContext<ScsCustodyEventSubmis
     documentIntegrityVerified: integrityStatus === "VERIFIED",
     submitterAuthorised: true,
     internallyConsistent: !codes.includes("QUANTITY_GAIN_UNEXPLAINED"),
+    ...(representation === null ? {} : { representation: representation.checks }),
   };
   const decisionReasons: string[] = [];
   if (q === undefined) {
     decisionReasons.push(`quantityRecorded: not applicable — a ${req.eventType} event need not concern a quantity, and none was recorded. This is not a limitation.`);
   }
+  if (representation !== null) decisionReasons.push(...representation.reasons);
   const decision: ScsCustodyEventAdmissionDecision = {
     decisionId: randomUUID(),
     eventId: inserted.eventId,
@@ -425,4 +464,4 @@ export async function submitCustodyEvent(ctx: RouteContext<ScsCustodyEventSubmis
 
   const body: ScsCustodyEventAdmissionResponse = { decision, receipt: written.receipt, receiptDigest: written.receiptDigest };
   return { status: 201, body };
-}
+};

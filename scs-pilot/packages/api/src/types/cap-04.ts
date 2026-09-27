@@ -11,6 +11,7 @@
  * npm test fails if this file differs from what the schemas generate.
  */
 
+import type { ScsActingUnder, ScsRepresentationChecks } from "./cap-02.js";
 import type { ActorReference } from "./shared.js";
 
 /**
@@ -19,6 +20,10 @@ import type { ActorReference } from "./shared.js";
 export interface ScsDeforestationEvidenceSubmissionRequest {
   plotId: string;
   frameworkAssociationId: string;
+  /**
+   * Present only for a representative submission (amendment of 2026-09-27): the mandate from the plot's producer or operator, or a tenure claimant, to the representative party.
+   */
+  actingUnder?: ScsActingUnder;
   evidenceType:
     | "SATELLITE_IMAGE"
     | "REMOTE_SENSING_ANALYSIS"
@@ -234,6 +239,10 @@ export interface ScsEvidenceAdmissionChecks {
   provenanceComplete: boolean;
   evidenceTypeCompatibleWithRequirement: boolean;
   submitterAuthorised: boolean;
+  /**
+   * Present only for a representative submission.
+   */
+  representation?: ScsRepresentationChecks;
 }
 
 /**

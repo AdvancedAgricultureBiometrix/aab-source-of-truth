@@ -75,6 +75,9 @@ export interface MandateForCustody {
   readonly mandateId: string;
   readonly grantingPartyId: string;
   readonly permittedActions: readonly string[];
+  readonly frameworkAssociationIds: readonly string[];
+  readonly commodityScope: readonly string[];
+  readonly geographicScope: readonly string[];
   readonly validFrom: Date;
   readonly validUntil: Date;
   readonly revocationStatus: string;
@@ -83,8 +86,8 @@ export interface MandateForCustody {
 /** Each of `mandateIds` that is a registered SCS-CAP-02 representation mandate. */
 export async function findMandates(tx: Tx, mandateIds: readonly string[]): Promise<Map<string, MandateForCustody>> {
   const { rows } = await withDatabaseErrors(CAPABILITY_ID, () =>
-    tx.query<{ mandate_id: string; granting_party_id: string; permitted_actions: string[]; valid_from: Date; valid_until: Date; revocation_status: string }>(
-      `SELECT mandate_id, granting_party_id, permitted_actions, valid_from, valid_until, revocation_status
+    tx.query<{ mandate_id: string; granting_party_id: string; permitted_actions: string[]; framework_association_ids: string[]; commodity_scope: string[]; geographic_scope: string[]; valid_from: Date; valid_until: Date; revocation_status: string }>(
+      `SELECT mandate_id, granting_party_id, permitted_actions, framework_association_ids, commodity_scope, geographic_scope, valid_from, valid_until, revocation_status
          FROM scs.representation_mandate WHERE mandate_id = ANY($1::uuid[])`,
       [mandateIds],
     ),
@@ -92,7 +95,11 @@ export async function findMandates(tx: Tx, mandateIds: readonly string[]): Promi
   return new Map(
     rows.map((r) => [
       r.mandate_id,
-      { mandateId: r.mandate_id, grantingPartyId: r.granting_party_id, permittedActions: r.permitted_actions, validFrom: r.valid_from, validUntil: r.valid_until, revocationStatus: r.revocation_status },
+      {
+        mandateId: r.mandate_id, grantingPartyId: r.granting_party_id, permittedActions: r.permitted_actions,
+        frameworkAssociationIds: r.framework_association_ids, commodityScope: r.commodity_scope, geographicScope: r.geographic_scope,
+        validFrom: r.valid_from, validUntil: r.valid_until, revocationStatus: r.revocation_status,
+      },
     ]),
   );
 }
@@ -135,9 +142,14 @@ export interface NewCustodyEvent {
   readonly evidenceRequirementSpecId: string;
   readonly sourcePartyVersion: number;
   readonly destinationPartyVersion: number;
-  /** Mandate ids that name a registered mandate (linked); the rest stay cited only. */
+  /** Whether sourceParty.actingUnderMandateId names a registered mandate (linked); otherwise it stays cited only. */
   readonly sourceMandateLinked: boolean;
-  readonly submissionMandateLinked: boolean;
+  /**
+   * provenance.submissionMandateId: the mandate a representative submitted
+   * under, from actingUnder, every check having passed; null for a direct
+   * submission (amendment of 2026-09-27).
+   */
+  readonly submissionMandateId: string | null;
   readonly integrityStatus: "VERIFIED" | "UNVERIFIED";
   readonly admissionStatus: "ADMITTED" | "ADMITTED_WITH_LIMITATIONS";
   readonly limitations: readonly string[];
@@ -217,7 +229,7 @@ export async function insertCustodyEvent(
         x?.conversionRatioDescription ?? null,
         doc.documentId, doc.documentType, doc.documentReference, doc.issuingAuthority ?? null, doc.documentDate ?? null, doc.contentDigest,
         doc.objectId ?? null, n.integrityStatus,
-        JSON.stringify(n.actor), r.submissionMandateId ?? null, n.submissionMandateLinked ? r.submissionMandateId! : null, r.chainOfCustodyComplete,
+        JSON.stringify(n.actor), n.submissionMandateId, n.submissionMandateId, r.chainOfCustodyComplete,
         r.uncertainties, r.contradictions, r.knownGaps,
         n.admissionStatus, n.limitations, n.limitationCodes,
       ],

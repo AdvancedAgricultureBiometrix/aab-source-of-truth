@@ -25,6 +25,8 @@ Nothing is implemented by this amendment. Every other rule in this contract is u
 
 It also records that a mandate verification assessment is not a governance decision. Nothing else changes.
 
+**Fifth amendment of 2026-09-27: representative submission made exact.** Found while building representative submission ("Representative submission"). Three rules are settled: whose `PARTY_REPRESENTATIVE` counts; an actor who holds both a direct role and `PARTY_REPRESENTATIVE`; and when a mandate is current. The second departs deliberately from the literal text of SCS-CAP-04 and SCS-CAP-05, and says why. Signing-key history is recorded as blocking the admission of any real data (AAB-PLATFORM-04, second amendment).
+
 **Decisions recorded on 2026-09-27:**
 1. **All three additions go together.** Without mandate verification, links deliver nothing usable: an unverified mandate cannot be acted under.
 2. **`IS_SUBJECT` is for natural persons only, and `ACTS_FOR_SUBJECT` for organisations only.** A natural person acting for another natural person does so under a mandate, not a link.
@@ -1150,10 +1152,10 @@ Every write returns its decision with a receipt, written in the same transaction
 **A representative act passes every check below, in the act's own transaction, before the act's own rules.** This implements AAB-PLATFORM-03 section 3 for SCS. It applies to every capability whose act is a mandate action. In this contract, that is `SUBMIT_IDENTITY_EVIDENCE`; SCS-CAP-03, SCS-CAP-04 and SCS-CAP-05 adopt it by their own amendments.
 
 The checks run in this order, and each failure ends in `FAIL_CLOSED` and writes nothing:
-1. **Role.** The actor holds `PARTY_REPRESENTATIVE`, in scope. Otherwise `REPRESENTATIVE_NOT_AUTHORISED`.
+1. **Role.** The actor holds `PARTY_REPRESENTATIVE` granted for `actingUnder.representativePartyId` itself: `scopeType: SUBJECT`, `scopeId: "SCS:PARTY:<partyId>"` (fifth amendment of 2026-09-27). A deployment-wide grant is not enough: it would let anyone holding the role act for any party. Nor is a grant for another party. Otherwise `REPRESENTATIVE_NOT_AUTHORISED`. Pilot limitation: as for `PARTY_AUTHORITY_REPRESENTATIVE`, the grant is operator configuration, not a signed, evidenced act, and every representative act discloses this.
 2. **Link.** Exactly one `ACTIVE`, validly signed `ACTS_FOR_SUBJECT` link binds the actor to `actingUnder.representativePartyId`, and that party is current. Otherwise the AAB-PLATFORM-04 use-check failure: `LINK_NOT_FOUND`, `LINK_AMBIGUOUS`, `LINK_NOT_ACTIVE`, `LINK_SIGNATURE_INVALID`, `LINK_RELATION_NOT_PERMITTED` or `LINK_SUBJECT_NOT_CURRENT`.
 3. **Mandate parties.** The mandate exists (`MANDATE_NOT_FOUND`). Its `representativePartyId` is the linked party, and its `grantingPartyId` is the party the act is for. Otherwise `MANDATE_PARTIES_MISMATCH`.
-4. **Mandate current.** `revocationStatus: NOT_REVOKED`, and the act falls within `validFrom` and `validUntil`. Otherwise `MANDATE_NOT_CURRENT`.
+4. **Mandate current.** `revocationStatus: NOT_REVOKED`, and the act falls within `validFrom` and `validUntil`. Otherwise `MANDATE_NOT_CURRENT`. The act's time is the time of the submission, and the mandate is current from `validFrom` up to, not including, `validUntil` (fifth amendment of 2026-09-27).
 5. **Action.** The mandate's `permittedActions` include the act's action, for example `SUBMIT_IDENTITY_EVIDENCE`. Otherwise `MANDATE_ACTION_NOT_PERMITTED`.
 6. **Scope.** The act falls within the mandate's `frameworkAssociationIds`, `commodityScope` and `geographicScope`. Otherwise `MANDATE_SCOPE_MISMATCH`. Identity evidence is not tied to a framework or commodity, so for `SUBMIT_IDENTITY_EVIDENCE` only geography applies: the granting party's `countryOfOperation`, or its `countryOfRegistration` when no country of operation is recorded, is within `geographicScope`.
 7. **Relationship.** An `ACTIVE` relationship still exists between the two parties, covering every framework the mandate references. Otherwise `MANDATE_RELATIONSHIP_NOT_ACTIVE`.
@@ -1178,6 +1180,11 @@ interface ScsRepresentationChecks {
 ```
 
 **The mandate's authority boundary still applies.** A representative never approves the granting party, alters its identity, makes legal declarations without explicit authority, or acts outside the mandate's declared scope.
+
+**Who submits as a representative** (fifth amendment of 2026-09-27):
+- **`actingUnder` makes a submission representative,** whatever other roles the actor holds. It is then checked in full, and refused on any failure.
+- **Without `actingUnder`, the submission is direct,** on the capability's direct role. A `PARTY_REPRESENTATIVE` never submits directly: without `actingUnder`, it is refused as `REPRESENTATIVE_NOT_AUTHORISED`.
+- **This departs from the literal text of SCS-CAP-04 and SCS-CAP-05,** "A `COMPLIANCE_OFFICER` sending `actingUnder` is refused." Read literally, it refuses an actor who holds both `COMPLIANCE_OFFICER` and `PARTY_REPRESENTATIVE` for the party, so such an actor could never act as a representative: an operational dead end for the pilot, where one person often holds both. What that text protects is kept: an actor without `PARTY_REPRESENTATIVE` for the party, a compliance officer included, is refused when sending `actingUnder`. A representative act never proceeds on a direct role, and a direct act never on `PARTY_REPRESENTATIVE` (AAB-PLATFORM-03, section 3).
 
 ## Verification assessment recording
 
@@ -1466,7 +1473,9 @@ defined submitting role, and is a future contract decision.
 changes only through a verification assessment, but this contract defines verification
 assessments for parties and, since the amendment of 2026-09-27, mandates only.
 
-**Open item: designating a party's authority representative.** In production, designating a `PARTY_AUTHORITY_REPRESENTATIVE` must be a signed, evidenced act with a receipt. It is not defined yet; the pilot records the designation as operator configuration, disclosed ("Who may suspend a link").
+**Open item: designating a party's authority representative.** In production, designating a `PARTY_AUTHORITY_REPRESENTATIVE` must be a signed, evidenced act with a receipt. It is not defined yet; the pilot records the designation as operator configuration, disclosed ("Who may suspend a link"). The same holds for `PARTY_REPRESENTATIVE` grants for a party ("Representative submission", check 1).
+
+**BLOCKING before any real data is admitted: signing-key history** (AAB-PLATFORM-04, second amendment of 2026-09-27). A signature is verified against the signer's currently registered key. Rotating a key therefore makes every record signed with the earlier key fail verification: every link and status record the signer ever made becomes unusable at once, and every act that relies on one is refused. A governed record must not stop being valid because its signer's key changed. Before any real data is admitted, each actor's signing keys must be kept with the period each was valid, and a record verified against the key that was valid when it was signed. Until then, a key is never rotated while records it signed are in use; the SCS pilot keeps one key per actor, in its actors file.
 
 **Current system limit: no registry of verifying authorities.** `verifyingAuthority` is
 recorded as declared; it cannot be checked against a registry, and the decision must say so.

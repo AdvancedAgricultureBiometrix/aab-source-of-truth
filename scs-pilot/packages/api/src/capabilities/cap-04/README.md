@@ -3,7 +3,7 @@
 **Status: `submitEvidence` (`POST /scs/v1/deforestation-evidence`) is implemented for the pilot (contract 5c6a263, "Admission rules for the pilot"). `quarantineEvidence` is not yet specified as a request and decision. The reads are deferred. `MINIMUM_VERTICAL_SLICE_PROVEN` for CAP-04, on the adopted standard: admitted deforestation evidence feeds an SCS-CAP-06 evaluation that runs end to end, honestly, and reproducibly (`integration/cap-06-evaluate-sufficiency.test.ts`, "end to end over real admitted CAP-04 and CAP-05 records"). Spatial coverage is still not verified (TODO(postgis)), which the evaluation discloses.**
 
 - **Failure checks,** in the contract's order. Each is FAIL_CLOSED and writes nothing:
-  1. Authority: only `COMPLIANCE_OFFICER` (`SUBMITTER_NOT_AUTHORISED`).
+  1. Authority: a `COMPLIANCE_OFFICER` submits directly (`SUBMITTER_NOT_AUTHORISED`). Representative submission (SCS-CAP-02, "Representative submission"; amendments of 2026-09-27): an actor holding `PARTY_REPRESENTATIVE` granted for the representative party itself (never deployment-wide) and sending `actingUnder` passes the eight link and mandate checks (`capabilities/shared/representation.ts`), each failing closed with its own code, and the act records `representation` in its admission checks and on the submitter's `ActorReference`. A `PARTY_REPRESENTATIVE` without `actingUnder`, or anyone without that role sending it, is `REPRESENTATIVE_NOT_AUTHORISED`. The checks run after the plot and association are resolved: the act is for the association's producer or operator, or a tenure claimant on the plot at its current version, and its scope is the association's framework and commodity and the plot's country.
   2. Request rule: attestation details require `attestationProvided: true` (400).
   3. Dates, checked against the database clock (`TEMPORAL_DATES_INCONSISTENT`):
      - a start is never after its end;
@@ -36,7 +36,6 @@
 - **`TODO(object-store-credentials)`** (see `platform/evidence-objects/object-store.ts`). The pilot stack gives the API an S3 identity with admin rights on the SeaweedFS store. Before any real data is stored, the API needs a dedicated identity that can only put and read objects, with object locking or an equivalent retention guarantee.
 - **Test infrastructure gap.** No lifecycle endpoints exist yet: there is no `retirePlot`, no association withdrawal or supersession, and no framework supersession. So `cap-04-submit-evidence.test.ts` sets retired plots, inactive associations and superseded frameworks directly with SQL as the database owner. When those endpoints exist, the tests should use them instead.
 - **Contract gaps** (contract "Open gaps"):
-  - submission under a CAP-02 mandate: an actor is not linked to a party;
   - which of the two attested periods is authoritative (both are checked against the analysis period);
   - whether the claimed period must lie within the analysis period (not checked);
   - the criteria for `REJECTED` and `QUARANTINED`.

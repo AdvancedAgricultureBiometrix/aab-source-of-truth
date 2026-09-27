@@ -13,6 +13,12 @@ Three structural problems were found while planning the build, and are fixed her
 
 Signatures are Ed25519, made by the person with their own key, outside the server. The server holds only public keys, and verifies.
 
+## Second amendment of 2026-09-27: which link applies, and signing-key history
+
+Found while building representative submission, the first act that relies on a link:
+- **Which link applies to an act** (section 3, check 1) is made exact, so that every failure code is reachable and each names what was found.
+- **Signing-key history** is recorded as an open item that blocks the admission of any real data ("Open items").
+
 ## Sources
 
 - `governance/AAB-PLATFORM-03-ACTOR-REFERENCE-CANONICAL-CONTRACT-2026-09-27.md`: section 2 sets the rules this contract must keep; section 3 sets the mandate checks that use a link
@@ -169,7 +175,14 @@ interface ActorSubjectLinkStatement {
 
 **When an actor claims to act as or for a subject,** the capability checks the link, in the same transaction and snapshot as the act, failing closed at the first unmet check:
 
-1. **Exactly one link applies:** one link for this actor (`issuer`, `actorId`) and this subject, with the relation the act requires. None is `LINK_NOT_FOUND`. More than one is `LINK_AMBIGUOUS`; it never picks one.
+1. **Exactly one link applies:** one link for this actor (`issuer`, `actorId`) and this subject, with the relation the act requires. None is `LINK_NOT_FOUND`. More than one is `LINK_AMBIGUOUS`; it never picks one. Made exact by the second amendment of 2026-09-27:
+   - **A link applies while it is `ACTIVE` or `SUSPENDED`:** it is the actor's current relationship with the subject. A `REVOKED` link, a superseded link and an `EXPIRED` link have ended, and apply to nothing.
+   - **Each failure names what was found:**
+     - more than one current link with the act's relation: `LINK_AMBIGUOUS`;
+     - no current link with the act's relation, but a current link with the other relation: `LINK_RELATION_NOT_PERMITTED` (check 3);
+     - no current link at all, but an ended link with the act's relation: `LINK_NOT_ACTIVE`, naming its state;
+     - otherwise: `LINK_NOT_FOUND`.
+   - A `SUSPENDED` link applies, then fails check 2 as `LINK_NOT_ACTIVE`.
 2. **The link is `ACTIVE` at the time of the act, its statement signature verifies, and its `linkDigest` matches its content:** otherwise `LINK_NOT_ACTIVE`, naming the state, or `LINK_SIGNATURE_INVALID`.
 3. **The relation fits the act:**
    - acting as oneself requires `IS_SUBJECT`;
@@ -338,3 +351,4 @@ A domain that uses actor–subject links adopts this contract by amendment to it
 - **`LINK_OFFICER`, `PARTY_REPRESENTATIVE` and each domain's subject authority role** in the role registry (`TODO(role-registry)`).
 - **Designating a subject authority representative, as a governed act.** In a production deployment, granting a subject authority role must itself be a signed, evidenced act with a receipt, on evidence that the subject designated that person. It is not defined yet. A pilot may record the grant as operator configuration, as the SCS pilot does, disclosed as a limitation.
 - **Signing keys** for link creators and status-record writers, shared with the admission and Gate D open items.
+- **BLOCKING before any real data is admitted: signing-key history** (second amendment of 2026-09-27). A signature is verified against the signer's currently registered key. Rotating a key therefore makes every record signed with the earlier key fail verification: every link and status record the signer ever made becomes unusable at once, and every act that relies on one is refused. A governed record must not stop being valid because its signer's key changed. Before any real data is admitted, each actor's signing keys must be kept with the period each was valid, and a record verified against the key that was valid when it was signed. Until then, a key is never rotated while records it signed are in use; the SCS pilot keeps one key per actor, in its actors file.
