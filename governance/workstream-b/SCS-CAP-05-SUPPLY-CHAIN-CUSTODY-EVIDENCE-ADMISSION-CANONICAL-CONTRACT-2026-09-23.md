@@ -24,6 +24,10 @@ This closes this contract's gaps on submission under a mandate, the two mandate 
 - **A `COMPLIANCE_OFFICER` sending `actingUnder` is refused;** they record an event's representation through `sourceParty.actingUnderMandateId`.
 - **No mandate action for representation in a transaction is added now.** The gap is recorded. It is addressed when SCS-CAP-02's mandate action vocabulary is reviewed deliberately, as its own contract change.
 
+**Second amendment of 2026-09-27: representative submission made exact.** Found while building it:
+- **Who submits as a representative** is as SCS-CAP-02 settles it ("Representative submission", fifth amendment): `actingUnder` makes a submission representative, whatever other roles the actor holds, and it is then checked in full. The decision above, read literally, would refuse an actor holding both `COMPLIANCE_OFFICER` and `PARTY_REPRESENTATIVE` for the party; this departs from that reading deliberately, for the reason SCS-CAP-02 records. An actor without `PARTY_REPRESENTATIVE` for the party, a compliance officer included, is still refused.
+- **The two mandates are current at different times.** The submission's mandate (`actingUnder`) is current at the time of the submission, from `validFrom` up to, not including, `validUntil`. The event's mandate (`sourceParty.actingUnderMandateId`) is checked against the event's date, as before.
+
 ## Plain-English boundary statement
 
 SCS-CAP-05 admits genuine, attributable, and usable supply chain custody
