@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-02:actor-party-link-read:1",
+  "title": "ScsActorPartyLink",
+  "description": "SCS-CAP-02 ScsActorPartyLink: the body of GET /scs/v1/actor-party-links/:linkId (200). The link and its status records exactly as recorded, in recordedAt order, with currentState and supersededByLinkId derived when read. Nothing is written, and signatures are not verified by the read (third amendment of 2026-09-27).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "link",
+    "statusRecords",
+    "currentState"
+  ],
+  "properties": {
+    "link": {
+      "$ref": "urn:aab:scs:schema:platform:actor-subject-link:1"
+    },
+    "statusRecords": {
+      "type": "array",
+      "items": {
+        "$ref": "urn:aab:scs:schema:platform:actor-subject-link-status-record:1"
+      }
+    },
+    "currentState": {
+      "type": "string",
+      "enum": [
+        "ACTIVE",
+        "SUSPENDED",
+        "REVOKED",
+        "EXPIRED"
+      ]
+    },
+    "supersededByLinkId": {
+      "type": "string",
+      "format": "uuid"
+    }
+  }
+}

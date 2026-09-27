@@ -23,7 +23,19 @@ const typesDir = path.join(root, "src", "types");
  */
 const TARGETS = [
   { out: "shared.ts", schemas: ["shared/actor-reference.schema.json", "shared/actor-reference-v1.schema.json", "shared/actor-reference-v2.schema.json"] },
-  { out: "platform.ts", schemas: ["platform/evidence-object.schema.json", "platform/rendition-params.schema.json"] },
+  {
+    out: "platform.ts",
+    schemas: [
+      "platform/evidence-object.schema.json",
+      "platform/rendition-params.schema.json",
+      "platform/subject-key.schema.json",
+      "platform/actor-subject-link-actor.schema.json",
+      "platform/actor-subject-link-statement.schema.json",
+      "platform/actor-subject-link.schema.json",
+      "platform/actor-subject-link-status-statement.schema.json",
+      "platform/actor-subject-link-status-record.schema.json",
+    ],
+  },
   {
     out: "cap-01.ts",
     schemas: [
@@ -63,6 +75,16 @@ const TARGETS = [
       "cap-02/verification-assessment-decision.schema.json",
       "cap-02/verification-assessment-receipt.schema.json",
       "cap-02/verification-assessment-response.schema.json",
+      "cap-02/actor-party-link-params.schema.json",
+      "cap-02/actor-party-link-request.schema.json",
+      "cap-02/actor-party-link-decision.schema.json",
+      "cap-02/actor-party-link-receipt.schema.json",
+      "cap-02/actor-party-link-response.schema.json",
+      "cap-02/actor-party-link-status-request.schema.json",
+      "cap-02/actor-party-link-status-decision.schema.json",
+      "cap-02/actor-party-link-status-receipt.schema.json",
+      "cap-02/actor-party-link-status-response.schema.json",
+      "cap-02/actor-party-link-read.schema.json",
     ],
   },
   {

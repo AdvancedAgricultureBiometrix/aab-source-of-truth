@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-02:actor-party-link-status-request:1",
+  "title": "ScsActorPartyLinkStatusRequest",
+  "description": "SCS-CAP-02 ScsActorPartyLinkStatusRequest: an AAB-PLATFORM-04 status statement against the link in the route, and the writer's signature over its canonical JSON, made outside the server.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "statusStatement",
+    "statementSignature"
+  ],
+  "properties": {
+    "statusStatement": {
+      "allOf": [
+        {
+          "$ref": "urn:aab:scs:schema:platform:actor-subject-link-status-statement:1"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "linkId": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+              "description": "The link in the route, lowercase."
+            }
+          }
+        }
+      ]
+    },
+    "statementSignature": {
+      "description": "Ed25519 signature over the statement's canonical JSON: 64 bytes, standard base64.",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9+/]{86}==$"
+    }
+  }
+}

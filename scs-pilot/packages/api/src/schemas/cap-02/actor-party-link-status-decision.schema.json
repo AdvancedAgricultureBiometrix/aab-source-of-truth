@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-02:actor-party-link-status-decision:1",
+  "title": "ScsActorPartyLinkStatusDecision",
+  "description": "SCS-CAP-02 ScsActorPartyLinkStatusDecision: a status record was written against a link. Every check was performed and passed.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decisionId",
+    "statusRecordId",
+    "linkId",
+    "action",
+    "decision",
+    "writerCapacity",
+    "eligibilityChecks",
+    "resultingState",
+    "recordDigest",
+    "decisionReasons",
+    "decidedBy",
+    "decidedAt"
+  ],
+  "properties": {
+    "decisionId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "statusRecordId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "linkId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "action": {
+      "type": "string",
+      "enum": [
+        "SUSPEND",
+        "REINSTATE",
+        "REVOKE"
+      ]
+    },
+    "decision": {
+      "type": "string",
+      "const": "RECORDED"
+    },
+    "writerCapacity": {
+      "type": "string",
+      "enum": [
+        "CREATING_ROLE",
+        "SUBJECT_AUTHORITY"
+      ]
+    },
+    "eligibilityChecks": {
+      "title": "ScsActorPartyLinkStatusEligibilityChecks",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "linkExists",
+        "writerPermittedForAction",
+        "actionPossibleFromCurrentState",
+        "statementBindsCurrentLink",
+        "statementSignatureVerified"
+      ],
+      "properties": {
+        "linkExists": {
+          "type": "boolean",
+          "const": true
+        },
+        "writerPermittedForAction": {
+          "type": "boolean",
+          "const": true
+        },
+        "actionPossibleFromCurrentState": {
+          "type": "boolean",
+          "const": true
+        },
+        "statementBindsCurrentLink": {
+          "type": "boolean",
+          "const": true
+        },
+        "statementSignatureVerified": {
+          "type": "boolean",
+          "const": true
+        }
+      }
+    },
+    "resultingState": {
+      "type": "string",
+      "enum": [
+        "ACTIVE",
+        "SUSPENDED",
+        "REVOKED",
+        "EXPIRED"
+      ],
+      "description": "The link's state after this record."
+    },
+    "recordDigest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "decisionReasons": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4000,
+        "pattern": "\\S"
+      }
+    },
+    "decidedBy": {
+      "$ref": "urn:aab:scs:schema:shared:actor-reference:1"
+    },
+    "decidedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

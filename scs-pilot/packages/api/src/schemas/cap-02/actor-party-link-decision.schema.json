@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-02:actor-party-link-decision:1",
+  "title": "ScsActorPartyLinkDecision",
+  "description": "SCS-CAP-02 ScsActorPartyLinkDecision: a link was created. Every check was performed and passed; a failed check refuses the request and writes nothing.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decisionId",
+    "linkId",
+    "partyId",
+    "decision",
+    "eligibilityChecks",
+    "linkDigest",
+    "decisionReasons",
+    "decidedBy",
+    "decidedAt"
+  ],
+  "properties": {
+    "decisionId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "linkId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "partyId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "decision": {
+      "type": "string",
+      "const": "CREATED"
+    },
+    "eligibilityChecks": {
+      "title": "ScsActorPartyLinkEligibilityChecks",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "creatorAuthorised",
+        "notSelfAsserted",
+        "partyCurrent",
+        "relationFitsPartyType",
+        "evidenceStored",
+        "validityWithinMaximum",
+        "noOverlappingActiveLink",
+        "creatorIndependentOfMandateVerification",
+        "statementSignatureVerified"
+      ],
+      "properties": {
+        "creatorAuthorised": {
+          "type": "boolean",
+          "const": true
+        },
+        "notSelfAsserted": {
+          "type": "boolean",
+          "const": true
+        },
+        "partyCurrent": {
+          "type": "boolean",
+          "const": true
+        },
+        "relationFitsPartyType": {
+          "type": "boolean",
+          "const": true
+        },
+        "evidenceStored": {
+          "type": "boolean",
+          "const": true
+        },
+        "validityWithinMaximum": {
+          "type": "boolean",
+          "const": true
+        },
+        "noOverlappingActiveLink": {
+          "type": "boolean",
+          "const": true
+        },
+        "creatorIndependentOfMandateVerification": {
+          "type": "boolean",
+          "const": true
+        },
+        "statementSignatureVerified": {
+          "type": "boolean",
+          "const": true
+        }
+      }
+    },
+    "linkDigest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "decisionReasons": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4000,
+        "pattern": "\\S"
+      }
+    },
+    "decidedBy": {
+      "$ref": "urn:aab:scs:schema:shared:actor-reference:1"
+    },
+    "decidedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

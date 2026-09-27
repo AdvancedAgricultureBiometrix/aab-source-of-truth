@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:platform:actor-subject-link:1",
+  "title": "ActorSubjectLink",
+  "description": "AAB-PLATFORM-04 ActorSubjectLink: a write-once record binding one actor to one domain subject, as it (IS_SUBJECT) or for it (ACTS_FOR_SUBJECT). Its fields are the signed statement's; the server sets linkId, createdAt and createdBy, then linkDigest over everything else. It grants no authority. Its state is derived when read.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "linkId",
+    "schemaVersion",
+    "actor",
+    "subject",
+    "relation",
+    "validFrom",
+    "validUntil",
+    "authorisationEvidence",
+    "createdAt",
+    "createdBy",
+    "linkStatement",
+    "statementSignature",
+    "linkDigest"
+  ],
+  "properties": {
+    "linkId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "schemaVersion": {
+      "type": "string",
+      "const": "1"
+    },
+    "actor": {
+      "$ref": "urn:aab:scs:schema:platform:actor-subject-link-actor:1"
+    },
+    "subject": {
+      "$ref": "urn:aab:scs:schema:platform:subject-key:1"
+    },
+    "relation": {
+      "type": "string",
+      "enum": [
+        "IS_SUBJECT",
+        "ACTS_FOR_SUBJECT"
+      ]
+    },
+    "validFrom": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "validUntil": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "authorisationEvidence": {
+      "description": "Evidence that the subject authorised the relationship: at least one AAB-PLATFORM-01 stored object.",
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 20,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "evidenceObjectSha256",
+          "description"
+        ],
+        "properties": {
+          "evidenceObjectSha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$",
+            "description": "The AAB-PLATFORM-01 objectId: lowercase hex SHA-256 of the stored bytes."
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500,
+            "pattern": "\\S"
+          }
+        }
+      }
+    },
+    "supersedesLinkId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "createdBy": {
+      "$ref": "urn:aab:scs:schema:shared:actor-reference:1",
+      "description": "The creator: HUMAN, with accountableName (a governance decision); never the linked actor."
+    },
+    "linkStatement": {
+      "$ref": "urn:aab:scs:schema:platform:actor-subject-link-statement:1"
+    },
+    "statementSignature": {
+      "description": "Ed25519 signature over the statement's canonical JSON: 64 bytes, standard base64.",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9+/]{86}==$"
+    },
+    "linkDigest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "description": "\"sha256:\" and the SHA-256 of the canonical JSON of every other field of the record."
+    }
+  }
+}

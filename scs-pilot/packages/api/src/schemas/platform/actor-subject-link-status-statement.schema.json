@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:platform:actor-subject-link-status-statement:1",
+  "title": "ActorSubjectLinkStatusStatement",
+  "description": "AAB-PLATFORM-04 ActorSubjectLinkStatusStatement: what a status record's writer decides, and signs. It names the link's own linkDigest, so it binds the exact link it acts on.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "statementType",
+    "linkId",
+    "linkDigest",
+    "action",
+    "reason",
+    "writer"
+  ],
+  "properties": {
+    "statementType": {
+      "const": "ACTOR_SUBJECT_LINK_STATUS"
+    },
+    "linkId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "linkDigest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "action": {
+      "type": "string",
+      "enum": [
+        "SUSPEND",
+        "REINSTATE",
+        "REVOKE"
+      ]
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000,
+      "pattern": "\\S"
+    },
+    "writer": {
+      "$ref": "urn:aab:scs:schema:platform:actor-subject-link-actor:1"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:cap-02:actor-party-link-params:1",
+  "title": "ScsActorPartyLinkPathParams",
+  "description": "Path parameters of GET /scs/v1/actor-party-links/:linkId and POST /scs/v1/actor-party-links/:linkId/status-records.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "linkId"
+  ],
+  "properties": {
+    "linkId": {
+      "type": "string",
+      "format": "uuid"
+    }
+  }
+}

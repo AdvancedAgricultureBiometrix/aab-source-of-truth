@@ -9,6 +9,10 @@
 // (enum and required non-blank), so the server layer refuses them first with
 // REQUEST_VALIDATION_FAILED (400); the codes stay listed because the contract
 // defines them.
+//
+// Not yet listed, because nothing built returns them: LINK_AMBIGUOUS (the link
+// use checks, with representative submission) and the representative and
+// mandate verification codes. Each is added with the operation that returns it.
 
 import { ScsFailure } from "../../foundation/errors.js";
 
@@ -42,6 +46,21 @@ export const CAP02_FAILURES = {
   VERIFICATION_STATUS_NOT_RECORDABLE: 400,
   VERIFICATION_EVIDENCE_NOT_LINKED: 422,
   SUPERSEDED_ASSESSMENT_NOT_FOUND: 422,
+  // Actor–party links (AAB-PLATFORM-04; amendments of 2026-09-27)
+  LINK_CREATOR_NOT_AUTHORISED: 403,
+  LINK_SELF_ASSERTED: 403,
+  LINK_SUBJECT_NOT_FOUND: 422,
+  LINK_SUBJECT_NOT_CURRENT: 422,
+  LINK_EVIDENCE_MISSING: 422,
+  LINK_VALIDITY_INVALID: 400,
+  LINK_ALREADY_ACTIVE: 409,
+  LINK_SIGNATURE_INVALID: 422,
+  LINK_NOT_FOUND: 404,
+  LINK_NOT_ACTIVE: 422,
+  LINK_RELATION_NOT_PERMITTED: 422,
+  LINK_STATUS_NOT_PERMITTED: 409,
+  LINK_STATUS_WRITER_NOT_AUTHORISED: 403,
+  LINK_READER_NOT_AUTHORISED: 403,
   DEPENDENCY_UNAVAILABLE: 503,
 } as const;
 

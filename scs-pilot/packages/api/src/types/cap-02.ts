@@ -29,12 +29,23 @@
  *   src/schemas/cap-02/verification-assessment-decision.schema.json
  *   src/schemas/cap-02/verification-assessment-receipt.schema.json
  *   src/schemas/cap-02/verification-assessment-response.schema.json
+ *   src/schemas/cap-02/actor-party-link-params.schema.json
+ *   src/schemas/cap-02/actor-party-link-request.schema.json
+ *   src/schemas/cap-02/actor-party-link-decision.schema.json
+ *   src/schemas/cap-02/actor-party-link-receipt.schema.json
+ *   src/schemas/cap-02/actor-party-link-response.schema.json
+ *   src/schemas/cap-02/actor-party-link-status-request.schema.json
+ *   src/schemas/cap-02/actor-party-link-status-decision.schema.json
+ *   src/schemas/cap-02/actor-party-link-status-receipt.schema.json
+ *   src/schemas/cap-02/actor-party-link-status-response.schema.json
+ *   src/schemas/cap-02/actor-party-link-read.schema.json
  * To change these types, edit the schema(s) above, then run:
  *   npm run generate:types
  * npm test fails if this file differs from what the schemas generate.
  */
 
 import type { ActorReference } from "./shared.js";
+import type { ActorSubjectLink, ActorSubjectLinkStatement, ActorSubjectLinkStatusRecord, ActorSubjectLinkStatusStatement } from "./platform.js";
 
 export type NonBlankText = string;
 
@@ -712,4 +723,191 @@ export interface ScsVerificationAssessmentResponse {
   decision: ScsVerificationAssessmentDecision;
   receipt: ScsVerificationAssessmentReceipt;
   receiptDigest: string;
+}
+
+/**
+ * Path parameters of GET /scs/v1/actor-party-links/:linkId and POST /scs/v1/actor-party-links/:linkId/status-records.
+ */
+export interface ScsActorPartyLinkPathParams {
+  linkId: string;
+}
+
+/**
+ * SCS-CAP-02 ScsActorPartyLinkRequest (amendments of 2026-09-27): an AAB-PLATFORM-04 link statement for a CAP-02 party (subject.domain SCS, subject.subjectType PARTY, subject.subjectId a partyId), and the creator's signature over its canonical JSON, made outside the server. Identifiers in the statement are lowercase UUIDs: the statement is signed as sent, and stored beside the record's own identifiers.
+ */
+export interface ScsActorPartyLinkRequest {
+  linkStatement: ActorSubjectLinkStatement & {
+    subject?: {
+      domain?: "SCS";
+      subjectType?: "PARTY";
+      /**
+       * A CAP-02 partyId, lowercase.
+       */
+      subjectId?: string;
+    };
+    /**
+     * Lowercase.
+     */
+    supersedesLinkId?: string;
+  };
+  /**
+   * Ed25519 signature over the statement's canonical JSON: 64 bytes, standard base64.
+   */
+  statementSignature: string;
+}
+
+/**
+ * SCS-CAP-02 ScsActorPartyLinkDecision: a link was created. Every check was performed and passed; a failed check refuses the request and writes nothing.
+ */
+export interface ScsActorPartyLinkDecision {
+  decisionId: string;
+  linkId: string;
+  partyId: string;
+  decision: "CREATED";
+  eligibilityChecks: ScsActorPartyLinkEligibilityChecks;
+  linkDigest: string;
+  /**
+   * @minItems 1
+   */
+  decisionReasons: string[];
+  decidedBy: ActorReference;
+  decidedAt: string;
+}
+export interface ScsActorPartyLinkEligibilityChecks {
+  creatorAuthorised: true;
+  notSelfAsserted: true;
+  partyCurrent: true;
+  relationFitsPartyType: true;
+  evidenceStored: true;
+  validityWithinMaximum: true;
+  noOverlappingActiveLink: true;
+  creatorIndependentOfMandateVerification: true;
+  statementSignatureVerified: true;
+}
+
+/**
+ * Immutable receipt for an SCS-CAP-02 ACTOR_PARTY_LINK_CREATION decision, written in the same transaction as the decision (foundation/receipts.ts). Its SHA-256 over canonical JSON is returned alongside it as receiptDigest.
+ */
+export interface ScsActorPartyLinkReceipt {
+  receiptId: string;
+  receiptVersion: "1";
+  capabilityId: "SCS-CAP-02";
+  decisionType: "ACTOR_PARTY_LINK_CREATION";
+  /**
+   * linkId of the created link.
+   */
+  subjectId: string;
+  correlationId: string;
+  /**
+   * SHA-256 (hex) of the canonical request: method, concrete path and body.
+   */
+  requestDigest: string;
+  idempotencyKey: string | null;
+  issuedAt: string;
+  /**
+   * The authenticated actor whose request produced this decision.
+   */
+  issuedFor: ActorReference;
+  decision: ScsActorPartyLinkDecision;
+}
+
+/**
+ * Body of a successful POST /scs/v1/actor-party-links (201): the decision, the immutable receipt that records it, and the receipt's SHA-256 over canonical JSON.
+ */
+export interface ScsActorPartyLinkResponse {
+  decision: ScsActorPartyLinkDecision;
+  receipt: ScsActorPartyLinkReceipt;
+  receiptDigest: string;
+}
+
+/**
+ * SCS-CAP-02 ScsActorPartyLinkStatusRequest: an AAB-PLATFORM-04 status statement against the link in the route, and the writer's signature over its canonical JSON, made outside the server.
+ */
+export interface ScsActorPartyLinkStatusRequest {
+  statusStatement: ActorSubjectLinkStatusStatement & {
+    /**
+     * The link in the route, lowercase.
+     */
+    linkId?: string;
+  };
+  /**
+   * Ed25519 signature over the statement's canonical JSON: 64 bytes, standard base64.
+   */
+  statementSignature: string;
+}
+
+/**
+ * SCS-CAP-02 ScsActorPartyLinkStatusDecision: a status record was written against a link. Every check was performed and passed.
+ */
+export interface ScsActorPartyLinkStatusDecision {
+  decisionId: string;
+  statusRecordId: string;
+  linkId: string;
+  action: "SUSPEND" | "REINSTATE" | "REVOKE";
+  decision: "RECORDED";
+  writerCapacity: "CREATING_ROLE" | "SUBJECT_AUTHORITY";
+  eligibilityChecks: ScsActorPartyLinkStatusEligibilityChecks;
+  /**
+   * The link's state after this record.
+   */
+  resultingState: "ACTIVE" | "SUSPENDED" | "REVOKED" | "EXPIRED";
+  recordDigest: string;
+  /**
+   * @minItems 1
+   */
+  decisionReasons: string[];
+  decidedBy: ActorReference;
+  decidedAt: string;
+}
+export interface ScsActorPartyLinkStatusEligibilityChecks {
+  linkExists: true;
+  writerPermittedForAction: true;
+  actionPossibleFromCurrentState: true;
+  statementBindsCurrentLink: true;
+  statementSignatureVerified: true;
+}
+
+/**
+ * Immutable receipt for an SCS-CAP-02 ACTOR_PARTY_LINK_STATUS decision, written in the same transaction as the decision (foundation/receipts.ts). Its SHA-256 over canonical JSON is returned alongside it as receiptDigest.
+ */
+export interface ScsActorPartyLinkStatusReceipt {
+  receiptId: string;
+  receiptVersion: "1";
+  capabilityId: "SCS-CAP-02";
+  decisionType: "ACTOR_PARTY_LINK_STATUS";
+  /**
+   * statusRecordId of the written status record.
+   */
+  subjectId: string;
+  correlationId: string;
+  /**
+   * SHA-256 (hex) of the canonical request: method, concrete path and body.
+   */
+  requestDigest: string;
+  idempotencyKey: string | null;
+  issuedAt: string;
+  /**
+   * The authenticated actor whose request produced this decision.
+   */
+  issuedFor: ActorReference;
+  decision: ScsActorPartyLinkStatusDecision;
+}
+
+/**
+ * Body of a successful POST /scs/v1/actor-party-links/:linkId/status-records (201): the decision, the immutable receipt that records it, and the receipt's SHA-256 over canonical JSON.
+ */
+export interface ScsActorPartyLinkStatusResponse {
+  decision: ScsActorPartyLinkStatusDecision;
+  receipt: ScsActorPartyLinkStatusReceipt;
+  receiptDigest: string;
+}
+
+/**
+ * SCS-CAP-02 ScsActorPartyLink: the body of GET /scs/v1/actor-party-links/:linkId (200). The link and its status records exactly as recorded, in recordedAt order, with currentState and supersededByLinkId derived when read. Nothing is written, and signatures are not verified by the read (third amendment of 2026-09-27).
+ */
+export interface ScsActorPartyLink {
+  link: ActorSubjectLink;
+  statusRecords: ActorSubjectLinkStatusRecord[];
+  currentState: "ACTIVE" | "SUSPENDED" | "REVOKED" | "EXPIRED";
+  supersededByLinkId?: string;
 }
