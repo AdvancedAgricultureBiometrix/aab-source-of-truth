@@ -2,7 +2,8 @@
 
 **Status:** PLATFORM ROADMAP
 **Renamed identifiers (2026-09-27):** SCS-PLATFORM-01 and SCS-PLATFORM-02 are now AAB-PLATFORM-01 and AAB-PLATFORM-02, and are cited by their new names throughout.
-**Authority:** RECORDS THE STATE OF EVERY AAB PLATFORM PRIMITIVE AND CAPABILITY, AS DEMONSTRATED BY THE CONTRACTS, CODE, TESTS AND PROOFS ON `main` AT `9f17cc2`, AND WHAT MUST EXIST BEFORE WHAT. Admits no capability, grants no implementation, commissioning, production, regulatory or scientific authority, changes no control's status, and does not satisfy Gate D or begin WP05.
+**Updated (2026-09-27):** to `main` at `634295a`, after PRs #27 to #35, from the stock-take `governance/AAB-STOCK-TAKE-2026-09-27.md`, section 8. Open PRs, unmerged branches and open decisions are recorded in the stock-take, not here.
+**Authority:** RECORDS THE STATE OF EVERY AAB PLATFORM PRIMITIVE AND CAPABILITY, AS DEMONSTRATED BY THE CONTRACTS, CODE, TESTS AND PROOFS ON `main` AT `9f17cc2`, UPDATED TO `634295a`, AND WHAT MUST EXIST BEFORE WHAT. Admits no capability, grants no implementation, commissioning, production, regulatory or scientific authority, changes no control's status, and does not satisfy Gate D or begin WP05.
 **Sources:**
 - `governance/AAB-PLATFORM-PURPOSE-AND-VALUES-REVISION-2026-09-25.md`
 - `governance/AAB-PLATFORM-DOMAIN-SEPARATION-DECISION-2026-09-25.md`
@@ -54,7 +55,7 @@ The domain separation decision (25 September) names eleven platform primitives. 
 | # | Primitive | Where it exists | Current state | What it does not yet do |
 |---|---|---|---|---|
 | 1 | Canonical runtime schemas | JSON Schema 2020-12 with strict Ajv; generated types; the whole registry compiled up front (`foundation/validation.ts`) | `implemented`, exercised by every endpoint and the 549-test suite | No platform-level schema registry; schemas live in `scs-pilot` |
-| 2 | Governed identity and authority | `foundation/auth.ts`: static bearer tokens stored as SHA-256, role checks, separation of duties | `implemented` | `TODO(oidc)`; `TODO(role-registry)`; the actor-to-party link (`TODO(actor-reference)`: `ActorReference` has no shared contract and no `partyId`), so mandate-based submission is refused everywhere |
+| 2 | Governed identity and authority | `foundation/auth.ts`: static bearer tokens stored as SHA-256, role checks, separation of duties | `implemented` | `TODO(oidc)`; `TODO(role-registry)`; ActorReference is defined (AAB-PLATFORM-03) and actor–subject links (AAB-PLATFORM-04), but the pilot records ActorReference version 1 and has no links (`TODO(actor-reference)`); representation under a mandate is specified in SCS-CAP-02, 04 and 05, and not built |
 | 3 | Immutable evidence objects | AAB-PLATFORM-01: content-addressed by SHA-256, conditional write, never overwritten | `implemented` (upload only) | Retrieval, retention and read access are undefined in the contract; `TODO(object-store-credentials)`; SCS-CAP-02 and SCS-CAP-03 evidence ids are not linked to stored objects (`TODO(evidence-id-model)`) |
 | 4 | Provenance | Submitter, submission time, cited and linked lineage, recorded at admission | `implemented` | No shared provenance contract; each capability records its own |
 | 5 | Admission decisions | SCS-CAP-02 to SCS-CAP-05: admit, or admit with limitations, fail closed | `implemented` | `REJECTED` and `QUARANTINED` are reserved everywhere; no quarantine operation exists |
@@ -99,13 +100,15 @@ The SCS domain definition and the SCS capability roster name **twelve** SCS capa
 | SCS-CAP-05 Supply Chain Custody Evidence Admission | `behaviourally proven` | 1 of 6 | README |
 | SCS-CAP-06 Due Diligence Sufficiency Evaluation | `behaviourally proven` | 4 of 5 | README |
 | SCS-CAP-07 Evidence Source Discovery | `named only` | — | — |
-| SCS-CAP-08 Due Diligence Package Compilation | `behaviourally proven` | 3 of 5, and no export bundle | PR #25; README record to follow |
-| SCS-CAP-09 Regulatory Review and Promotion | `behaviourally proven` | 4 of 6 | PR #25; README record to follow |
+| SCS-CAP-08 Due Diligence Package Compilation | `behaviourally proven` | 3 of 5, and no export bundle | README (PR #26) |
+| SCS-CAP-09 Regulatory Review and Promotion | `behaviourally proven` | 4 of 6 | README (PR #26) |
 | SCS-CAP-10 Challenge Response and Evidence Retrieval | `named only` | — | — |
 | SCS-CAP-11 Regulatory Framework Update Management | `named only` | — | — |
 | SCS-CAP-12 Cross-Boundary Evidence Reference | `named only` | — | — |
 | AAB-PLATFORM-01 Evidence Object Store | `implemented` | upload | none |
 | AAB-PLATFORM-02 Governed Document Rendition | `implemented` | render, download | none |
+| AAB-PLATFORM-03 ActorReference | `designed` | none of version 2; the pilot records version 1 | — |
+| AAB-PLATFORM-04 Actor–Subject Link | `designed` | none | — |
 | SCS-BRAIN-CANDIDATE-01 Governed Evidence Intelligence | `named only` (candidate design record) | — | — |
 
 **The pilot's standard for `MINIMUM_VERTICAL_SLICE_PROVEN`:** records feed an SCS-CAP-06 evaluation that runs end to end, honestly, over real admitted evidence, as the restricted `scs_api` role. It does not mean a best-case outcome. **No pilot evaluation can reach `SUFFICIENT`** (`TODO(postgis)`); the best pilot outcome is `GAPS_REQUIRE_HUMAN_DECISION`. The READMEs require that pilot partners be told this.
@@ -135,7 +138,7 @@ The SCS domain definition and the SCS capability roster name **twelve** SCS capa
 - **Deferred or open:**
   - The conflict definition is interim, with no name normalisation; natural-person deduplication is left to human review.
   - `REGISTERED_WITH_GAPS`, `REJECTED` and `REQUIRES_HUMAN_REVIEW` are reserved.
-  - Submission under a mandate is refused.
+  - Representative submission of identity evidence, actor–party links (with the new roles `LINK_OFFICER` and `PARTY_REPRESENTATIVE`) and mandate verification are specified (PR #34), and not built. Until they are built, submission under a mandate is refused.
   - Scope is not paired per framework.
   - A mandate may outlast its relationship.
   - No party-level verification summary.
@@ -163,7 +166,8 @@ The SCS domain definition and the SCS capability roster name **twelve** SCS capa
 - **Not built:** `getEvidenceRecord`, `listEvidenceForPlot`, and `quarantineEvidence` (not yet specified).
 - **Deferred or open:**
   - Every pilot admission is `ADMITTED_WITH_LIMITATIONS`: spatial coverage is not verified, and temporal coverage is not evaluated.
-  - Mandate-based submission is deferred.
+  - Representative submission is specified (PR #35), and not built.
+  - How a party's own staff submit on its behalf is not defined.
   - There are no criteria for `REJECTED` or `QUARANTINED`.
   - Temporal sufficiency belongs to SCS-CAP-06.
 - **Open TODOs:** `TODO(postgis)`, `TODO(object-store-credentials)`.
@@ -177,7 +181,9 @@ The SCS domain definition and the SCS capability roster name **twelve** SCS capa
   - There is no producer role: a smallholder is recorded as `SUPPLIER`.
   - Processed products are refused under a raw-commodity framework.
   - There is no batch or facility registry.
-  - Mandate scope is not checked.
+  - Representative submission is specified (PR #35), and not built. It settles the two mandate fields, `provenance.submissionMandateId` (the submission's authority) and `sourceParty.actingUnderMandateId` (a fact about the event), and checks both against the mandate's scope. It replaces the request's `submissionMandateId` with `actingUnder`, a breaking change for the pilot when it is built.
+  - There is no mandate action for representing a party in a transaction.
+  - How a party's own staff submit on its behalf is not defined.
 - **Open TODOs:** `TODO(object-store-credentials)`.
 - **Depends on:** SCS-CAP-01, SCS-CAP-02, SCS-CAP-03 (optional source plots) and AAB-PLATFORM-01.
 
@@ -434,7 +440,7 @@ flowchart LR
 **Prerequisites the diagram does not show:**
 - **Before SCS-CAP-02 and SCS-CAP-03 evidence can be confirmed as stored files,** the evidence-id model needs a contract change and a migration (`TODO(evidence-id-model)`).
 - **Before any SCS evaluation can be `SUFFICIENT`,** a spatial database is needed (`TODO(postgis)`), with country boundary data (`TODO(country-boundary-check)`).
-- **Before mandate-based submission,** the actor-to-party link is needed (`TODO(actor-reference)`).
+- **Before mandate-based submission is built,** ActorReference version 2, the actor–party link store, mandate verification and the representative checks are needed. All are specified (AAB-PLATFORM-03, AAB-PLATFORM-04, SCS-CAP-02, 04 and 05); none is built.
 
 ### 5.2 AGR
 
@@ -491,10 +497,12 @@ flowchart LR
 
 ### 5.5 Before any capability can be admitted
 
-- **An admission authority.** CAP-20 names a "capability identity and admission authority" as the source of admission status, and no document defines it. No capability can be admitted until it exists.
+- **An admission authority.** Defined (PR #28), with the pilot joint authority of the Platform Owner and the founding institution's representative (PR #29): `governance/AAB-CAPABILITY-ADMISSION-AUTHORITY-DEFINITION-2026-09-27.md`. Not yet constituted: the representative is not identified.
+- **The capability admission registry.** Defined (PR #29), not built: `governance/AAB-CAPABILITY-ADMISSION-REGISTRY-DEFINITION-2026-09-27.md`.
 - **The ten-point admission checklist.** It is reproduced verbatim only in the Evidence Watch candidate design, and written for Evidence Watch. No capability has been put through it.
-- **A shared `ActorReference` contract.** `TODO(actor-reference)` says this "must be confirmed in a shared contract before any capability is admitted".
-- **Independent review** of each capability, as admission requires.
+- **A shared `ActorReference` contract.** Defined as AAB-PLATFORM-03 (PR #30). Version 2 must still be implemented (`TODO(actor-reference)`).
+- **Independent review** of each capability, by a reviewer appointed jointly under the pilot authority. None is appointed.
+- **Signing keys** for the admission decisions and reviewer assessments. None is issued.
 - **The capability registry and the CAP-34 fidelity manifest updated together** (checklist items 8 and 9).
   - The fidelity manifest does not list the SCS capabilities at all.
   - CAP-34's SCS roadmap preview (`simulation/cap34/scs-roadmap-preview.js`) shows them as `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED`, or `CONCEPT_PREVIEW_NOT_IMPLEMENTED`.
@@ -513,7 +521,7 @@ Gate D is not an admission prerequisite. It follows admission, and blocks commis
 | `TODO(backup-encryption)` | Backups are unencrypted and unsigned, and hold credentials and country data | Egress spec §6: backups follow the primary data's sovereignty classification |
 | `TODO(tenant-scope)` | RLS is `USING (true)`: no organisation-level row filtering | "Sufficient only while each country deployment serves one organisation" |
 | `TODO(tenant-network-policy)` | Environments on one host are not isolated from each other | Separate hosts, or host firewall or kernel-level network policy |
-| `TODO(actor-reference)` | `ActorReference` has no shared contract and no `partyId` | "Before any capability is admitted" |
+| `TODO(actor-reference)` | The contract exists (AAB-PLATFORM-03); version 2, with issuer, scoped authority and representation, is not implemented | "Before any capability is admitted" |
 
 ### 6.2 Limits what the pilot can conclude (disclosed in every result)
 
@@ -533,6 +541,7 @@ Gate D is not an admission prerequisite. It follows admission, and blocks commis
 | `TODO(oidc)` | Static bearer tokens; OIDC to replace them behind the same interface |
 | `TODO(role-registry)` | No central role list; unknown roles in the actors file are not refused |
 | `TODO(idempotency-retention)` | Idempotency records never expire |
+| `TODO(multi-issuer-idempotency)` | Idempotency keys are scoped by `actorId`; by (`issuer`, `actorId`) once a second issuer acts in a deployment |
 | `TODO(immutability)` | The database owner can still change the SCS-CAP-01 evidence spec |
 | `TODO(append-only)` | SCS-CAP-01 `versionHistory` is a JSON array, not an insert-only table |
 | `TODO(party-versions)` | Only the current party version is stored |
@@ -560,17 +569,8 @@ Gate D is not an admission prerequisite. It follows admission, and blocks commis
 
 ### 6.5 Documentation that no longer matches the code
 
-These are corrections, not capability gaps. They should be fixed so the record stops understating what exists.
-
-- **All eight SCS contract headers,** AAB-PLATFORM-01 and AAB-PLATFORM-02 say "No implementation exists".
-- **The SCS roster** marks everything "NOT AUTHORISED — NOT STARTED" and `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED`.
-- **CAP-34's SCS roadmap preview** (`simulation/cap34/scs-roadmap-preview.js`) shows every SCS capability as not implemented. It shows SCS-CAP-02 and SCS-CAP-05 as `CONCEPT_PREVIEW_NOT_IMPLEMENTED`, although both have contracts.
-- **`scs-pilot/README.md`** says "No capability logic is implemented", that only SCS-CAP-01 is served, and migrations 001–005.
-- **`cap-06/README.md`** says only `COMPLIANCE_OFFICER` may read; the code and contract also allow `REGULATORY_REVIEWER`.
-- **`cap-09/routes.ts`** calls `validateForPackageCompilation` deferred; it is built.
-- **The SCS-CAP-05 contract** says SCS-CAP-06 has no custody-chain evaluation; it now does.
-- **The SCS-CAP-09 contract** says `listDecisionsForSubject` is built with SCS-CAP-08; it is not.
-- **`simulation/cap34/README.md`** cites snapshot 002 and superseded fixture counts.
+**Corrected in PR #26,** except one item:
+- **CAP-34's SCS roadmap preview** (`simulation/cap34/scs-roadmap-preview.js`) still shows every SCS capability as not implemented, and SCS-CAP-02 and SCS-CAP-05 as `CONCEPT_PREVIEW_NOT_IMPLEMENTED`. Correcting it changes simulation code and a frozen proof record, so it waits for its own decision.
 
 ## 7. Commissioning requirements
 
@@ -654,7 +654,7 @@ This is evidence for the SCS pilot stack only. It changes no control's status.
     - it is granted to one deployment (one country environment, one release, a named set of admitted capabilities), never to a capability in the abstract;
     - it is decided by the Platform Owner on an independent reviewer's assessment.
   - **Gate D follows admission.** An ungranted Gate D blocks commissioning. It does not block admission, which is blocked by its own prerequisites: an admission authority, the ten-point checklist, the shared `ActorReference` contract and independent review (section 5.5).
-  - **No deployment has been assessed, and none could be granted today.** Three items block the first assessment: the admission authority, which no document defines; the first independent reviewer appointment; and the commissioning governance document.
+  - **No deployment has been assessed, and none could be granted today.** Three items block the first assessment: the admission authority, now defined (PR #28, #29) but not constituted, and with its registry not built; the first independent reviewer appointment; and the commissioning governance document.
 
 ## Decisions recorded on 2026-09-27
 
@@ -678,4 +678,4 @@ These points came up while compiling the roadmap and were decided in review.
 - It does not change any control's status, and does not satisfy Gate D or begin WP05.
 - It does not schedule build work. Section 5 records dependencies, and the one next step the separation decision itself requires (the dependency audit).
 - It does not verify the rehearsal application, whose code is not in this repository.
-- It does not define the missing terms it reports. Gate D is defined separately (`governance/AAB-GATE-D-DEPLOYMENT-QUALIFICATION-DEFINITION-2026-09-27.md`); the provisioning authority and the admission authority are not defined anywhere.
+- It does not define the missing terms it reports. Gate D is defined separately (`governance/AAB-GATE-D-DEPLOYMENT-QUALIFICATION-DEFINITION-2026-09-27.md`); the admission authority and its registry are defined separately (PR #28, #29); the provisioning authority is not defined anywhere.
