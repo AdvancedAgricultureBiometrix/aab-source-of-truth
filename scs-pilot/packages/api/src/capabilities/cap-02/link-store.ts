@@ -92,7 +92,8 @@ export async function findMandateVerifiersOfRepresentative(tx: Tx, partyId: stri
 
 // ── Reading links ────────────────────────────────────────────────────────────
 
-interface LinkRow {
+/** A scs.actor_party_link row, as the link queries select it. */
+export interface LinkRow {
   link_id: string;
   schema_version: string;
   created_at: Date;
@@ -104,7 +105,8 @@ interface LinkRow {
   successor_created_at: Date | null;
 }
 
-interface StatusRow {
+/** A scs.actor_party_link_status row. */
+export interface StatusRow {
   status_record_id: string;
   link_id: string;
   schema_version: string;
@@ -120,7 +122,8 @@ const LINK_COLUMNS = `l.link_id, l.schema_version, l.created_at, l.created_by, l
        s.link_id AS successor_id, s.created_at AS successor_created_at`;
 const LINK_FROM = `scs.actor_party_link l LEFT JOIN scs.actor_party_link s ON s.supersedes_link_id = l.link_id`;
 
-function toLink(r: LinkRow): ActorSubjectLink {
+/** The link record a row holds, rebuilt exactly as it was digested. Also used by the integrity tool. */
+export function toLink(r: Pick<LinkRow, "link_id" | "schema_version" | "created_at" | "created_by" | "link_statement" | "statement_signature" | "link_digest">): ActorSubjectLink {
   const s = r.link_statement;
   return {
     linkId: r.link_id,
@@ -140,7 +143,8 @@ function toLink(r: LinkRow): ActorSubjectLink {
   };
 }
 
-function toStatusRecord(r: StatusRow): ActorSubjectLinkStatusRecord {
+/** The status record a row holds. Also used by the integrity tool. */
+export function toStatusRecord(r: StatusRow): ActorSubjectLinkStatusRecord {
   return {
     statusRecordId: r.status_record_id,
     linkId: r.link_id,

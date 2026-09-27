@@ -9,11 +9,14 @@
 //   2. the source: throwaway secrets and API tokens, the stack started, and a
 //      governed chain created through the API — framework, parties, plot, an
 //      uploaded evidence file, admitted evidence, evaluation, review decision,
-//      and a compiled due diligence package with its PDF rendition
+//      a compiled due diligence package with its PDF rendition, and an
+//      actor–party link signed by a link officer's throwaway Ed25519 key,
+//      suspended and reinstated
 //   3. backup (backup/backup.mjs, from the worktree: the committed script)
 //   4. restore into a new compose project with no volumes (backup/restore.mjs),
-//      which checks migrations, receipts, packages, files, row counts and
-//      grants against the source
+//      which checks migrations, receipts, packages, files, links (each
+//      signature against the restored actors file), row counts and grants
+//      against the source
 //   5. the restored API itself: the package reads back byte-for-byte, its
 //      integrity verification is INTACT, and its PDF downloads intact
 //   6. refusals: a backup with one altered byte is refused before anything
@@ -24,7 +27,7 @@
 // Writes <work>/proof-report.json and prints it. Exits 1 unless every step holds.
 
 import { spawnSync } from "node:child_process";
-import { createHash, randomBytes, randomUUID } from "node:crypto";
+import { createHash, generateKeyPairSync, randomBytes, randomUUID, sign } from "node:crypto";
 import { cpSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import net from "node:net";
 import { tmpdir } from "node:os";
@@ -205,16 +208,38 @@ async function seed(api, stack) {
     custodyEvidenceIds: [],
     packageTitle: "Backup-restore proof package",
   });
+  // an actor–party link, signed outside the server by the link officer, then suspended and reinstated
+  const signed = (statement) => sign(null, Buffer.from(canonicalJson(statement), "utf8"), linkOfficerKey.privateKey).toString("base64");
+  const linkStatement = {
+    statementType: "ACTOR_SUBJECT_LINK",
+    actor: { issuer: { issuerType: "COUNTRY_TENANCY", countryCode: "TH" }, actorId: "proof-staff" },
+    subject: { domain: "SCS", subjectType: "PARTY", subjectId: operator },
+    relation: "ACTS_FOR_SUBJECT",
+    validFrom: new Date(Date.now() - 60_000).toISOString(),
+    validUntil: new Date(Date.now() + 90 * 24 * 3600 * 1000).toISOString(),
+    authorisationEvidence: [{ evidenceObjectSha256: objectId, description: "Letter of authority from the operator" }],
+    creator: { issuer: { issuerType: "COUNTRY_TENANCY", countryCode: "TH" }, actorId: "proof-linker" },
+  };
+  const link = (await api.created("/scs/v1/actor-party-links", { linkStatement, statementSignature: signed(linkStatement) }, undefined, "linker")).decision;
+  for (const action of ["SUSPEND", "REINSTATE"]) {
+    const statusStatement = { statementType: "ACTOR_SUBJECT_LINK_STATUS", linkId: link.linkId, linkDigest: link.linkDigest, action, reason: `${action} in the backup proof.`, writer: linkStatement.creator };
+    await api.created(`/scs/v1/actor-party-links/${link.linkId}/status-records`, { statusStatement, statementSignature: signed(statusStatement) }, undefined, "linker");
+  }
   return {
     packageId: compiled.package.compilationMetadata.packageId,
     envelope: compiled.package,
     renditionId: compiled.decision.rendition.renditionId,
     renditionSha256: compiled.decision.rendition.sha256,
     objectId,
+    linkId: link.linkId,
+    linkDigest: link.linkDigest,
   };
 }
 
 // ── The proof ───────────────────────────────────────────────────────────────
+
+/** The link officer's throwaway signing key: the private half never leaves this process. */
+const linkOfficerKey = generateKeyPairSync("ed25519");
 
 const tag = `proof-${run}`;
 const src = new Stack({ dir: join(work, "source", "scs-pilot"), project: `scs-proof-src-${run}`, overrides: { SCS_API_IMAGE_TAG: tag } });
@@ -231,8 +256,8 @@ try {
   }
 
   // the source: throwaway secrets and tokens
-  const tokens = { officer: random(), verifier: random(), reviewer: random() };
-  const roles = { officer: ["COMPLIANCE_OFFICER"], verifier: ["VERIFICATION_OFFICER"], reviewer: ["REGULATORY_REVIEWER"] };
+  const tokens = { officer: random(), verifier: random(), reviewer: random(), linker: random(), staff: random() };
+  const roles = { officer: ["COMPLIANCE_OFFICER"], verifier: ["VERIFICATION_OFFICER"], reviewer: ["REGULATORY_REVIEWER"], linker: ["LINK_OFFICER"], staff: [] };
   writeFileSync(join(src.dir, ".env"), [
     "POSTGRES_DB=scs_pilot", "POSTGRES_USER=scs_owner", `POSTGRES_PASSWORD=${random()}`, "POSTGRES_PORT=5432",
     `SCS_API_DB_PASSWORD=${random()}`, `S3_ACCESS_KEY_ID=${random()}`, `S3_SECRET_ACCESS_KEY=${random()}`, "S3_PORT=9000", "S3_BUCKET=scs-evidence", "API_PORT=3000",
@@ -242,6 +267,7 @@ try {
     actors: Object.keys(tokens).map((who) => ({
       tokenSha256: sha256(tokens[who]),
       actor: { actorId: `proof-${who}`, actorType: "HUMAN", roles: roles[who], authenticationMethod: "STATIC_TOKEN" },
+      ...(who === "linker" ? { accountableName: "Proof Link Officer", signingPublicKey: linkOfficerKey.publicKey.export({ format: "der", type: "spki" }).toString("base64") } : {}),
     })),
   }, null, 2) + "\n");
   const srcPort = await freePort();
@@ -270,6 +296,8 @@ try {
   step("restore: every package verifies against its stored digest", i.packages.checked > 0 && i.packages.problems.length === 0, { packages: i.packages.checked });
   step("restore: every evidence file re-hashes to its recorded SHA-256", i.evidenceObjects.checked > 0 && i.evidenceObjects.problems.length === 0, { evidenceObjects: i.evidenceObjects.checked });
   step("restore: every rendition re-hashes to its recorded SHA-256", i.renditions.checked > 0 && i.renditions.problems.length === 0, { renditions: i.renditions.checked });
+  step("restore: every actor–party link and status record verifies against its signer's key and re-digests", i.links.checked > 0 && i.links.problems.length === 0 && i.linkStatusRecords.checked === 2 && i.linkStatusRecords.problems.length === 0,
+    { links: i.links.checked, statusRecords: i.linkStatusRecords.checked });
   step("restore: every table's row count and the database grants equal the source's", i.comparison !== undefined && i.comparison.problems.length === 0, { tables: Object.keys(i.counts).length });
 
   // the restored API itself
@@ -280,6 +308,9 @@ try {
   step("restored API: verifyPackageIntegrity is INTACT, every check PASS", v.integrityStatus === "INTACT" && v.checks.every((c) => c.result === "PASS"), { integrityStatus: v.integrityStatus, checks: v.checks.length });
   const pdf = await dstApi.call("GET", `/scs/v1/renditions/${seeded.renditionId}`);
   step("restored API: the PDF rendition downloads and re-hashes to its recorded SHA-256", pdf.status === 200 && sha256(pdf.bytes) === seeded.renditionSha256, { bytes: pdf.bytes.length });
+  const restoredLink = (await dstApi.call("GET", `/scs/v1/actor-party-links/${seeded.linkId}`, { who: "linker" })).json();
+  step("restored API: the link reads back ACTIVE, with its digest and both status records", restoredLink.currentState === "ACTIVE" && restoredLink.link.linkDigest === seeded.linkDigest && restoredLink.statusRecords.length === 2,
+    { currentState: restoredLink.currentState, statusRecords: restoredLink.statusRecords.length });
 
   // refusals
   const tampered = join(work, "backup-tampered");

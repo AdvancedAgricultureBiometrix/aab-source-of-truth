@@ -16,7 +16,14 @@
 //   - evidence files: every stored evidence object is in the object store and
 //     re-hashes to its SHA-256 and size;
 //   - renditions: every rendition's bytes are in the object store and
-//     re-hash to its SHA-256 and byte length.
+//     re-hash to its SHA-256 and byte length;
+//   - actor–party links (AAB-PLATFORM-04): every link's statement signature
+//     verifies against its creator's registered key, its record is its
+//     signed statement, it re-digests to its linkDigest, and its
+//     ACTOR_PARTY_LINK_CREATION receipt names that digest; every status record
+//     likewise, against its writer's key and its link's digest. The keys come
+//     from the actors file the api service uses (SCS_AUTH_STATIC_ACTORS_FILE,
+//     SCS_ACTOR_ISSUER_COUNTRY); with links present and no keys, the check fails.
 // With --expect, the row count of every table and the database-level grants
 // must also equal the source's.
 //
@@ -27,7 +34,10 @@ import { readFile } from "node:fs/promises";
 
 import pg from "pg";
 
+import { toLink, toStatusRecord, type LinkRow, type StatusRow } from "../capabilities/cap-02/link-store.js";
+import { StaticTokenAuthenticator } from "../foundation/auth.js";
 import { canonicalJson, sha256Hex } from "../foundation/canonical.js";
+import { linkIntegrity, statusRecordIntegrity, type IntegrityResult } from "../platform/actor-subject-links/links.js";
 import { DEFAULT_MIGRATIONS_DIR, loadMigrations } from "../migrations/runner.js";
 import { objectStoreConfigFromEnv, S3ObjectStore } from "../platform/evidence-objects/object-store.js";
 
@@ -40,6 +50,8 @@ interface Report {
   packages: Section;
   evidenceObjects: Section;
   renditions: Section;
+  links: Section;
+  linkStatusRecords: Section;
   counts: Record<string, number>;
   databaseAcl: string | null;
   comparison?: { source: string; problems: string[] };
@@ -51,6 +63,21 @@ const need = (name: string) => {
   return v;
 };
 const sha256 = (b: Uint8Array) => createHash("sha256").update(b).digest("hex");
+
+/**
+ * The registered signing keys, from the actors file the api service loads.
+ * Without it, no signature can be verified: a problem only when there are
+ * signed records to verify.
+ */
+async function signingKeys(needed: boolean): Promise<{ of: (a: Parameters<StaticTokenAuthenticator["signingKeyOf"]>[0]) => ReturnType<StaticTokenAuthenticator["signingKeyOf"]>; problem: string | null }> {
+  const file = process.env["SCS_AUTH_STATIC_ACTORS_FILE"];
+  const country = process.env["SCS_ACTOR_ISSUER_COUNTRY"];
+  if (file === undefined || file === "" || country === undefined || country === "") {
+    return { of: () => null, problem: needed ? "signed records exist, but SCS_AUTH_STATIC_ACTORS_FILE and SCS_ACTOR_ISSUER_COUNTRY are not both set, so no signature can be verified." : null };
+  }
+  const actors = await StaticTokenAuthenticator.fromFile(file, { issuerCountry: country });
+  return { of: (a) => actors.signingKeyOf(a), problem: null };
+}
 
 async function verify(): Promise<Report> {
   const client = new pg.Client({
@@ -122,6 +149,44 @@ async function verify(): Promise<Report> {
       else if (sha256(bytes) !== r.sha256 || bytes.length !== Number(r.byte_length)) renditionProblems.push(`rendition ${r.rendition_id} does not re-hash to its SHA-256 and byte length.`);
     }
 
+    // actor–party links and their status records
+    const linkRows = (await client.query<LinkRow & { recorded: string | null }>(
+      `SELECT l.link_id, l.schema_version, l.created_at, l.created_by, l.link_statement, l.statement_signature, l.link_digest,
+              (SELECT r.receipt -> 'decision' ->> 'linkDigest' FROM scs.decision_receipt r
+                WHERE r.capability_id = 'SCS-CAP-02' AND r.decision_type = 'ACTOR_PARTY_LINK_CREATION' AND r.subject_id = l.link_id) AS recorded
+         FROM scs.actor_party_link l ORDER BY l.link_id`,
+    )).rows;
+    const statusRows = (await client.query<StatusRow & { recorded: string | null }>(
+      `SELECT s.status_record_id, s.link_id, s.schema_version, s.status_statement, s.statement_signature, s.writer_capacity, s.recorded_at, s.written_by, s.record_digest,
+              (SELECT r.receipt -> 'decision' ->> 'recordDigest' FROM scs.decision_receipt r
+                WHERE r.capability_id = 'SCS-CAP-02' AND r.decision_type = 'ACTOR_PARTY_LINK_STATUS' AND r.subject_id = s.status_record_id) AS recorded
+         FROM scs.actor_party_link_status s ORDER BY s.link_id, s.recorded_at, s.status_record_id`,
+    )).rows;
+    const keys = await signingKeys(linkRows.length + statusRows.length > 0);
+    const failed = (what: string, r: IntegrityResult) => [
+      ...(r.signatureVerified ? [] : [`${what}: its statement signature does not verify against its signer's registered key.`]),
+      ...(r.statementIsRecord ? [] : [`${what}: its record differs from its signed statement.`]),
+      ...(r.digestMatches ? [] : [`${what}: it does not re-digest to its recorded digest.`]),
+    ];
+    const linksById = new Map(linkRows.map((r) => [r.link_id, toLink(r)]));
+    const linkProblems = [
+      ...(keys.problem === null ? [] : [keys.problem]),
+      ...linkRows.flatMap((r) => {
+        const link = linksById.get(r.link_id)!;
+        return [
+          ...failed(`link ${r.link_id}`, linkIntegrity(link, keys.of(link.createdBy))),
+          ...(r.recorded === r.link_digest ? [] : [`link ${r.link_id}: its ACTOR_PARTY_LINK_CREATION receipt names ${r.recorded ?? "no digest"}, not ${r.link_digest}.`]),
+        ];
+      }),
+    ];
+    const statusProblems = statusRows.flatMap((r) => {
+      const record = toStatusRecord(r);
+      return [
+        ...failed(`status record ${r.status_record_id}`, statusRecordIntegrity(record, linksById.get(r.link_id)!, keys.of(record.writtenBy))),
+        ...(r.recorded === r.record_digest ? [] : [`status record ${r.status_record_id}: its ACTOR_PARTY_LINK_STATUS receipt names ${r.recorded ?? "no digest"}, not ${r.record_digest}.`]),
+      ];
+    });
+
     // row counts and database-level grants
     const tables = (await client.query<{ schema: string; name: string }>(
       `SELECT n.nspname AS schema, c.relname AS name FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
@@ -142,6 +207,8 @@ async function verify(): Promise<Report> {
       packages: { checked: packages.length, problems: packageProblems },
       evidenceObjects: { checked: objects.length, problems: objectProblems },
       renditions: { checked: renditions.length, problems: renditionProblems },
+      links: { checked: linkRows.length, problems: linkProblems },
+      linkStatusRecords: { checked: statusRows.length, problems: statusProblems },
       counts,
       databaseAcl: acl,
     };
@@ -164,7 +231,7 @@ try {
     if (source.databaseAcl !== report.databaseAcl) problems.push(`database grants are ${report.databaseAcl}, the source's were ${source.databaseAcl}.`);
     report.comparison = { source: path, problems };
   }
-  const sections = [report.migrations, report.receipts, report.packages, report.evidenceObjects, report.renditions];
+  const sections = [report.migrations, report.receipts, report.packages, report.evidenceObjects, report.renditions, report.links, report.linkStatusRecords];
   report.ok = sections.every((s) => s.problems.length === 0) && (report.comparison?.problems.length ?? 0) === 0;
   console.log(JSON.stringify(report, null, 2));
   process.exit(report.ok ? 0 : 1);

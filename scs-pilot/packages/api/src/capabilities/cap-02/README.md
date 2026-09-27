@@ -4,6 +4,20 @@
 
 **Vertical proof: `MINIMUM_VERTICAL_SLICE_PROVEN`** as of commit `748aaba` (2026-09-25): all six registration paths (parties, identity evidence, relationships, mandates, role claims and verification assessments) have been proven end to end over real HTTP against PostgreSQL, connected as the restricted `scs_api` role, each with its decision and immutable receipt written in one transaction. This is a record of implementation proof only. SCS-CAP-02 remains `PROPOSED_NOT_ADMITTED`, and its reads and `revokeMandate` are not built.
 
+## Vertical proof: links, mandate verification and representative submission
+
+**`MINIMUM_VERTICAL_SLICE_PROVEN` for `createActorPartyLink`, `recordActorPartyLinkStatus`, `getActorPartyLink`, `addMandateVerificationAssessment`, and representative submission of identity evidence**, on the adopted standard: the operations run end to end over real HTTP against PostgreSQL, connected as the restricted `scs_api` role, each decision with its immutable receipt in one transaction, and every refusal writes nothing. Recorded on 2026-09-27 with the representation path's final PR; CI runs every named test on each change. Each criterion is met by a named test:
+
+- **The whole path works as a cooperative would use it:** every step of `representation-e2e.test.ts` — a signed link, a registered and verified mandate, three representative submissions each recording its link, mandate and both parties, a suspension by the cooperative's authority representative that refuses the next submission, and a reinstatement by the link officer after which it succeeds.
+- **A link is a signed governance decision, and exactly what was signed is stored:** "a signed link → 201 CREATED: every check true, the record digested as recorded, a receipt, and ACTIVE when read", and "rule 7: the creator is a named human who signed exactly this statement" (`cap-02-actor-party-links.test.ts`).
+- **Every creation, status and read rule fails closed and writes nothing:** the "rule 1" to "rule 7", "status", "reading" and representative tests in `cap-02-actor-party-links.test.ts`, including the concurrent-creation and receipt-rollback tests.
+- **Only the party itself, or its designated authority with a link, may suspend; neither alone:** "a natural person, through their own ACTIVE IS_SUBJECT link, may suspend another link to them — never reinstate or revoke", and "for an organisation: PARTY_AUTHORITY_REPRESENTATIVE for it AND an ACTIVE ACTS_FOR_SUBJECT link — either alone is not enough".
+- **Mandate verification is independent, and its derived status never hides an adverse finding:** the "rule 6" and "the derived status" tests (`cap-02-mandate-verification.test.ts`), and "checks 7 and 8" (`representative-submission.test.ts`).
+- **Each representative check refuses the act with its own code:** "check 1" to "checks 7 and 8" (`representative-submission.test.ts`); the link use checks, including `LINK_AMBIGUOUS`, in `platform/actor-subject-links/use.test.ts`.
+- **Links survive backup and restore, and every signature is re-verified:** `integrity-links.test.ts`, and the backup proof's "every actor–party link and status record verifies against its signer's key and re-digests" step (`backup/prove-backup-restore.mjs`).
+
+This is a record of implementation proof only. SCS-CAP-02 remains `PROPOSED_NOT_ADMITTED`. **Signing-key history is blocking before any real data is admitted** (pilot README, `TODO(signing-key-history)`).
+
 ## registerParty
 
 - **Authority:** only `COMPLIANCE_OFFICER`. Any other actor gets `REGISTRANT_NOT_AUTHORISED` (403).
