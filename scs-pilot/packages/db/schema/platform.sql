@@ -6,7 +6,8 @@
 -- was generated from this file (receipts and idempotency records); migration
 -- 012 added scs.evidence_object (AAB-PLATFORM-01); migration 018 added
 -- scs.rendition (AAB-PLATFORM-02); migration 020 reissued both tables'
--- comments with the AAB-PLATFORM names. Requires 001–004 (schema scs, role
+-- comments with the AAB-PLATFORM names; migration 024 added AAB-PLATFORM-09 to
+-- the receipt capability ids. Requires 001–004 (schema scs, role
 -- scs_api).
 --
 -- Both tables are INSERT-ONLY for everyone:
@@ -62,9 +63,11 @@ CREATE TABLE scs.decision_receipt (
   created_at          timestamptz NOT NULL DEFAULT now(),
 
   CONSTRAINT decision_receipt_pk PRIMARY KEY (receipt_id),
+  -- AAB-PLATFORM-09 added by migration 024 (the public-key registry)
   CONSTRAINT decision_receipt_capability_id_ck
     CHECK (capability_id IN ('SCS-CAP-01', 'SCS-CAP-02', 'SCS-CAP-03', 'SCS-CAP-04',
-                             'SCS-CAP-05', 'SCS-CAP-06', 'SCS-CAP-08', 'SCS-CAP-09')),
+                             'SCS-CAP-05', 'SCS-CAP-06', 'SCS-CAP-08', 'SCS-CAP-09',
+                             'AAB-PLATFORM-09')),
   CONSTRAINT decision_receipt_text_not_blank_ck
     CHECK (btrim(decision_type) <> '' AND btrim(decision) <> ''),
   CONSTRAINT decision_receipt_correlation_id_ck

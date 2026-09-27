@@ -5,7 +5,8 @@
 //                                      schemas produce (run by npm test)
 //
 // Types are never hand-written: edit the schema, then regenerate.
-// Schemas reference each other by $id (urn:aab:scs:schema:…); those references
+// Schemas reference each other by $id (urn:aab:scs:schema:… or, for new
+// platform schemas, urn:aab:schema:…); those references
 // are resolved to the local files here — nothing is fetched over the network.
 
 import { readFile, writeFile } from "node:fs/promises";
@@ -214,7 +215,7 @@ export async function generate() {
   const { byId, byFile } = await loadSchemas();
   const urnResolver = {
     order: 1,
-    canRead: /^urn:aab:scs:schema:/,
+    canRead: /^urn:aab:(scs:)?schema:/,   // SCS schemas, and new platform schemas (naming rule)
     read: (file) => {
       const schema = byId.get(file.url);
       if (!schema) throw new Error(`unresolved schema reference ${file.url}`);
