@@ -14,9 +14,9 @@
 - **Only the party itself, or its designated authority with a link, may suspend; neither alone:** "a natural person, through their own ACTIVE IS_SUBJECT link, may suspend another link to them — never reinstate or revoke", and "for an organisation: PARTY_AUTHORITY_REPRESENTATIVE for it AND an ACTIVE ACTS_FOR_SUBJECT link — either alone is not enough".
 - **Mandate verification is independent, and its derived status never hides an adverse finding:** the "rule 6" and "the derived status" tests (`cap-02-mandate-verification.test.ts`), and "checks 7 and 8" (`representative-submission.test.ts`).
 - **Each representative check refuses the act with its own code:** "check 1" to "checks 7 and 8" (`representative-submission.test.ts`); the link use checks, including `LINK_AMBIGUOUS`, in `platform/actor-subject-links/use.test.ts`.
-- **Links survive backup and restore, and every signature is re-verified:** `integrity-links.test.ts`, and the backup proof's "every actor–party link and status record verifies against its signer's key and re-digests" step (`backup/prove-backup-restore.mjs`).
+- **Links survive backup and restore, and every signature is re-verified, a rotated key's included:** `integrity-links.test.ts`, and the backup proof's "every actor–party link and status record verifies against the key it names, as at its acceptance, and re-digests — before and after the rotation" step (`backup/prove-backup-restore.mjs`).
 
-This is a record of implementation proof only. SCS-CAP-02 remains `PROPOSED_NOT_ADMITTED`. **Signing-key history is blocking before any real data is admitted** (pilot README, `TODO(signing-key-history)`).
+This is a record of implementation proof only. SCS-CAP-02 remains `PROPOSED_NOT_ADMITTED`. Signing-key history, which blocked real data, is proven: `governance/workstream-b/AAB-PLATFORM-09-KEY-REGISTRY-PROOF-2026-09-28.md` (AAB-PLATFORM-09, section 11).
 
 ## registerParty
 

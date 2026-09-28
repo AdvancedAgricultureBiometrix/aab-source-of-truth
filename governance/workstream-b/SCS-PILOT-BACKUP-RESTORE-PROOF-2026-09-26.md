@@ -4,6 +4,15 @@
 **Authority:** RECORDS WHAT HAS BEEN VERIFIED ABOUT BACKING UP AND RESTORING AN SCS PILOT ENVIRONMENT, ON WHICH PLATFORM, AND WHAT HAS NOT. Admits no capability, grants no production, commissioning or regulatory authority, changes the status of no control in the Phase-1 sovereignty register, and does not satisfy Gate D or close WP05.
 **Evidence base:** branch `implementation/scs-vertical-proof` at `aa8c98f` (the procedure and its proof). CI run 36227701973, a pull request run: it tested `a36de50`, the pull request merge of `aa8c98f` with `main` (`46995e9`). GitHub Actions, `ubuntu-24.04`, Docker 28.0.4, Linux 6.17.
 
+## Update of 2026-09-28: the steps since this record
+
+**This record is not rewritten.** It proves what it says, at `aa8c98f`, with the 14 steps below. The proof has gained steps since, and runs every one on every pull request:
+- **16 steps** from the representation path's PR 7 (`bc6c4b9`): every actor–party link and status record verifies against its signer's key and re-digests after the restore, and the restored API reads the link back.
+- **17 steps** from the signing-key history PR 6 (`d5c7300`): the link officer's key is registered in the public-key registry (AAB-PLATFORM-09) instead of the actors file, and the restored registry verifies: every registration, ceremony, signature and piece of evidence.
+- **18 steps** from the signing-key history PR 7: the key is rotated before the backup, and a second link is signed with the new key. After the restore, both links verify against their historical keys, the retired one included, and the restored API refuses a new statement signed with the retired key.
+
+The steps as they now stand, and the runs that prove them, are recorded in `AAB-PLATFORM-09-KEY-REGISTRY-PROOF-2026-09-28.md`. The number of migrations the restore reports has grown in the same way (24, at `80b3c14`).
+
 ## Scope and verdict
 
 The proof covers one country environment, the pilot stack defined by

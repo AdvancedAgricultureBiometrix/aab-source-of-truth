@@ -1,6 +1,6 @@
 # Signing-key history — build plan
 
-**Status:** BUILD PLAN — APPROVED 2026-09-28, WITH THE FOUR DECISIONS RECORDED BELOW — NOTHING BUILT
+**Status:** BUILD PLAN — APPROVED 2026-09-28, WITH THE FOUR DECISIONS RECORDED BELOW — ALL SEVEN PRS BUILT; PROVEN IN `governance/workstream-b/AAB-PLATFORM-09-KEY-REGISTRY-PROOF-2026-09-28.md`
 **Builds:** AAB-PLATFORM-09 Governed Public-Key Registry (`governance/AAB-PLATFORM-09-GOVERNED-PUBLIC-KEY-REGISTRY-CANONICAL-CONTRACT-2026-09-28.md`, with its amendment of 2026-09-28), in the SCS pilot, and the switch of every signature check from the signer's current key to the key active when the server accepted the signature.
 **Removes, when the proof merges:** `TODO(signing-key-history)` as the blocker before real data, replaced by the contract's section 11 proof.
 **Order:** contract gaps first, then migrations, then the foundation, then endpoints (each with its own tests, as always), then the switch-over, then the proof. One PR per step, each with CI passing, each reviewed before the next begins.
@@ -136,9 +136,12 @@ No key can be registered in any registry before its first key exists.
 4. **Registry endpoints 3.1 to 3.5:** bootstrap, challenges, registration, events, reads. **Also, moved here while building it:** the control plane's issuer (`PLATFORM_CONTROL_PLANE` actors, and `AAB_REGISTRY_INSTANCE=CONTROL_PLANE`, serving the registry's routes only), without which the Platform Owner's ceremony has no actor; and checking the Platform Owner's attested evidence, without which a country's ceremony cannot verify its co-signature.
 5. **Compromise and cross-issuer evidence: endpoints 3.6 to 3.8,** and the cross-issuer tests (the control plane's registry in its own database).
 6. **The switch-over (step 4):** statements version 2, checks at use, keys out of the actors file, the integrity verifier, the changed rotation test. **The breaking change for signing clients lands here.** **Also, found while building it:** the operator sections of the READMEs corrected here, not in PR 7, since after this PR they would tell operators to do what the server refuses; compromise evidence digested in canonical order (by digest), so that a compromise record re-digests from its stored rows; the integrity verifier reports a `NOT_VERIFIABLE` signature as a problem, and counts one under review, affirmed or repudiated without reporting it.
-7. **The proof (step 5):** the section 11 tests, the extended backup proof, the proof record, documentation, and the removal of `TODO(signing-key-history)`.
+7. **The proof (step 5):** the section 11 tests, the extended backup proof, the proof record, documentation, and the removal of `TODO(signing-key-history)`. **As built:**
+   - **The test files are named differently from step 5.** Compromise and cross-issuer evidence were proven in PR 5, in `integration/key-registry-compromise.test.ts`, and the bootstrap ceremonies in PR 4, in `integration/key-registry-endpoints.test.ts`. This PR adds `integration/key-rotation.test.ts` and `integration/key-compromise-window.test.ts`. The second shows, end to end over real links, what the registry library's unit tests showed only in pure functions: a record accepted before the window is unaffected, and a later start narrows nothing. The proof record cites the files as they are.
+   - **The backup proof has 18 steps.** It rotates the link officer's key and signs a second link with the new one; after the restore, both links verify, the registry holds three registrations, and the restored API refuses a new statement signed with the retired key.
+   - **The operator runbook** for both ceremonies is `KEY-BOOTSTRAP-CEREMONY-RUNBOOK.md`. The README's operator section was already corrected in PR 6, and now points to it.
 
-Until PR 7 merges, the pilot's rule stands: a key is never rotated while records it signed are in use.
+Until PR 7 merged, the pilot's rule stood: a key is never rotated while records it signed are in use. The proof lifts it.
 
 ## Decisions recorded on 2026-09-28
 

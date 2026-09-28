@@ -2,7 +2,7 @@
 
 **Status:** CANONICAL CONTRACT — NOT IMPLEMENTATION
 **Domain:** AAB platform (shared by every domain)
-**Authority:** DEFINES THE GOVERNED PUBLIC-KEY REGISTRY: WHERE AN ACTOR'S SIGNING KEYS ARE REGISTERED, WHAT A KEY REGISTRATION RECORDS, HOW A KEY IS RETIRED, SUSPENDED OR DECLARED COMPROMISED WITHOUT ITS HISTORY BEING LOST, HOW A SIGNATURE IS ACCEPTED AND LATER VERIFIED AGAINST THE KEY THAT WAS ACTIVE WHEN THE SERVER ACCEPTED IT, AND WHAT EVIDENCE A RECORD KEEPS WHEN ITS SIGNER'S KEY BELONGS TO ANOTHER ISSUER. It registers no key, grants no authority to anyone, amends no contract and changes no stored record. This contract is PROPOSED_NOT_ADMITTED. No implementation exists.
+**Authority:** DEFINES THE GOVERNED PUBLIC-KEY REGISTRY: WHERE AN ACTOR'S SIGNING KEYS ARE REGISTERED, WHAT A KEY REGISTRATION RECORDS, HOW A KEY IS RETIRED, SUSPENDED OR DECLARED COMPROMISED WITHOUT ITS HISTORY BEING LOST, HOW A SIGNATURE IS ACCEPTED AND LATER VERIFIED AGAINST THE KEY THAT WAS ACTIVE WHEN THE SERVER ACCEPTED IT, AND WHAT EVIDENCE A RECORD KEEPS WHEN ITS SIGNER'S KEY BELONGS TO ANOTHER ISSUER. It registers no key, grants no authority to anyone, amends no contract and changes no stored record. This contract is PROPOSED_NOT_ADMITTED. It is implemented in the SCS pilot and `behaviourally proven` for what its proof record covers (note of 2026-09-28, below).
 
 ## Amendment of 2026-09-28: the pilot position for a country registry's first key
 
@@ -56,6 +56,15 @@ Settled while building the compromise endpoints (`scs-pilot/SIGNING-KEY-HISTORY-
 - **A notice does not go stale. This is a distinction, not an exception.** The 60-minute limit of section 9 (third amendment) applies to verification evidence: an attestation presented at acceptance, of a key's state at that moment, which a later change could make untrue. A compromise notice is a record of a continuing fact: a compromise, once declared, never ends, so the notice never expires, however long it takes to reach the domain.
 - **Which records can be assessed:** a record that names the key it was signed with, and was accepted inside that key's exposure window. A link or status record names its key in its version 2 statement (AAB-PLATFORM-04, third amendment). **A version 1 statement names no key, so it cannot be assessed.** That is not a limitation of assessment but a correct consequence of the version 2 requirement: pilot deployments start from a fresh database, under version 2 statements only (second amendment), so no version 1 record is ever relied on.
 - **A record with more than one signature,** such as a country's bootstrap ceremony (its holder's, and the Platform Owner's co-signature), is still assessed once. An assessment decides whether one key's signature on one record was legitimate: the key whose window the record was accepted in determines what the assessment is about, and names that key's holder, who may not be the assessor. The record's other signature is unaffected.
+
+## Note of 2026-09-28: implemented and proven
+
+Recorded with the proof (`scs-pilot/SIGNING-KEY-HISTORY-BUILD-PLAN.md`, PR 7). Not an amendment: nothing in this contract changes.
+- **The registry is implemented** in the SCS pilot (`scs-pilot/packages/api/src/platform/key-registry/`, migrations 023 and 024), built by the plan's seven PRs. The control plane's registry is the same code, run as a separate instance (second amendment).
+- **The four conditions of section 11 are proven,** and so are both bootstrap ceremonies, test by test, in `governance/workstream-b/AAB-PLATFORM-09-KEY-REGISTRY-PROOF-2026-09-28.md`. That record states its limits.
+- **AAB-PLATFORM-09 is `behaviourally proven`** for what that record covers. It is not admitted, and it admits no data.
+- **The pilot's interim rule is lifted.** Keys may be rotated while records they signed are in use (section 11).
+- **The ceremonies** are performed as `scs-pilot/KEY-BOOTSTRAP-CEREMONY-RUNBOOK.md` describes. No real ceremony has been performed.
 
 ## Why this contract is needed
 
@@ -314,7 +323,7 @@ interface KeyVerificationEvidence {
 - **Compromise:** records accepted inside an exposure window are `UNDER_COMPROMISE_REVIEW` and fail closed where their authority is required; records accepted before it are unaffected; an assessment affirms or repudiates a record without removing it.
 - **Cross-issuer evidence:** a record signed with another issuer's key verifies with no call outside the domain; a compromise notice places the domain's records inside the window under review.
 
-These replace `TODO(signing-key-history)` as the condition for real data. Until they pass, the pilot's rule stands: a key is never rotated while records it signed are in use.
+These replace `TODO(signing-key-history)` as the condition for real data. Until they passed, the pilot's rule stood: a key is never rotated while records it signed are in use. **They pass** (note of 2026-09-28; `governance/workstream-b/AAB-PLATFORM-09-KEY-REGISTRY-PROOF-2026-09-28.md`): a rotated key's records still verify against it, and a new signature with it is refused, so the rule is lifted.
 
 ## 12. Adopting this contract
 
@@ -418,4 +427,4 @@ Confirmed in review:
 - **Algorithms beyond Ed25519,** and how an algorithm is withdrawn.
 - **A trusted timestamp mechanism,** if independent proof of signing time is ever needed (section 10).
 - **Private-key custody,** including the WP05 hardware key, which this contract assumes but does not govern.
-- **Implementation:** a registry per issuer, with a platform schema in the `urn:aab:schema:` namespace; the code changes in section 12; and the proof in section 11.
+- **Implementation:** a registry per issuer, with a platform schema in the `urn:aab:schema:` namespace; the code changes in section 12; and the proof in section 11. **Closed by the proof** (note of 2026-09-28): implemented in the SCS pilot by the build plan's seven PRs, with the `urn:aab:schema:platform:key-*` schemas, and proven in `governance/workstream-b/AAB-PLATFORM-09-KEY-REGISTRY-PROOF-2026-09-28.md`. The adoption items of section 12 that concern an import stay unbuilt: the pilot starts from a fresh database (second amendment).

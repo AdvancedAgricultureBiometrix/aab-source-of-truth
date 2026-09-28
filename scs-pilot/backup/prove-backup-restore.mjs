@@ -12,8 +12,10 @@
 //      a compiled due diligence package with its PDF rendition; the country's
 //      public-key registry (AAB-PLATFORM-09) bootstrapped, co-signed by a
 //      throwaway Platform Owner whose key is verified from attested evidence,
-//      and the link officer's throwaway Ed25519 key registered in it; and an
-//      actor–party link signed with that key, suspended and reinstated
+//      and the link officer's throwaway Ed25519 key registered in it; an
+//      actor–party link signed with that key, suspended and reinstated; then
+//      the key rotated — a replacement registered, retiring it — and a second
+//      link signed with the new key
 //   3. backup (backup/backup.mjs, from the worktree: the committed script)
 //   4. restore into a new compose project with no volumes (backup/restore.mjs),
 //      which checks migrations, receipts, packages, files, links (each
@@ -21,7 +23,8 @@
 //      from the restored registry), the registry itself, row counts and grants
 //      against the source
 //   5. the restored API itself: the package reads back byte-for-byte, its
-//      integrity verification is INTACT, and its PDF downloads intact
+//      integrity verification is INTACT, its PDF downloads intact, and a new
+//      statement signed with the retired key is refused
 //   6. refusals: a backup with one altered byte is refused before anything
 //      is started, and a restore over an existing environment is refused
 //   7. both environments, their image and the worktrees removed, and the
@@ -122,12 +125,13 @@ const keyDigest = (spki) => `sha256:${sha256(Buffer.from(spki, "base64"))}`;
 const signWith = (privateKey, statement) => sign(null, Buffer.from(canonicalJson(statement), "utf8"), privateKey).toString("base64");
 
 /** Statements for a key's registration: the holder's proof of possession, and the authority's registration. */
-function keyStatements(challenge, actorId, key, authority, authorityKey, authorityKeyId) {
+function keyStatements(challenge, actorId, key, authority, authorityKey, authorityKeyId, replacesKeyId) {
   const publicKeyDigest = keyDigest(spkiOf(key.publicKey));
   const possessionStatement = { statementType: "SIGNING_KEY_POSSESSION", keyId: challenge.keyId, actorId, issuer: TH, publicKeyDigest, challengeId: challenge.challengeId, nonce: challenge.nonce };
   const registrationStatement = {
     statementType: "SIGNING_KEY_REGISTRATION", keyId: challenge.keyId, actorId, issuer: TH, publicKeyDigest, algorithm: "Ed25519",
     challengeId: challenge.challengeId, signingKeyId: authorityKeyId, registrationAuthority: { issuer: TH, actorId: authority },
+    ...(replacesKeyId === undefined ? {} : { replacesKeyId }),
   };
   return {
     publicKey: spkiOf(key.publicKey),
@@ -140,7 +144,8 @@ function keyStatements(challenge, actorId, key, authority, authorityKey, authori
  * The country's registry: bootstrapped by its key registrar, co-signed by a
  * throwaway Platform Owner whose key and attestation key this process holds
  * (the country verifies the co-signature from the attested evidence alone);
- * then the link officer's key, registered by the registrar. Returns its keyId.
+ * then the link officer's key, registered by the registrar. Returns its keyId,
+ * and a function that rotates it: registers a replacement, retiring it.
  */
 async function registry(api) {
   const po = generateKeyPairSync("ed25519");
@@ -170,7 +175,12 @@ async function registry(api) {
 
   const lc = (await api.created("/aab/v1/key-registration-challenges", { purpose: "REGISTRATION", actorId: "proof-linker" }, undefined, "registrar")).decision;
   await api.created("/aab/v1/signing-keys", keyStatements(lc, "proof-linker", linkOfficerKey, "proof-registrar", registrar, bc.keyId), undefined, "registrar");
-  return lc.keyId;
+  const rotate = async (key, replacesKeyId) => {
+    const rc = (await api.created("/aab/v1/key-registration-challenges", { purpose: "REGISTRATION", actorId: "proof-linker" }, undefined, "registrar")).decision;
+    await api.created("/aab/v1/signing-keys", keyStatements(rc, "proof-linker", key, "proof-registrar", registrar, bc.keyId, replacesKeyId), undefined, "registrar");
+    return rc.keyId;
+  };
+  return { linkerKeyId: lc.keyId, rotate };
 }
 
 /** A governed chain, created through the API: returns what the restored environment must reproduce. */
@@ -272,9 +282,9 @@ async function seed(api, stack) {
     packageTitle: "Backup-restore proof package",
   });
   // the link officer's key, registered in the country's public-key registry
-  const linkerKeyId = await registry(api);
+  const { linkerKeyId, rotate } = await registry(api);
   // an actor–party link, signed outside the server by the link officer (version 2 statements, naming the key), then suspended and reinstated
-  const signed = (statement) => signWith(linkOfficerKey.privateKey, Object.assign(statement, { statementVersion: "2", signingKeyId: linkerKeyId }));
+  const signed = (statement, key = linkOfficerKey, keyId = linkerKeyId) => signWith(key.privateKey, Object.assign(statement, { statementVersion: "2", signingKeyId: keyId }));
   const linkStatement = {
     statementType: "ACTOR_SUBJECT_LINK",
     actor: { issuer: { issuerType: "COUNTRY_TENANCY", countryCode: "TH" }, actorId: "proof-staff" },
@@ -290,6 +300,12 @@ async function seed(api, stack) {
     const statusStatement = { statementType: "ACTOR_SUBJECT_LINK_STATUS", linkId: link.linkId, linkDigest: link.linkDigest, action, reason: `${action} in the backup proof.`, writer: linkStatement.creator };
     await api.created(`/scs/v1/actor-party-links/${link.linkId}/status-records`, { statusStatement, statementSignature: signed(statusStatement) }, undefined, "linker");
   }
+  // rotation: a replacement key registered, retiring the first as it becomes active; a second link signed with the new key
+  const rotatedKeyId = await rotate(rotatedLinkOfficerKey, linkerKeyId);
+  const secondStatement = { ...linkStatement, subject: { ...linkStatement.subject, subjectId: reviewerOrg } };
+  delete secondStatement.statementVersion;
+  delete secondStatement.signingKeyId;
+  const second = (await api.created("/scs/v1/actor-party-links", { linkStatement: secondStatement, statementSignature: signed(secondStatement, rotatedLinkOfficerKey, rotatedKeyId) }, undefined, "linker")).decision;
   return {
     packageId: compiled.package.compilationMetadata.packageId,
     envelope: compiled.package,
@@ -298,6 +314,14 @@ async function seed(api, stack) {
     objectId,
     linkId: link.linkId,
     linkDigest: link.linkDigest,
+    secondLinkId: second.linkId,
+    // a statement superseding the second link, as a new one would, but signed with the retired key
+    retiredKeyStatement: () => {
+      const statement = { ...secondStatement, supersedesLinkId: second.linkId, validFrom: new Date(Date.now() - 60_000).toISOString() };
+      delete statement.statementVersion;
+      delete statement.signingKeyId;
+      return { linkStatement: statement, statementSignature: signed(statement) };
+    },
   };
 }
 
@@ -305,6 +329,8 @@ async function seed(api, stack) {
 
 /** The link officer's throwaway signing key: the private half never leaves this process. */
 const linkOfficerKey = generateKeyPairSync("ed25519");
+/** Its replacement, registered when the first is rotated. */
+const rotatedLinkOfficerKey = generateKeyPairSync("ed25519");
 
 const tag = `proof-${run}`;
 const src = new Stack({ dir: join(work, "source", "scs-pilot"), project: `scs-proof-src-${run}`, overrides: { SCS_API_IMAGE_TAG: tag } });
@@ -361,12 +387,12 @@ try {
   step("restore: every package verifies against its stored digest", i.packages.checked > 0 && i.packages.problems.length === 0, { packages: i.packages.checked });
   step("restore: every evidence file re-hashes to its recorded SHA-256", i.evidenceObjects.checked > 0 && i.evidenceObjects.problems.length === 0, { evidenceObjects: i.evidenceObjects.checked });
   step("restore: every rendition re-hashes to its recorded SHA-256", i.renditions.checked > 0 && i.renditions.problems.length === 0, { renditions: i.renditions.checked });
-  step("restore: every actor–party link and status record verifies against the key it names, as at its acceptance, and re-digests", i.links.checked > 0 && i.links.problems.length === 0 && i.linkStatusRecords.checked === 2 && i.linkStatusRecords.problems.length === 0
-    && i.links.verification.VERIFIED === i.links.checked && i.linkStatusRecords.verification.VERIFIED === 2,
+  step("restore: every actor–party link and status record verifies against the key it names, as at its acceptance, and re-digests — before and after the rotation", i.links.checked === 2 && i.links.problems.length === 0 && i.linkStatusRecords.checked === 2 && i.linkStatusRecords.problems.length === 0
+    && i.links.verification.VERIFIED === 2 && i.linkStatusRecords.verification.VERIFIED === 2,
     { links: i.links.checked, statusRecords: i.linkStatusRecords.checked });
   const registryProblems = Object.values(i.keyRegistry).flatMap((x) => x.problems);
   step("restore: the public-key registry verifies — every registration, ceremony, signature and piece of evidence", registryProblems.length === 0
-    && i.keyRegistry.registrations.checked === 2 && i.keyRegistry.ceremonies.checked === 1 && i.keyRegistry.ceremonies.verification.VERIFIED === 2 && i.keyRegistry.verificationEvidence.checked === 1,
+    && i.keyRegistry.registrations.checked === 3 && i.keyRegistry.ceremonies.checked === 1 && i.keyRegistry.ceremonies.verification.VERIFIED === 2 && i.keyRegistry.verificationEvidence.checked === 1,
     { registrations: i.keyRegistry.registrations.checked, ceremonies: i.keyRegistry.ceremonies.checked, problems: registryProblems });
   step("restore: every table's row count and the database grants equal the source's", i.comparison !== undefined && i.comparison.problems.length === 0, { tables: Object.keys(i.counts).length });
 
@@ -381,6 +407,10 @@ try {
   const restoredLink = (await dstApi.call("GET", `/scs/v1/actor-party-links/${seeded.linkId}`, { who: "linker" })).json();
   step("restored API: the link reads back ACTIVE, with its digest and both status records", restoredLink.currentState === "ACTIVE" && restoredLink.link.linkDigest === seeded.linkDigest && restoredLink.statusRecords.length === 2,
     { currentState: restoredLink.currentState, statusRecords: restoredLink.statusRecords.length });
+  const retired = await dstApi.call("POST", "/scs/v1/actor-party-links", { body: seeded.retiredKeyStatement(), who: "linker" });
+  const retiredBody = retired.json();
+  step("restored API: a new statement signed with the retired key is refused", retired.status === 422 && retiredBody.error === "LINK_SIGNATURE_INVALID" && /was RETIRED/.test(retiredBody.reasons?.[0] ?? ""),
+    { status: retired.status, error: retiredBody.error, reason: retiredBody.reasons?.[0] });
 
   // refusals
   const tampered = join(work, "backup-tampered");
