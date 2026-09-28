@@ -1,0 +1,3 @@
+# The Step 0 evidence snapshots are byte-exact records: no line-ending
+# conversion, no diff normalisation.
+snapshot-*/** -text
