@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:schema:platform:key-assessment-request:1",
+  "title": "KeyAssessmentRequest",
+  "description": "POST /aab/v1/key-compromise-assessments: affirm or repudiate one record inside an exposure window (AAB-PLATFORM-09 section 8).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "assessmentStatement",
+    "statementSignature"
+  ],
+  "properties": {
+    "assessmentStatement": {
+      "$ref": "urn:aab:schema:platform:key-assessment-statement:1"
+    },
+    "statementSignature": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9+/]{86}==$",
+      "description": "Ed25519 signature over the statement's canonical JSON: 64 bytes, standard base64, made outside the server."
+    }
+  }
+}

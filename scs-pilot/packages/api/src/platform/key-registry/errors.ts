@@ -31,6 +31,15 @@ export const KEY_REGISTRY_FAILURES = {
   KEY_STATE_NOT_PERMITTED: 409,
   KEY_CEREMONY_INVALID: 422,
   KEY_EVIDENCE_INVALID: 422,
+  // Compromise, notices and assessments (PR 5)
+  KEY_COMPROMISE_NOT_AUTHORISED: 403,
+  KEY_NOTICE_NOT_AUTHORISED: 403,
+  KEY_ASSESSOR_NOT_AUTHORISED: 403,
+  KEY_EXPOSURE_INVALID: 422,
+  KEY_NOTICE_INVALID: 422,
+  KEY_RECORD_NOT_FOUND: 404,
+  KEY_RECORD_NOT_UNDER_REVIEW: 409,
+  KEY_RECORD_ALREADY_ASSESSED: 409,
 } as const;
 
 export type KeyRegistryFailureCode = keyof typeof KEY_REGISTRY_FAILURES;
@@ -41,5 +50,5 @@ export function keyRegistryFailure(code: KeyRegistryFailureCode, reasons: readon
 
 /** The issuer's key-registration role (AAB-PLATFORM-09, second amendment). TODO(role-registry). */
 export const KEY_REGISTRAR_ROLE = "KEY_REGISTRAR";
-/** The issuer's security role (second amendment): declares compromises and assesses records (PR 5). TODO(role-registry). */
+/** The issuer's security role (second amendment): declares compromises, records notices, assesses records. TODO(role-registry). */
 export const KEY_SECURITY_OFFICER_ROLE = "KEY_SECURITY_OFFICER";

@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:schema:platform:key-compromise-notice:1",
+  "title": "KeyCompromiseNotice",
+  "description": "AAB-PLATFORM-09 section 9: another issuer's compromise, as its registry exports it and its attestation-key holder attests it, outside the server.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "issuer",
+    "keyId",
+    "actorId",
+    "suspectedExposureFrom",
+    "recordedAt",
+    "attestedAt",
+    "attestationKeyId"
+  ],
+  "properties": {
+    "issuer": {
+      "$ref": "urn:aab:schema:platform:key-registry-issuer:1"
+    },
+    "keyId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._:-]{1,128}$",
+      "description": "A key identifier in its issuer's registry."
+    },
+    "actorId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._:@-]{1,128}$"
+    },
+    "suspectedExposureFrom": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "recordedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "attestedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "attestationKeyId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._:-]{1,128}$",
+      "description": "A key identifier in its issuer's registry."
+    }
+  }
+}

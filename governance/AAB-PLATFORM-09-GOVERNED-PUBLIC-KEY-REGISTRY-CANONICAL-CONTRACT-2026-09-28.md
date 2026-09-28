@@ -47,6 +47,16 @@ Settled while building the registry's first endpoints (`scs-pilot/SIGNING-KEY-HI
 - **Events take effect when they are recorded: a pilot position, not a permanent rule.** Section 4 allows an event to take effect later than it is recorded, and that rule stands. The pilot records every event effective at once, and does not use future-dated events.
 - **A key holder retires their own key by signing with it, so only while it is `ACTIVE`.** A holder whose key is suspended cannot use it to retire it, so a registration authority retires a suspended key (section 4).
 
+## Fifth amendment of 2026-09-28: compromise, notices and assessments
+
+Settled while building the compromise endpoints (`scs-pilot/SIGNING-KEY-HISTORY-BUILD-PLAN.md`, PR 5):
+- **The failure codes** for compromise, notices and assessments are added to section 13, and **the decision types** `KEY_COMPROMISE`, `KEY_COMPROMISE_NOTICE` and `KEY_COMPROMISE_ASSESSMENT` to those of the fourth amendment.
+- **What a notice carries** (section 9): the key's issuer, `keyId` and holder; the suspected start of the exposure; the time the compromise was recorded; and when, and with which attestation key, it was attested. The attestation is over the notice itself.
+- **A notice's times run in order:** the suspected start, then the time the compromise was recorded, then the time it was attested; none may be earlier than the one before it. A notice cannot be attested after the receiving domain records it.
+- **A notice does not go stale. This is a distinction, not an exception.** The 60-minute limit of section 9 (third amendment) applies to verification evidence: an attestation presented at acceptance, of a key's state at that moment, which a later change could make untrue. A compromise notice is a record of a continuing fact: a compromise, once declared, never ends, so the notice never expires, however long it takes to reach the domain.
+- **Which records can be assessed:** a record that names the key it was signed with, and was accepted inside that key's exposure window. A link or status record names its key in its version 2 statement (AAB-PLATFORM-04, third amendment). **A version 1 statement names no key, so it cannot be assessed.** That is not a limitation of assessment but a correct consequence of the version 2 requirement: pilot deployments start from a fresh database, under version 2 statements only (second amendment), so no version 1 record is ever relied on.
+- **A record with more than one signature,** such as a country's bootstrap ceremony (its holder's, and the Platform Owner's co-signature), is still assessed once. An assessment decides whether one key's signature on one record was legitimate: the key whose window the record was accepted in determines what the assessment is about, and names that key's holder, who may not be the assessor. The record's other signature is unaffected.
+
 ## Why this contract is needed
 
 - **Today a signature is verified against the signer's current key** (`foundation/signatures.ts`, `TODO(signing-key-history)`). Rotating a key makes every record signed with the earlier key fail verification: every link and status record the signer made becomes unusable at once. AAB-PLATFORM-04 records this as blocking before any real data is admitted, and AAB-PLATFORM-08 makes it a precondition of any human decision going live with real data.
@@ -357,7 +367,20 @@ interface KeyRegistryFailure {
 | `KEY_CEREMONY_INVALID` | 422 | A bootstrap ceremony is not what section 3a and its amendments require, or the Platform Owner's co-signature does not verify |
 | `KEY_EVIDENCE_INVALID` | 422 | Verification evidence does not verify against a pinned attestation key, is for another key, or is too old (section 9) |
 
-Codes for compromise, notices and assessments are added with their endpoints.
+**Compromise, notices and assessments** (fifth amendment of 2026-09-28):
+
+| Code | Status | When |
+|---|---|---|
+| `KEY_COMPROMISE_NOT_AUTHORISED` | 403 | The declarer is not the key's holder, a registration authority or a security officer |
+| `KEY_NOTICE_NOT_AUTHORISED` | 403 | The recorder of another issuer's notice is not a named human holding the issuer's security role |
+| `KEY_ASSESSOR_NOT_AUTHORISED` | 403 | The assessor is not a named human holding the security role, or holds the compromised key |
+| `KEY_EXPOSURE_INVALID` | 422 | The suspected start is before the key was active, or after the declaration |
+| `KEY_NOTICE_INVALID` | 422 | The notice is not attested by a key pinned for its issuer, or its times are out of order |
+| `KEY_RECORD_NOT_FOUND` | 404 | No such record to assess |
+| `KEY_RECORD_NOT_UNDER_REVIEW` | 409 | The record was not accepted inside the exposure window of a key it names |
+| `KEY_RECORD_ALREADY_ASSESSED` | 409 | The record has already been assessed; an assessment is written once |
+
+A compromise declared unsigned by anyone but the key's holder, or signed with the compromised key, is `KEY_SIGNATURE_INVALID`. A notice for this registry's own issuer is `KEY_ISSUER_MISMATCH`.
 
 ## What this contract does not establish
 
@@ -388,6 +411,7 @@ Confirmed in review:
 
 ## Open items
 
+- **An assessment does not re-check the record's signature first** (fifth amendment of 2026-09-28). The assessment endpoint checks that the record was accepted inside a key's exposure window, not that its signature verifies. This holds fail-closed: a record whose signature does not verify is `NOT_VERIFIABLE`, and no assessment changes that result, so nothing becomes reliable that should not. Full signature re-checking belongs to the integrity verifier, built in the switch-over (`scs-pilot/SIGNING-KEY-HISTORY-BUILD-PLAN.md`, PR 6).
 - **The bootstrap problem — the most important open item. Without solving it, no registry can start** (section 3a). For the pilot, the Platform Owner's first key is self-attested in a documented ceremony, and a country registry's first key is self-attested by the country's authorised representative in a ceremony the Platform Owner witnesses and co-signs (amendment of 2026-09-28); both are disclosed. Still open: the bootstrap for production.
 - **Attestation keys:** how each registry's attestation key is created, pinned, rotated and, if compromised, replaced, across every domain that pinned it.
 - **Compromise notices across the boundary:** the channel, and what a domain does if a notice cannot reach it.

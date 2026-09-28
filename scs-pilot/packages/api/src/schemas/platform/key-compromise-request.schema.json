@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:schema:platform:key-compromise-request:1",
+  "title": "KeyCompromiseRequest",
+  "description": "POST /aab/v1/signing-keys/:keyId/compromises: declare a compromise, or widen its window (AAB-PLATFORM-09 section 8). statementSignature is present exactly when the statement names a signingKeyId.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "compromiseStatement"
+  ],
+  "properties": {
+    "compromiseStatement": {
+      "$ref": "urn:aab:schema:platform:key-compromise-statement:1"
+    },
+    "statementSignature": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9+/]{86}==$",
+      "description": "Ed25519 signature over the statement's canonical JSON: 64 bytes, standard base64, made outside the server."
+    }
+  }
+}
