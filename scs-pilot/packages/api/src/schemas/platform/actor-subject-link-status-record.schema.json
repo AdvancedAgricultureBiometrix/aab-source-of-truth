@@ -30,7 +30,15 @@
       "const": "1"
     },
     "statusStatement": {
-      "$ref": "urn:aab:scs:schema:platform:actor-subject-link-status-statement:1"
+      "description": "As signed: version 2, or version 1 for a record stored before the switch-over (read, never accepted again).",
+      "anyOf": [
+        {
+          "$ref": "urn:aab:scs:schema:platform:actor-subject-link-status-statement:2"
+        },
+        {
+          "$ref": "urn:aab:scs:schema:platform:actor-subject-link-status-statement:1"
+        }
+      ]
     },
     "statementSignature": {
       "description": "Ed25519 signature over the statement's canonical JSON: 64 bytes, standard base64.",

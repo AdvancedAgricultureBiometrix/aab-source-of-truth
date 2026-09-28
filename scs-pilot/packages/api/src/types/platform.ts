@@ -7,8 +7,10 @@
  *   src/schemas/platform/subject-key.schema.json
  *   src/schemas/platform/actor-subject-link-actor.schema.json
  *   src/schemas/platform/actor-subject-link-statement.schema.json
+ *   src/schemas/platform/actor-subject-link-statement-v2.schema.json
  *   src/schemas/platform/actor-subject-link.schema.json
  *   src/schemas/platform/actor-subject-link-status-statement.schema.json
+ *   src/schemas/platform/actor-subject-link-status-statement-v2.schema.json
  *   src/schemas/platform/actor-subject-link-status-record.schema.json
  * To change these types, edit the schema(s) above, then run:
  *   npm run generate:types
@@ -102,6 +104,38 @@ export interface ActorSubjectLinkStatement {
 }
 
 /**
+ * AAB-PLATFORM-04 ActorSubjectLinkStatement: what a link's creator decides, and signs, before submitting. Every field is known before submission. The signed bytes are its canonical JSON. Version 2 (AAB-PLATFORM-04, third amendment of 2026-09-28): names the key the creator signs with, registered in the public-key registry (AAB-PLATFORM-09). A new version 1 statement is refused.
+ */
+export interface ActorSubjectLinkStatementV2 {
+  statementType: "ACTOR_SUBJECT_LINK";
+  actor: ActorSubjectLinkActor;
+  subject: SubjectKey;
+  relation: "IS_SUBJECT" | "ACTS_FOR_SUBJECT";
+  validFrom: string;
+  validUntil: string;
+  /**
+   * Evidence that the subject authorised the relationship: at least one AAB-PLATFORM-01 stored object.
+   *
+   * @minItems 1
+   * @maxItems 20
+   */
+  authorisationEvidence: {
+    /**
+     * The AAB-PLATFORM-01 objectId: lowercase hex SHA-256 of the stored bytes.
+     */
+    evidenceObjectSha256: string;
+    description: string;
+  }[];
+  supersedesLinkId?: string;
+  creator: ActorSubjectLinkActor;
+  statementVersion: "2";
+  /**
+   * The creator's key in the public-key registry, lowercase.
+   */
+  signingKeyId: string;
+}
+
+/**
  * AAB-PLATFORM-04 ActorSubjectLink: a write-once record binding one actor to one domain subject, as it (IS_SUBJECT) or for it (ACTS_FOR_SUBJECT). Its fields are the signed statement's; the server sets linkId, createdAt and createdBy, then linkDigest over everything else. It grants no authority. Its state is derived when read.
  */
 export interface ActorSubjectLink {
@@ -131,7 +165,10 @@ export interface ActorSubjectLink {
    * The creator: HUMAN, with accountableName (a governance decision); never the linked actor.
    */
   createdBy: ActorReference;
-  linkStatement: ActorSubjectLinkStatement;
+  /**
+   * As signed: version 2, or version 1 for a record stored before the switch-over (read, never accepted again).
+   */
+  linkStatement: ActorSubjectLinkStatementV2 | ActorSubjectLinkStatement;
   /**
    * Ed25519 signature over the statement's canonical JSON: 64 bytes, standard base64.
    */
@@ -155,13 +192,33 @@ export interface ActorSubjectLinkStatusStatement {
 }
 
 /**
+ * AAB-PLATFORM-04 ActorSubjectLinkStatusStatement: what a status record's writer decides, and signs. It names the link's own linkDigest, so it binds the exact link it acts on. Version 2 (AAB-PLATFORM-04, third amendment of 2026-09-28): names the key the writer signs with, registered in the public-key registry (AAB-PLATFORM-09). A new version 1 statement is refused.
+ */
+export interface ActorSubjectLinkStatusStatementV2 {
+  statementType: "ACTOR_SUBJECT_LINK_STATUS";
+  linkId: string;
+  linkDigest: string;
+  action: "SUSPEND" | "REINSTATE" | "REVOKE";
+  reason: string;
+  writer: ActorSubjectLinkActor;
+  statementVersion: "2";
+  /**
+   * The writer's key in the public-key registry, lowercase.
+   */
+  signingKeyId: string;
+}
+
+/**
  * AAB-PLATFORM-04 ActorSubjectLinkStatusRecord: SUSPEND, REINSTATE or REVOKE, written once against a link and never changed. Signed by the named human who writes it, never the linked actor.
  */
 export interface ActorSubjectLinkStatusRecord {
   statusRecordId: string;
   linkId: string;
   schemaVersion: "1";
-  statusStatement: ActorSubjectLinkStatusStatement;
+  /**
+   * As signed: version 2, or version 1 for a record stored before the switch-over (read, never accepted again).
+   */
+  statusStatement: ActorSubjectLinkStatusStatementV2 | ActorSubjectLinkStatusStatement;
   /**
    * Ed25519 signature over the statement's canonical JSON: 64 bytes, standard base64.
    */

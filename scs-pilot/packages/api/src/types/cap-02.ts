@@ -52,7 +52,8 @@
  */
 
 import type { ActorReference } from "./shared.js";
-import type { ActorSubjectLink, ActorSubjectLinkStatement, ActorSubjectLinkStatusRecord, ActorSubjectLinkStatusStatement } from "./platform.js";
+import type { ActorSubjectLink, ActorSubjectLinkStatementV2, ActorSubjectLinkStatusRecord, ActorSubjectLinkStatusStatementV2 } from "./platform.js";
+import type { KeySignatureAcceptance } from "./key-registry.js";
 
 /**
  * SCS-CAP-02 "Representative submission" (amendments of 2026-09-27): present only when a PARTY_REPRESENTATIVE submits for another party under a mandate. The same shape in SCS-CAP-02, SCS-CAP-04 and SCS-CAP-05. The link, the mandate and the party the act is for are checked by the capability, which refuses the act on any failure.
@@ -779,7 +780,7 @@ export interface ScsActorPartyLinkPathParams {
  * SCS-CAP-02 ScsActorPartyLinkRequest (amendments of 2026-09-27): an AAB-PLATFORM-04 link statement for a CAP-02 party (subject.domain SCS, subject.subjectType PARTY, subject.subjectId a partyId), and the creator's signature over its canonical JSON, made outside the server. Identifiers in the statement are lowercase UUIDs: the statement is signed as sent, and stored beside the record's own identifiers.
  */
 export interface ScsActorPartyLinkRequest {
-  linkStatement: ActorSubjectLinkStatement & {
+  linkStatement: ActorSubjectLinkStatementV2 & {
     subject?: {
       domain?: "SCS";
       subjectType?: "PARTY";
@@ -808,6 +809,10 @@ export interface ScsActorPartyLinkDecision {
   partyId: string;
   decision: "CREATED";
   eligibilityChecks: ScsActorPartyLinkEligibilityChecks;
+  /**
+   * SCS-CAP-02 sixth amendment (AAB-PLATFORM-09 section 6): the signature accepted — the server's acceptedAt, the key it was verified with, and that key's digests.
+   */
+  signatureAcceptance: KeySignatureAcceptance;
   linkDigest: string;
   /**
    * @minItems 1
@@ -867,7 +872,7 @@ export interface ScsActorPartyLinkResponse {
  * SCS-CAP-02 ScsActorPartyLinkStatusRequest: an AAB-PLATFORM-04 status statement against the link in the route, and the writer's signature over its canonical JSON, made outside the server.
  */
 export interface ScsActorPartyLinkStatusRequest {
-  statusStatement: ActorSubjectLinkStatusStatement & {
+  statusStatement: ActorSubjectLinkStatusStatementV2 & {
     /**
      * The link in the route, lowercase.
      */
@@ -890,6 +895,10 @@ export interface ScsActorPartyLinkStatusDecision {
   decision: "RECORDED";
   writerCapacity: "CREATING_ROLE" | "SUBJECT_AUTHORITY";
   eligibilityChecks: ScsActorPartyLinkStatusEligibilityChecks;
+  /**
+   * SCS-CAP-02 sixth amendment (AAB-PLATFORM-09 section 6): the signature accepted — the server's acceptedAt, the key it was verified with, and that key's digests.
+   */
+  signatureAcceptance: KeySignatureAcceptance;
   /**
    * The link's state after this record.
    */

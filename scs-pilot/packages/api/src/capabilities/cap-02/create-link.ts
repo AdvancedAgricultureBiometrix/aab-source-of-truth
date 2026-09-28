@@ -29,8 +29,10 @@
 //   6. one link       — no other ACTIVE or SUSPENDED link of the same relation
 //                       → LINK_ALREADY_ACTIVE (409)
 //   7. signature      — the creator is HUMAN with an accountable name, is the
-//                       statement's creator, and signed it with their key
-//                       → LINK_SIGNATURE_INVALID (422)
+//                       statement's creator, and signed it (a version 2
+//                       statement) with the key it names, registered for them
+//                       in the public-key registry and ACTIVE now
+//                       (AAB-PLATFORM-09) → LINK_SIGNATURE_INVALID (422)
 //   8. insert         — linkDigest over the whole record; the link and its evidence rows
 //   9. receipt        — ACTOR_PARTY_LINK_CREATION, same transaction; 201
 
@@ -42,8 +44,9 @@ import { platformFailure } from "../../foundation/errors.js";
 import type { OperationResult } from "../../foundation/idempotency.js";
 import { writeReceipt } from "../../foundation/receipts.js";
 import type { RouteContext } from "../../foundation/server.js";
-import { verifyStatementSignature } from "../../foundation/signatures.js";
 import { deriveLinkState, isStatementActor, linkDigestOf } from "../../platform/actor-subject-links/links.js";
+import { verifyWithRegisteredKey } from "../../platform/key-registry/common.js";
+import { keyRegistryReader } from "../../platform/key-registry/store.js";
 import { SCHEMAS } from "../../schemas/registry.js";
 import type {
   ScsActorPartyLinkDecision,
@@ -157,17 +160,21 @@ export function createActorPartyLink(directory: ActorDirectory) {
         : `Link ${l.id} for actor ${linked.actorId}, party ${partyId} and ${statement.relation} is SUSPENDED; reinstate or revoke it first, so that two links can never be ACTIVE.`));
     }
 
-    // 7. The creator is a named human who signed this statement
+    // 7. The creator is a named human who signed this statement with the key
+    //    it names, registered for them and ACTIVE now (AAB-PLATFORM-09)
     const accountableName = directory.accountableNameOf(actor);
-    const key = directory.signingKeyOf(actor);
-    const signatureProblem =
+    const signerProblem =
       actor.actorType !== "HUMAN" ? `Link creation is a governance decision: actor ${actor.actorId} is a ${actor.actorType}, not a HUMAN.`
       : accountableName === null ? `Link creation is a governance decision: no accountable name is recorded for actor ${actor.actorId}.`
       : !isStatementActor(actor, statement.creator) ? `The statement's creator (${statement.creator.actorId}) is not the authenticated actor (${actor.actorId}).`
-      : key === null ? `No signing key is registered for actor ${actor.actorId}.`
-      : !verifyStatementSignature(statement, ctx.body.statementSignature, key) ? `The statement signature does not verify against actor ${actor.actorId}'s registered key.`
       : null;
-    if (signatureProblem !== null) throw cap02Failure("LINK_SIGNATURE_INVALID", [signatureProblem]);
+    if (signerProblem !== null) throw cap02Failure("LINK_SIGNATURE_INVALID", [signerProblem]);
+    const signed = await verifyWithRegisteredKey(keyRegistryReader(tx), {
+      statement, signature: ctx.body.statementSignature, signer: statement.creator, signingKeyId: statement.signingKeyId, acceptedAt: now.toISOString(),
+    });
+    if (signed.verification.result !== "VERIFIED") {
+      throw cap02Failure("LINK_SIGNATURE_INVALID", [`The statement does not verify with key ${statement.signingKeyId}, as registered for ${actor.actorId} and ACTIVE now: ${signed.verification.reason ?? signed.verification.result}.`]);
+    }
 
     // 8. The record: its fields are the statement's; linkDigest over all of it
     const createdBy: ActorReferenceV2 = { ...(actor as ActorReferenceV2), accountableName: accountableName! };
@@ -206,6 +213,12 @@ export function createActorPartyLink(directory: ActorDirectory) {
       partyId,
       decision: "CREATED",
       eligibilityChecks,
+      signatureAcceptance: {
+        acceptedAt: link.createdAt,
+        signingKeyId: statement.signingKeyId,
+        publicKeyDigest: signed.key!.registration.publicKeyDigest,
+        registrationDigest: signed.key!.registration.registrationDigest,
+      },
       linkDigest: link.linkDigest,
       decisionReasons: [
         `creatorAuthorised: evaluated — actor ${actor.actorId} holds ${LINK_OFFICER_ROLE} in a scope covering party ${partyId}.`,
@@ -218,8 +231,8 @@ export function createActorPartyLink(directory: ActorDirectory) {
           ? `noOverlappingActiveLink: evaluated — no other ACTIVE or SUSPENDED ${statement.relation} link for this actor and party.`
           : `noOverlappingActiveLink: evaluated — supersedes ACTIVE link ${supersedes}, which is REVOKED from now; no other ACTIVE or SUSPENDED ${statement.relation} link for this actor and party.`,
         `creatorIndependentOfMandateVerification: evaluated — actor ${actor.actorId} recorded no verification assessment of a mandate whose representative is party ${partyId}.`,
-        `statementSignatureVerified: evaluated — the statement is signed by its creator, ${actor.actorId} (${accountableName}), and verifies against their registered Ed25519 key.`,
-        `Pilot limitation: the creator's role and signing key are operator configuration (the actors file), not signed, evidenced or receipted grants.`,
+        `statementSignatureVerified: evaluated — the statement is signed by its creator, ${actor.actorId} (${accountableName}), and verifies with their key ${statement.signingKeyId}, registered in the public-key registry and ACTIVE at ${link.createdAt} (AAB-PLATFORM-09).`,
+        `Pilot limitation: the creator's role is operator configuration (the actors file), not a signed, evidenced or receipted grant.`,
       ],
       decidedBy: createdBy,
       decidedAt: link.createdAt,

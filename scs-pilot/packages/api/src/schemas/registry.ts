@@ -88,6 +88,8 @@ import platformActorSubjectLinkStatement from "./platform/actor-subject-link-sta
 import platformActorSubjectLink from "./platform/actor-subject-link.schema.json" with { type: "json" };
 import platformActorSubjectLinkStatusStatement from "./platform/actor-subject-link-status-statement.schema.json" with { type: "json" };
 import platformActorSubjectLinkStatusRecord from "./platform/actor-subject-link-status-record.schema.json" with { type: "json" };
+import platformActorSubjectLinkStatementV2 from "./platform/actor-subject-link-statement-v2.schema.json" with { type: "json" };
+import platformActorSubjectLinkStatusStatementV2 from "./platform/actor-subject-link-status-statement-v2.schema.json" with { type: "json" };
 import cap02ActorPartyLinkParams from "./cap-02/actor-party-link-params.schema.json" with { type: "json" };
 import cap02ActorPartyLinkRequest from "./cap-02/actor-party-link-request.schema.json" with { type: "json" };
 import cap02ActorPartyLinkDecision from "./cap-02/actor-party-link-decision.schema.json" with { type: "json" };
@@ -232,6 +234,8 @@ export const SCHEMAS = {
   platformActorSubjectLink,
   platformActorSubjectLinkStatusStatement,
   platformActorSubjectLinkStatusRecord,
+  platformActorSubjectLinkStatementV2,
+  platformActorSubjectLinkStatusStatementV2,
   cap02ActorPartyLinkParams,
   cap02ActorPartyLinkRequest,
   cap02ActorPartyLinkDecision,

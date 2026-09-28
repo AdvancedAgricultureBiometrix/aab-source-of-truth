@@ -3,9 +3,11 @@
 //
 //   * digests      — linkDigest and recordDigest: "sha256:" over the canonical
 //                    JSON of every other field of the record
-//   * integrity    — a record's statement signature verifies against its
-//                    signer's registered key, its statement is the record's
-//                    own, and its digest matches its content
+//   * integrity    — a record's statement signature, verified against the key
+//                    its statement names as at the record's acceptance
+//                    (AAB-PLATFORM-09; platform/key-registry/signed-records.ts),
+//                    may be relied on; its statement is the record's own; and
+//                    its digest matches its content
 //   * state        — ACTIVE, SUSPENDED, REVOKED or EXPIRED, derived when read,
 //                    never stored
 //   * SubjectResolver — the one interface a domain implements to say whether
@@ -15,11 +17,10 @@
 // Nothing here imports a domain's types or reads a domain's tables (section 5,
 // "Direction"). Domains store the records and call these functions.
 
-import type { KeyObject } from "node:crypto";
-
 import { isVersion2 } from "../../foundation/actor.js";
 import { canonicalJson } from "../../foundation/canonical.js";
-import { recordDigest, verifyStatementSignature } from "../../foundation/signatures.js";
+import { recordDigest } from "../../foundation/signatures.js";
+import { mayBeReliedOn, type VerificationResult } from "../key-registry/registry.js";
 import type { ActorSubjectLink, ActorSubjectLinkActor, ActorSubjectLinkStatusRecord, SubjectKey } from "../../types/platform.js";
 import type { ActorReference } from "../../types/shared.js";
 
@@ -64,27 +65,30 @@ export function isStatementActor(reference: ActorReference, named: ActorSubjectL
 }
 
 export interface IntegrityResult {
-  /** The statement signature verifies against the signer's registered key. False when no key is registered. */
-  readonly signatureVerified: boolean;
+  /** The statement signature's verification, against the key the statement names, as at the record's acceptance (AAB-PLATFORM-09 section 7). */
+  readonly signature: VerificationResult;
   /** The record's fields are its statement's, and the statement names the recorded signer. */
   readonly statementIsRecord: boolean;
   /** The digest recomputes from the record's content. */
   readonly digestMatches: boolean;
 }
 
-export const isIntact = (r: IntegrityResult): boolean => r.signatureVerified && r.statementIsRecord && r.digestMatches;
+/** Intact: a signature that may be relied on (VERIFIED or AFFIRMED_AFTER_COMPROMISE), the statement the record's own, the digest its content's. */
+export const isIntact = (r: IntegrityResult): boolean => mayBeReliedOn(r.signature) && r.statementIsRecord && r.digestMatches;
 
 /**
  * A link's integrity (section 1, "What is signed"): the creator's signature
  * over the statement, the record taking its fields from the statement, and
- * linkDigest over the whole record. `creatorKey` is the key registered for
- * link.createdBy, or null if none is.
+ * linkDigest over the whole record. `signature` is the creator's signature
+ * verified as AAB-PLATFORM-09 requires: against the key the statement names,
+ * as at the link's createdAt (verifyLinkSignature in
+ * platform/key-registry/signed-records.ts).
  */
-export function linkIntegrity(link: ActorSubjectLink, creatorKey: KeyObject | null): IntegrityResult {
+export function linkIntegrity(link: ActorSubjectLink, signature: VerificationResult): IntegrityResult {
   const s = link.linkStatement;
   const same = (a: unknown, b: unknown) => canonicalJson(a ?? null) === canonicalJson(b ?? null);
   return {
-    signatureVerified: creatorKey !== null && verifyStatementSignature(s, link.statementSignature, creatorKey),
+    signature,
     statementIsRecord:
       same(s.actor, link.actor) && same(s.subject, link.subject) && s.relation === link.relation
       && s.validFrom === link.validFrom && s.validUntil === link.validUntil
@@ -95,10 +99,10 @@ export function linkIntegrity(link: ActorSubjectLink, creatorKey: KeyObject | nu
 }
 
 /** A status record's integrity: the writer's signature, the statement binding the link and the recorded writer, and recordDigest. */
-export function statusRecordIntegrity(record: ActorSubjectLinkStatusRecord, link: ActorSubjectLink, writerKey: KeyObject | null): IntegrityResult {
+export function statusRecordIntegrity(record: ActorSubjectLinkStatusRecord, link: ActorSubjectLink, signature: VerificationResult): IntegrityResult {
   const s = record.statusStatement;
   return {
-    signatureVerified: writerKey !== null && verifyStatementSignature(s, record.statementSignature, writerKey),
+    signature,
     statementIsRecord: s.linkId === record.linkId && record.linkId === link.linkId && s.linkDigest === link.linkDigest && isStatementActor(record.writtenBy, s.writer),
     digestMatches: statusRecordDigestOf(record) === record.recordDigest,
   };

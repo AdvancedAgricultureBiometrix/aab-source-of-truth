@@ -13,7 +13,7 @@
     "linkStatement": {
       "allOf": [
         {
-          "$ref": "urn:aab:scs:schema:platform:actor-subject-link-statement:1"
+          "$ref": "urn:aab:scs:schema:platform:actor-subject-link-statement:2"
         },
         {
           "type": "object",

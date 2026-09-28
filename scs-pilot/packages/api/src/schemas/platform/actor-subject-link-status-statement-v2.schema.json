@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:scs:schema:platform:actor-subject-link-status-statement:2",
+  "title": "ActorSubjectLinkStatusStatementV2",
+  "description": "AAB-PLATFORM-04 ActorSubjectLinkStatusStatement: what a status record's writer decides, and signs. It names the link's own linkDigest, so it binds the exact link it acts on. Version 2 (AAB-PLATFORM-04, third amendment of 2026-09-28): names the key the writer signs with, registered in the public-key registry (AAB-PLATFORM-09). A new version 1 statement is refused.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "statementType",
+    "linkId",
+    "linkDigest",
+    "action",
+    "reason",
+    "writer",
+    "statementVersion",
+    "signingKeyId"
+  ],
+  "properties": {
+    "statementType": {
+      "const": "ACTOR_SUBJECT_LINK_STATUS"
+    },
+    "linkId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "linkDigest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "action": {
+      "type": "string",
+      "enum": [
+        "SUSPEND",
+        "REINSTATE",
+        "REVOKE"
+      ]
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000,
+      "pattern": "\\S"
+    },
+    "writer": {
+      "$ref": "urn:aab:scs:schema:platform:actor-subject-link-actor:1"
+    },
+    "statementVersion": {
+      "type": "string",
+      "const": "2"
+    },
+    "signingKeyId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "description": "The writer's key in the public-key registry, lowercase."
+    }
+  }
+}

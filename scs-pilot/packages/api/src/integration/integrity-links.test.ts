@@ -1,28 +1,28 @@
-// ops/verify-integrity.ts on actor–party links (AAB-PLATFORM-04): run as the
-// operator runs it, as a separate process, against a database built from
-// every migration and a throwaway bucket. Links and status records are made
-// through the API, signed with throwaway Ed25519 keys; the tool reads the
-// public keys from an actors file, as the api service does.
+// ops/verify-integrity.ts on actor–party links (AAB-PLATFORM-04) and the
+// public-key registry (AAB-PLATFORM-09): run as the operator runs it, as a
+// separate process, against a database built from every migration and a
+// throwaway bucket. Keys are registered, links and status records made,
+// through the API, with Ed25519 keys signing outside the server. The tool
+// reads no actors file: every signature is verified against the key its
+// statement names, as at its acceptance, from the registry in the database.
 
 import { after, before, test } from "node:test";
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { createHash, generateKeyPairSync, randomBytes, randomUUID, sign } from "node:crypto";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { createHash, randomBytes, randomUUID } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import type { AddressInfo } from "node:net";
 import type { Server } from "node:http";
 
 import { capabilityRoutes } from "../capabilities/index.js";
 import { StaticTokenAuthenticator } from "../foundation/auth.js";
-import { canonicalJson } from "../foundation/canonical.js";
 import { connectDatabase, type Database } from "../foundation/db.js";
 import { createApiServer } from "../foundation/server.js";
 import { partyRequest } from "./fixtures.js";
 import { createMigratedDatabase, type MigratedDatabase } from "./harness.js";
 import { createTestObjectStore, type TestObjectStore } from "./object-store-harness.js";
+import { keyRegistryRoutes } from "../platform/key-registry/routes.js";
+import { bootstrapCountryRegistry, keyRegistrarEntry, newKeyPair, registerTestKey, signWith, type TestKey } from "./signing-keys.js";
 
 const TH = { issuerType: "COUNTRY_TENANCY" as const, countryCode: "TH" };
 const API_DIR = fileURLToPath(new URL("../..", import.meta.url));
@@ -31,24 +31,27 @@ type Who = (typeof WHO)[number];
 const ROLES: Record<Who, string[]> = { officer: ["COMPLIANCE_OFFICER"], linker: ["LINK_OFFICER"], staff: [] };
 const actors = Object.fromEntries(WHO.map((w) => [w, { actorId: `${w}-integrity`, actorType: "HUMAN", roles: ROLES[w], authenticationMethod: "STATIC_TOKEN" }])) as Record<Who, { actorId: string; actorType: string; roles: string[]; authenticationMethod: string }>;
 const token = (w: Who) => `integrity-${w}-token-0123456789abcdefghijk`;
-const keys = Object.fromEntries(WHO.map((w) => [w, generateKeyPairSync("ed25519")])) as Record<Who, ReturnType<typeof generateKeyPairSync>>;
-const spki = (k: ReturnType<typeof generateKeyPairSync>["publicKey"]) => k.export({ format: "der", type: "spki" }).toString("base64");
-const signAs = (w: Who, s: unknown) => sign(null, Buffer.from(canonicalJson(s), "utf8"), keys[w].privateKey).toString("base64");
-const actorsFile = (linkerKey = keys.linker.publicKey) => ({
-  actors: WHO.map((w) => ({
+const REGISTRAR_TOKEN = "integrity-key-registrar-token-0123456789";
+const actorsFile = () => ({
+  actors: [keyRegistrarEntry(createHash("sha256").update(REGISTRAR_TOKEN).digest("hex")), ...WHO.map((w) => ({
     tokenSha256: createHash("sha256").update(token(w)).digest("hex"),
     actor: actors[w],
     accountableName: `Named ${w}`,
-    signingPublicKey: spki(w === "linker" ? linkerKey : keys[w].publicKey),
-  })),
+  }))],
 });
+const registry = { base: "", token: () => REGISTRAR_TOKEN, issuer: TH };
+let registrar: TestKey;
+/** The linker's key, registered in the public-key registry (AAB-PLATFORM-09); rotated by a test. */
+let linkerKey: TestKey;
+let linkerFirstKeyId = "";
+/** Signs a statement as version 2 (AAB-PLATFORM-04, third amendment) with the linker's key. */
+const signAsLinker = (s: object) => signWith(linkerKey.privateKey, Object.assign(s, { statementVersion: "2", signingKeyId: linkerKey.keyId }));
 
 let harness: MigratedDatabase;
 let objects: TestObjectStore;
 let api: Database;
 let server: Server;
 let base = "";
-let dir = "";
 let linkId = "";
 
 async function post(path: string, body: unknown, who: Who): Promise<Record<string, unknown>> {
@@ -68,10 +71,13 @@ before(async () => {
   const role = await harness.createLoginRole("NOSUPERUSER NOCREATEDB NOCREATEROLE NOBYPASSRLS IN ROLE scs_api");
   api = await connectDatabase(harness.configFor(role.user, role.password));
   const authenticator = StaticTokenAuthenticator.fromConfig(actorsFile(), { issuerCountry: "TH" });
-  server = createApiServer({ routes: capabilityRoutes(authenticator), authenticator, db: api });
+  server = createApiServer({ routes: [...capabilityRoutes(authenticator), ...keyRegistryRoutes(authenticator)], authenticator, db: api });
   await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
-  dir = mkdtempSync(join(tmpdir(), "scs-integrity-"));
+  registry.base = base;
+  registrar = await bootstrapCountryRegistry(registry);
+  linkerKey = await registerTestKey(registry, registrar, actors.linker.actorId);
+  linkerFirstKeyId = linkerKey.keyId;
 
   const coop = (await post("/scs/v1/parties", partyRequest("COOPERATIVE"), "officer"))["partyId"] as string;
   // the authorisation letter: real bytes in the store, and its row
@@ -89,11 +95,11 @@ before(async () => {
     authorisationEvidence: [{ evidenceObjectSha256: sha, description: "Letter of authority from the cooperative" }],
     creator: { issuer: TH, actorId: actors.linker.actorId },
   };
-  const link = await post("/scs/v1/actor-party-links", { linkStatement: statement, statementSignature: signAs("linker", statement) }, "linker");
+  const link = await post("/scs/v1/actor-party-links", { linkStatement: statement, statementSignature: signAsLinker(statement) }, "linker");
   linkId = link["linkId"] as string;
   for (const action of ["SUSPEND", "REINSTATE"]) {
     const s = { statementType: "ACTOR_SUBJECT_LINK_STATUS", linkId, linkDigest: link["linkDigest"], action, reason: `${action} for the integrity check.`, writer: { issuer: TH, actorId: actors.linker.actorId } };
-    await post(`/scs/v1/actor-party-links/${linkId}/status-records`, { statusStatement: s, statementSignature: signAs("linker", s) }, "linker");
+    await post(`/scs/v1/actor-party-links/${linkId}/status-records`, { statusStatement: s, statementSignature: signAsLinker(s) }, "linker");
   }
 });
 
@@ -102,13 +108,20 @@ after(async () => {
   await api?.close();
   await objects?.drop();
   await harness?.drop();
-  if (dir) rmSync(dir, { recursive: true, force: true });
 });
 
-interface Section { checked: number; problems: string[] }
+interface Section { checked: number; problems: string[]; verification?: Record<string, number> }
+interface IntegrityReport {
+  ok: boolean;
+  links: Section;
+  linkStatusRecords: Section;
+  receipts: Section;
+  evidenceObjects: Section;
+  keyRegistry: Record<"registrations" | "events" | "compromises" | "ceremonies" | "verificationEvidence" | "notices" | "assessments", Section>;
+}
 
-/** Runs the integrity tool as a separate process, as the operator does; returns its exit code and report. */
-function verifyIntegrity(o: { actors?: unknown; issuer?: boolean } = {}): { code: number; report: { ok: boolean; links: Section; linkStatusRecords: Section; receipts: Section; evidenceObjects: Section } } {
+/** Runs the integrity tool as a separate process, as the operator does, with no actors file; returns its exit code and report. */
+function verifyIntegrity(): { code: number; report: IntegrityReport } {
   const admin = harness.admin as unknown as { host: string; port: number; user: string; password: string; database: string };
   const env: Record<string, string> = {
     ...process.env as Record<string, string>,
@@ -118,36 +131,50 @@ function verifyIntegrity(o: { actors?: unknown; issuer?: boolean } = {}): { code
   };
   delete env["SCS_AUTH_STATIC_ACTORS_FILE"];
   delete env["SCS_ACTOR_ISSUER_COUNTRY"];
-  if (o.actors !== undefined) {
-    const file = join(dir, `actors-${randomUUID()}.json`);
-    writeFileSync(file, JSON.stringify(o.actors));
-    env["SCS_AUTH_STATIC_ACTORS_FILE"] = file;
-  }
-  if (o.issuer !== false) env["SCS_ACTOR_ISSUER_COUNTRY"] = "TH";
   const r = spawnSync(process.execPath, ["--import", "tsx", "src/ops/verify-integrity.ts"], { cwd: API_DIR, env, encoding: "utf8" });
   assert.ok(r.stdout.trim().startsWith("{"), `no report: ${r.stderr}`);
-  return { code: r.status ?? -1, report: JSON.parse(r.stdout) };
+  return { code: r.status ?? -1, report: JSON.parse(r.stdout) as IntegrityReport };
 }
 
-test("intact: every link and status record verifies against its signer's key, re-digests, and matches its receipt", () => {
-  const { code, report } = verifyIntegrity({ actors: actorsFile() });
-  assert.deepEqual(report.links, { checked: 1, problems: [] });
-  assert.deepEqual(report.linkStatusRecords, { checked: 2, problems: [] });
+const registryProblems = (report: IntegrityReport) => Object.values(report.keyRegistry).flatMap((s) => s.problems);
+
+test("intact, with no actors file: every link, status record and registry record verifies against the registry, re-digests, and matches its receipt", () => {
+  const { code, report } = verifyIntegrity();
+  assert.deepEqual(report.links, { checked: 1, problems: [], verification: { VERIFIED: 1 } });
+  assert.deepEqual(report.linkStatusRecords, { checked: 2, problems: [], verification: { VERIFIED: 2 } });
+  assert.deepEqual(registryProblems(report), []);
+  assert.equal(report.keyRegistry.registrations.checked, 2, "the registrar's first key, and the linker's");
+  assert.deepEqual(report.keyRegistry.ceremonies.verification, { VERIFIED: 2 }, "the holder's signature and the Platform Owner's co-signature, from the evidence stored with it");
+  assert.equal(report.keyRegistry.verificationEvidence.checked, 1);
   assert.equal(report.ok, true, JSON.stringify(report));
   assert.equal(code, 0);
 });
 
-test("without the actors file, signed records cannot be verified: the check fails, saying why", () => {
-  const { code, report } = verifyIntegrity({});
-  assert.equal(code, 1);
-  assert.match(report.links.problems[0]!, /SCS_AUTH_STATIC_ACTORS_FILE and SCS_ACTOR_ISSUER_COUNTRY are not both set/);
+test("signing-key history: after the creator's key is rotated, every record signed with the old key still verifies", async () => {
+  linkerKey = await registerTestKey(registry, registrar, actors.linker.actorId, { replaces: linkerFirstKeyId });
+  const { code, report } = verifyIntegrity();
+  assert.deepEqual(report.links.verification, { VERIFIED: 1 }, "verified against the key the statement names, as at its createdAt");
+  assert.deepEqual(report.linkStatusRecords.verification, { VERIFIED: 2 });
+  assert.deepEqual(registryProblems(report), []);
+  assert.equal(report.ok, true, JSON.stringify(report));
+  assert.equal(code, 0);
 });
 
-test("a creator's key that is not the one they signed with: every record they signed fails (why signing-key history blocks real data)", () => {
-  const { code, report } = verifyIntegrity({ actors: actorsFile(generateKeyPairSync("ed25519").publicKey) });
-  assert.equal(code, 1);
-  assert.match(report.links.problems.join(" "), new RegExp(`link ${linkId}: its statement signature does not verify`));
-  assert.equal(report.linkStatusRecords.problems.length, 2, "both status records were signed by the same creator");
+test("a compromise of the old key: its records are under review — counted, not problems; the environment is intact", async () => {
+  const res = await fetch(`${base}/aab/v1/signing-keys/${linkerFirstKeyId}/compromises`, {
+    method: "POST",
+    headers: { authorization: `Bearer ${token("linker")}`, "content-type": "application/json", "idempotency-key": `integrity-${randomUUID()}` },
+    body: JSON.stringify({ compromiseStatement: {
+      statementType: "SIGNING_KEY_COMPROMISE", keyId: linkerFirstKeyId, exposureBasis: "Unknown", evidence: [], declaredBy: { issuer: TH, actorId: actors.linker.actorId },
+    } }),
+  });
+  assert.equal(res.status, 201, await res.text());
+  const { code, report } = verifyIntegrity();
+  assert.deepEqual(report.links, { checked: 1, problems: [], verification: { UNDER_COMPROMISE_REVIEW: 1 } });
+  assert.deepEqual(report.linkStatusRecords.verification, { UNDER_COMPROMISE_REVIEW: 2 });
+  assert.equal(report.keyRegistry.compromises.checked, 1);
+  assert.equal(report.ok, true, "a compromise is not tampering: the records are intact, and their results say what they are worth");
+  assert.equal(code, 0);
 });
 
 test("a link altered in the database, around its append-only trigger, is found: it no longer re-digests", async () => {
@@ -157,7 +184,23 @@ test("a link altered in the database, around its append-only trigger, is found: 
   } finally {
     await harness.admin.query(`ALTER TABLE scs.actor_party_link ENABLE TRIGGER actor_party_link_append_only`);
   }
-  const { code, report } = verifyIntegrity({ actors: actorsFile() });
+  const { code, report } = verifyIntegrity();
   assert.equal(code, 1);
   assert.deepEqual(report.links.problems, [`link ${linkId}: it does not re-digest to its recorded digest.`]);
+});
+
+test("a key registration altered in the database is found, and the records signed with it no longer verify", async () => {
+  await harness.admin.query(`ALTER TABLE scs.signing_key_registration DISABLE TRIGGER signing_key_registration_append_only`);
+  try {
+    await harness.admin.query(`UPDATE scs.signing_key_registration SET public_key = $2 WHERE key_id = $1`, [linkerFirstKeyId, newKeyPair().publicKey]);
+  } finally {
+    await harness.admin.query(`ALTER TABLE scs.signing_key_registration ENABLE TRIGGER signing_key_registration_append_only`);
+  }
+  const { code, report } = verifyIntegrity();
+  assert.equal(code, 1);
+  const problems = report.keyRegistry.registrations.problems.join(" ");
+  assert.match(problems, new RegExp(`key ${linkerFirstKeyId}: it does not re-digest`));
+  assert.match(problems, /its public key is not the key its digest names/);
+  assert.match(problems, /proof of possession does not verify/);
+  assert.equal(report.linkStatusRecords.verification?.["NOT_VERIFIABLE"], 2, "signed with the substituted key's original: no longer verifiable");
 });

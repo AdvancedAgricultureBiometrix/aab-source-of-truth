@@ -8,15 +8,19 @@
 // own: the party the act is for, the scope, and what is recorded.
 //
 // Set-up runs in two phases. Parties, frameworks, relationships, links (signed
-// with throwaway Ed25519 keys), mandate verifications and a plot are created
-// first; the actors file is then loaded again with the subject grants that
-// name those parties, and with one link creator's key rotated, so a link they
-// signed no longer verifies. Mandates are inserted directly, so each test can
-// set their actions, validity and revocation.
+// with Ed25519 keys registered in the public-key registry, AAB-PLATFORM-09),
+// mandate verifications and a plot are created first; the actors file is then
+// loaded again with the subject grants that name those parties. Between the
+// two phases, one link creator's key is rotated (a link they signed still
+// verifies: it was accepted while that key was active), another creator's key
+// is declared compromised (a link they signed is under review), and one link is
+// forged directly in the database (signed with a key its statement does not
+// name). Mandates are inserted directly, so each test can set their actions,
+// validity and revocation.
 
 import { after, before, test } from "node:test";
 import assert from "node:assert/strict";
-import { createHash, generateKeyPairSync, randomBytes, randomUUID, sign, type KeyObject } from "node:crypto";
+import { createHash, randomBytes, randomUUID } from "node:crypto";
 import type { AddressInfo } from "node:net";
 import type { Server } from "node:http";
 
@@ -29,23 +33,33 @@ import type { ScsCustodyEventSubmissionRequest } from "../types/cap-05.js";
 import type { ScsDeforestationEvidenceSubmissionRequest } from "../types/cap-04.js";
 import { frameworkRequest, issuedReference, partyRequest } from "./fixtures.js";
 import { createMigratedDatabase, type MigratedDatabase } from "./harness.js";
+import { insertLink } from "../capabilities/cap-02/link-store.js";
+import { linkDigestOf } from "../platform/actor-subject-links/links.js";
+import { keyRegistryRoutes } from "../platform/key-registry/routes.js";
+import type { ActorSubjectLink } from "../types/platform.js";
+import type { ActorReferenceV2 } from "../types/shared.js";
+import { bootstrapCountryRegistry, keyRegistrarEntry, newKeyPair, registerTestKey, signWith, type TestKey } from "./signing-keys.js";
 
 const TH = { issuerType: "COUNTRY_TENANCY" as const, countryCode: "TH" };
-const WHO = ["officer", "linker", "linkerOld", "verifier", "viewer", "rep", "repScoped", "repElsewhere", "rep2", "repPerson", "repSuspended", "repRetired", "repForged", "dual", "repDeployment"] as const;
+const WHO = ["officer", "linker", "linkerOld", "linkerCompromised", "verifier", "viewer", "keySecurity", "rep", "repScoped", "repElsewhere", "rep2", "repPerson", "repSuspended", "repRetired", "repRotated", "repCompromised", "repForged", "dual", "repDeployment"] as const;
 type Who = (typeof WHO)[number];
 const ROLES: Record<Who, string[]> = {
-  officer: ["COMPLIANCE_OFFICER"], linker: ["LINK_OFFICER"], linkerOld: ["LINK_OFFICER"], verifier: ["VERIFICATION_OFFICER"], viewer: ["VIEWER"],
+  officer: ["COMPLIANCE_OFFICER"], linker: ["LINK_OFFICER"], linkerOld: ["LINK_OFFICER"], linkerCompromised: ["LINK_OFFICER"], verifier: ["VERIFICATION_OFFICER"], viewer: ["VIEWER"],
+  keySecurity: ["KEY_SECURITY_OFFICER"],
   // PARTY_REPRESENTATIVE counts only when granted for the representative party (subjectGrants, phase 2)
-  rep: [], repScoped: [], repElsewhere: [], rep2: [], repPerson: [], repSuspended: [], repRetired: [], repForged: [], dual: ["COMPLIANCE_OFFICER"],
+  rep: [], repScoped: [], repElsewhere: [], rep2: [], repPerson: [], repSuspended: [], repRetired: [], repRotated: [], repCompromised: [], repForged: [], dual: ["COMPLIANCE_OFFICER"],
   // deployment-wide: never enough (SCS-CAP-02, fifth amendment)
   repDeployment: ["PARTY_REPRESENTATIVE"],
 };
 const actors = Object.fromEntries(WHO.map((w) => [w, { actorId: `${w}-rs`, actorType: "HUMAN", roles: ROLES[w], authenticationMethod: "STATIC_TOKEN" }])) as Record<Who, { actorId: string; actorType: string; roles: string[]; authenticationMethod: string }>;
 const token = (w: Who) => `rs-${w}-token-0123456789abcdefghijklmnopq`;
-const keys = Object.fromEntries(WHO.map((w) => [w, generateKeyPairSync("ed25519")])) as Record<Who, { publicKey: KeyObject; privateKey: KeyObject }>;
-const rotated = generateKeyPairSync("ed25519");
-const spki = (k: KeyObject) => k.export({ format: "der", type: "spki" }).toString("base64");
-const signAs = (w: Who, s: unknown) => sign(null, Buffer.from(canonicalJson(s), "utf8"), keys[w].privateKey).toString("base64");
+const REGISTRAR_TOKEN = "rs-key-registrar-token-0123456789abcdefgh";
+const registry = { base: "", token: () => REGISTRAR_TOKEN, issuer: TH };
+let registrar: TestKey;
+/** Each actor's key, registered in the public-key registry (AAB-PLATFORM-09) before the tests run. */
+const keys = {} as Record<Who, TestKey>;
+/** Signs a statement as version 2 (AAB-PLATFORM-04, third amendment): names w's key on it, then signs it with that key. */
+const signAs = (w: Who, s: object) => signWith(keys[w].privateKey, Object.assign(s, { statementVersion: "2", signingKeyId: keys[w].keyId }));
 const SQUARE = [[101.5, 13.5], [101.501, 13.5], [101.501, 13.501], [101.5, 13.501], [101.5, 13.5]];
 const SCENE = [[101.4, 13.4], [101.6, 13.4], [101.6, 13.6], [101.4, 13.6], [101.4, 13.4]];
 
@@ -80,24 +94,24 @@ function authenticator(phase: 1 | 2): StaticTokenAuthenticator {
   const representing = (partyId: string) => [{ role: "PARTY_REPRESENTATIVE", scopeId: `SCS:PARTY:${partyId}` }];
   const grants: Partial<Record<Who, Array<{ role: string; scopeId: string }>>> = phase === 1 ? {} : {
     rep: representing(p.coop), repScoped: representing(p.coop), rep2: representing(p.coop), repSuspended: representing(p.coop),
-    repForged: representing(p.coop), dual: representing(p.coop), repElsewhere: representing(p.coop2),
+    repRotated: representing(p.coop), repCompromised: representing(p.coop), repForged: representing(p.coop), dual: representing(p.coop), repElsewhere: representing(p.coop2),
     repPerson: representing(p.otherFarmer), repRetired: representing(p.coop3),
   };
   return StaticTokenAuthenticator.fromConfig({
-    actors: WHO.map((w) => ({
+    actors: [keyRegistrarEntry(createHash("sha256").update(REGISTRAR_TOKEN).digest("hex")), ...WHO.map((w) => ({
       tokenSha256: createHash("sha256").update(token(w)).digest("hex"),
       actor: actors[w],
       accountableName: `Named ${w}`,
-      signingPublicKey: spki(phase === 2 && w === "linkerOld" ? rotated.publicKey : keys[w].publicKey),
       ...(grants[w] === undefined ? {} : { subjectGrants: grants[w] }),
-    })),
+    }))],
   }, { issuerCountry: "TH" });
 }
 
 async function listen(auth: StaticTokenAuthenticator): Promise<void> {
-  server = createApiServer({ routes: capabilityRoutes(auth), authenticator: auth, db: api });
+  server = createApiServer({ routes: [...capabilityRoutes(auth), ...keyRegistryRoutes(auth)], authenticator: auth, db: api });
   await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
+  Object.assign(registry, { base });
 }
 
 async function storedObject(): Promise<string> {
@@ -178,6 +192,8 @@ before(async () => {
   const role = await harness.createLoginRole("NOSUPERUSER NOCREATEDB NOCREATEROLE NOBYPASSRLS IN ROLE scs_api");
   api = await connectDatabase(harness.configFor(role.user, role.password));
   await listen(authenticator(1));
+  registrar = await bootstrapCountryRegistry(registry);
+  for (const w of WHO) keys[w] = await registerTestKey(registry, registrar, actors[w].actorId);
 
   fw.rubber = await created("/scs/v1/frameworks", frameworkRequest(), "frameworkId");
   fw.cocoa = await created("/scs/v1/frameworks", frameworkRequest("1801", "TH"), "frameworkId");
@@ -207,7 +223,9 @@ before(async () => {
   for (const w of ["rep", "repScoped", "repElsewhere", "repSuspended", "dual", "repDeployment"] as const) await link(w, p.coop, "ACTS_FOR_SUBJECT");
   await link("repPerson", p.otherFarmer, "IS_SUBJECT");
   await link("repRetired", p.coop3, "ACTS_FOR_SUBJECT");
-  await link("repForged", p.coop, "ACTS_FOR_SUBJECT", "linkerOld");
+  await link("repRotated", p.coop, "ACTS_FOR_SUBJECT", "linkerOld");
+  await link("repCompromised", p.coop, "ACTS_FOR_SUBJECT", "linkerCompromised");
+  await forgedLink("repForged", p.coop);
   const suspendedLink = (await harness.admin.query<{ link_id: string; link_digest: string }>(`SELECT link_id, link_digest FROM scs.actor_party_link WHERE link_id = $1`, [links["repSuspended"]])).rows[0]!;
   const suspend = { statementType: "ACTOR_SUBJECT_LINK_STATUS", linkId: suspendedLink.link_id, linkDigest: suspendedLink.link_digest, action: "SUSPEND", reason: "Under review.", writer: { issuer: TH, actorId: actors.linker.actorId } };
   assert.equal((await post(`/scs/v1/actor-party-links/${suspendedLink.link_id}/status-records`, { statusStatement: suspend, statementSignature: signAs("linker", suspend) }, "linker")).status, 201);
@@ -216,9 +234,48 @@ before(async () => {
   plot.rubber = await registerPlot(fw.rubber, "4001");
   plot.cocoa = await registerPlot(fw.cocoa, "1801");
 
+  // linkerOld's key is rotated: the registry retires it as its replacement becomes active
+  keys.linkerOld = await registerTestKey(registry, registrar, actors.linkerOld.actorId, { replaces: keys.linkerOld.keyId });
+  // linkerCompromised's key is declared compromised by its holder, unsigned, the start unknown: its whole life
+  const compromised = await post(`/aab/v1/signing-keys/${keys.linkerCompromised.keyId}/compromises`, {
+    compromiseStatement: {
+      statementType: "SIGNING_KEY_COMPROMISE", keyId: keys.linkerCompromised.keyId, exposureBasis: "Unknown: the laptop was stolen",
+      evidence: [], declaredBy: { issuer: TH, actorId: actors.linkerCompromised.actorId },
+    },
+  }, "linkerCompromised");
+  assert.equal(compromised.status, 201, compromised.text);
+
   await new Promise<void>((r) => server.close(() => r()));
   await listen(authenticator(2));
 });
+
+/**
+ * A link that no endpoint would accept, written straight to the database: its
+ * statement names the linker's registered key, but it is signed with another
+ * key. Its record is its statement and its digest matches: only its
+ * signature is wrong.
+ */
+async function forgedLink(actor: Who, partyId: string): Promise<void> {
+  const statement = {
+    statementType: "ACTOR_SUBJECT_LINK" as const, actor: { issuer: TH, actorId: actors[actor].actorId },
+    subject: { domain: "SCS", subjectType: "PARTY", subjectId: partyId }, relation: "ACTS_FOR_SUBJECT" as const,
+    validFrom: new Date(Date.now() - 60_000).toISOString(), validUntil: new Date(Date.now() + 90 * 24 * 3600 * 1000).toISOString(),
+    authorisationEvidence: [{ evidenceObjectSha256: await storedObject(), description: "Letter of authority from the party" }],
+    creator: { issuer: TH, actorId: actors.linker.actorId }, statementVersion: "2" as const, signingKeyId: keys.linker.keyId,
+  };
+  const createdBy: ActorReferenceV2 = {
+    referenceVersion: "2", actorId: actors.linker.actorId, issuer: TH, actorType: "HUMAN", authenticationMethod: "STATIC_TOKEN",
+    accountableName: "Named linker", authorityBasis: [{ role: "LINK_OFFICER", scopeType: "DEPLOYMENT", scopeId: "SCS-PILOT-TH" }],
+  };
+  const unsigned: Omit<ActorSubjectLink, "linkDigest"> = {
+    linkId: randomUUID(), schemaVersion: "1", actor: statement.actor, subject: statement.subject, relation: statement.relation,
+    validFrom: statement.validFrom, validUntil: statement.validUntil, authorisationEvidence: statement.authorisationEvidence,
+    createdAt: new Date().toISOString(), createdBy, linkStatement: statement, statementSignature: signWith(newKeyPair().privateKey, statement),
+  };
+  const forged: ActorSubjectLink = { ...unsigned, linkDigest: linkDigestOf(unsigned) };
+  await api.transaction((tx) => insertLink(tx, forged));
+  links[actor] = forged.linkId;
+}
 
 after(async () => {
   if (server) await new Promise<void>((r) => server.close(() => r()));
@@ -316,10 +373,29 @@ test("check 2, the link: none, suspended, not verifying, the wrong relation, a r
   r = await refused(submitIdentity(p.farmer, "repSuspended", under(m.all)), 422, "LINK_NOT_ACTIVE");
   assert.match((r.json["reasons"] as string[])[0]!, /is SUSPENDED/);
   r = await refused(submitIdentity(p.farmer, "repForged", under(m.all)), 422, "LINK_SIGNATURE_INVALID");
-  assert.match((r.json["reasons"] as string[])[0]!, /does not verify against its creator's registered key/, "signed with a key its creator no longer holds");
+  assert.match((r.json["reasons"] as string[])[0]!, /its signature is NOT_VERIFIABLE \(the signature does not verify with key/, "signed with a key its statement does not name");
   r = await refused(submitIdentity(p.otherFarmer, "repPerson", under(m.noRelationship, p.otherFarmer)), 422, "LINK_RELATION_NOT_PERMITTED");
   assert.match((r.json["reasons"] as string[])[0]!, /is IS_SUBJECT; this act requires ACTS_FOR_SUBJECT/);
   await refused(submitIdentity(p.farmer, "repRetired", under(m.all, p.coop3)), 422, "LINK_SUBJECT_NOT_CURRENT");
+});
+
+test("check 2, the link, and signing-key history (AAB-PLATFORM-09): a rotated key's link still verifies; a compromised key's is under review until affirmed", async () => {
+  // rotation never invalidates what was accepted: linkerOld signed this link while their old key was active
+  const rotated = await submitIdentity(p.farmer, "repRotated", under(m.all));
+  assert.equal(rotated.status, 201, rotated.text);
+  // a compromise does: the link was accepted inside the exposure window, and no one has assessed it
+  const r = await refused(submitIdentity(p.farmer, "repCompromised", under(m.all)), 422, "LINK_SIGNATURE_UNDER_REVIEW");
+  assert.match((r.json["reasons"] as string[])[0]!, /until a person affirms it/);
+  // a security officer, who does not hold the compromised key, affirms it; the link may be relied on again
+  const assessmentStatement = {
+    statementType: "KEY_COMPROMISE_ASSESSMENT", recordTable: "actor_party_link", recordId: links["repCompromised"], outcome: "AFFIRM",
+    reasons: "Confirmed with the link officer in person: they created this link before the laptop was stolen.", evidenceConsidered: [],
+    signingKeyId: keys.keySecurity.keyId, assessedBy: { issuer: TH, actorId: actors.keySecurity.actorId },
+  };
+  const assessed = await post("/aab/v1/key-compromise-assessments", { assessmentStatement, statementSignature: signWith(keys.keySecurity.privateKey, assessmentStatement) }, "keySecurity");
+  assert.equal(assessed.status, 201, assessed.text);
+  const after = await submitIdentity(p.farmer, "repCompromised", under(m.all));
+  assert.equal(after.status, 201, after.text);
 });
 
 test("check 3, the mandate and its parties: it exists, names the linked party, and is granted by the party the act is for", async () => {

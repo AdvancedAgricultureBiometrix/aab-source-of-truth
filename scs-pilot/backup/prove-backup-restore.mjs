@@ -9,13 +9,16 @@
 //   2. the source: throwaway secrets and API tokens, the stack started, and a
 //      governed chain created through the API — framework, parties, plot, an
 //      uploaded evidence file, admitted evidence, evaluation, review decision,
-//      a compiled due diligence package with its PDF rendition, and an
-//      actor–party link signed by a link officer's throwaway Ed25519 key,
-//      suspended and reinstated
+//      a compiled due diligence package with its PDF rendition; the country's
+//      public-key registry (AAB-PLATFORM-09) bootstrapped, co-signed by a
+//      throwaway Platform Owner whose key is verified from attested evidence,
+//      and the link officer's throwaway Ed25519 key registered in it; and an
+//      actor–party link signed with that key, suspended and reinstated
 //   3. backup (backup/backup.mjs, from the worktree: the committed script)
 //   4. restore into a new compose project with no volumes (backup/restore.mjs),
 //      which checks migrations, receipts, packages, files, links (each
-//      signature against the restored actors file), row counts and grants
+//      signature against the key its statement names, as at its acceptance,
+//      from the restored registry), the registry itself, row counts and grants
 //      against the source
 //   5. the restored API itself: the package reads back byte-for-byte, its
 //      integrity verification is INTACT, and its PDF downloads intact
@@ -109,6 +112,66 @@ function client(base, tokens) {
 const SQUARE = [[101.5, 13.5], [101.501, 13.5], [101.501, 13.501], [101.5, 13.501], [101.5, 13.5]];
 const SCENE = [[101.4, 13.4], [101.6, 13.4], [101.6, 13.6], [101.4, 13.6], [101.4, 13.4]];
 const party = (partyType, extra = {}) => ({ partyType, partyName: `Proof ${partyType} ${randomUUID()}`, countryOfRegistration: "TH", identityEvidence: { evidenceIds: [], evidenceLimitations: [] }, ...extra });
+
+// ── The public-key registry (AAB-PLATFORM-09) ────────────────────────────────
+
+const PLATFORM = { issuerType: "PLATFORM_CONTROL_PLANE" };
+const TH = { issuerType: "COUNTRY_TENANCY", countryCode: "TH" };
+const spkiOf = (k) => k.export({ format: "der", type: "spki" }).toString("base64");
+const keyDigest = (spki) => `sha256:${sha256(Buffer.from(spki, "base64"))}`;
+const signWith = (privateKey, statement) => sign(null, Buffer.from(canonicalJson(statement), "utf8"), privateKey).toString("base64");
+
+/** Statements for a key's registration: the holder's proof of possession, and the authority's registration. */
+function keyStatements(challenge, actorId, key, authority, authorityKey, authorityKeyId) {
+  const publicKeyDigest = keyDigest(spkiOf(key.publicKey));
+  const possessionStatement = { statementType: "SIGNING_KEY_POSSESSION", keyId: challenge.keyId, actorId, issuer: TH, publicKeyDigest, challengeId: challenge.challengeId, nonce: challenge.nonce };
+  const registrationStatement = {
+    statementType: "SIGNING_KEY_REGISTRATION", keyId: challenge.keyId, actorId, issuer: TH, publicKeyDigest, algorithm: "Ed25519",
+    challengeId: challenge.challengeId, signingKeyId: authorityKeyId, registrationAuthority: { issuer: TH, actorId: authority },
+  };
+  return {
+    publicKey: spkiOf(key.publicKey),
+    possessionStatement, possessionSignature: signWith(key.privateKey, possessionStatement),
+    registrationStatement, registrationSignature: signWith(authorityKey.privateKey, registrationStatement),
+  };
+}
+
+/**
+ * The country's registry: bootstrapped by its key registrar, co-signed by a
+ * throwaway Platform Owner whose key and attestation key this process holds
+ * (the country verifies the co-signature from the attested evidence alone);
+ * then the link officer's key, registered by the registrar. Returns its keyId.
+ */
+async function registry(api) {
+  const po = generateKeyPairSync("ed25519");
+  const attestation = generateKeyPairSync("ed25519");
+  const registrar = generateKeyPairSync("ed25519");
+  const now = new Date().toISOString();
+  const poRegistration = {
+    keyId: "proof-control-plane-key", issuer: PLATFORM, actorId: "proof-platform-owner", algorithm: "Ed25519", publicKey: spkiOf(po.publicKey),
+    publicKeyDigest: keyDigest(spkiOf(po.publicKey)), activeFrom: now, registeredAt: now, registrationDigest: `sha256:${sha256(`proof-control-plane-${run}`)}`,
+  };
+  const unattested = { issuer: PLATFORM, keyId: poRegistration.keyId, registration: poRegistration, eventsAtAcceptance: [], compromisedAtAcceptance: false, attestedAt: now };
+  const evidence = { ...unattested, attestation: signWith(attestation.privateKey, unattested), attestationKeyId: "proof-control-plane-attestation" };
+
+  const bc = (await api.created("/aab/v1/key-registration-challenges", { purpose: "BOOTSTRAP", actorId: "proof-registrar" }, undefined, "registrar")).decision;
+  const ceremonyStatement = {
+    statementType: "KEY_BOOTSTRAP_CEREMONY", registry: TH, holder: { issuer: TH, actorId: "proof-registrar" },
+    keyId: bc.keyId, challengeId: bc.challengeId, publicKeyDigest: keyDigest(spkiOf(registrar.publicKey)),
+    record: { present: ["Proof key registrar", "Proof Platform Owner"], procedure: "Backup-restore proof: throwaway keys generated in the proof process.", performedAt: now },
+    pinnedAttestationKey: { attestationKeyId: evidence.attestationKeyId, publicKey: spkiOf(attestation.publicKey) },
+    cosigner: { actor: { issuer: PLATFORM, actorId: "proof-platform-owner" }, accountableName: "Proof Platform Owner", signingKeyId: poRegistration.keyId },
+  };
+  await api.created("/aab/v1/key-bootstrap-ceremonies", {
+    ...keyStatements(bc, "proof-registrar", registrar, "proof-registrar", registrar, bc.keyId),
+    ceremonyStatement, holderSignature: signWith(registrar.privateKey, ceremonyStatement),
+    cosignature: signWith(po.privateKey, ceremonyStatement), cosignerKeyEvidence: evidence,
+  }, undefined, "registrar");
+
+  const lc = (await api.created("/aab/v1/key-registration-challenges", { purpose: "REGISTRATION", actorId: "proof-linker" }, undefined, "registrar")).decision;
+  await api.created("/aab/v1/signing-keys", keyStatements(lc, "proof-linker", linkOfficerKey, "proof-registrar", registrar, bc.keyId), undefined, "registrar");
+  return lc.keyId;
+}
 
 /** A governed chain, created through the API: returns what the restored environment must reproduce. */
 async function seed(api, stack) {
@@ -208,8 +271,10 @@ async function seed(api, stack) {
     custodyEvidenceIds: [],
     packageTitle: "Backup-restore proof package",
   });
-  // an actor–party link, signed outside the server by the link officer, then suspended and reinstated
-  const signed = (statement) => sign(null, Buffer.from(canonicalJson(statement), "utf8"), linkOfficerKey.privateKey).toString("base64");
+  // the link officer's key, registered in the country's public-key registry
+  const linkerKeyId = await registry(api);
+  // an actor–party link, signed outside the server by the link officer (version 2 statements, naming the key), then suspended and reinstated
+  const signed = (statement) => signWith(linkOfficerKey.privateKey, Object.assign(statement, { statementVersion: "2", signingKeyId: linkerKeyId }));
   const linkStatement = {
     statementType: "ACTOR_SUBJECT_LINK",
     actor: { issuer: { issuerType: "COUNTRY_TENANCY", countryCode: "TH" }, actorId: "proof-staff" },
@@ -256,8 +321,8 @@ try {
   }
 
   // the source: throwaway secrets and tokens
-  const tokens = { officer: random(), verifier: random(), reviewer: random(), linker: random(), staff: random() };
-  const roles = { officer: ["COMPLIANCE_OFFICER"], verifier: ["VERIFICATION_OFFICER"], reviewer: ["REGULATORY_REVIEWER"], linker: ["LINK_OFFICER"], staff: [] };
+  const tokens = { officer: random(), verifier: random(), reviewer: random(), linker: random(), staff: random(), registrar: random() };
+  const roles = { officer: ["COMPLIANCE_OFFICER"], verifier: ["VERIFICATION_OFFICER"], reviewer: ["REGULATORY_REVIEWER"], linker: ["LINK_OFFICER"], staff: [], registrar: ["KEY_REGISTRAR"] };
   writeFileSync(join(src.dir, ".env"), [
     "POSTGRES_DB=scs_pilot", "POSTGRES_USER=scs_owner", `POSTGRES_PASSWORD=${random()}`, "POSTGRES_PORT=5432",
     `SCS_API_DB_PASSWORD=${random()}`, `S3_ACCESS_KEY_ID=${random()}`, `S3_SECRET_ACCESS_KEY=${random()}`, "S3_PORT=9000", "S3_BUCKET=scs-evidence", "API_PORT=3000",
@@ -267,7 +332,7 @@ try {
     actors: Object.keys(tokens).map((who) => ({
       tokenSha256: sha256(tokens[who]),
       actor: { actorId: `proof-${who}`, actorType: "HUMAN", roles: roles[who], authenticationMethod: "STATIC_TOKEN" },
-      ...(who === "linker" ? { accountableName: "Proof Link Officer", signingPublicKey: linkOfficerKey.publicKey.export({ format: "der", type: "spki" }).toString("base64") } : {}),
+      ...(who === "linker" ? { accountableName: "Proof Link Officer" } : who === "registrar" ? { accountableName: "Proof Key Registrar" } : {}),
     })),
   }, null, 2) + "\n");
   const srcPort = await freePort();
@@ -296,8 +361,13 @@ try {
   step("restore: every package verifies against its stored digest", i.packages.checked > 0 && i.packages.problems.length === 0, { packages: i.packages.checked });
   step("restore: every evidence file re-hashes to its recorded SHA-256", i.evidenceObjects.checked > 0 && i.evidenceObjects.problems.length === 0, { evidenceObjects: i.evidenceObjects.checked });
   step("restore: every rendition re-hashes to its recorded SHA-256", i.renditions.checked > 0 && i.renditions.problems.length === 0, { renditions: i.renditions.checked });
-  step("restore: every actor–party link and status record verifies against its signer's key and re-digests", i.links.checked > 0 && i.links.problems.length === 0 && i.linkStatusRecords.checked === 2 && i.linkStatusRecords.problems.length === 0,
+  step("restore: every actor–party link and status record verifies against the key it names, as at its acceptance, and re-digests", i.links.checked > 0 && i.links.problems.length === 0 && i.linkStatusRecords.checked === 2 && i.linkStatusRecords.problems.length === 0
+    && i.links.verification.VERIFIED === i.links.checked && i.linkStatusRecords.verification.VERIFIED === 2,
     { links: i.links.checked, statusRecords: i.linkStatusRecords.checked });
+  const registryProblems = Object.values(i.keyRegistry).flatMap((x) => x.problems);
+  step("restore: the public-key registry verifies — every registration, ceremony, signature and piece of evidence", registryProblems.length === 0
+    && i.keyRegistry.registrations.checked === 2 && i.keyRegistry.ceremonies.checked === 1 && i.keyRegistry.ceremonies.verification.VERIFIED === 2 && i.keyRegistry.verificationEvidence.checked === 1,
+    { registrations: i.keyRegistry.registrations.checked, ceremonies: i.keyRegistry.ceremonies.checked, problems: registryProblems });
   step("restore: every table's row count and the database grants equal the source's", i.comparison !== undefined && i.comparison.problems.length === 0, { tables: Object.keys(i.counts).length });
 
   // the restored API itself

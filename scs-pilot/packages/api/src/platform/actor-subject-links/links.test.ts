@@ -93,24 +93,23 @@ test("which action is possible from which state", () => {
   assert.equal(stateAfter("REVOKE", h, at("2026-10-01T00:00:00.000Z")), "REVOKED");
 });
 
-test("a link is intact when its creator signed the statement, the record is the statement, and the digest matches", () => {
+test("a link is intact when its signature may be relied on, the record is its statement, and the digest matches", () => {
   const k = keys();
   const link = makeLink(k.privateKey);
-  assert.ok(isIntact(linkIntegrity(link, k.publicKey)));
-  assert.equal(linkIntegrity(link, null).signatureVerified, false, "no registered key: not verified");
-  assert.equal(linkIntegrity(link, keys().publicKey).signatureVerified, false, "another person's key");
+  // the signature's verification result comes from the registry (platform/key-registry/signed-records.ts)
+  for (const result of ["VERIFIED", "AFFIRMED_AFTER_COMPROMISE"] as const) assert.ok(isIntact(linkIntegrity(link, result)), result);
+  for (const result of ["UNDER_COMPROMISE_REVIEW", "REPUDIATED", "NOT_VERIFIABLE"] as const) {
+    assert.equal(isIntact(linkIntegrity(link, result)), false, result);
+    assert.equal(linkIntegrity(link, result).signature, result);
+  }
   // the record changed after signing, digest recomputed to hide it
   const widened = { ...link, validUntil: "2027-09-01T00:00:00.000Z" };
   const rehashed = { ...widened, linkDigest: linkDigestOf(widened) };
-  assert.equal(linkIntegrity(rehashed, k.publicKey).statementIsRecord, false, "record differs from what was signed");
-  assert.equal(linkIntegrity(widened, k.publicKey).digestMatches, false, "digest no longer matches");
-  // the statement changed, re-signed by someone else
-  const other = keys();
-  const forged = { ...link, statementSignature: signWith(other.privateKey, link.linkStatement) };
-  assert.equal(linkIntegrity(forged, k.publicKey).signatureVerified, false);
+  assert.equal(linkIntegrity(rehashed, "VERIFIED").statementIsRecord, false, "record differs from what was signed");
+  assert.equal(linkIntegrity(widened, "VERIFIED").digestMatches, false, "digest no longer matches");
   // the recorded creator is not the statement's creator
   const wrongCreator = { ...link, createdBy: { ...creatorRef, actorId: "someone-else" } };
-  assert.equal(linkIntegrity({ ...wrongCreator, linkDigest: linkDigestOf(wrongCreator) }, k.publicKey).statementIsRecord, false);
+  assert.equal(linkIntegrity({ ...wrongCreator, linkDigest: linkDigestOf(wrongCreator) }, "VERIFIED").statementIsRecord, false);
 });
 
 test("a status record is intact when its writer signed a statement binding this link's digest, and the digest matches", () => {
@@ -123,11 +122,11 @@ test("a status record is intact when its writer signed a statement binding this 
     writerCapacity: "CREATING_ROLE", recordedAt: "2026-10-01T00:00:00.000Z", writtenBy: creatorRef,
   };
   const record = { ...unsigned, recordDigest: statusRecordDigestOf(unsigned) };
-  assert.ok(isIntact(statusRecordIntegrity(record, link, writer.publicKey)));
+  assert.ok(isIntact(statusRecordIntegrity(record, link, "VERIFIED")));
   const anotherLink = makeLink(k.privateKey);
-  assert.equal(statusRecordIntegrity(record, anotherLink, writer.publicKey).statementIsRecord, false, "bound to another link");
-  assert.equal(statusRecordIntegrity({ ...record, writerCapacity: "SUBJECT_AUTHORITY" }, link, writer.publicKey).digestMatches, false);
-  assert.equal(statusRecordIntegrity(record, link, k.publicKey).signatureVerified, false);
+  assert.equal(statusRecordIntegrity(record, anotherLink, "VERIFIED").statementIsRecord, false, "bound to another link");
+  assert.equal(statusRecordIntegrity({ ...record, writerCapacity: "SUBJECT_AUTHORITY" }, link, "VERIFIED").digestMatches, false);
+  assert.equal(isIntact(statusRecordIntegrity(record, link, "NOT_VERIFIABLE")), false);
 });
 
 test("the statement's actor is compared by (issuer, actorId); a version 1 reference by actorId", () => {

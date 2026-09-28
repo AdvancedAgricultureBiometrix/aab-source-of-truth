@@ -41,7 +41,6 @@
 
 import { randomUUID } from "node:crypto";
 
-import type { SigningKeyDirectory } from "../../foundation/auth.js";
 import type { OperationResult } from "../../foundation/idempotency.js";
 import { writeReceipt } from "../../foundation/receipts.js";
 import type { RouteContext } from "../../foundation/server.js";
@@ -58,7 +57,7 @@ import { CAPABILITY_ID, cap02Failure } from "./errors.js";
 import { REGISTRANT_ROLE } from "./register-party.js";
 import { findLinkedEvidence, findParty, findPartyCountry, insertEvidenceSubmission, lockPartyEvidence } from "./store.js";
 
-export const submitIdentityEvidence = (keys: SigningKeyDirectory) => async (ctx: RouteContext<ScsIdentityEvidenceSubmissionRequest>): Promise<OperationResult> => {
+export const submitIdentityEvidence = async (ctx: RouteContext<ScsIdentityEvidenceSubmissionRequest>): Promise<OperationResult> => {
   const tx = ctx.tx!;
   const request = ctx.body;
   const requestedPartyId = ctx.params["partyId"]!.toLowerCase();
@@ -74,7 +73,7 @@ export const submitIdentityEvidence = (keys: SigningKeyDirectory) => async (ctx:
   let representation: Representation | null = null;
   if (authority.kind === "REPRESENTATIVE") {
     try {
-      representation = await checkRepresentation(CAPABILITY_ID, tx, keys, ctx.actor!, authority.actingUnder, {
+      representation = await checkRepresentation(CAPABILITY_ID, tx, ctx.actor!, authority.actingUnder, {
         action: "SUBMIT_IDENTITY_EVIDENCE",
         forParties: [requestedPartyId],
         forDescription: "the path's party",

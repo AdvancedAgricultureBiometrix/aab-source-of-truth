@@ -41,7 +41,6 @@
 
 import { randomUUID } from "node:crypto";
 
-import type { SigningKeyDirectory } from "../../foundation/auth.js";
 import type { OperationResult } from "../../foundation/idempotency.js";
 import { writeReceipt } from "../../foundation/receipts.js";
 import type { RouteContext } from "../../foundation/server.js";
@@ -206,7 +205,7 @@ export function mandateProblems(mandate: MandateForCustody | undefined, req: Scs
   return problems;
 }
 
-export const submitCustodyEvent = (keys: SigningKeyDirectory) => async (ctx: RouteContext<ScsCustodyEventSubmissionRequest>): Promise<OperationResult> => {
+export const submitCustodyEvent = async (ctx: RouteContext<ScsCustodyEventSubmissionRequest>): Promise<OperationResult> => {
   const tx = ctx.tx!;
   let actor = ctx.actor!;
   const req = ctx.body;
@@ -258,7 +257,7 @@ export const submitCustodyEvent = (keys: SigningKeyDirectory) => async (ctx: Rou
   let representation: Representation | null = null;
   if (authority.kind === "REPRESENTATIVE") {
     try {
-      representation = await checkRepresentation(CAPABILITY_ID, tx, keys, actor, authority.actingUnder, {
+      representation = await checkRepresentation(CAPABILITY_ID, tx, actor, authority.actingUnder, {
         action: "SUBMIT_CUSTODY_EVIDENCE",
         forParties: [sp.partyId],
         forDescription: "the source party",

@@ -103,7 +103,8 @@ export function declareCompromise(directory: RegistryDirectory) {
       keyId,
       suspectedExposureFrom: from,
       exposureBasis: s.exposureBasis,
-      evidence: s.evidence,
+      // in canonical order, as the evidence rows are read back: the digest recomputes from what is stored
+      evidence: [...s.evidence].sort((x, y) => (x.digest < y.digest ? -1 : x.digest > y.digest ? 1 : 0)),
       declaredBy: declarer,
       declarationSigned: signed,
       ...(signed ? { declarationStatement: s, statementSignature: ctx.body.statementSignature!, signerKeyId: s.signingKeyId! } : {}),

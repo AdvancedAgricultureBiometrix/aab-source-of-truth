@@ -7,7 +7,7 @@
 // and of mandates. The actor–party link routes are in link-routes.ts. The
 // contract's reads (getParty, getRelationship, list…) are not built yet.
 
-import type { ActorDirectory, SigningKeyDirectory } from "../../foundation/auth.js";
+import type { ActorDirectory } from "../../foundation/auth.js";
 import type { Route } from "../../foundation/server.js";
 import { SCHEMAS } from "../../schemas/registry.js";
 import type {
@@ -40,8 +40,8 @@ export const registerPartyRoute: Route<ScsPartyRegistrationRequest> = {
   handle: registerParty,
 };
 
-/** Built with the signing keys: a representative submission verifies the representative's link. */
-export const submitIdentityEvidenceRoute = (keys: SigningKeyDirectory): Route<ScsIdentityEvidenceSubmissionRequest> => ({
+/** A representative submission verifies the representative's link against the public-key registry (AAB-PLATFORM-09). */
+export const submitIdentityEvidenceRoute: Route<ScsIdentityEvidenceSubmissionRequest> = {
   method: "POST",
   path: "/scs/v1/parties/:partyId/evidence",
   capabilityId: CAPABILITY_ID,
@@ -50,8 +50,8 @@ export const submitIdentityEvidenceRoute = (keys: SigningKeyDirectory): Route<Sc
   idempotency: "required",
   requestSchema: SCHEMAS.cap02IdentityEvidenceSubmissionRequest,
   paramsSchema: SCHEMAS.cap02IdentityEvidenceSubmissionParams,
-  handle: submitIdentityEvidence(keys),
-});
+  handle: submitIdentityEvidence,
+};
 
 export const registerRelationshipRoute: Route<ScsRelationshipRegistrationRequest> = {
   method: "POST",
@@ -112,13 +112,13 @@ export const addMandateVerificationAssessmentRoute: Route<ScsMandateVerification
 };
 
 /**
- * Every CAP-02 route. Identity evidence gets only the signing keys; the link
- * routes get the directory, for the accountable names their governance
- * decisions record. No other route gets either.
+ * Every CAP-02 route. The link routes get the directory, for the accountable
+ * names their governance decisions record; no other route gets it. Signing
+ * keys come from the public-key registry (AAB-PLATFORM-09), not the directory.
  */
 export const cap02Routes = (directory: ActorDirectory): readonly Route<never>[] => [
   registerPartyRoute as unknown as Route<never>,
-  submitIdentityEvidenceRoute({ signingKeyOf: (a) => directory.signingKeyOf(a) }) as unknown as Route<never>,
+  submitIdentityEvidenceRoute as unknown as Route<never>,
   registerRelationshipRoute as unknown as Route<never>,
   registerMandateRoute as unknown as Route<never>,
   addRoleClaimRoute as unknown as Route<never>,

@@ -27,6 +27,9 @@
 //                  recordDigest over the whole record
 //   6. receipt   — ACTOR_PARTY_LINK_STATUS, same transaction; 201
 
+import { verifyWithRegisteredKey } from "../../platform/key-registry/common.js";
+import { verifyLinkSignature, verifyStatusSignature } from "../../platform/key-registry/signed-records.js";
+import { keyRegistryReader } from "../../platform/key-registry/store.js";
 import { randomUUID } from "node:crypto";
 
 import { holdsRole, holdsSubjectGrant, type SubjectRef } from "../../foundation/actor.js";
@@ -35,13 +38,13 @@ import type { Tx } from "../../foundation/db.js";
 import type { OperationResult } from "../../foundation/idempotency.js";
 import { writeReceipt } from "../../foundation/receipts.js";
 import type { RouteContext } from "../../foundation/server.js";
-import { verifyStatementSignature } from "../../foundation/signatures.js";
 import {
   actionPossible,
   deriveLinkState,
   isIntact,
   isStatementActor,
   linkIntegrity,
+  statusRecordIntegrity,
   stateAfter,
   statusRecordDigestOf,
   type LinkRelation,
@@ -68,16 +71,24 @@ function asLinkActor(actor: ActorReferenceV2): ActorSubjectLinkActor {
   return { issuer: { ...actor.issuer }, actorId: actor.actorId };
 }
 
-/** The writer's own ACTIVE link to the party with this relation, whose signature and digest verify; or the reason there is none. */
-async function writerOwnLink(tx: Tx, directory: ActorDirectory, writer: ActorReference, partyId: string, relation: LinkRelation, at: Date): Promise<{ linkId: string } | { problem: string }> {
+/**
+ * The writer's own ACTIVE link to the party with this relation, intact — its
+ * signature and every status record's, verified as at their acceptance
+ * (AAB-PLATFORM-09), may be relied on, and each digest matches — or the
+ * reason there is none.
+ */
+async function writerOwnLink(tx: Tx, writer: ActorReference, partyId: string, relation: LinkRelation, at: Date): Promise<{ linkId: string } | { problem: string }> {
   if (!("issuer" in writer)) return { problem: `actor ${writer.actorId} has no version 2 reference, so holds no link` };
   const links = await findLinksForActorParty(tx, asLinkActor(writer as ActorReferenceV2), partyId);
   const own = links.filter((l) => l.link.relation === relation && deriveLinkState(l, at) === "ACTIVE");
   if (own.length === 0) return { problem: `actor ${writer.actorId} holds no ACTIVE ${relation} link to party ${partyId}` };
   if (own.length > 1) return { problem: `actor ${writer.actorId} holds ${own.length} ACTIVE ${relation} links to party ${partyId}; none is chosen` };
   const l = own[0]!;
-  if (!isIntact(linkIntegrity(l.link, directory.signingKeyOf(l.link.createdBy)))) {
-    return { problem: `actor ${writer.actorId}'s ${relation} link ${l.link.linkId} to party ${partyId} does not verify (signature, statement or digest), so it is not a link` };
+  const registry = keyRegistryReader(tx);
+  const intact = isIntact(linkIntegrity(l.link, (await verifyLinkSignature(registry, l.link)).result))
+    && (await Promise.all(l.statusRecords.map(async (r) => isIntact(statusRecordIntegrity(r, l.link, (await verifyStatusSignature(registry, r)).result))))).every(Boolean);
+  if (!intact) {
+    return { problem: `actor ${writer.actorId}'s ${relation} link ${l.link.linkId} to party ${partyId}, or a status record against it, cannot be relied on (signature, statement or digest), so it is not a link` };
   }
   return { linkId: l.link.linkId };
 }
@@ -117,7 +128,7 @@ export function recordActorPartyLinkStatus(directory: ActorDirectory) {
       if (!person && !holdsSubjectGrant(actor, PARTY_AUTHORITY_ROLE, subject)) {
         problems.push(`actor ${actor.actorId} does not hold ${PARTY_AUTHORITY_ROLE} granted for party ${partyId} (scopeType SUBJECT)`);
       }
-      const own = await writerOwnLink(tx, directory, actor, partyId, person ? "IS_SUBJECT" : "ACTS_FOR_SUBJECT", now);
+      const own = await writerOwnLink(tx, actor, partyId, person ? "IS_SUBJECT" : "ACTS_FOR_SUBJECT", now);
       if ("problem" in own) problems.push(own.problem);
       if (problems.length > 0) {
         throw cap02Failure("LINK_STATUS_WRITER_NOT_AUTHORISED", [
@@ -138,19 +149,23 @@ export function recordActorPartyLinkStatus(directory: ActorDirectory) {
       throw cap02Failure("LINK_STATUS_NOT_PERMITTED", [`Link ${linkId} is ${state}; ${action} needs ${needs}.`]);
     }
 
-    // 4. The statement binds this link and this writer, who signed it
+    // 4. The statement binds this link and this writer, who signed it with
+    //    the key it names, registered for them and ACTIVE now (AAB-PLATFORM-09)
     const accountableName = directory.accountableNameOf(actor);
-    const key = directory.signingKeyOf(actor);
     const problem =
       statement.linkId !== linkId ? `The statement names link ${statement.linkId}, not link ${linkId}.`
       : statement.linkDigest !== current.link.linkDigest ? `The statement names linkDigest ${statement.linkDigest}; link ${linkId}'s is ${current.link.linkDigest}.`
       : !isStatementActor(actor, statement.writer) ? `The statement's writer (${statement.writer.actorId}) is not the authenticated actor (${actor.actorId}).`
       : actor.actorType !== "HUMAN" ? `A status record is signed by a named human: actor ${actor.actorId} is a ${actor.actorType}.`
       : accountableName === null ? `A status record is signed by a named human: no accountable name is recorded for actor ${actor.actorId}.`
-      : key === null ? `No signing key is registered for actor ${actor.actorId}.`
-      : !verifyStatementSignature(statement, ctx.body.statementSignature, key) ? `The statement signature does not verify against actor ${actor.actorId}'s registered key.`
       : null;
     if (problem !== null) throw cap02Failure("LINK_SIGNATURE_INVALID", [problem]);
+    const signed = await verifyWithRegisteredKey(keyRegistryReader(tx), {
+      statement, signature: ctx.body.statementSignature, signer: statement.writer, signingKeyId: statement.signingKeyId, acceptedAt: now.toISOString(),
+    });
+    if (signed.verification.result !== "VERIFIED") {
+      throw cap02Failure("LINK_SIGNATURE_INVALID", [`The statement does not verify with key ${statement.signingKeyId}, as registered for ${actor.actorId} and ACTIVE now: ${signed.verification.reason ?? signed.verification.result}.`]);
+    }
 
     // 5. The record, strictly after the link's previous record
     const previous = current.statusRecords.at(-1);
@@ -185,6 +200,12 @@ export function recordActorPartyLinkStatus(directory: ActorDirectory) {
       decision: "RECORDED",
       writerCapacity,
       eligibilityChecks,
+      signatureAcceptance: {
+        acceptedAt: record.recordedAt,
+        signingKeyId: statement.signingKeyId,
+        publicKeyDigest: signed.key!.registration.publicKeyDigest,
+        registrationDigest: signed.key!.registration.registrationDigest,
+      },
       resultingState,
       recordDigest: record.recordDigest,
       decisionReasons: [
@@ -192,7 +213,7 @@ export function recordActorPartyLinkStatus(directory: ActorDirectory) {
         `writerPermittedForAction: evaluated — ${writerCapacity}: ${capacityReason}. The writer is not the linked actor.`,
         `actionPossibleFromCurrentState: evaluated — the link was ${state}; ${action} is possible from ${state}.`,
         `statementBindsCurrentLink: evaluated — the statement names link ${linkId}, its linkDigest ${current.link.linkDigest}, and the writer.`,
-        `statementSignatureVerified: evaluated — signed by ${actor.actorId} (${accountableName}), verified against their registered Ed25519 key.`,
+        `statementSignatureVerified: evaluated — signed by ${actor.actorId} (${accountableName}), verified with their key ${statement.signingKeyId}, registered in the public-key registry and ACTIVE when accepted (AAB-PLATFORM-09).`,
         `The link is ${resultingState} after this record. Past acts that relied on the link are unchanged.`,
       ],
       decidedBy: writtenBy,

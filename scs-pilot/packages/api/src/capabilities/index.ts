@@ -3,10 +3,9 @@
 // SCS-CAP-08's routes need the object store and are built with it in index.ts
 // (capabilities/cap-08/routes.ts).
 //
-// Built with the ActorDirectory. Each capability passes on only what a route
-// needs: the actor–party link routes the directory (accountable names and
-// signing keys), and the three submissions that accept a representative only
-// the signing keys. Every other route gets neither.
+// Built with the ActorDirectory, which only the actor–party link routes are
+// given (for accountable names). Signing keys come from the public-key
+// registry (AAB-PLATFORM-09), read in each act's own transaction.
 
 import type { ActorDirectory } from "../foundation/auth.js";
 import type { Route } from "../foundation/server.js";
@@ -19,6 +18,5 @@ import { cap06Routes } from "./cap-06/routes.js";
 import { cap09Routes } from "./cap-09/routes.js";
 
 export function capabilityRoutes(directory: ActorDirectory): readonly Route<never>[] {
-  const keys = { signingKeyOf: directory.signingKeyOf.bind(directory) };
-  return [...cap01Routes, ...cap02Routes(directory), ...cap03Routes, ...cap04Routes(keys), ...cap05Routes(keys), ...cap06Routes, ...cap09Routes];
+  return [...cap01Routes, ...cap02Routes(directory), ...cap03Routes, ...cap04Routes, ...cap05Routes, ...cap06Routes, ...cap09Routes];
 }
