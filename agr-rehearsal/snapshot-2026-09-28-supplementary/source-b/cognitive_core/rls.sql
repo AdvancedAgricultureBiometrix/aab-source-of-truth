@@ -1,0 +1,24 @@
+-- Source B supplement. Live rehearsal database kdpcfbaeklkffozryjah, read through the Supabase connector on 2026-09-28. Schema only, no rows. The eight application schemas not in snapshot-2026-09-28.
+-- Read at 2026-09-28 09:04:35.914286+00 (UTC), PostgreSQL 17.6. Generated from the system catalogs, read only.
+-- Schema: cognitive_core. Row level security: the enabled/forced setting of every table, and every policy.
+-- Catalog counts for cognitive_core: functions 25, tables 18, views 1, sequences 0, rls_enabled_tables 0, constraints 157, triggers 0, policies 0, indexes 39.
+-- Evidence of what exists, not governed code. Never edited after commit.
+
+-- cognitive_core.algorithm_registry: row level security DISABLED
+-- cognitive_core.brain_registry: row level security DISABLED
+-- cognitive_core.cognitive_loop_run: row level security DISABLED
+-- cognitive_core.domain_brain_inheritance: row level security DISABLED
+-- cognitive_core.ingredient_build_candidate: row level security DISABLED
+-- cognitive_core.ingredient_candidate_component: row level security DISABLED
+-- cognitive_core.intelligence_activity_event: row level security DISABLED
+-- cognitive_core.intelligent_node: row level security DISABLED
+-- cognitive_core.intelligent_relationship: row level security DISABLED
+-- cognitive_core.next_investigation_candidate: row level security DISABLED
+-- cognitive_core.node_cognitive_state: row level security DISABLED
+-- cognitive_core.node_evidence_signal: row level security DISABLED
+-- cognitive_core.node_target_link: row level security DISABLED
+-- cognitive_core.opportunity_target_link: row level security DISABLED
+-- cognitive_core.problem_signal: row level security DISABLED
+-- cognitive_core.reassessment_queue: row level security DISABLED
+-- cognitive_core.target_registry: row level security DISABLED
+-- cognitive_core.transformation_opportunity: row level security DISABLED

@@ -1,0 +1,16 @@
+-- Source B supplement. Live rehearsal database kdpcfbaeklkffozryjah, read through the Supabase connector on 2026-09-28. Schema only, no rows. The eight application schemas not in snapshot-2026-09-28.
+-- Read at 2026-09-28 09:04:35.914286+00 (UTC), PostgreSQL 17.6. Generated from the system catalogs, read only.
+-- Schema: observation_core. Row level security: the enabled/forced setting of every table, and every policy.
+-- Catalog counts for observation_core: functions 22, tables 10, views 9, sequences 0, rls_enabled_tables 0, constraints 71, triggers 0, policies 0, indexes 28.
+-- Evidence of what exists, not governed code. Never edited after commit.
+
+-- observation_core.campaign: row level security DISABLED
+-- observation_core.campaign_observation: row level security DISABLED
+-- observation_core.community_participant_profile: row level security DISABLED
+-- observation_core.community_submission: row level security DISABLED
+-- observation_core.domain_adapter: row level security DISABLED
+-- observation_core.evidence_link: row level security DISABLED
+-- observation_core.measurement: row level security DISABLED
+-- observation_core.observation: row level security DISABLED
+-- observation_core.route: row level security DISABLED
+-- observation_core.validation_event: row level security DISABLED
