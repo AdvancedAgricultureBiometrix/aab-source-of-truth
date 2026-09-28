@@ -351,7 +351,9 @@ try {
   const roles = { officer: ["COMPLIANCE_OFFICER"], verifier: ["VERIFICATION_OFFICER"], reviewer: ["REGULATORY_REVIEWER"], linker: ["LINK_OFFICER"], staff: [], registrar: ["KEY_REGISTRAR"] };
   writeFileSync(join(src.dir, ".env"), [
     "POSTGRES_DB=scs_pilot", "POSTGRES_USER=scs_owner", `POSTGRES_PASSWORD=${random()}`, "POSTGRES_PORT=5432",
-    `SCS_API_DB_PASSWORD=${random()}`, `S3_ACCESS_KEY_ID=${random()}`, `S3_SECRET_ACCESS_KEY=${random()}`, "S3_PORT=9000", "S3_BUCKET=scs-evidence", "API_PORT=3000",
+    `SCS_API_DB_PASSWORD=${random()}`, "S3_PORT=9000", "S3_BUCKET=scs-evidence", "API_PORT=3000",
+    // the store's three identities (AAB-PLATFORM-01, amendment of 2026-09-28)
+    ...["ADMIN", "API", "BACKUP"].flatMap((who) => [`S3_${who}_ACCESS_KEY_ID=${random()}`, `S3_${who}_SECRET_ACCESS_KEY=${random()}`]),
     "SCS_ACTOR_ISSUER_COUNTRY=TH",
   ].join("\n") + "\n");
   writeFileSync(join(src.dir, "packages/api/config/static-actors.json"), JSON.stringify({
@@ -375,6 +377,18 @@ try {
   step("backup", nodeScript(join(src.dir, "backup/backup.mjs"), ["--dir", src.dir, "--project", src.project, "--out", backupDir, "--set", `SCS_API_IMAGE_TAG=${tag}`]));
   const manifest = JSON.parse(readFileSync(join(backupDir, "manifest.json"), "utf8"));
   step("backup: roles, database, objects, configuration and source report all present", ["database/roles.sql", "database/database.dump", "objects.json", "config/.env", "config/static-actors.json", "config/edge/nginx.conf", "config/edge/nginx.dev.conf", "source-report.json"].every((f) => manifest.files.some((x) => x.path === f)), { files: manifest.files.length, objects: manifest.objects.exported });
+
+  // the export needs the backup identity: the API's may not list the bucket
+  const apiExport = src.runApiTool(["node", "dist/ops/object-store-archive.js", "export", "/tmp/export"], {
+    passEnv: { S3_BACKUP_ACCESS_KEY_ID: src.env.S3_API_ACCESS_KEY_ID, S3_BACKUP_SECRET_ACCESS_KEY: src.env.S3_API_SECRET_ACCESS_KEY },
+    check: false,
+  });
+  step("refused: an export attempted with the API identity (it may not list the bucket)", apiExport.status !== 0 && /AccessDenied/.test(apiExport.stderr), refusalOf(apiExport.stderr));
+  // the source's store: locked and with its policy, by the setup step. It runs
+  // on every start: the first run created the bucket, and every run verified it.
+  const runs = src.compose(["logs", "--no-color", "--no-log-prefix", "objectstore-init"]).trim().split(/\r?\n/).filter((l) => l.startsWith("{")).map((l) => JSON.parse(l));
+  step("source store: the setup step created the evidence bucket locked (GOVERNANCE 2,192 days), and every run verified the lock and the policy",
+    runs.length > 0 && runs[0].created === true && runs.every((r) => r.retention === "GOVERNANCE 2192 days" && r.policy === "verified"), { runs });
 
   // restore into a fresh project, with the committed script
   const dstPort = await freePort();

@@ -4,7 +4,7 @@ The Supply Chain Sovereignty pilot: the SCS vertical proof, merged to `main` in 
 
 | Path | What it is |
 |---|---|
-| `docker-compose.yml` | Local stack: PostgreSQL 17, the migration runner, SeaweedFS (S3-compatible: the evidence object store), and the API |
+| `docker-compose.yml` | Local stack: PostgreSQL 17, the migration runner, SeaweedFS (S3-compatible: the evidence object store, locked with Object Lock, with three identities: admin, api and backup), the object store setup step (`objectstore-init`), and the API |
 | `.env.example` | Every environment variable, with placeholder values only |
 | `packages/api` | Node.js 24 + TypeScript API. Serves `GET /health` and the capability and platform routes; anything else gets the canonical 404 envelope |
 | `packages/api/src/capabilities/` | Capability code, one folder per capability; `README.md` there sets out the pattern every capability follows, with `cap-01/` as the reference implementation |
@@ -43,12 +43,25 @@ node isolation/verify-network-isolation.mjs dev    # or: base, without the overr
 
 The API connects only as `scs_api`, and refuses to start if its database role is a superuser, can bypass row-level security, can create roles or databases, or owns anything in the database. It also refuses to start without a valid static actors file, and without `SCS_ACTOR_ISSUER_COUNTRY`; the example file in the repository is rejected until its placeholder hashes are replaced.
 
+**The object store (AAB-PLATFORM-01, amendment of 2026-09-28).**
+- **Three identities, each with its own credential in `.env`:**
+  - **admin:** given only to `seaweedfs` and the `objectstore-init` setup step;
+  - **api:** read and write on the evidence bucket only;
+  - **backup:** read and list only.
+
+  `seaweedfs/start.sh` refuses to start on a missing, placeholder, short or shared credential, and on any `S3_OVERRIDE_*` value. The override credential is never configured in the store; its custodian holds it.
+- **`objectstore-init` runs on every start, before the API.** It creates the evidence bucket with Object Lock (GOVERNANCE mode, 2,192 days) and a bucket policy that denies the API every delete and every lock, retention and policy change. It names the API by ARN, because a bare name is silently not enforced. It then verifies all of it, and refuses an existing bucket that differs: a drifted lock or policy is a security incident, never repaired automatically.
+- **The API refuses to start unless** the bucket is locked as required, its credential is the scoped one (a listing must be refused), and the policy is enforced. Every read from the store is re-hashed against its key.
+- **A local stack created before this change** has an unlocked bucket, which `objectstore-init` refuses. The pilot holds no real data: remove the object store volume and start again, with `docker compose down` and then `docker volume rm scs-pilot_seaweedfs-data`.
+
 ## Tests
 
 ```bash
 cd packages/api
 SCS_TEST_ADMIN_DATABASE_URL=postgres://postgres:postgres@127.0.0.1:5432/postgres npm test
 ```
+
+The object store tests also need a **disposable** SeaweedFS: `SCS_TEST_S3_ENDPOINT` and the admin credential, plus the two scoped test identities for the locked-bucket tests (`.env.example`, "Tests"). With `docker-compose.dev.yml`, setting `SCS_TEST_S3_API_*` and `SCS_TEST_S3_BACKUP_*` adds those identities to the stack's store, scoped to `scs-idt-*` buckets. The country stack never has them.
 
 The integration tests need a superuser connection to a **disposable** PostgreSQL 17 instance. They create and drop their own databases and roles. Without the variable they fail; they are never skipped. Test files build their databases one at a time, because migration 004 alters the instance-wide role `scs_api`, then run in parallel.
 

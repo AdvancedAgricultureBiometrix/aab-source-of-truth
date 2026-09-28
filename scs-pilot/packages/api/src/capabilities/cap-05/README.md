@@ -33,7 +33,7 @@
 ## Open items
 
 - **Chain sufficiency belongs to SCS-CAP-06.** CAP-05 records events, never chains. CAP-06's contract must first define a custody-chain dimension, with the batch and operator in its request subject.
-- **`TODO(object-store-credentials)`** (see `platform/evidence-objects/object-store.ts`). The pilot stack gives the API an S3 identity with admin rights on the SeaweedFS store. Before any real data is stored, the API needs a dedicated identity that can only put and read objects, with object locking or an equivalent retention guarantee.
+- **Object store credentials: closed** by the AAB-PLATFORM-01 amendment of 2026-09-28 and its build (`OBJECT-STORE-IDENTITIES-BUILD-PLAN.md`). The API has its own scoped identity: read and write on the evidence bucket only, with a bucket policy that removes every delete and every lock, retention and policy change. The bucket is locked with Object Lock (GOVERNANCE mode, 2,192 days), and every read is verified against its key.
 - **Test infrastructure gap.** No lifecycle endpoints exist yet: no party or plot retirement, no framework supersession, no mandate revocation. So `cap-05-submit-custody-event.test.ts` sets those states directly with SQL as the database owner. When those endpoints exist, the tests should use them instead.
 - **Contract gaps** (contract "Open gaps"):
   - the missing producer role (a smallholder is recorded as `SUPPLIER`);

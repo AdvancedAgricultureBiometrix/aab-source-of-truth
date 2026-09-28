@@ -127,7 +127,7 @@ function verifyIntegrity(): { code: number; report: IntegrityReport } {
     ...process.env as Record<string, string>,
     SCS_VERIFY_DB_HOST: admin.host, SCS_VERIFY_DB_PORT: String(admin.port), SCS_VERIFY_DB_NAME: admin.database,
     SCS_VERIFY_DB_USER: admin.user, SCS_VERIFY_DB_PASSWORD: admin.password,
-    S3_ENDPOINT: objects.config.endpoint, S3_BUCKET: objects.config.bucket, S3_ACCESS_KEY_ID: objects.config.accessKeyId, S3_SECRET_ACCESS_KEY: objects.config.secretAccessKey,
+    S3_ENDPOINT: objects.config.endpoint, S3_BUCKET: objects.config.bucket, S3_API_ACCESS_KEY_ID: objects.config.accessKeyId, S3_API_SECRET_ACCESS_KEY: objects.config.secretAccessKey,
   };
   delete env["SCS_AUTH_STATIC_ACTORS_FILE"];
   delete env["SCS_ACTOR_ISSUER_COUNTRY"];

@@ -1,27 +1,32 @@
 // Backup and restore of the object store (AAB-PLATFORM-01): every stored
 // object — evidence files and PDF renditions — exported to, or imported from,
-// a directory. Run inside the api image, on the stack's internal network, with
-// the api service's object store environment (S3_*):
+// a directory. Run inside the api image, on the stack's internal network:
 //
-//   node dist/ops/object-store-archive.js export <dir>
-//   node dist/ops/object-store-archive.js import <dir>
+//   node dist/ops/object-store-archive.js export <dir>   (backup credential, S3_BACKUP_*)
+//   node dist/ops/object-store-archive.js import <dir>   (API credential, S3_API_*)
+//
+// Each runs as its own identity (amendment of 2026-09-28, section 1): export
+// with the backup identity, which may read and list and nothing else; import
+// with the API identity, into a bucket the setup step (objectstore-init) has
+// already created and locked. Neither creates a bucket.
 //
 // Export writes <dir>/objects/<key> and <dir>/objects.json (key, size,
 // SHA-256, media type of every object). Every key must be a SHA-256: every
-// object in this store is stored under its digest, and each exported file is
-// checked against its key, so a corrupt object is refused rather than backed up.
+// object in this store is stored under its digest, and each object is read
+// through the verified read, so a changed object is refused rather than
+// backed up.
 //
 // Import checks every file against the manifest and its key before storing
 // it, stores it with the same conditional write the service uses (never
-// overwriting), then reads it back and checks it again.
+// overwriting), then reads it back through the verified read.
 
 import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
-import { GetObjectCommand, ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
+import { HeadObjectCommand, ListObjectsV2Command } from "@aws-sdk/client-s3";
 
-import { objectStoreConfigFromEnv, S3ObjectStore } from "../platform/evidence-objects/object-store.js";
+import { objectStoreConfigFromEnv, s3ClientFor, S3ObjectStore } from "../platform/evidence-objects/object-store.js";
 
 export interface ArchivedObject {
   readonly key: string;
@@ -34,13 +39,9 @@ const SHA256_KEY = /^[0-9a-f]{64}$/;
 const sha256 = (b: Uint8Array) => createHash("sha256").update(b).digest("hex");
 
 async function exportObjects(dir: string): Promise<void> {
-  const config = objectStoreConfigFromEnv();
-  const client = new S3Client({
-    endpoint: config.endpoint,
-    region: config.region,
-    forcePathStyle: true,
-    credentials: { accessKeyId: config.accessKeyId, secretAccessKey: config.secretAccessKey },
-  });
+  const config = objectStoreConfigFromEnv("BACKUP");
+  const client = s3ClientFor(config);
+  const store = new S3ObjectStore(config);
   await mkdir(join(dir, "objects"), { recursive: true });
   const entries: ArchivedObject[] = [];
   let token: string | undefined;
@@ -49,12 +50,12 @@ async function exportObjects(dir: string): Promise<void> {
     for (const o of page.Contents ?? []) {
       const key = o.Key!;
       if (!SHA256_KEY.test(key)) throw new Error(`object ${JSON.stringify(key)} is not stored under a SHA-256; refusing to export it`);
-      const got = await client.send(new GetObjectCommand({ Bucket: config.bucket, Key: key }));
-      const bytes = Buffer.from(await got.Body!.transformToByteArray());
-      const digest = sha256(bytes);
-      if (digest !== key) throw new Error(`object ${key} hashes to ${digest}: it is corrupt; refusing to back it up`);
-      await writeFile(join(dir, "objects", key), bytes);
-      entries.push({ key, size: bytes.length, sha256: digest, contentType: got.ContentType ?? "application/octet-stream" });
+      const read = await store.read(key);
+      if (read.state === "MISSING") throw new Error(`object ${key} was listed but could not be read; refusing to back up an incomplete store`);
+      if (read.state === "CHANGED") throw new Error(`object ${key} hashes to ${read.actualSha256}: it is corrupt; refusing to back it up`);
+      const head = await client.send(new HeadObjectCommand({ Bucket: config.bucket, Key: key }));
+      await writeFile(join(dir, "objects", key), read.bytes);
+      entries.push({ key, size: read.bytes.length, sha256: key, contentType: head.ContentType ?? "application/octet-stream" });
     }
     token = page.IsTruncated === true ? page.NextContinuationToken : undefined;
   } while (token !== undefined);
@@ -64,8 +65,7 @@ async function exportObjects(dir: string): Promise<void> {
 }
 
 async function importObjects(dir: string): Promise<void> {
-  const store = new S3ObjectStore(objectStoreConfigFromEnv());
-  await store.ensureBucket();
+  const store = new S3ObjectStore(objectStoreConfigFromEnv("API"));
   const manifest = JSON.parse(await readFile(join(dir, "objects.json"), "utf8")) as { objects: ArchivedObject[] };
   let stored = 0;
   let existed = 0;
@@ -78,8 +78,8 @@ async function importObjects(dir: string): Promise<void> {
     }
     if ((await store.putIfAbsent(e.key, bytes, e.contentType)) === "stored") stored++;
     else existed++;
-    const back = await store.get(e.key);
-    if (back === null || sha256(back) !== e.key) throw new Error(`object ${e.key} did not read back intact after restore`);
+    const back = await store.read(e.key);
+    if (back.state !== "INTACT") throw new Error(`object ${e.key} did not read back intact after restore (${back.state})`);
   }
   console.log(JSON.stringify({ imported: manifest.objects.length, stored, alreadyPresent: existed }));
 }
@@ -92,6 +92,6 @@ if ((command !== "export" && command !== "import") || dir === undefined) {
 try {
   await (command === "export" ? exportObjects(dir) : importObjects(dir));
 } catch (err) {
-  console.error(`object-store-archive ${command} failed: ${(err as Error).message}`);
+  console.error(`object-store-archive ${command} failed: ${(err as Error).name}: ${(err as Error).message}`);
   process.exit(1);
 }

@@ -9,7 +9,8 @@
 # migration, rebuild: docker compose up -d --build
 #
 # Networks (the access isolation model for this platform):
-#   internal — internal: true. postgres, seaweedfs, migrate and api are on it
+#   internal — internal: true. postgres, seaweedfs, migrate, objectstore-init
+#              and api are on it
 #              and on nothing else: they reach each other, but no public
 #              address, no public DNS and no service on the host
 #              (host.docker.internal). On Docker Desktop an internal network is
@@ -31,14 +32,28 @@
 #             any failure, and the api does not start (src/migrations/runner.ts)
 # seaweedfs — S3-compatible object storage: the evidence object store
 #             (AAB-PLATFORM-01). The api stores evidence files there under
-#             their SHA-256, never overwriting (conditional PUT, If-None-Match);
-#             it creates the bucket at startup. Pinned to a release tag: an
-#             unpinned "latest" image is how the MinIO image broke. Its S3
-#             identity file is written from .env at container start, so no
-#             credentials are committed
+#             their SHA-256, never overwriting (conditional PUT, If-None-Match).
+#             Pinned to a release tag: an unpinned "latest" image is how the
+#             MinIO image broke. seaweedfs/start.sh writes its identity file
+#             from .env at container start (no credential is committed): three
+#             identities, admin, api and backup (amendment of 2026-09-28,
+#             section 1). It refuses to start on a missing, placeholder, short
+#             or shared credential, and on any S3_OVERRIDE_* value: the
+#             override credential is never configured in the store
+# objectstore-init — runs on every start, before the api, with the admin
+#             credential (dist/ops/object-store-setup.js): creates the evidence
+#             bucket if it does not exist, with Object Lock (GOVERNANCE, 2,192
+#             days) and the bucket policy that denies the api every delete and
+#             every lock, retention and policy change; then verifies all of it.
+#             It refuses, and repairs nothing, when an existing bucket differs:
+#             a drifted lock or policy is a security incident. The api does not
+#             start unless it succeeds
 # api       — Node service; connects as the restricted role scs_api only and
 #             refuses to start if that role owns scs objects, is a superuser
-#             or can bypass row-level security
+#             or can bypass row-level security. It holds only its own object
+#             store credential (S3_API_*), never the admin's or the backup's,
+#             and refuses to start unless the evidence bucket is locked as the
+#             contract requires and its credential is the scoped one
 # edge      — nginx, TCP forwarding only (edge/nginx.conf): the host's
 #             127.0.0.1:${API_PORT} to api:3000. Read-only filesystem
 #
@@ -97,23 +112,49 @@ services:
   seaweedfs:
     image: chrislusf/seaweedfs:4.47@sha256:ce9e796f1fe6f06968f4c04bdaf8f678dad9c8acdfef3d244133d71bfa6bf882
     restart: unless-stopped
-    entrypoint: ["sh", "-c"]
-    command:
-      - >-
-        printf '{"identities":[{"name":"scs-api","credentials":[{"accessKey":"%s","secretKey":"%s"}],"actions":["Admin","Read","Write","List","Tagging"]}]}'
-        "$$S3_ACCESS_KEY_ID" "$$S3_SECRET_ACCESS_KEY" > /tmp/s3.json
-        && exec weed server -dir=/data -s3 -s3.port=8333 -s3.config=/tmp/s3.json -master.volumeSizeLimitMB=64 -volume.max=64
+    entrypoint: ["sh", "/scs/start.sh"]
     environment:
-      S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID:?set S3_ACCESS_KEY_ID in .env}
-      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY:?set S3_SECRET_ACCESS_KEY in .env}
+      S3_BUCKET: ${S3_BUCKET:-scs-evidence}
+      S3_ADMIN_ACCESS_KEY_ID: ${S3_ADMIN_ACCESS_KEY_ID:?set S3_ADMIN_ACCESS_KEY_ID in .env}
+      S3_ADMIN_SECRET_ACCESS_KEY: ${S3_ADMIN_SECRET_ACCESS_KEY:?set S3_ADMIN_SECRET_ACCESS_KEY in .env}
+      S3_API_ACCESS_KEY_ID: ${S3_API_ACCESS_KEY_ID:?set S3_API_ACCESS_KEY_ID in .env}
+      S3_API_SECRET_ACCESS_KEY: ${S3_API_SECRET_ACCESS_KEY:?set S3_API_SECRET_ACCESS_KEY in .env}
+      S3_BACKUP_ACCESS_KEY_ID: ${S3_BACKUP_ACCESS_KEY_ID:?set S3_BACKUP_ACCESS_KEY_ID in .env}
+      S3_BACKUP_SECRET_ACCESS_KEY: ${S3_BACKUP_SECRET_ACCESS_KEY:?set S3_BACKUP_SECRET_ACCESS_KEY in .env}
+      # passed only so that start.sh can refuse them: the override credential
+      # is never configured in the store in normal operation
+      S3_OVERRIDE_ACCESS_KEY_ID: ${S3_OVERRIDE_ACCESS_KEY_ID:-}
+      S3_OVERRIDE_SECRET_ACCESS_KEY: ${S3_OVERRIDE_SECRET_ACCESS_KEY:-}
     networks: [internal]
     volumes:
+      - ./seaweedfs/start.sh:/scs/start.sh:ro
       - seaweedfs-data:/data
     healthcheck:
       test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8333/healthz || exit 1"]
       interval: 10s
       timeout: 3s
       retries: 10
+
+  objectstore-init:
+    build:
+      context: ./packages
+      dockerfile: api/Dockerfile
+    image: scs-pilot-api:${SCS_API_IMAGE_TAG:-local}
+    command: ["node", "dist/ops/object-store-setup.js"]
+    restart: "no"
+    # a one-off command, not the API: the image's HEALTHCHECK does not apply
+    healthcheck:
+      disable: true
+    networks: [internal]
+    environment:
+      S3_ENDPOINT: http://seaweedfs:8333
+      S3_BUCKET: ${S3_BUCKET:-scs-evidence}
+      # the admin credential: this service and seaweedfs only, never the api
+      S3_ADMIN_ACCESS_KEY_ID: ${S3_ADMIN_ACCESS_KEY_ID}
+      S3_ADMIN_SECRET_ACCESS_KEY: ${S3_ADMIN_SECRET_ACCESS_KEY}
+    depends_on:
+      seaweedfs:
+        condition: service_healthy
 
   api:
     build:
@@ -135,16 +176,17 @@ services:
       SCS_ACTOR_ISSUER_COUNTRY: ${SCS_ACTOR_ISSUER_COUNTRY:?set SCS_ACTOR_ISSUER_COUNTRY in .env}
       S3_ENDPOINT: http://seaweedfs:8333
       S3_BUCKET: ${S3_BUCKET:-scs-evidence}
-      S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID}
-      S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY}
+      # its own scoped credential only (AAB-PLATFORM-01, amendment of 2026-09-28)
+      S3_API_ACCESS_KEY_ID: ${S3_API_ACCESS_KEY_ID}
+      S3_API_SECRET_ACCESS_KEY: ${S3_API_SECRET_ACCESS_KEY}
     volumes:
       # token digests: supplied at run time, never built into the image
       - ./packages/api/config/static-actors.json:/app/config/static-actors.json:ro
     depends_on:
       migrate:
         condition: service_completed_successfully
-      seaweedfs:
-        condition: service_healthy
+      objectstore-init:
+        condition: service_completed_successfully
 
   edge:
     image: nginx:1.30.5-alpine3.24@sha256:bf3201ab56f23e5954646379c775d511fc466e9f11376d9725361064ad07ed35

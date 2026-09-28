@@ -11,7 +11,7 @@ run inside the environment's own containers, on its internal network.
 |---|---|---|
 | Every role | `database/roles.sql` | `pg_dumpall --roles-only`; passwords as their stored hashes |
 | The whole database: every schema, row and database-level grant | `database/database.dump` | `pg_dump --create`, custom format |
-| Every object: evidence files and PDF renditions | `objects/<sha256>`, `objects.json` | exported through the S3 API; each file checked against its SHA-256 key |
+| Every object: evidence files and PDF renditions | `objects/<sha256>`, `objects.json` | exported through the S3 API with the backup identity (read and list only); each object read through the verified read, and the export checked to include every object the database records |
 | The configuration | `config/.env`, `config/static-actors.json`, `config/edge/nginx.conf`, `config/edge/nginx.dev.conf` | copied |
 | The source's integrity, before the dump | `source-report.json` | migrations, receipts, packages, files, row counts, grants |
 | What was backed up, from which commit | `manifest.json`, `SHA256SUMS` | the SHA-256 of every file |
@@ -33,7 +33,7 @@ node backup/backup.mjs --dir . --project scs-pilot --out /path/to/new/backup-dir
 ## Keeping it
 
 A backup holds credentials and country data:
-- `.env`: the database, object store and API passwords;
+- `.env`: the database and API passwords, and all three object store credentials, the admin's included;
 - the static actors file: API token digests;
 - every record and evidence file.
 
@@ -63,7 +63,7 @@ On the target host:
 The restore does the following, each step failing closed:
 1. It checks every backup file against `SHA256SUMS` and the manifest.
 2. It restores the configuration.
-3. It starts PostgreSQL and the object store on new, empty volumes.
+3. It starts PostgreSQL and the object store on new, empty volumes, and runs the setup step (`objectstore-init`), which creates the evidence bucket locked and with its policy. The objects are then imported with the API identity.
 4. It restores the roles, and replaces the empty database created at first start with the
    backed-up one, including its database-level grants.
 5. It imports and reads back every object.

@@ -9,7 +9,7 @@
 
 import { randomBytes } from "node:crypto";
 
-import { DeleteBucketCommand, DeleteObjectCommand, ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
+import { CreateBucketCommand, DeleteBucketCommand, DeleteObjectCommand, ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
 
 import { S3ObjectStore, type ObjectStoreConfig } from "../platform/evidence-objects/object-store.js";
 
@@ -36,8 +36,11 @@ export async function createTestObjectStore(): Promise<TestObjectStore> {
     secretAccessKey: need("SCS_TEST_S3_SECRET_ACCESS_KEY"),
   };
   const s3 = new S3Client({ endpoint: config.endpoint, region: config.region, forcePathStyle: true, credentials: { accessKeyId: config.accessKeyId, secretAccessKey: config.secretAccessKey } });
+  // An unlocked, disposable bucket for the service's own logic: the locked
+  // bucket, its policy and the scoped identities are tested in
+  // object-store-identities.test.ts.
+  await s3.send(new CreateBucketCommand({ Bucket: config.bucket }));
   const store = new S3ObjectStore(config);
-  await store.ensureBucket();
   return {
     config,
     store,

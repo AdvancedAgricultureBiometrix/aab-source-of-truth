@@ -1,6 +1,6 @@
 # Object store identities — build plan (`TODO(object-store-credentials)`)
 
-**Status:** BUILD PLAN — APPROVED 2026-09-28, WITH THE THREE DECISIONS RECORDED BELOW. Nothing is built yet.
+**Status:** BUILD PLAN — APPROVED 2026-09-28, WITH THE THREE DECISIONS RECORDED BELOW — BUILT 2026-09-28, IN ONE PR; THE PROOF RECORD FOLLOWS (DECISION 3)
 **Builds:** the AAB-PLATFORM-01 amendment of 2026-09-28 (`governance/workstream-b/AAB-PLATFORM-01-EVIDENCE-OBJECT-STORE-CANONICAL-CONTRACT-2026-09-25.md`, sections 1 to 7), in the SCS pilot.
 **Removes, when it merges:** `TODO(object-store-credentials)` from the code, `.env.example` and the CAP-04 and CAP-05 READMEs. The roadmap and stock-take are updated in a governance PR afterwards.
 **Shape:** **one PR.** The credentials, the setup step, the startup checks, the read check, backup and restore, and CI all change together. A partial change would break the backup proof or the isolation job.

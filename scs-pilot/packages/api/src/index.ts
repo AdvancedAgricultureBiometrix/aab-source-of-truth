@@ -27,7 +27,7 @@ import { StaticTokenAuthenticator } from "./foundation/auth.js";
 import { log } from "./foundation/correlation.js";
 import { connectDatabase, dbConfigFromEnv, RestrictedRoleViolation, type Database } from "./foundation/db.js";
 import { createApiServer } from "./foundation/server.js";
-import { objectStoreConfigFromEnv, S3ObjectStore } from "./platform/evidence-objects/object-store.js";
+import { evidenceBucketProblemsForApi, objectStoreConfigFromEnv, S3ObjectStore } from "./platform/evidence-objects/object-store.js";
 import { renditionRoutes } from "./platform/renditions/routes.js";
 import { evidenceObjectRoutes } from "./platform/evidence-objects/routes.js";
 import { keyRegistryRoutes } from "./platform/key-registry/routes.js";
@@ -83,10 +83,20 @@ async function main(): Promise<void> {
     return;
   }
 
+  // AAB-PLATFORM-01, amendment of 2026-09-28, section 5: the API runs only
+  // with its own scoped credential, against a bucket the setup step
+  // (objectstore-init) has created, locked and given its policy.
   let objectStore: S3ObjectStore;
   try {
-    objectStore = new S3ObjectStore(objectStoreConfigFromEnv());
-    await objectStore.ensureBucket();
+    const config = objectStoreConfigFromEnv("API");
+    const problems = await evidenceBucketProblemsForApi(config);
+    if (problems.length > 0) {
+      log.error("startup failed: the evidence object store is not as AAB-PLATFORM-01 requires", { problems });
+      await db.close();
+      process.exitCode = 1;
+      return;
+    }
+    objectStore = new S3ObjectStore(config);
   } catch (err) {
     log.error("startup failed: the evidence object store is not configured or unreachable", { err });
     await db.close();

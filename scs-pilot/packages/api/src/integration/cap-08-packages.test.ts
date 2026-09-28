@@ -385,7 +385,9 @@ test("full chain: framework → plot → evidence file → evaluation → decisi
   assert.equal(await count(`SELECT count(*) AS n FROM scs.evidence_object WHERE content_sha256 = $1`, [rend["sha256"]]), 0, "a rendition is never evidence");
 
   // the rendition: its bytes are stored under their SHA-256, and present the whole package
-  const pdf = (await objects.store.get(r.decision.rendition.sha256))!;
+  const read = await objects.store.read(r.decision.rendition.sha256);
+  assert.equal(read.state, "INTACT");
+  const pdf = (read as { bytes: Buffer }).bytes;
   assert.equal(createHash("sha256").update(pdf).digest("hex"), r.decision.rendition.sha256);
   assert.equal(pdf.length, Number(rend["byte_length"]));
   const pages = await pdfPages(pdf);

@@ -17,7 +17,6 @@
 // Which roles may read which capability's renditions is passed in by the
 // wiring (index.ts): platform code never imports a capability's code.
 
-import { createHash } from "node:crypto";
 
 import { holdsRole } from "../../foundation/actor.js";
 import { withDatabaseErrors } from "../../foundation/db-errors.js";
@@ -25,7 +24,7 @@ import { platformFailure, ScsFailure } from "../../foundation/errors.js";
 import type { OperationResult } from "../../foundation/idempotency.js";
 import type { Route, RouteContext } from "../../foundation/server.js";
 import { SCHEMAS } from "../../schemas/registry.js";
-import type { ObjectStore } from "../evidence-objects/object-store.js";
+import type { ObjectRead, ObjectStore } from "../evidence-objects/object-store.js";
 
 /** Reader roles per owning capability, e.g. { "SCS-CAP-08": ["COMPLIANCE_OFFICER", "REGULATORY_REVIEWER"] }. */
 export type RenditionReaders = Readonly<Record<string, readonly string[]>>;
@@ -55,22 +54,23 @@ function downloadRendition(objectStore: ObjectStore, readers: RenditionReaders) 
         `Renditions of ${row.sourceCapabilityId} records are for ${allowed.join(" or ") || "no role"}; actor ${actor.actorId} holds neither.`,
       ]);
     }
-    let bytes: Buffer | null;
+    let read: ObjectRead;
     try {
-      bytes = await objectStore.get(row.sha256);
+      read = await objectStore.read(row.sha256);
     } catch (err) {
       if (err instanceof ScsFailure && err.code === "DEPENDENCY_UNAVAILABLE") throw platformFailure("DEPENDENCY_UNAVAILABLE", ["The object store is unavailable; nothing was returned."]);
       throw err;
     }
-    if (bytes === null) {
+    if (read.state === "MISSING") {
       throw platformFailure("RENDITION_INTEGRITY_FAILED", [`The bytes of rendition ${renditionId} (SHA-256 ${row.sha256}) are not in the object store; nothing was returned.`]);
     }
-    const actual = createHash("sha256").update(bytes).digest("hex");
-    if (actual !== row.sha256 || bytes.length !== row.byteLength) {
+    const [actual, size] = read.state === "INTACT" ? [row.sha256, read.bytes.length] : [read.actualSha256, read.sizeBytes];
+    if (read.state === "CHANGED" || size !== row.byteLength) {
       throw platformFailure("RENDITION_INTEGRITY_FAILED", [
-        `The stored bytes of rendition ${renditionId} hash to ${actual} (${bytes.length} bytes), not the recorded ${row.sha256} (${row.byteLength} bytes); nothing was returned.`,
+        `The stored bytes of rendition ${renditionId} hash to ${actual} (${size} bytes), not the recorded ${row.sha256} (${row.byteLength} bytes); nothing was returned.`,
       ]);
     }
+    const bytes = read.bytes;
     return {
       status: 200,
       body: null,
