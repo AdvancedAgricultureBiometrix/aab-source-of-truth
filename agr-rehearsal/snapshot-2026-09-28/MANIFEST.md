@@ -1,0 +1,83 @@
+# Step 0 evidence snapshot, 2026-09-28: manifest
+
+Every file in the snapshot, with its source, size in bytes and SHA-256 digest. The digests are the same as in `SHA256SUMS`, which `sha256sum -c SHA256SUMS` checks from this folder.
+
+**This manifest is part of a read-only evidence record. It is never edited after commit.**
+
+## Sources
+
+- **Source A:** Deployed rehearsal, wa-rehearsal.nexiuma.ai. Static files verified against the live site 733 of 733 on 2026-09-28. PHP not verifiable over HTTP. From hPanel download public_html (56).zip.
+- **Source B:** Live rehearsal database kdpcfbaeklkffozryjah, read through the Supabase connector on 2026-09-28. Schema only, no rows.
+
+## Source A: the deployed rehearsal's PHP files (29)
+
+Byte-for-byte copies of the 29 PHP files in `public_html (56).zip`, at their paths in that bundle, under `source-a/`. The bundle's 736 other files, its static files among them, are outside this snapshot's scope.
+
+| File | Bytes | SHA-256 |
+|---|---:|---|
+| `source-a/aab-local/app/_rebuild/api.php` | 139201 | `40ecf91a7488d0dd4dbf6fd3a375f3dbcc2c9aec76632d4a38fd0f2268dca47c` |
+| `source-a/aab-local/app/_rebuild/api/agriculture/bootstrap.php` | 1920 | `3efbe66860d6cec1cd21b3deb8b059145d2f36fdb9b11313b4dc0a21dc435720` |
+| `source-a/aab-local/app/_rebuild/api/agriculture/config/PostgresConfig.php` | 2979 | `ff309036bc815df90ba1d79ab6462af3f993fc8bbc1eb8ce50636b1139f5a5b0` |
+| `source-a/aab-local/app/_rebuild/api/agriculture/config/PrivateConfigLoader.php` | 4380 | `2bfed72d91c9f8c51152d57d0806e577d671cb02b56c636ae4e2d0ee2aea02c4` |
+| `source-a/aab-local/app/_rebuild/api/agriculture/database/ConnectionFactory.php` | 2179 | `44f118d9abb54b2f89b99b80646edd11c48a366f08d35f61df328ec5699d651e` |
+| `source-a/aab-local/app/_rebuild/api/agriculture/database/TransactionManager.php` | 433 | `bd478255315a17096daea3d016978cced31251ed09ee94d8ca038b923f09e222` |
+| `source-a/aab-local/app/_rebuild/api/agriculture/http/JsonResponse.php` | 503 | `c6df2dff7fbd7f5cd2434e9d9578bc5bd742bfb869ec023bcaf8136b3117d92d` |
+| `source-a/aab-local/app/_rebuild/api/agriculture/repositories/ActorRepository.php` | 671 | `206f517ff913053df7348006f878fe76d006f4e3ae65f133b00501af4c1e9493` |
+| `source-a/aab-local/app/_rebuild/api/agriculture/repositories/AuditRepository.php` | 969 | `06534b293b5a1236e483b1ad45847494e9702c520f5adcae275e0ca7e09457ef` |
+| `source-a/aab-local/app/_rebuild/api/agriculture/repositories/IngredientRepository.php` | 6391 | `fce1db40e9ff81b1f3a278272e6acdd69751c993c44e494d29876d82cd55f7de` |
+| `source-a/aab-local/app/_rebuild/api/agriculture/repositories/ObservationTemplateRepository.php` | 1739 | `f1fad2847a6a697c10f27f43fd74ab90d272f34abc740620c93f2b371891c6c8` |
+| `source-a/aab-local/app/_rebuild/api/agriculture/services/IngredientService.php` | 4124 | `9289b3d9012bfee60bb5d51b5fc13efedea31a648d414200051f04f84fe9b144` |
+| `source-a/aab-local/app/_rebuild/api/agriculture/services/ObservationTemplateService.php` | 420 | `fdd9312790a922f7bc557f7ce26017143970e5d856e315b8f6e69cfc86a83e4b` |
+| `source-a/aab-local/app/_rebuild/api/agriculture/services/PostgresHealthService.php` | 1864 | `9b878bf7226f1c73131734a485505e7565885bbb6b2b984746b7b24f67bfcfdc` |
+| `source-a/aab-local/app/_rebuild/api/agriculture/services/PostgresIngredientReadBridge.php` | 3516 | `3e2523b7124ad27c076860db152de6f780a301ce0b1fdcf8b70d7e6525f98bf0` |
+| `source-a/aab-local/app/_rebuild/api/agriculture/validation/diagnostic-auth-guard.php` | 1366 | `63a1dc4d2a3ff866560594d7749769bf52e3ce7e59b64664b958fa70820e7c24` |
+| `source-a/aab-local/app/_rebuild/api/agriculture/validation/php_preflight.php` | 1753 | `3da89b2a4ef51cf2730b4994a6d6e7190b2a25e9bbf8e2e5fde1fdead73f7c75` |
+| `source-a/aab-local/app/_rebuild/api/agriculture/validation/postgresql_health.php` | 13852 | `62ebc7b62be5d94bcb063b394f7a17eb2c65c9b3bed11e34290e145cebe80c1a` |
+| `source-a/aab-local/app/aab-intel-live.php` | 287 | `5386c51d56944401a7e3f2199b60c3ce5aba6361e7aae10edc368b4828214eae` |
+| `source-a/aab-local/app/api.php` | 147 | `69ee72e1fb797b12bd992aca992dafe1e9f78847f7a44598dd6cacc8fdc6e0a1` |
+| `source-a/aab-local/app/country-runtime-guard.php` | 2245 | `ac10b332b01e1618bff8381ddf643166dbf7c0cb1ba14cf1ae04ea2a38371650` |
+| `source-a/aab-local/app/country-runtime-public-config.php` | 682 | `f1119d1fb15155094e5c695a0856eb1a331d3b11e342ac33b4b8c1af2d9f3257` |
+| `source-a/aab-local/app/gate.php` | 337 | `01114e4737f298fc20bbdcc4de59f4efae6da409b38032f4b7250beabbf4d400` |
+| `source-a/aab-local/app/smtp_config.example.php` | 617 | `4585abe2ec8e243f599a83fdabb14c44bff8681609a6305188be60e11164ecd8` |
+| `source-a/aab-local/app/supabase-auth-bridge.php` | 2931 | `9d67f96981a1f6954153227a6db97f242d347781f575c3eecff989e93dbe33ad` |
+| `source-a/api/aab-config/index.php` | 516 | `24c5cdb25ff285c6ee1016a5fe95be0e32dfd9e986461bc8c874b3d84bfdb291` |
+| `source-a/default.php` | 16369 | `aba5b5856471c610e4dd52c322c7a72a895fc9bf98ac1d027528d0e7de1f7e45` |
+| `source-a/index.php` | 2088 | `6f82adf71d0ed1159adc6cc59288349ddfb7b3dd09a56e116b4d9ccb8bd3ec56` |
+| `source-a/onboarding/activate/index.php` | 3766 | `ba02cb62eb79ed6c98bd8c30bd90e78b5c7c2fb9f28bd4f07992374d36310f29` |
+
+## Source B: the rehearsal database schema (19 files)
+
+Generated from the PostgreSQL system catalogs in one read-only query at 2026-09-28 07:30:53 UTC (PostgreSQL 17.6). One file for each kind of object in each schema, and the migration list.
+
+| File | Bytes | SHA-256 |
+|---|---:|---|
+| `source-b/agriculture/functions.sql` | 313955 | `0d5343054bdf2e50c52ac607a754a94c87b1159742f099defdf41c35533518ee` |
+| `source-b/agriculture/grants.sql` | 108229 | `93ba8300317a0c1fe87dab53fe0ad74b82793dc0e2c0e40469468c5eef1dde35` |
+| `source-b/agriculture/rls.sql` | 17011 | `345fd1dd16bfc257734e696a7c8f6a57cd00f12c50a5a5dfeeb85d3d6a184851` |
+| `source-b/agriculture/tables.sql` | 237351 | `e0cc38302da6170cbdc7a5416ad7c8fa492109738ec0bd8309d38523bf9fc04f` |
+| `source-b/agriculture/triggers.sql` | 14359 | `273370ffe7823b71bfde52a65dd394c4c1b0b8a2f84416121fa0d599bfc19f25` |
+| `source-b/agriculture/views.sql` | 65959 | `6394719efdacdddfc116cc8cc79a710e6ae1546c2c6cb42dc5fa33f602857e8f` |
+| `source-b/migrations.sql` | 2900 | `fb10752f74cb5e0a93385357161385a866090de97933ca6026ef2967c34ca8a0` |
+| `source-b/platform/functions.sql` | 9199 | `6960f1bd224391d44408daecab3913651e54c43174a1e4a1188de36fa9ae593d` |
+| `source-b/platform/grants.sql` | 2874 | `5cd52030dc5a29a5ec1540ca9131b0e4da0b24b3bdfbe7a2ce9d474cbd507c8e` |
+| `source-b/platform/rls.sql` | 1465 | `55786d12e3828fe370d3217261ad6109e71d0bd9b356d94b1d3fa8fb14394aca` |
+| `source-b/platform/tables.sql` | 8029 | `27a0df61e7b5153620fa6ef8e58551a239e0f89bd2ce5eafa3e65c25d09980da` |
+| `source-b/platform/triggers.sql` | 564 | `5f66bb0eebf1170feb95fc491abbca0865a816c2eadefaf5289d63a73f0c21ef` |
+| `source-b/platform/views.sql` | 6247 | `8cb2261ef6ab771c429180728eee7087a57369e4881734ed27ca714d24fdab26` |
+| `source-b/public/functions.sql` | 68294 | `3dd35b18f032c4fdb4597b88ce821f16e0aa38ae2c84ee91676df301da5f99fa` |
+| `source-b/public/grants.sql` | 25854 | `9dad5e01d8b83e69c787eaaf0fce2fbf7bbf545ee9ec2090a6dfd712aa773e70` |
+| `source-b/public/rls.sql` | 1000 | `a3c9cae506b1609b48e1b695e1fe71fc6eaad197cad9cbf312200c9edf04cdb7` |
+| `source-b/public/tables.sql` | 6820 | `04e56cbfc2942e99b0fd74062bb7ef79531d5d6fcdb16fca55e4465d9184f37a` |
+| `source-b/public/triggers.sql` | 717 | `2d29cce8b0a84a26c0b04beae6a207c06e0955e4521464b40ba23a7e5da46eef` |
+| `source-b/public/views.sql` | 543 | `06e8e337e48222a51833e866b7ea15685cf22719ce28fc0101ee07ae96f867aa` |
+
+## Excluded
+
+| What | Where | Reason |
+|---|---|---|
+| Every table row | Source B | Schema only. No row of any table was read; the query reads the system catalogs only |
+| The migration statements | Source B | Some migrations insert rows. `migrations.sql` records each migration's version and name only |
+| The bundle's 736 non-PHP files | Source A | Outside scope: the snapshot takes the PHP files only |
+| The aab.ag application tree (bundles 55 and 57), which was Source C in the draft brief | Not included | Owner decision, 2026-09-28: legacy Airtable-era code, no longer in use, and not the rehearsal |
+
+No file inside Source A or Source B was excluded for credentials or personal data. The 29 PHP files read their configuration from the environment, and the only credential-shaped values in them are the placeholders in `smtp_config.example.php`. The `gate.php` in bundle 56 is a 337-byte stub that returns `410 LEGACY_LOCAL_AUTH_RETIRED`. `leads.csv` and `analytics.csv` are not in bundle 56. A scan of the schema files found no email addresses, keys, tokens or connection strings.

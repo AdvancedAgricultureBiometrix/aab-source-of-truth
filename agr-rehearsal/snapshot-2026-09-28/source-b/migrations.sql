@@ -1,0 +1,48 @@
+-- Source B. Live rehearsal database kdpcfbaeklkffozryjah, read through the Supabase connector on 2026-09-28. Schema only, no rows.
+-- Read at 2026-09-28 07:30:53.092006+00 (UTC). The migration history (supabase_migrations.schema_migrations): version and name only.
+-- The migration statements are not included: some of them insert rows.
+-- 41 migrations, 20260814230043 to 20260902101859.
+-- Evidence of what exists, not governed code. Never edited after commit.
+
+-- version          name
+-- 20260814230043   aab_managed_dependencies
+-- 20260814230220   aab_canonical_present_state_schema
+-- 20260814230327   aab_post_baseline_security
+-- 20260814230451   aab_post_baseline_security_revoke_existing_browser_grants
+-- 20260814230647   aab_post_baseline_security_revoke_anonymous_function_execution
+-- 20260814230829   aab_post_baseline_security_protect_rls_event_helper
+-- 20260815071331   add_country_spatial_observation_pipeline
+-- 20260815071626   index_spatial_pipeline_foreign_keys
+-- 20260815102653   connect_wa_candidates_to_brains
+-- 20260815102815   store_red_hill_computed_observations
+-- 20260815225922   create_spatial_investigation_memory
+-- 20260815232929   grant_spatial_memory_service_access
+-- 20260815234525   create_api_safe_spatial_investigation_memory
+-- 20260818113933   thailand_country_discovery_registry
+-- 20260818220716   thailand_governed_snapshot_v1
+-- 20260818223955   thailand_national_impact_investigation_layer
+-- 20260819035151   wa_governed_discovery_snapshot_v1
+-- 20260819035520   country_discovery_query_indexes
+-- 20260819071213   wa_emrc_live_evidence_path
+-- 20260819071529   wa_emrc_live_evidence_indexes
+-- 20260820215510   country_discovery_brain_schema_v1
+-- 20260821033704   thailand_automatic_source_adapter_pipeline_v1
+-- 20260823050248   demo_jurisdiction_catalog_v1
+-- 20260823052911   demo_jurisdiction_execution_policy_v1
+-- 20260823055415   demo_jurisdiction_scan_runtime_v1
+-- 20260824210831   country_resource_investigation_intake_v1
+-- 20260824210902   owner_country_resource_capture_policy_v1
+-- 20260824210950   bind_owner_country_resource_capture_identity_v1
+-- 20260826025110   governed_investigation_profiles_v1
+-- 20260826040007   governed_candidate_observations_v1
+-- 20260826232053   private_schema_rls_defence_in_depth
+-- 20260827001026   country_legal_onboarding_v1
+-- 20260827001038   head_admin_aab_terms_gate_v1
+-- 20260827230438   wa_rehearsal_activation_bridge
+-- 20260829212644   expired_wa_rehearsal_activation_reissue
+-- 20260830054241   internal_institution_rehearsal_v1
+-- 20260830054833   internal_institution_rehearsal_authority_v2
+-- 20260831213842   repair_rehearsal_participant_invitation_lifecycle_constraint
+-- 20260831214638   prevent_existing_institution_member_reinvitation
+-- 20260831214743   protect_existing_institution_member_during_finalization
+-- 20260902101859   accept_internal_rehearsal_nomination_source
