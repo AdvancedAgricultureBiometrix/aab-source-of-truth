@@ -12,7 +12,7 @@ import assert from "node:assert/strict";
 import { createHash, randomBytes, randomUUID } from "node:crypto";
 import type { AddressInfo } from "node:net";
 import type { Server } from "node:http";
-import { DeleteBucketCommand, DeleteObjectCommand, GetObjectCommand, ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
+import { CreateBucketCommand, DeleteBucketCommand, DeleteObjectCommand, GetObjectCommand, ListObjectsV2Command, S3Client } from "@aws-sdk/client-s3";
 
 import { StaticTokenAuthenticator } from "../foundation/auth.js";
 import { runWithCorrelation } from "../foundation/correlation.js";
@@ -68,8 +68,8 @@ before(async () => {
   authenticator = StaticTokenAuthenticator.fromConfig({
     actors: (Object.keys(TOKENS) as Array<keyof typeof TOKENS>).map((k) => ({ tokenSha256: createHash("sha256").update(TOKENS[k]).digest("hex"), actor: actors[k] })),
   }, { issuerCountry: "TH" });
+  await s3.send(new CreateBucketCommand({ Bucket: config.bucket }));
   const store = new S3ObjectStore(config);
-  await store.ensureBucket();
   server = createApiServer({ routes: evidenceObjectRoutes(store), authenticator, db: api });
   await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;

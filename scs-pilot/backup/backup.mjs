@@ -34,7 +34,7 @@
 // environment's operators. It is not encrypted by this script:
 // TODO(backup-encryption).
 
-import { copyFileSync, mkdirSync, writeFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 
 import { ensureEmptyDir, git, listFiles, log, parseArgs, sha256File, Stack } from "./lib.mjs";
@@ -68,8 +68,18 @@ try {
   stack.compose(["exec", "-T", "postgres", "pg_dump", "-U", env.POSTGRES_USER, "-d", env.POSTGRES_DB, "--create", "-Fc"], { stdoutFile: join(out, "database/database.dump") });
   const postgresVersion = stack.compose(["exec", "-T", "postgres", "psql", "-U", env.POSTGRES_USER, "-d", env.POSTGRES_DB, "-tAc", "SHOW server_version"]).trim();
 
+  // with the backup identity, which may read and list and nothing else
+  // (AAB-PLATFORM-01, amendment of 2026-09-28, section 1)
   log("exporting the object store");
-  const exported = stack.runApiTool(["node", "dist/ops/object-store-archive.js", "export", "/backup"], { mounts: [`${out}:/backup`], writable: true });
+  const exported = stack.runApiTool(["node", "dist/ops/object-store-archive.js", "export", "/backup"], {
+    mounts: [`${out}:/backup`], writable: true,
+    passEnv: { S3_BACKUP_ACCESS_KEY_ID: env.S3_BACKUP_ACCESS_KEY_ID, S3_BACKUP_SECRET_ACCESS_KEY: env.S3_BACKUP_SECRET_ACCESS_KEY },
+  });
+  // every object the database records must be in the export: a missing or
+  // hidden object fails the backup instead of being left out (section 6)
+  const exportedKeys = new Set(JSON.parse(readFileSync(join(out, "objects.json"), "utf8")).objects.map((o) => o.key));
+  const notExported = JSON.parse(sourceReport).storedObjectKeys.filter((k) => !exportedKeys.has(k));
+  if (notExported.length > 0) throw new Error(`the export is missing ${notExported.length} object(s) the database records, e.g. ${notExported[0]}; no backup was taken`);
 
   log("copying the configuration");
   for (const [from, to] of [

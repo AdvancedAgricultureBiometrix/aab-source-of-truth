@@ -16,14 +16,13 @@
 //                  → REQUESTOR_NOT_AUTHORISED (403)
 //   2. lookup    — an unknown packageId → PACKAGE_NOT_FOUND (404)
 
-import { createHash } from "node:crypto";
 
 import { holdsRole } from "../../foundation/actor.js";
 import { canonicalJson, sha256Hex } from "../../foundation/canonical.js";
 import { ScsFailure } from "../../foundation/errors.js";
 import type { OperationResult } from "../../foundation/idempotency.js";
 import type { RouteContext } from "../../foundation/server.js";
-import type { ObjectStore } from "../../platform/evidence-objects/object-store.js";
+import type { ObjectRead, ObjectStore } from "../../platform/evidence-objects/object-store.js";
 import type { ScsSufficiencyEvaluationResult } from "../../types/cap-06.js";
 import type {
   ScsDueDiligencePackage,
@@ -211,24 +210,23 @@ export function verifyPackageIntegrity(objectStore: ObjectStore) {
         checks.push({ ...base, result: "UNVERIFIABLE", detail: "The object store could not be reached." });
         continue;
       }
-      let bytes: Buffer | null;
+      let read: ObjectRead;
       try {
-        bytes = await objectStore.get(chain.contentDigest);
+        read = await objectStore.read(chain.contentDigest);
       } catch (err) {
         if (!(err instanceof ScsFailure && err.code === "DEPENDENCY_UNAVAILABLE")) throw err;
         storeDown = true;
         checks.push({ ...base, result: "UNVERIFIABLE", detail: "The object store could not be reached." });
         continue;
       }
-      if (bytes === null) {
+      if (read.state === "MISSING") {
         checks.push({ ...base, result: "EVIDENCE_OBJECT_MISSING", detail: `No file is stored under SHA-256 ${chain.contentDigest}.` });
         continue;
       }
-      const actual = createHash("sha256").update(bytes).digest("hex");
       checks.push(
-        actual === chain.contentDigest
+        read.state === "INTACT"
           ? { ...base, result: "PASS", detail: "Matches." }
-          : { ...base, result: "EVIDENCE_CHANGED", detail: `The stored file hashes to ${actual}, not its recorded SHA-256 ${chain.contentDigest}.` },
+          : { ...base, result: "EVIDENCE_CHANGED", detail: `The stored file hashes to ${read.actualSha256}, not its recorded SHA-256 ${chain.contentDigest}.` },
       );
     }
 

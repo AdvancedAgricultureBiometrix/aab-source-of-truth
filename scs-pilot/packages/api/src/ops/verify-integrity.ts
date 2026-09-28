@@ -6,8 +6,9 @@
 //
 // It connects as the owner (SCS_VERIFY_DB_HOST, _PORT, _NAME, _USER,
 // _PASSWORD) because it must read every table, including the migration
-// history, and reaches the object store with the api service's S3_* settings.
-// It reads only. Intact means:
+// history, and reaches the object store with the API's scoped credential
+// (S3_API_*): every read is verified against its key (AAB-PLATFORM-01). It reads
+// only. Intact means:
 //   - migrations: every migration in the image is applied, in order, with the
 //     same checksum, and nothing else is;
 //   - receipts: every receipt hashes to its recorded digest and names its id;
@@ -37,7 +38,6 @@
 //
 // Prints a JSON report; exits 1 unless everything holds.
 
-import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 
 import pg from "pg";
@@ -65,6 +65,8 @@ interface Report {
   linkStatusRecords: IntegritySection;
   keyRegistry: RegistryIntegrity;
   counts: Record<string, number>;
+  /** Every object key the database records (evidence objects and renditions), sorted: a backup must export each one. */
+  storedObjectKeys: string[];
   databaseAcl: string | null;
   comparison?: { source: string; problems: string[] };
 }
@@ -74,7 +76,6 @@ const need = (name: string) => {
   if (v === undefined || v === "") throw new Error(`${name} is not set`);
   return v;
 };
-const sha256 = (b: Uint8Array) => createHash("sha256").update(b).digest("hex");
 
 async function verify(): Promise<Report> {
   const client = new pg.Client({
@@ -85,7 +86,7 @@ async function verify(): Promise<Report> {
     password: need("SCS_VERIFY_DB_PASSWORD"),
   });
   await client.connect();
-  const store = new S3ObjectStore(objectStoreConfigFromEnv());
+  const store = new S3ObjectStore(objectStoreConfigFromEnv("API"));
   try {
     // one snapshot for every database read
     await client.query("BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY");
@@ -132,18 +133,18 @@ async function verify(): Promise<Report> {
       "SELECT content_sha256, size_bytes FROM scs.evidence_object ORDER BY content_sha256",
     )).rows;
     for (const o of objects) {
-      const bytes = await store.get(o.content_sha256);
-      if (bytes === null) objectProblems.push(`evidence object ${o.content_sha256} is not in the object store.`);
-      else if (sha256(bytes) !== o.content_sha256 || bytes.length !== Number(o.size_bytes)) objectProblems.push(`evidence object ${o.content_sha256} does not re-hash to its SHA-256 and size.`);
+      const read = await store.read(o.content_sha256);
+      if (read.state === "MISSING") objectProblems.push(`evidence object ${o.content_sha256} is not in the object store.`);
+      else if (read.state === "CHANGED" || read.bytes.length !== Number(o.size_bytes)) objectProblems.push(`evidence object ${o.content_sha256} does not re-hash to its SHA-256 and size.`);
     }
     const renditionProblems: string[] = [];
     const renditions = (await client.query<{ rendition_id: string; sha256: string; byte_length: string }>(
       "SELECT rendition_id, sha256, byte_length FROM scs.rendition ORDER BY rendition_id",
     )).rows;
     for (const r of renditions) {
-      const bytes = await store.get(r.sha256);
-      if (bytes === null) renditionProblems.push(`rendition ${r.rendition_id}: its bytes (${r.sha256}) are not in the object store.`);
-      else if (sha256(bytes) !== r.sha256 || bytes.length !== Number(r.byte_length)) renditionProblems.push(`rendition ${r.rendition_id} does not re-hash to its SHA-256 and byte length.`);
+      const read = await store.read(r.sha256);
+      if (read.state === "MISSING") renditionProblems.push(`rendition ${r.rendition_id}: its bytes (${r.sha256}) are not in the object store.`);
+      else if (read.state === "CHANGED" || read.bytes.length !== Number(r.byte_length)) renditionProblems.push(`rendition ${r.rendition_id} does not re-hash to its SHA-256 and byte length.`);
     }
 
     // actor–party links and their status records
@@ -208,6 +209,7 @@ async function verify(): Promise<Report> {
       linkStatusRecords,
       keyRegistry,
       counts,
+      storedObjectKeys: [...new Set([...objects.map((o) => o.content_sha256), ...renditions.map((r) => r.sha256)])].sort(),
       databaseAcl: acl,
     };
     return report;
@@ -227,6 +229,7 @@ try {
       if (source.counts[k] !== report.counts[k]) problems.push(`${k}: ${report.counts[k] ?? "missing"} rows, the source had ${source.counts[k] ?? "none"}.`);
     }
     if (source.databaseAcl !== report.databaseAcl) problems.push(`database grants are ${report.databaseAcl}, the source's were ${source.databaseAcl}.`);
+    if (JSON.stringify(source.storedObjectKeys) !== JSON.stringify(report.storedObjectKeys)) problems.push("the stored object keys differ from the source's.");
     report.comparison = { source: path, problems };
   }
   const sections = [report.migrations, report.receipts, report.packages, report.evidenceObjects, report.renditions, report.links, report.linkStatusRecords, ...Object.values(report.keyRegistry)];

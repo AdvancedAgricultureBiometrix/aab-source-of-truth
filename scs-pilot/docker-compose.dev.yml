@@ -9,6 +9,18 @@
 # reachable from the host.
 
 services:
+  # Optional test identities for the scoped-store tests on the host
+  # (packages/api/src/integration/scoped-store-harness.ts), scoped to scs-idt-*
+  # buckets only. Set SCS_TEST_S3_API_* and SCS_TEST_S3_BACKUP_* in .env to add
+  # them, and SCS_TEST_S3_API_IDENTITY=scs-test-api for the tests. The country
+  # stack, docker-compose.yml alone, never has them.
+  seaweedfs:
+    environment:
+      SCS_TEST_S3_API_ACCESS_KEY_ID: ${SCS_TEST_S3_API_ACCESS_KEY_ID:-}
+      SCS_TEST_S3_API_SECRET_ACCESS_KEY: ${SCS_TEST_S3_API_SECRET_ACCESS_KEY:-}
+      SCS_TEST_S3_BACKUP_ACCESS_KEY_ID: ${SCS_TEST_S3_BACKUP_ACCESS_KEY_ID:-}
+      SCS_TEST_S3_BACKUP_SECRET_ACCESS_KEY: ${SCS_TEST_S3_BACKUP_SECRET_ACCESS_KEY:-}
+
   edge:
     ports:
       - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"

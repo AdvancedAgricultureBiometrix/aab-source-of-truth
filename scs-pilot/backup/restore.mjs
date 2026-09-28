@@ -15,11 +15,13 @@
 //   2. the target: the checkout's commit is the backup's; the project is
 //      empty; the committed edge configuration equals the backed-up copy
 //   3. the configuration: .env and the static actors file restored
-//   4. PostgreSQL and the object store started on new, empty volumes
+//   4. PostgreSQL and the object store started on new, empty volumes; the
+//      setup step (objectstore-init) creates the evidence bucket, locked and
+//      with its policy
 //   5. roles restored; the empty database created at first start replaced by
 //      the backed-up one (pg_restore --create: schemas, rows and
 //      database-level grants)
-//   6. every object imported and read back
+//   6. every object imported with the API identity and read back verified
 //   7. the whole stack started; the migrate service must report every
 //      migration already applied (it checks each recorded checksum, and fails
 //      closed on any difference)
@@ -72,6 +74,9 @@ const env = stack.env;
 log(`building the image and starting postgres and seaweedfs for ${stack.project}`);
 stack.compose(["build"]);
 stack.compose(["up", "-d", "--wait", "postgres", "seaweedfs"]);
+// the evidence bucket, locked and with its policy, by the setup step and the
+// admin credential: the import runs with the API's, which cannot create it
+stack.compose(["run", "--rm", "--no-deps", "objectstore-init"]);
 
 // 5. Roles and the database
 log("restoring roles and the database");

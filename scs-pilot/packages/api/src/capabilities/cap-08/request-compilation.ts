@@ -35,7 +35,7 @@
 // object. The database's commit-time trigger refuses a package without its
 // compilation record and receipt.
 
-import { createHash, randomUUID } from "node:crypto";
+import { randomUUID } from "node:crypto";
 
 import { holdsRole, sameActor } from "../../foundation/actor.js";
 import { canonicalJson, sha256Hex } from "../../foundation/canonical.js";
@@ -202,13 +202,10 @@ export function requestCompilation(objectStore: ObjectStore) {
     ]) {
       // a record that cites no stored file has none to verify; its provenance says so
       if (sha === null) continue;
-      const bytes = await fromStore(() => objectStore.get(sha));
-      if (bytes === null) fileProblems.push(`The file of ${kind} ${id} (SHA-256 ${sha}) is not in the object store.`);
-      else {
-        const actual = createHash("sha256").update(bytes).digest("hex");
-        if (actual !== sha) fileProblems.push(`The file of ${kind} ${id} hashes to ${actual}, not its recorded SHA-256 ${sha}.`);
-        else verifiedFiles.add(id);
-      }
+      const read = await fromStore(() => objectStore.read(sha));
+      if (read.state === "MISSING") fileProblems.push(`The file of ${kind} ${id} (SHA-256 ${sha}) is not in the object store.`);
+      else if (read.state === "CHANGED") fileProblems.push(`The file of ${kind} ${id} hashes to ${read.actualSha256}, not its recorded SHA-256 ${sha}.`);
+      else verifiedFiles.add(id);
     }
     if (fileProblems.length > 0) throw cap08Failure("EVIDENCE_INTEGRITY_FAILED", [...fileProblems, "A package goes to a regulator: every file it cites is verified when it is compiled."]);
 
