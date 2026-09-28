@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:schema:platform:key-assessment-statement:1",
+  "title": "KeyAssessmentStatement",
+  "description": "AAB-PLATFORM-09 section 8: a person's assessment of one record accepted inside a compromise's exposure window. Signed with the assessor's own key.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "statementType",
+    "recordTable",
+    "recordId",
+    "outcome",
+    "reasons",
+    "evidenceConsidered",
+    "signingKeyId",
+    "assessedBy"
+  ],
+  "properties": {
+    "statementType": {
+      "type": "string",
+      "const": "KEY_COMPROMISE_ASSESSMENT"
+    },
+    "recordTable": {
+      "type": "string",
+      "enum": [
+        "actor_party_link",
+        "actor_party_link_status",
+        "signing_key_registration",
+        "signing_key_event",
+        "signing_key_compromise",
+        "key_bootstrap_ceremony",
+        "key_compromise_assessment"
+      ]
+    },
+    "recordId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "description": "Lowercase UUID."
+    },
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "AFFIRM",
+        "REPUDIATE"
+      ]
+    },
+    "reasons": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000,
+      "pattern": "\\S"
+    },
+    "evidenceConsidered": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "description",
+          "digest"
+        ],
+        "properties": {
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000,
+            "pattern": "\\S"
+          },
+          "digest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          }
+        }
+      }
+    },
+    "signingKeyId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "description": "Lowercase UUID."
+    },
+    "assessedBy": {
+      "$ref": "urn:aab:schema:platform:key-registry-actor:1"
+    }
+  }
+}

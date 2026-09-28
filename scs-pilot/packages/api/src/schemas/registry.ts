@@ -131,6 +131,21 @@ import platformKeyRegistrationResponse from "./platform/key-registration-respons
 import platformKeyEventReceipt from "./platform/key-event-receipt.schema.json" with { type: "json" };
 import platformKeyEventResponse from "./platform/key-event-response.schema.json" with { type: "json" };
 import platformKeyRead from "./platform/key-read.schema.json" with { type: "json" };
+import platformKeyCompromiseStatement from "./platform/key-compromise-statement.schema.json" with { type: "json" };
+import platformKeyCompromiseRequest from "./platform/key-compromise-request.schema.json" with { type: "json" };
+import platformKeyCompromiseNotice from "./platform/key-compromise-notice.schema.json" with { type: "json" };
+import platformKeyNoticeRequest from "./platform/key-notice-request.schema.json" with { type: "json" };
+import platformKeyAssessmentStatement from "./platform/key-assessment-statement.schema.json" with { type: "json" };
+import platformKeyAssessmentRequest from "./platform/key-assessment-request.schema.json" with { type: "json" };
+import platformKeyCompromiseDecision from "./platform/key-compromise-decision.schema.json" with { type: "json" };
+import platformKeyNoticeDecision from "./platform/key-notice-decision.schema.json" with { type: "json" };
+import platformKeyAssessmentDecision from "./platform/key-assessment-decision.schema.json" with { type: "json" };
+import platformKeyCompromiseReceipt from "./platform/key-compromise-receipt.schema.json" with { type: "json" };
+import platformKeyCompromiseResponse from "./platform/key-compromise-response.schema.json" with { type: "json" };
+import platformKeyNoticeReceipt from "./platform/key-notice-receipt.schema.json" with { type: "json" };
+import platformKeyNoticeResponse from "./platform/key-notice-response.schema.json" with { type: "json" };
+import platformKeyAssessmentReceipt from "./platform/key-assessment-receipt.schema.json" with { type: "json" };
+import platformKeyAssessmentResponse from "./platform/key-assessment-response.schema.json" with { type: "json" };
 
 import { registerSchema, type JsonSchema } from "../foundation/validation.js";
 
@@ -259,6 +274,21 @@ export const SCHEMAS = {
   platformKeyEventReceipt,
   platformKeyEventResponse,
   platformKeyRead,
+  platformKeyCompromiseStatement,
+  platformKeyCompromiseRequest,
+  platformKeyCompromiseNotice,
+  platformKeyNoticeRequest,
+  platformKeyAssessmentStatement,
+  platformKeyAssessmentRequest,
+  platformKeyCompromiseDecision,
+  platformKeyNoticeDecision,
+  platformKeyAssessmentDecision,
+  platformKeyCompromiseReceipt,
+  platformKeyCompromiseResponse,
+  platformKeyNoticeReceipt,
+  platformKeyNoticeResponse,
+  platformKeyAssessmentReceipt,
+  platformKeyAssessmentResponse,
 } as const satisfies Record<string, JsonSchema>;
 
 for (const schema of Object.values(SCHEMAS)) registerSchema(schema);

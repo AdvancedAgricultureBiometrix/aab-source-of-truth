@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:schema:platform:key-compromise-statement:1",
+  "title": "KeyCompromiseStatement",
+  "description": "AAB-PLATFORM-09 section 8: a declaration that a key may be compromised. Signed with the declarer's own key, never the compromised one; the key holder's own declaration may be unsigned (second amendment). Without suspectedExposureFrom the start is unknown, and the window covers the key's whole life.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "statementType",
+    "keyId",
+    "exposureBasis",
+    "evidence",
+    "declaredBy"
+  ],
+  "properties": {
+    "statementType": {
+      "type": "string",
+      "const": "SIGNING_KEY_COMPROMISE"
+    },
+    "keyId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "description": "Lowercase UUID."
+    },
+    "suspectedExposureFrom": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "exposureBasis": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000,
+      "pattern": "\\S"
+    },
+    "evidence": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "description",
+          "digest"
+        ],
+        "properties": {
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000,
+            "pattern": "\\S"
+          },
+          "digest": {
+            "type": "string",
+            "pattern": "^sha256:[0-9a-f]{64}$"
+          }
+        }
+      }
+    },
+    "declaredBy": {
+      "$ref": "urn:aab:schema:platform:key-registry-actor:1"
+    },
+    "signingKeyId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "description": "Lowercase UUID."
+    }
+  }
+}

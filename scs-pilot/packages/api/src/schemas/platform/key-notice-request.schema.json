@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:schema:platform:key-notice-request:1",
+  "title": "KeyNoticeRequest",
+  "description": "POST /aab/v1/key-compromise-notices: record another issuer's attested compromise notice (AAB-PLATFORM-09 section 9).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "notice",
+    "attestation"
+  ],
+  "properties": {
+    "notice": {
+      "$ref": "urn:aab:schema:platform:key-compromise-notice:1"
+    },
+    "attestation": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9+/]{86}==$",
+      "description": "Ed25519 signature over the statement's canonical JSON: 64 bytes, standard base64, made outside the server."
+    }
+  }
+}

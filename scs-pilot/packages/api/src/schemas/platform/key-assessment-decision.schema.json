@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:schema:platform:key-assessment-decision:1",
+  "title": "KeyAssessmentDecision",
+  "description": "AAB-PLATFORM-09 section 8: one record, accepted inside an exposure window, affirmed or repudiated by a person who is not the key holder. The record is never removed.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decisionId",
+    "decision",
+    "assessmentId",
+    "recordTable",
+    "recordId",
+    "outcome",
+    "resultingVerification",
+    "assessmentDigest",
+    "signatureAcceptance",
+    "decisionReasons",
+    "decidedBy",
+    "decidedAt"
+  ],
+  "properties": {
+    "decisionId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "decision": {
+      "type": "string",
+      "const": "RECORDED"
+    },
+    "assessmentId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "recordTable": {
+      "type": "string",
+      "enum": [
+        "actor_party_link",
+        "actor_party_link_status",
+        "signing_key_registration",
+        "signing_key_event",
+        "signing_key_compromise",
+        "key_bootstrap_ceremony",
+        "key_compromise_assessment"
+      ]
+    },
+    "recordId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "outcome": {
+      "type": "string",
+      "enum": [
+        "AFFIRM",
+        "REPUDIATE"
+      ]
+    },
+    "resultingVerification": {
+      "type": "string",
+      "enum": [
+        "AFFIRMED_AFTER_COMPROMISE",
+        "REPUDIATED"
+      ]
+    },
+    "assessmentDigest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "signatureAcceptance": {
+      "$ref": "urn:aab:schema:platform:key-signature-acceptance:1"
+    },
+    "decisionReasons": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "decidedBy": {
+      "$ref": "urn:aab:scs:schema:shared:actor-reference:1"
+    },
+    "decidedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

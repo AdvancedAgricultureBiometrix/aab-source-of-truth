@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:schema:platform:key-compromise-decision:1",
+  "title": "KeyCompromiseDecision",
+  "description": "AAB-PLATFORM-09 section 8: a compromise recorded. Final: the key never signs again. Every record accepted inside the window is under review until a person assesses it.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decisionId",
+    "decision",
+    "compromiseId",
+    "keyId",
+    "declarationSigned",
+    "exposureWindow",
+    "compromiseDigest",
+    "decisionReasons",
+    "decidedBy",
+    "decidedAt"
+  ],
+  "properties": {
+    "decisionId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "decision": {
+      "type": "string",
+      "const": "RECORDED"
+    },
+    "compromiseId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "keyId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "declarationSigned": {
+      "type": "boolean"
+    },
+    "exposureWindow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "from",
+        "until"
+      ],
+      "properties": {
+        "from": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "until": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "compromiseDigest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "signatureAcceptance": {
+      "$ref": "urn:aab:schema:platform:key-signature-acceptance:1"
+    },
+    "decisionReasons": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "decidedBy": {
+      "$ref": "urn:aab:scs:schema:shared:actor-reference:1"
+    },
+    "decidedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

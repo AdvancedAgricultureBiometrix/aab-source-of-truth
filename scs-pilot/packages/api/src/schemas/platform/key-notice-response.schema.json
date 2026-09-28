@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:schema:platform:key-notice-response:1",
+  "title": "KeyNoticeResponse",
+  "description": "Body of a successful POST /aab/v1/key-compromise-notices (201): the decision, its immutable receipt, and the receipt's SHA-256 over canonical JSON.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decision",
+    "receipt",
+    "receiptDigest"
+  ],
+  "properties": {
+    "decision": {
+      "$ref": "urn:aab:schema:platform:key-notice-decision:1"
+    },
+    "receipt": {
+      "$ref": "urn:aab:schema:platform:key-notice-receipt:1"
+    },
+    "receiptDigest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

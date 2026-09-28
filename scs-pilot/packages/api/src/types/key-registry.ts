@@ -29,6 +29,21 @@
  *   src/schemas/platform/key-event-receipt.schema.json
  *   src/schemas/platform/key-event-response.schema.json
  *   src/schemas/platform/key-read.schema.json
+ *   src/schemas/platform/key-compromise-statement.schema.json
+ *   src/schemas/platform/key-compromise-request.schema.json
+ *   src/schemas/platform/key-compromise-notice.schema.json
+ *   src/schemas/platform/key-notice-request.schema.json
+ *   src/schemas/platform/key-assessment-statement.schema.json
+ *   src/schemas/platform/key-assessment-request.schema.json
+ *   src/schemas/platform/key-compromise-decision.schema.json
+ *   src/schemas/platform/key-notice-decision.schema.json
+ *   src/schemas/platform/key-assessment-decision.schema.json
+ *   src/schemas/platform/key-compromise-receipt.schema.json
+ *   src/schemas/platform/key-compromise-response.schema.json
+ *   src/schemas/platform/key-notice-receipt.schema.json
+ *   src/schemas/platform/key-notice-response.schema.json
+ *   src/schemas/platform/key-assessment-receipt.schema.json
+ *   src/schemas/platform/key-assessment-response.schema.json
  * To change these types, edit the schema(s) above, then run:
  *   npm run generate:types
  * npm test fails if this file differs from what the schemas generate.
@@ -579,4 +594,295 @@ export interface KeyRead {
     until: string;
   };
   readAt: string;
+}
+
+/**
+ * AAB-PLATFORM-09 section 8: a declaration that a key may be compromised. Signed with the declarer's own key, never the compromised one; the key holder's own declaration may be unsigned (second amendment). Without suspectedExposureFrom the start is unknown, and the window covers the key's whole life.
+ */
+export interface KeyCompromiseStatement {
+  statementType: "SIGNING_KEY_COMPROMISE";
+  /**
+   * Lowercase UUID.
+   */
+  keyId: string;
+  suspectedExposureFrom?: string;
+  exposureBasis: string;
+  /**
+   * @maxItems 50
+   */
+  evidence: {
+    description: string;
+    digest: string;
+  }[];
+  declaredBy: KeyRegistryActor;
+  /**
+   * Lowercase UUID.
+   */
+  signingKeyId?: string;
+}
+
+/**
+ * POST /aab/v1/signing-keys/:keyId/compromises: declare a compromise, or widen its window (AAB-PLATFORM-09 section 8). statementSignature is present exactly when the statement names a signingKeyId.
+ */
+export interface KeyCompromiseRequest {
+  compromiseStatement: KeyCompromiseStatement;
+  /**
+   * Ed25519 signature over the statement's canonical JSON: 64 bytes, standard base64, made outside the server.
+   */
+  statementSignature?: string;
+}
+
+/**
+ * AAB-PLATFORM-09 section 9: another issuer's compromise, as its registry exports it and its attestation-key holder attests it, outside the server.
+ */
+export interface KeyCompromiseNotice {
+  issuer: KeyRegistryIssuer;
+  /**
+   * A key identifier in its issuer's registry.
+   */
+  keyId: string;
+  actorId: string;
+  suspectedExposureFrom: string;
+  recordedAt: string;
+  attestedAt: string;
+  /**
+   * A key identifier in its issuer's registry.
+   */
+  attestationKeyId: string;
+}
+
+/**
+ * POST /aab/v1/key-compromise-notices: record another issuer's attested compromise notice (AAB-PLATFORM-09 section 9).
+ */
+export interface KeyNoticeRequest {
+  notice: KeyCompromiseNotice;
+  /**
+   * Ed25519 signature over the statement's canonical JSON: 64 bytes, standard base64, made outside the server.
+   */
+  attestation: string;
+}
+
+/**
+ * AAB-PLATFORM-09 section 8: a person's assessment of one record accepted inside a compromise's exposure window. Signed with the assessor's own key.
+ */
+export interface KeyAssessmentStatement {
+  statementType: "KEY_COMPROMISE_ASSESSMENT";
+  recordTable:
+    | "actor_party_link"
+    | "actor_party_link_status"
+    | "signing_key_registration"
+    | "signing_key_event"
+    | "signing_key_compromise"
+    | "key_bootstrap_ceremony"
+    | "key_compromise_assessment";
+  /**
+   * Lowercase UUID.
+   */
+  recordId: string;
+  outcome: "AFFIRM" | "REPUDIATE";
+  reasons: string;
+  /**
+   * @maxItems 50
+   */
+  evidenceConsidered: {
+    description: string;
+    digest: string;
+  }[];
+  /**
+   * Lowercase UUID.
+   */
+  signingKeyId: string;
+  assessedBy: KeyRegistryActor;
+}
+
+/**
+ * POST /aab/v1/key-compromise-assessments: affirm or repudiate one record inside an exposure window (AAB-PLATFORM-09 section 8).
+ */
+export interface KeyAssessmentRequest {
+  assessmentStatement: KeyAssessmentStatement;
+  /**
+   * Ed25519 signature over the statement's canonical JSON: 64 bytes, standard base64, made outside the server.
+   */
+  statementSignature: string;
+}
+
+/**
+ * AAB-PLATFORM-09 section 8: a compromise recorded. Final: the key never signs again. Every record accepted inside the window is under review until a person assesses it.
+ */
+export interface KeyCompromiseDecision {
+  decisionId: string;
+  decision: "RECORDED";
+  compromiseId: string;
+  keyId: string;
+  declarationSigned: boolean;
+  exposureWindow: {
+    from: string;
+    until: string;
+  };
+  compromiseDigest: string;
+  signatureAcceptance?: KeySignatureAcceptance;
+  /**
+   * @minItems 1
+   */
+  decisionReasons: string[];
+  decidedBy: ActorReference;
+  decidedAt: string;
+}
+
+/**
+ * AAB-PLATFORM-09 section 9: another issuer's compromise notice recorded. This domain's records signed with that key inside the window are under review.
+ */
+export interface KeyNoticeDecision {
+  decisionId: string;
+  decision: "RECORDED";
+  noticeId: string;
+  issuer: KeyRegistryIssuer;
+  /**
+   * A key identifier in its issuer's registry.
+   */
+  keyId: string;
+  exposureWindow: {
+    from: string;
+    until: string;
+  };
+  noticeDigest: string;
+  /**
+   * @minItems 1
+   */
+  decisionReasons: string[];
+  decidedBy: ActorReference;
+  decidedAt: string;
+}
+
+/**
+ * AAB-PLATFORM-09 section 8: one record, accepted inside an exposure window, affirmed or repudiated by a person who is not the key holder. The record is never removed.
+ */
+export interface KeyAssessmentDecision {
+  decisionId: string;
+  decision: "RECORDED";
+  assessmentId: string;
+  recordTable:
+    | "actor_party_link"
+    | "actor_party_link_status"
+    | "signing_key_registration"
+    | "signing_key_event"
+    | "signing_key_compromise"
+    | "key_bootstrap_ceremony"
+    | "key_compromise_assessment";
+  recordId: string;
+  outcome: "AFFIRM" | "REPUDIATE";
+  resultingVerification: "AFFIRMED_AFTER_COMPROMISE" | "REPUDIATED";
+  assessmentDigest: string;
+  signatureAcceptance: KeySignatureAcceptance;
+  /**
+   * @minItems 1
+   */
+  decisionReasons: string[];
+  decidedBy: ActorReference;
+  decidedAt: string;
+}
+
+/**
+ * Immutable receipt for an AAB-PLATFORM-09 KEY_COMPROMISE decision, written in the same transaction as the decision (foundation/receipts.ts); the registry record names it by receiptId.
+ */
+export interface KeyCompromiseReceipt {
+  receiptId: string;
+  receiptVersion: "1";
+  capabilityId: "AAB-PLATFORM-09";
+  decisionType: "KEY_COMPROMISE";
+  /**
+   * compromiseId of the recorded compromise.
+   */
+  subjectId: string;
+  correlationId: string;
+  /**
+   * SHA-256 (hex) of the canonical request: method, concrete path and body.
+   */
+  requestDigest: string;
+  idempotencyKey: string | null;
+  issuedAt: string;
+  /**
+   * The authenticated actor whose request produced this decision.
+   */
+  issuedFor: ActorReference;
+  decision: KeyCompromiseDecision;
+}
+
+/**
+ * Body of a successful POST /aab/v1/signing-keys/:keyId/compromises (201): the decision, its immutable receipt, and the receipt's SHA-256 over canonical JSON.
+ */
+export interface KeyCompromiseResponse {
+  decision: KeyCompromiseDecision;
+  receipt: KeyCompromiseReceipt;
+  receiptDigest: string;
+}
+
+/**
+ * Immutable receipt for an AAB-PLATFORM-09 KEY_COMPROMISE_NOTICE decision, written in the same transaction as the decision (foundation/receipts.ts); the registry record names it by receiptId.
+ */
+export interface KeyNoticeReceipt {
+  receiptId: string;
+  receiptVersion: "1";
+  capabilityId: "AAB-PLATFORM-09";
+  decisionType: "KEY_COMPROMISE_NOTICE";
+  /**
+   * noticeId of the recorded notice.
+   */
+  subjectId: string;
+  correlationId: string;
+  /**
+   * SHA-256 (hex) of the canonical request: method, concrete path and body.
+   */
+  requestDigest: string;
+  idempotencyKey: string | null;
+  issuedAt: string;
+  /**
+   * The authenticated actor whose request produced this decision.
+   */
+  issuedFor: ActorReference;
+  decision: KeyNoticeDecision;
+}
+
+/**
+ * Body of a successful POST /aab/v1/key-compromise-notices (201): the decision, its immutable receipt, and the receipt's SHA-256 over canonical JSON.
+ */
+export interface KeyNoticeResponse {
+  decision: KeyNoticeDecision;
+  receipt: KeyNoticeReceipt;
+  receiptDigest: string;
+}
+
+/**
+ * Immutable receipt for an AAB-PLATFORM-09 KEY_COMPROMISE_ASSESSMENT decision, written in the same transaction as the decision (foundation/receipts.ts); the registry record names it by receiptId.
+ */
+export interface KeyAssessmentReceipt {
+  receiptId: string;
+  receiptVersion: "1";
+  capabilityId: "AAB-PLATFORM-09";
+  decisionType: "KEY_COMPROMISE_ASSESSMENT";
+  /**
+   * assessmentId of the recorded assessment.
+   */
+  subjectId: string;
+  correlationId: string;
+  /**
+   * SHA-256 (hex) of the canonical request: method, concrete path and body.
+   */
+  requestDigest: string;
+  idempotencyKey: string | null;
+  issuedAt: string;
+  /**
+   * The authenticated actor whose request produced this decision.
+   */
+  issuedFor: ActorReference;
+  decision: KeyAssessmentDecision;
+}
+
+/**
+ * Body of a successful POST /aab/v1/key-compromise-assessments (201): the decision, its immutable receipt, and the receipt's SHA-256 over canonical JSON.
+ */
+export interface KeyAssessmentResponse {
+  decision: KeyAssessmentDecision;
+  receipt: KeyAssessmentReceipt;
+  receiptDigest: string;
 }
