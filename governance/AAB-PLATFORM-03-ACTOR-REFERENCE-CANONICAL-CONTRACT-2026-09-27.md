@@ -12,6 +12,10 @@
 
 Signing keys, and their history, are defined by AAB-PLATFORM-09 Governed Public-Key Registry. A signature on a governance decision is verified against the key the signed statement names, registered in the signer's issuer's registry, as at the time the server accepted it. Nothing else in this contract changes.
 
+## Note of 2026-09-28: signing keys proven
+
+Not an amendment: nothing in this contract changes. **AAB-PLATFORM-09's section 11 proof exists** (`governance/workstream-b/AAB-PLATFORM-09-KEY-REGISTRY-PROOF-2026-09-28.md`, merged in PR #59), and so does the proof of its bootstrap. **Both bootstrap ceremonies are proven in tests:** the Platform Owner's first key, and a country registry's first key registered by its representative and co-signed by the Platform Owner. The procedure is `scs-pilot/KEY-BOOTSTRAP-CEREMONY-RUNBOOK.md`. **No real ceremony has been performed,** so no signing key has yet been issued for a real governance decision. A country's ceremony waits on its authorised representative being identified.
+
 ## Sources
 
 - `scs-pilot/packages/api/src/schemas/shared/actor-reference.schema.json`: the pilot definition, recorded "because no contract defines it"
@@ -229,6 +233,6 @@ interface ActorReference {
 
 - **Protected membership records** for the SCS pilot, replacing the actors file's roles as the source of `authorityBasis`.
 - **The actor–subject link store,** once AAB-PLATFORM-04 defines it.
-- **Signing keys** for governance decisions (shared with the registry and Gate D open items): defined by AAB-PLATFORM-09 (amendment of 2026-09-28); issuing them for real decisions waits on its bootstrap and its proof.
+- **Signing keys** for governance decisions (shared with the registry and Gate D open items): defined by AAB-PLATFORM-09 (amendment of 2026-09-28); issuing them for real decisions waited on its bootstrap and its proof. **Both are now proven** (note of 2026-09-28): the registry's section 11 conditions, and both bootstrap ceremonies, in tests. **Issuing keys for real decisions now waits only on the real ceremonies,** which have not been performed.
 - **Implementing version 2** in the pilot: the schema, the authenticator and the readers of version 1 records.
 - **`PARTY_REPRESENTATIVE`** added to the role registry (`TODO(role-registry)`) when the role registry exists.
