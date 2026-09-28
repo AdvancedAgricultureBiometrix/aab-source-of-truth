@@ -4,6 +4,24 @@
 **Domain:** AAB platform (shared by every domain)
 **Authority:** DEFINES RECORD ADMISSION: HOW A SUBMITTED RECORD ENTERS A DOMAIN'S GOVERNED STORE, WHAT AN ADMISSION DECISION RECORDS AND ASSERTS, HOW A SUBMISSION IS REFUSED, HELD FOR REVIEW, OR ADMITTED WITH ITS LIMITATIONS DISCLOSED, AND HOW AN ADMITTED RECORD IS QUARANTINED WITHOUT BEING CHANGED. It admits no record, grants no authority to anyone, amends no domain contract and changes no stored record. This contract is PROPOSED_NOT_ADMITTED. No implementation exists.
 
+## Amendment of 2026-09-29: checks whose failure holds a record
+
+**Why.** Section 3 allowed the result `NOT_PASSED` only for a check whose failure is a limitation. Section 2 lets a domain hold a submission its rules cannot decide automatically, but the contract never said how the check that holds it is recorded. CAP-04 was the first domain to need it (`governance/workstream-b/CAP-04-SCIENTIFIC-MEMORY-CANONICAL-CONTRACT-2026-09-20.md`, amendment of 2026-09-29). This amendment settles it at platform level, before any domain relies on a reading of its own.
+
+**A check has one of three consequences when it does not pass,** and the domain states which for each of its checks (section 9):
+- **it refuses** the submission: nothing is written, and the check never appears in a decision;
+- **it limits** the admission: the check is `NOT_PASSED`, and a limitation is disclosed;
+- **it holds** the submission for review: the check is `NOT_PASSED`, and the decision is `HELD_FOR_REVIEW`, with the check named in `heldBecause`.
+
+**Rules for a holding check:**
+- **It is `NOT_PASSED` only in a `HELD_FOR_REVIEW` decision.** A decision that admits at submission never records a holding check as `NOT_PASSED`: had it not passed, the submission would have been held.
+- **`heldBecause` names exactly the holding checks that did not pass,** each with its reason, and nothing else. A held decision always names at least one.
+- **A holding check never discloses a limitation by itself.** The limitations of a held record are those its limiting checks found, disclosed with the decision exactly as at an admission.
+- **Holding checks run after every refusing check has passed.** A submission that would be refused is refused, never held.
+- **A reviewer's resolution does not change the held decision.** It is a separate decision (section 6), and the held decision keeps its checks as recorded.
+
+**Sections 3 and 9 are corrected to match.** Nothing else changes, and nothing is implemented by this amendment.
+
 ## Record admission is not capability admission
 
 **This contract is about records, not capabilities.** The word "admission" has two meanings on the platform, and they must never be confused:
@@ -121,7 +139,7 @@ interface AdmissionDecision {
 - **`requestedBy` is the submitter, not a decider.** An automated admission is the application of the domain's rules, not a person's judgement, and is never presented as one.
 - **Checks have three results, never two:**
   - `PASSED`: the check was made, and passed;
-  - `NOT_PASSED`: the check was made, and did not pass. Only a check whose failure is a limitation can have this result: a check whose failure refuses the submission never appears in a decision;
+  - `NOT_PASSED`: the check was made, and did not pass. Only a check whose failure is a limitation, or whose failure holds the submission for review (amendment of 2026-09-29), can have this result: a check whose failure refuses the submission never appears in a decision;
   - `NOT_EVALUATED`: the check was not made, with the reason. A check that was not made is never recorded as passed, and never as failed.
 - **Limitations, reasons and gaps are different things:**
   - a **limitation** is something the record lacks or cannot show, disclosed with its admission;
@@ -178,7 +196,7 @@ interface AdmissionDecision {
 
 A domain adopts this contract by amendment to its admission contracts. The amendment must document:
 - **its outcome names,** where its stored or published names differ from this contract's, mapped to them. A registration outcome such as "registered" or "registered with gaps" is an admission outcome under another name. Existing stored names are kept, and mapped;
-- **its checks,** each with the results it can have, and which checks refuse;
+- **its checks,** each with the results it can have, and for each whether its failure refuses, limits or holds (amendment of 2026-09-29);
 - **its limitation codes,** each with its meaning, and which provenance gap it discloses, if any;
 - **its gap mapping** (AAB-PLATFORM-05, section 7);
 - **when a submission is held,** and which role reviews held submissions;
