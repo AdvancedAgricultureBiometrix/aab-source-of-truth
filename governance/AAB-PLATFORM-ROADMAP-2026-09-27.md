@@ -7,7 +7,11 @@
 **Updated again (2026-09-28):** to `main` at `c1586c6`, after PRs #44 to #49, from the stock-take `governance/AAB-STOCK-TAKE-2026-09-28.md`, section 11: the platform dependency audit, a completed working document (PR #45), and the platform contracts AAB-PLATFORM-05 to 08 (PRs #46 to #49), all `designed`.
 **Updated again (2026-09-28):** to `main` at `fa84240`, after PRs #50 and #51: AAB-PLATFORM-09 Governed Public-Key Registry (`designed`) contracts signing-key history.
 **Updated again (2026-09-28):** to `main` at `16d21cc`, after PRs #52 to #59: signing-key history is built and proven (`scs-pilot/SIGNING-KEY-HISTORY-BUILD-PLAN.md`), and AAB-PLATFORM-09 is `behaviourally proven` (`governance/workstream-b/AAB-PLATFORM-09-KEY-REGISTRY-PROOF-2026-09-28.md`). `TODO(signing-key-history)` no longer blocks real data; `TODO(object-store-credentials)` is the remaining blocker before real data is stored. **Also new:** the AGR rehearsal migration workstream (section 8).
-**Authority:** RECORDS THE STATE OF EVERY AAB PLATFORM PRIMITIVE AND CAPABILITY, AS DEMONSTRATED BY THE CONTRACTS, CODE, TESTS AND PROOFS ON `main` AT `9f17cc2`, UPDATED TO `634295a`, TO `67b6ba8`, TO `c1586c6`, TO `fa84240` AND TO `16d21cc`, AND WHAT MUST EXIST BEFORE WHAT. Admits no capability, grants no implementation, commissioning, production, regulatory or scientific authority, changes no control's status, and does not satisfy Gate D or begin WP05.
+**Updated again (2026-09-28):** to `main` at `dbb2408`, after PRs #60 to #65.
+- **Step 0 of the AGR workstream is done** (#61, #62): the rehearsal's source is committed as dated evidence snapshots.
+- **The AAB-PLATFORM-01 amendment** (#63) is built (#64, the plan; #65, the build) and `behaviourally proven` (`governance/workstream-b/AAB-PLATFORM-01-OBJECT-STORE-PROOF-2026-09-28.md`, on CI run 36417985710 of the merge commit).
+- **`TODO(object-store-credentials)` no longer blocks real data.** Real data is now blocked by the override credential's governance, a condition the amendment itself sets (section 6.1).
+**Authority:** RECORDS THE STATE OF EVERY AAB PLATFORM PRIMITIVE AND CAPABILITY, AS DEMONSTRATED BY THE CONTRACTS, CODE, TESTS AND PROOFS ON `main` AT `9f17cc2`, UPDATED TO `634295a`, TO `67b6ba8`, TO `c1586c6`, TO `fa84240`, TO `16d21cc` AND TO `dbb2408`, AND WHAT MUST EXIST BEFORE WHAT. Admits no capability, grants no implementation, commissioning, production, regulatory or scientific authority, changes no control's status, and does not satisfy Gate D or begin WP05.
 **Sources:**
 - `governance/AAB-PLATFORM-PURPOSE-AND-VALUES-REVISION-2026-09-25.md`
 - `governance/AAB-PLATFORM-DOMAIN-SEPARATION-DECISION-2026-09-25.md`
@@ -18,7 +22,7 @@
 - `governance/AAB-current-technical-contract-catalogue-2026-09-20.md`
 - `simulation/cap34/capability-fidelity-manifest.json` (snapshot 008)
 - the SCS pilot READMEs in `scs-pilot/packages/api/src/capabilities/`
-- the SCS pilot proof records, and the AAB-PLATFORM-09 proof record
+- the SCS pilot proof records, and the AAB-PLATFORM-09 and AAB-PLATFORM-01 proof records
 - the Phase-1 sovereignty register
 - every `TODO(` in the repository
 
@@ -62,7 +66,7 @@ The domain separation decision (25 September) names eleven platform primitives. 
 |---|---|---|---|---|
 | 1 | Canonical runtime schemas | JSON Schema 2020-12 with strict Ajv; generated types; the whole registry compiled up front (`foundation/validation.ts`) | `implemented`, exercised by every endpoint and the 723-test suite | No platform-level schema registry; schemas live in `scs-pilot` |
 | 2 | Governed identity and authority | `foundation/auth.ts`: static bearer tokens stored as SHA-256; ActorReference version 2 (AAB-PLATFORM-03) with issuer and scoped authority, read through `holdsRole` and `sameActor`; Ed25519 signatures made outside the server, each verified against the key its statement names, as at its acceptance, from the public-key registry (AAB-PLATFORM-09); actor–subject links (AAB-PLATFORM-04) and representation under a verified mandate | `implemented`; links and representative submission `behaviourally proven` (SCS-CAP-02 README, PR #43); signing-key history `behaviourally proven` (AAB-PLATFORM-09 proof record, PR #59) | `TODO(oidc)`; `TODO(role-registry)`; actor-directory history (section 6.1); party-scoped grants are operator configuration, not signed, evidenced acts; both registries' first keys are self-attested, a disclosed pilot position, and no real key ceremony has been performed; AAB-PLATFORM-03, 04 and 09 are proposed, not admitted |
-| 3 | Immutable evidence objects | AAB-PLATFORM-01: content-addressed by SHA-256, conditional write, never overwritten | `implemented` (upload only) | Retrieval, retention and read access are undefined in the contract; `TODO(object-store-credentials)`; SCS-CAP-02 and SCS-CAP-03 evidence ids are not linked to stored objects (`TODO(evidence-id-model)`) |
+| 3 | Immutable evidence objects | AAB-PLATFORM-01: content-addressed by SHA-256, conditional write, never overwritten; Object Lock (GOVERNANCE, six years), three scoped identities and every read verified (amendment of 2026-09-28) | `behaviourally proven` (upload and the amendment; PR #65, proof record) | Retrieval and read access are undefined in the contract; the override credential's governance and erasure are undefined (they block real data); SCS-CAP-02 and SCS-CAP-03 evidence ids are not linked to stored objects (`TODO(evidence-id-model)`) |
 | 4 | Provenance | Submitter, submission time, cited and linked lineage, recorded at admission | `implemented` | **Contract: AAB-PLATFORM-05 (`designed`, PR #46).** Not adopted by any domain; each capability still records its own provenance, and no gaps are carried into what is built from a record |
 | 5 | Admission decisions | SCS-CAP-02 to SCS-CAP-05: admit, or admit with limitations, fail closed | `implemented` | **Contract: AAB-PLATFORM-06 (`designed`, PR #47).** Not adopted. `REJECTED` and `QUARANTINED` are reserved everywhere; under the contract, `REJECTED` is only a reviewer's decision on a held record, and quarantine is a status record after admission. No hold or quarantine operation exists |
 | 6 | Frozen evaluation snapshots | SCS-CAP-06: one REPEATABLE READ snapshot, a manifest, a pure evaluation, content-derived ids | `implemented` | **Contract: AAB-PLATFORM-07 (`designed`, PR #48).** Not adopted. The snapshot is embedded in the evaluation, with no digest over its input and no recorded exclusions; some inputs are read but not recorded; stored files are not re-hashed at evaluation time |
@@ -93,7 +97,7 @@ The domain separation decision allows extraction only after an independent depen
 
 | Contract | State | Governs | What exists |
 |---|---|---|---|
-| AAB-PLATFORM-01 Evidence Object Store | `implemented` | Primitive 3 | Upload only |
+| AAB-PLATFORM-01 Evidence Object Store | `behaviourally proven` (was `implemented`) | Primitive 3 | Upload, and the amendment of 2026-09-28: scoped identities, Object Lock, verified reads (PR #65; proof record) |
 | AAB-PLATFORM-02 Governed Document Rendition | `implemented` | Primitive 8 (rendition) | Render and download |
 | AAB-PLATFORM-03 ActorReference | `implemented` | Primitive 2 | Version 2 issued for every new record (PR #39); version 1 records stay readable. No proof record names it |
 | AAB-PLATFORM-04 Actor–Subject Link | `behaviourally proven` | Primitive 2 | As adopted by SCS-CAP-02 (PRs #40, #42; README, PR #43) |
@@ -131,7 +135,7 @@ The SCS domain definition and the SCS capability roster name **twelve** SCS capa
 | SCS-CAP-10 Challenge Response and Evidence Retrieval | `named only` | — | — |
 | SCS-CAP-11 Regulatory Framework Update Management | `named only` | — | — |
 | SCS-CAP-12 Cross-Boundary Evidence Reference | `named only` | — | — |
-| AAB-PLATFORM-01 Evidence Object Store | `implemented` | upload | none |
+| AAB-PLATFORM-01 Evidence Object Store | `behaviourally proven` | upload; the amendment of 2026-09-28 | `governance/workstream-b/AAB-PLATFORM-01-OBJECT-STORE-PROOF-2026-09-28.md` |
 | AAB-PLATFORM-02 Governed Document Rendition | `implemented` | render, download | none |
 | AAB-PLATFORM-03 ActorReference | `implemented` | version 2, issued for every new record (PR #39); version 1 records stay readable | — (no record names it) |
 | AAB-PLATFORM-04 Actor–Subject Link | `behaviourally proven` | create, status records, read, use checks, as adopted by SCS-CAP-02 (PRs #40, #42) | SCS-CAP-02 README (PR #43) |
@@ -199,7 +203,7 @@ The SCS domain definition and the SCS capability roster name **twelve** SCS capa
   - There are no criteria for `REJECTED` or `QUARANTINED`.
   - Temporal sufficiency belongs to SCS-CAP-06.
 - **Contract amendments for the representation path:** the amendment of 2026-09-27 (PR #35) and the second amendment (PR #42); for signing-key history, the third amendment (PR #53).
-- **Open TODOs:** `TODO(postgis)`, `TODO(object-store-credentials)`.
+- **Open TODOs:** `TODO(postgis)`. `TODO(object-store-credentials)` is resolved (AAB-PLATFORM-01's proof record); real data waits on the override credential's governance (section 6.1).
 - **Depends on:** SCS-CAP-01, SCS-CAP-02, SCS-CAP-03 and AAB-PLATFORM-01.
 
 **SCS-CAP-05 Supply Chain Custody Evidence Admission — `behaviourally proven`**
@@ -214,7 +218,7 @@ The SCS domain definition and the SCS capability roster name **twelve** SCS capa
   - There is no mandate action for representing a party in a transaction.
   - How a party's own staff submit on its behalf is not defined.
 - **Contract amendments for the representation path:** the amendment of 2026-09-27 (PR #35) and the second amendment (PR #42); for signing-key history, the third amendment (PR #53).
-- **Open TODOs:** `TODO(object-store-credentials)`.
+- **Open TODOs:** none of its own. `TODO(object-store-credentials)` is resolved (AAB-PLATFORM-01's proof record); real data waits on the override credential's governance (section 6.1).
 - **Depends on:** SCS-CAP-01, SCS-CAP-02, SCS-CAP-03 (optional source plots) and AAB-PLATFORM-01.
 
 **SCS-CAP-06 Due Diligence Sufficiency Evaluation — `behaviourally proven`**
@@ -278,11 +282,22 @@ The SCS domain definition and the SCS capability roster name **twelve** SCS capa
 - **Depends on:** SCS-CAP-01, 03, 04, 05, 08 and 09, "plus stable country-isolation architecture confirmed in production".
 - The roster calls it last to be designed, and highest complexity.
 
-**AAB-PLATFORM-01 Evidence Object Store — `implemented`**
+**AAB-PLATFORM-01 Evidence Object Store — `behaviourally proven`** (was `implemented`)
 - **Built:** upload (`POST /scs/v1/evidence-objects`), up to 50 MB, six media types, never overwritten.
-- **Not defined by the contract:** retrieval, retention, read access, and who may upload.
+- **Built and proven (amendment of 2026-09-28; PR #65; `governance/workstream-b/AAB-PLATFORM-01-OBJECT-STORE-PROOF-2026-09-28.md`):**
+  - three identities: admin, API (read and write on the evidence bucket) and backup (read and list);
+  - Object Lock, GOVERNANCE mode, 2,192 days;
+  - a bucket policy naming the API by ARN;
+  - the setup step (`objectstore-init`), which refuses and never repairs drift;
+  - the API's startup checks;
+  - every read verified against its key;
+  - backup and restore on the scoped identities.
+
+  Proven on CI run 36417985710 of the merge commit `dbb2408`: 748 tests, and the backup proof `PROVEN` with 20 steps.
+- **`TODO(object-store-credentials)` is resolved,** and gone from the code.
+- **Not defined by the contract:** retrieval, read access, and who may upload. **Also not defined, and blocking real data:** the override credential's governance, and erasure: what it leaves behind in records, packages and backups (section 6.1).
 - **Not verified:** that the media type matches the bytes.
-- **Open TODOs:** `TODO(object-store-credentials)`, which must be done "before any real data is stored". **It is now the remaining blocker before real data** (section 6.1).
+- **Specific to SeaweedFS 4.47:** three behaviours the checks rely on. They are asserted in CI, so an upgrade that changes one fails CI (the proof record's "Limits").
 
 **AAB-PLATFORM-02 Governed Document Rendition — `implemented`**
 - **Built:** a deterministic PDF renderer (pdfkit 0.20.2, fonts pinned by SHA-256) and `GET /scs/v1/renditions/:renditionId` with a re-hash on read.
@@ -409,7 +424,7 @@ The eleven primitives of section 1 are what every domain builds on. This section
 |---|---|---|---|---|
 | 1 | Canonical runtime schemas | `implemented`: every endpoint | Browser contracts in the rehearsal bundle; no runtime-enforced canonical schemas evidenced | — |
 | 2 | Governed identity and authority | `implemented`; links and representative submission `behaviourally proven` | The rehearsal resolves actors through `agriculture.api_resolve_authenticated_actor`; browser contracts `AAB-ID-01` to `09` | CAP-23 (`named only`); CAP-24 (`named only`) |
-| 3 | Immutable evidence objects | `implemented` (AAB-PLATFORM-01) | CAP-04 `preserveOriginal` (`designed`); the rehearsal's community photo upload | CAP-03 (`named only`) |
+| 3 | Immutable evidence objects | `behaviourally proven` (AAB-PLATFORM-01) | CAP-04 `preserveOriginal` (`designed`); the rehearsal's community photo upload | CAP-03 (`named only`) |
 | 4 | Provenance | `implemented` | CAP-04 record envelope (`designed`) | CAP-03 (`named only`) |
 | 5 | Admission decisions | `implemented` (SCS-CAP-02 to 05) | CAP-04 `MemoryAdmissionDecision` (`designed`) | CAP-04 (`designed`) |
 | 6 | Frozen evaluation snapshots | `implemented` (SCS-CAP-06) | CAP-05 `EvidenceLandscapeSnapshotIdentity` (`designed`) | CAP-05 (`designed`) |
@@ -471,7 +486,7 @@ flowchart LR
 **Prerequisites the diagram does not show:**
 - **Before SCS-CAP-02 and SCS-CAP-03 evidence can be confirmed as stored files,** the evidence-id model needs a contract change and a migration (`TODO(evidence-id-model)`).
 - **Before any SCS evaluation can be `SUFFICIENT`,** a spatial database is needed (`TODO(postgis)`), with country boundary data (`TODO(country-boundary-check)`).
-- **Mandate-based submission is built** (PRs #37 to #43), **and signing-key history with it** (PRs #53 to #59): a link or status record is verified against the key that signed it, as at its acceptance, so a replaced key no longer invalidates what it signed. AAB-PLATFORM-09's section 11 proof exists. **Before it is used with real data,** `TODO(object-store-credentials)` remains (section 6.1).
+- **Mandate-based submission is built** (PRs #37 to #43), **and signing-key history with it** (PRs #53 to #59): a link or status record is verified against the key that signed it, as at its acceptance, so a replaced key no longer invalidates what it signed. AAB-PLATFORM-09's section 11 proof exists. **Before it is used with real data,** the override credential's governance remains (section 6.1). `TODO(object-store-credentials)` is resolved (update of `dbb2408`).
 
 ### 5.2 AGR
 
@@ -554,7 +569,8 @@ Gate D is not an admission prerequisite. It follows admission, and blocks commis
 
 | TODO | Gap | Stated precondition |
 |---|---|---|
-| `TODO(object-store-credentials)` | The API's object store identity has admin rights | "Before any real data is stored": a put/read-only identity with object locking. **The remaining blocker before real data** since signing-key history was proven (PR #59) |
+| `TODO(object-store-credentials)`: **resolved** (update of `dbb2408`) | The API's object store identity had admin rights | Built by PR #65 and proven (`governance/workstream-b/AAB-PLATFORM-01-OBJECT-STORE-PROOF-2026-09-28.md`). It no longer blocks real data. As first recorded: "Before any real data is stored": a put/read-only identity with object locking |
+| The override credential's governance (no tag; AAB-PLATFORM-01, amendment of 2026-09-28, section 4) | Who holds the override credential, what a use requires, and how each use is recorded, are not defined. Nor is what an erasure leaves behind: citing records, packages (each records its objects' SHA-256) and backups | **"Must be defined before any real data is admitted"** (section 4). **The remaining blocker before real data** since object-store credentials were proven (update of `dbb2408`). Until it is defined, the credential is never used |
 | `TODO(backup-encryption)` | Backups are unencrypted and unsigned, and hold credentials and country data | Egress spec §6: backups follow the primary data's sovereignty classification |
 | `TODO(tenant-scope)` | RLS is `USING (true)`: no organisation-level row filtering | "Sufficient only while each country deployment serves one organisation" |
 | `TODO(tenant-network-policy)` | Environments on one host are not isolated from each other | Separate hosts, or host firewall or kernel-level network policy |
@@ -798,14 +814,14 @@ flowchart LR
   B --> P[step 5<br/>proof record]
 ```
 
-- **Step 0 may start now, and contract work follows it.** Steps 0 to 3 need no extraction, but no contract work begins before step 0.
+- **Step 0 is done** (PRs #61 and #62; decision 17), **and contract work may begin.** Steps 0 to 3 need no extraction.
 - **Before any AGR capability code is brought across (step 4),** two things must happen first, in order:
   1. **the independent verification of the dependency audit** (section 5.3), due now, with no reviewer appointed;
   2. **the extraction of the platform primitives** out of `scs-pilot`, which the separation decision allows only after that verification.
 
   **This is a hard dependency.** Until both are done, no AGR code is brought across, because it would be built on SCS's domain modules. The separation decision forbids that.
 - **AGR adopts AAB-PLATFORM-05 to 08** by amendment to its own contracts, as SCS must (section 4). This happens before or with step 4 of the first capability.
-- **Before real data,** AGR is blocked as SCS is: `TODO(object-store-credentials)` (section 6.1). Before live operation, it needs a commissioned country environment (section 7).
+- **Before real data,** AGR is blocked as SCS is: the override credential's governance (section 6.1; `TODO(object-store-credentials)` is resolved, update of `dbb2408`). Before live operation, it needs a commissioned country environment (section 7).
 
 ### 8.6 Impact on governance records
 
@@ -838,6 +854,8 @@ These points came up while compiling the roadmap and were decided in review.
 13. **Step 0, obtaining the source, is mandatory and first.** No contract work begins before the rehearsal's gateway code and a schema-only database export are committed as a dated, read-only evidence record (section 8.3).
 14. **Observation, cognitive intelligence and resource intelligence need capability numbers and identities before their migration paths are defined.** Observation becomes its own numbered capability, not part of CAP-08 (section 8.4).
 15. **The catalogue mapping is a proposed mapping, requiring review** before any migration work begins. It is evidence and analysis, not a governance decision (section 8.2).
+16. **Object-store credentials are complete** (update of `dbb2408`). AAB-PLATFORM-01's amendment is built and proven. `TODO(object-store-credentials)` no longer blocks real data. The override credential's governance, which the amendment requires before any real data is admitted, is now the remaining blocker (section 6.1).
+17. **Step 0 of the AGR workstream is done** (update of `dbb2408`). The rehearsal's source is committed as dated, read-only evidence: `agr-rehearsal/snapshot-2026-09-28/` (PR #61: the deployed gateway PHP, and the schemas of `agriculture`, `platform` and `public`) and `agr-rehearsal/snapshot-2026-09-28-supplementary/` (PR #62: the eight other application schemas, which the first snapshot missed). Contract work may begin (section 8.3).
 
 **Still open, noted in the text:**
 - The mapping of the eleven primitives to landscape capabilities (section 4) is proposed by this roadmap, not established.

@@ -1,10 +1,11 @@
 # AAB Stock-Take — 2026-09-28
 
 **Status:** STOCK-TAKE RECORD
-**Authority:** RECORDS THE STATE OF THE REPOSITORY ON 2026-09-28, READ FROM `main` AT `c1586c6` AND UPDATED TO `fa84240` AND TO `16d21cc`, FROM GITHUB (OPEN PRS AND BRANCHES) AND FROM THE CI RUNS. It admits, commissions and decides nothing. Where a fact comes from anywhere other than the repository, it says so.
+**Authority:** RECORDS THE STATE OF THE REPOSITORY ON 2026-09-28, READ FROM `main` AT `c1586c6` AND UPDATED TO `fa84240`, TO `16d21cc` AND TO `dbb2408`, FROM GITHUB (OPEN PRS AND BRANCHES) AND FROM THE CI RUNS. It admits, commissions and decides nothing. Where a fact comes from anywhere other than the repository, it says so.
 **Supersedes, as the current stock-take:** `governance/AAB-STOCK-TAKE-2026-09-27.md` (at `634295a`), which stays unchanged as the record of that date. This stock-take covers everything merged since that record merged (`5d4edfe`, PR #36).
 **Updated (2026-09-28):** to `main` at `fa84240`, after PR #50 (this stock-take, the roadmap update and the SCS-CAP-09 amendment) and PR #51 (AAB-PLATFORM-09 Governed Public-Key Registry). The rest of this record is as it was at `c1586c6`, except where marked.
 **Updated again (2026-09-28):** to `main` at `16d21cc`, after PRs #52 to #59: the signing-key history build, complete and proven. Marked "update of `16d21cc`" where it changes this record.
+**Updated again (2026-09-28):** to `main` at `dbb2408`, after PRs #60 to #65: the AGR workstream's step 0, and object-store credentials, complete and proven. Marked "update of `dbb2408`" where it changes this record.
 **Read from:** every canonical contract and governance record on `main`; the SCS pilot READMEs; the proof records; every `TODO(` marker; `gh pr list`, `git branch -r` and `gh run list` on 2026-09-28; and, where marked, the session notes kept outside the repository.
 
 ## Summary
@@ -25,6 +26,12 @@
   - **AAB-PLATFORM-09 is `behaviourally proven`:** rotation, restoration, compromise and cross-issuer evidence pass in CI (`governance/workstream-b/AAB-PLATFORM-09-KEY-REGISTRY-PROOF-2026-09-28.md`).
   - **Signing-key history no longer blocks real data.** `TODO(object-store-credentials)` is the remaining blocker before real data is stored (section 5). Actor-directory history still blocks production.
   - **CI on `16d21cc`'s final commit** (run 36370537666): 723 of 723 tests, isolation, and backup-restore `PROVEN` with 18 steps.
+- **Updated to `dbb2408`:**
+  - **Step 0 of the AGR workstream is done.** The rehearsal's source is committed as dated, read-only evidence: the deployed gateway PHP and three schemas (#61), and the eight other application schemas, which the first snapshot missed (#62).
+  - **Object-store credentials are complete.** AAB-PLATFORM-01 was amended before any code (#63), the build was planned (#64) and built (#65).
+  - **AAB-PLATFORM-01 is `behaviourally proven`** (`governance/workstream-b/AAB-PLATFORM-01-OBJECT-STORE-PROOF-2026-09-28.md`).
+  - **`TODO(object-store-credentials)` no longer blocks real data.** The override credential's governance, which the amendment requires before any real data is admitted, is now the remaining blocker (section 5). Actor-directory history still blocks production.
+  - **CI on the merge commit `dbb2408`** (run 36417985710): 748 of 748 tests, isolation, and backup-restore `PROVEN` with 20 steps.
 
 ## 1. What merged since `5d4edfe`
 
@@ -53,8 +60,14 @@
 | #57 | `b3ea055` | Signing-key history PR 5: compromise, notices and assessments; the cross-issuer proof; AAB-PLATFORM-09 fifth amendment | Code, contract |
 | #58 | `80b3c14` | Signing-key history PR 6: the switch-over. Version 2 statements naming their key; **breaking change for signing clients:** version 1 refused; keys out of the actors file | Code |
 | #59 | `16d21cc` | Signing-key history PR 7: the proof. Rotation and compromise-window tests; backup proof rotation (18 steps); the AAB-PLATFORM-09 proof record; the ceremony runbook; `TODO(signing-key-history)` removed; AAB-PLATFORM-09 note of 2026-09-28 | Proof, docs, contract |
+| #60 | `ebe5be4` | Governance at `16d21cc`: this stock-take and the roadmap updated; the AGR rehearsal migration workstream (roadmap, section 8) (update of `dbb2408`) | Governance |
+| #61 | `b4707ec` | AGR rehearsal step 0: the dated evidence snapshot `agr-rehearsal/snapshot-2026-09-28/`: the 29 PHP files of the deployed rehearsal, and the schemas of `agriculture`, `platform` and `public`, schema only | Evidence |
+| #62 | `d7c4561` | AGR rehearsal step 0 supplement: the eight other application schemas, which #61 missed (`agr-rehearsal/snapshot-2026-09-28-supplementary/`) | Evidence |
+| #63 | `74e50bd` | AAB-PLATFORM-01 amendment: three identities, Object Lock in GOVERNANCE mode for six years, the ARN bucket policy, the override credential, overwrites versioned and detected | Contract |
+| #64 | `9156408` | Object store identities: the build plan, approved with three decisions (`scs-pilot/OBJECT-STORE-IDENTITIES-BUILD-PLAN.md`) | Plan |
+| #65 | `dbb2408` | Object store identities: scoped credentials, Object Lock, the setup step, the API's startup checks, verified reads; backup and restore on the scoped identities; `TODO(object-store-credentials)` removed from the code | Code, CI, docs |
 
-Every one of them passed all three CI jobs before it merged, and so did #50 to #59.
+Every one of them passed all three CI jobs before it merged, and so did #50 to #65.
 
 ## 2. What is on `main`
 
@@ -72,7 +85,7 @@ State labels are the platform's maturity states: `named only`, `designed`, `impl
 | SCS-CAP-06 Due Diligence Sufficiency Evaluation | `behaviourally proven` | None. 4 of 5 |
 | SCS-CAP-08 Due Diligence Package Compilation | `behaviourally proven` | None. 3 of 5; no export bundle |
 | SCS-CAP-09 Regulatory Review and Promotion | `behaviourally proven` | 4 of 6. **Amended** (#50): currency is derived when read, never updated (drift item 4) |
-| AAB-PLATFORM-01 Evidence Object Store | `implemented` (upload) | None |
+| AAB-PLATFORM-01 Evidence Object Store | **`behaviourally proven`** (update of `dbb2408`; was `implemented`, upload) | **Amended** (#63): three identities, Object Lock (GOVERNANCE, 2,192 days), the ARN bucket policy, the override credential, overwrites versioned and detected. Built (#65) and proven (`governance/workstream-b/AAB-PLATFORM-01-OBJECT-STORE-PROOF-2026-09-28.md`); a note of 2026-09-28 records it |
 | AAB-PLATFORM-02 Governed Document Rendition | `implemented` | None |
 | AAB-PLATFORM-03 ActorReference | **`implemented`** (was `designed`) | Version 2 issued for every new record (PR #39); version 1 records stay readable. No proof record names it yet. Amended (#53) to cite AAB-PLATFORM-09 for signing keys |
 | AAB-PLATFORM-04 Actor–Subject Link | **`behaviourally proven`** (was `designed`) | Second amendment (#42). Proven as adopted by SCS-CAP-02 (README, PR #43). **Update of `16d21cc`:** third amendment (#53), version 2 statements naming their key; its proof noted, and the interim rule on key rotation lifted |
@@ -103,6 +116,13 @@ State labels are the platform's maturity states: `named only`, `designed`, `impl
 - **CI:** 723 tests. The backup-restore proof has 18 steps: it rotates a key before the backup, and after the restore re-verifies both links, the retired key's included, and the registry itself. It also refuses a new statement signed with the retired key.
 - **Proof records:** three. Access isolation, backup-restore, and now the AAB-PLATFORM-09 proof record.
 
+**Update of `dbb2408`:**
+- **Migrations:** unchanged, 24.
+- **The object store** has three identities, each with its own credential: admin, API and backup (`scs-pilot/seaweedfs/start.sh`). A setup service, `objectstore-init`, creates and verifies the locked evidence bucket and its policy on every start. The API refuses to start without its scoped credential, the lock, or an enforced policy. Every read is verified against its key.
+- **CI:** 748 tests. The isolation job also checks the store's 8 start refusals. The backup-restore proof has 20 steps: an export attempted with the API identity is refused, and the setup step's runs are checked.
+- **Proof records:** four. The AAB-PLATFORM-01 proof record is new.
+- **`agr-rehearsal/`:** two dated, read-only evidence snapshots of the AGR rehearsal (#61, #62). They are evidence, not governed code: nothing in them is built, run or tested here.
+
 ### 2.3 Governance records added since the last stock-take
 
 | Record | What it establishes | State |
@@ -114,6 +134,9 @@ State labels are the platform's maturity states: `named only`, `designed`, `impl
 | Signing-key history build plan (#53; update of `16d21cc`) | The seven-PR plan signing-key history was built to (`scs-pilot/SIGNING-KEY-HISTORY-BUILD-PLAN.md`) | Complete: all seven PRs built |
 | AAB-PLATFORM-09 proof record (#59; update of `16d21cc`) | The section 11 conditions and both bootstrap ceremonies, test by test; its limits | Cites CI run 36369519581 |
 | Key bootstrap ceremony runbook (#59; update of `16d21cc`) | The operator procedure for both ceremonies, rotation, compromise and notices (`scs-pilot/KEY-BOOTSTRAP-CEREMONY-RUNBOOK.md`) | No real ceremony performed |
+| AGR rehearsal step 0 snapshots (#61, #62; update of `dbb2408`) | The rehearsal's source, as dated evidence: 29 PHP files; the schemas of all eleven application schemas; manifests and SHA-256 digests | Read-only; never edited after commit |
+| Object store identities build plan (#64; update of `dbb2408`) | The plan the amendment was built to, with its three decisions: the override credential never configured in the store; refuse, never repair; a proof record citing the merge commit's CI run | Complete: built by #65 |
+| AAB-PLATFORM-01 proof record (update of `dbb2408`) | The amendment of 2026-09-28, section by section; SeaweedFS 4.47's behaviours asserted in CI; its limits (`governance/workstream-b/AAB-PLATFORM-01-OBJECT-STORE-PROOF-2026-09-28.md`) | Cites CI run 36417985710, on the merge commit |
 
 **The naming rule** (the audit's step 0, decided on 2026-09-27): what is already stored or externally visible keeps its SCS name; everything new takes an AAB name. `SCS-PLATFORM` stays in error envelopes until a platform envelope contract exists; the `/scs/v1` platform routes are kept permanently as aliases and new platform routes use `/aab/v1/`; the `scs` database schema is kept; new platform schemas use `urn:aab:schema:`.
 
@@ -124,6 +147,15 @@ State labels are the platform's maturity states: `named only`, `designed`, `impl
 - No local branch holds work that is not on `main`, except the two AGR candidate branches.
 
 **Update of `16d21cc`:** no work in flight on the repository beyond this update. A draft of the public demonstration page exists outside the repository, as a private artifact for review, and is not deployed. The roadmap now holds it back until the first capability in the AGR workstream has its contract committed under it (roadmap, section 8.6).
+
+**Update of `dbb2408`:** no work in flight on the repository beyond this update. Next, as decided in review on 2026-09-28 and not yet recorded in a governance record:
+- **A capability identity record** for the AGR workstream. Its content, as decided:
+  - observation to be the proposed CAP-36, Governed Observation and Field Evidence;
+  - resource intelligence to belong to CAP-01, with no new number;
+  - cognitive intelligence to be split between CAP-01 and CAP-06, with its loop held for a reading of `cognitive_core`, which is now in the supplementary snapshot.
+- **The CAP-04 contract,** the workstream's first step 1.
+
+The aab.ag legacy application tree is a separate cleanup, outside this repository, for another session. The owner is aware of it.
 
 **Open PRs: twelve, unchanged since the last stock-take** (still twelve at `16d21cc`). #19 (AGR candidate remediation, based on the candidate branch) and eleven from August (#2 to #13). None has been updated since then. Their details are in the last stock-take, section 3.
 
@@ -148,7 +180,8 @@ New:
 | Item | Source | Why |
 |---|---|---|
 | **Signing-key history: resolved** (update of `16d21cc`): built by PRs #53 to #59 and proven (`governance/workstream-b/AAB-PLATFORM-09-KEY-REGISTRY-PROOF-2026-09-28.md`). It no longer blocks real data, and the interim rule on key rotation is lifted. As first recorded: (`TODO(signing-key-history)`, 8 uses) | **AAB-PLATFORM-09 Governed Public-Key Registry** (PR #51), which contracts it; AAB-PLATFORM-04, second amendment; `foundation/signatures.ts`; AAB-PLATFORM-08, section 13 | A signature is verified against the signer's current key, so a replaced key invalidates every link and status record it signed. **AAB-PLATFORM-08 adds:** no domain adoption of it can go live with real data until signing-key history is implemented. **Updated to `fa84240`:** the design is now contracted, not built. The condition for real data is AAB-PLATFORM-09's section 11: rotation, restoration, compromise and cross-issuer tests passing, with a proof record. Until then, keys stay in the actors file, one per actor, never rotated while records they signed are in use |
-| **Object-store credentials** (`TODO(object-store-credentials)`, 10 uses) | AAB-PLATFORM-01; SCS-CAP-04 and 05 | The API's object store identity has admin rights. It needs a put/read-only identity with object locking "before any real data is stored". **Update of `16d21cc`: the remaining blocker before real data** |
+| **Object-store credentials: resolved** (update of `dbb2408`): built by PR #65 and proven (`governance/workstream-b/AAB-PLATFORM-01-OBJECT-STORE-PROOF-2026-09-28.md`). It no longer blocks real data, and the tag is gone from the code. As first recorded: (`TODO(object-store-credentials)`, 10 uses) | AAB-PLATFORM-01; SCS-CAP-04 and 05 | The API's object store identity has admin rights. It needs a put/read-only identity with object locking "before any real data is stored". **Update of `16d21cc`: the remaining blocker before real data** |
+| **The override credential's governance** (update of `dbb2408`; no tag) | AAB-PLATFORM-01, amendment of 2026-09-28, section 4, and its "retention governance" gap | Who holds the override credential, what a use requires, and how each use is recorded. **It "must be defined before any real data is admitted",** and until then the credential is never used. With it comes what an erasure leaves behind: citing records, packages (each records its objects' SHA-256, so an erased object makes every package citing it unverifiable), and backups. **The remaining blocker before real data** |
 
 **Before production: actor-directory history** (no tag yet; AAB-PLATFORM-08, "Open items"). **New.**
 - **Why it blocks production.** A human decision identifies its decider by `actorId` and `issuer` only; the accountable name lives in the country's actor directory. AAB-PLATFORM-08 requires that the name held for a decider at the time of a decision can be established later. Without the directory's history, it cannot, and a human decision cannot be fully verified after the fact.
@@ -167,7 +200,7 @@ New:
 | **A platform error envelope contract** | Before `SCS-PLATFORM` can change in error envelopes (the naming rule) | **New** |
 | **The AAB-PLATFORM-03 proof record** | Before AAB-PLATFORM-03 can be raised from `implemented` | **New.** The behaviour is tested; no record names it |
 | **Signed party grants** | `PARTY_REPRESENTATIVE` and `PARTY_AUTHORITY_REPRESENTATIVE` grants are operator configuration in the actors file; in production each must be a signed, evidenced act | Now relied on by representative submission, which is built |
-| AGR capabilities built on the platform | Extraction, and AGR's adoption of AAB-PLATFORM-05 to 08 | The contracts exist. **Update of `16d21cc`:** now the AGR rehearsal migration workstream (roadmap, section 8), in the order CAP-04, 05, 08, 06, 07, 09. Step 0, obtaining the rehearsal's source, may start now, and contract work follows it. Its code waits on the audit's independent verification and the extraction. Observation, cognitive and resource intelligence need capability numbers and identities first |
+| AGR capabilities built on the platform | Extraction, and AGR's adoption of AAB-PLATFORM-05 to 08 | The contracts exist. **Update of `16d21cc`:** now the AGR rehearsal migration workstream (roadmap, section 8), in the order CAP-04, 05, 08, 06, 07, 09. Step 0, obtaining the rehearsal's source, may start now, and contract work follows it. **Update of `dbb2408`:** step 0 is done (#61, #62), and contract work may begin. Its code waits on the audit's independent verification and the extraction. Observation, cognitive and resource intelligence need capability numbers and identities first |
 | PDF metadata (`Producer` and `Creator` still read `SCS-PLATFORM-02`) | A deliberate change of its own: new expected digest, renderer version bump, cross-platform re-verification | None |
 | `simulation/cap34/scs-roadmap-preview.js` and the CAP-34 manifest extended to SCS | Your decision (deferred after PR #26) | None |
 | Multi-issuer idempotency keys | A second identity issuer acting in a deployment (`TODO(multi-issuer-idempotency)`) | None |
@@ -197,7 +230,7 @@ Unchanged from the last stock-take, except item 2:
 
 | Group | Tags (uses) |
 |---|---|
-| Blocks real data | `object-store-credentials` (10). **Update of `16d21cc`:** `signing-key-history` (8 at `fa84240`) is resolved; it is gone from the code, and remains only in dated records |
+| Blocks real data | `object-store-credentials` (10). **Update of `16d21cc`:** `signing-key-history` (8 at `fa84240`) is resolved; it is gone from the code, and remains only in dated records. **Update of `dbb2408`:** `object-store-credentials` is resolved too, gone from the code and remaining only in dated records and plans. No tag now blocks real data: the override credential's governance, which does, has no tag (section 5) |
 | Blocks live operation | `backup-encryption` (10), `tenant-scope` (12), `tenant-network-policy` (8) |
 | Blocks admission | `actor-reference` (14; 22 before this change, which clears the eight stale uses in the schema mirrors): the contract is proposed, not admitted; version 2 is implemented |
 | Limits what the pilot can conclude | `postgis` (36), `evidence-id-model` (19), `evidence` (19), `country-boundary-check` (6), `eligibility-rules` (5), `spec-derivation` (6) |
@@ -259,6 +292,13 @@ Unchanged from the last stock-take, except item 2:
   - step 0, obtaining the source, mandatory and first;
   - the identity decision for observation, cognitive and resource intelligence;
   - the catalogue mapping, marked as proposed and requiring review.
+
+**Updated to `dbb2408`,** in a later change, at your instruction:
+- **This record:** PRs #60 to #65 in section 1; AAB-PLATFORM-01 `behaviourally proven` in the contract table; the code and proofs at `dbb2408`; the step 0 snapshots, the build plan and the proof record in section 2.3; work in progress; object-store credentials resolved, and the override credential's governance the remaining blocker before real data; step 0 done.
+- **The AAB-PLATFORM-01 proof record,** new (`governance/workstream-b/AAB-PLATFORM-01-OBJECT-STORE-PROOF-2026-09-28.md`). It cites CI run 36417985710, on the merge commit, as the build plan's decision 3 requires.
+- **AAB-PLATFORM-01:** a note of 2026-09-28, recording the build and the proof. Not an amendment. HTML re-rendered.
+- **SCS-CAP-02:** a short note of 2026-09-28, at your instruction in review. Its earlier note said real data was blocked by `TODO(object-store-credentials)`; the new one points to the proof record, and names the override credential's governance as what now blocks real data. Not an amendment. HTML re-rendered.
+- **The roadmap:** updated to `dbb2408`. AAB-PLATFORM-01 and primitive 3 are `behaviourally proven`. `TODO(object-store-credentials)` is resolved, and the override credential's governance is added in section 6.1 as the remaining blocker before real data. New decisions 16 (object-store credentials complete) and 17 (step 0 done).
 
 **The roadmap,** updated in the same change (at `c1586c6`):
 - **Header:** `main` at `c1586c6`, after PRs #44 to #49.

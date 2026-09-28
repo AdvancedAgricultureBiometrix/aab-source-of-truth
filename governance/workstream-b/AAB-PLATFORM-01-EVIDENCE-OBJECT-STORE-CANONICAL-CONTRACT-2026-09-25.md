@@ -3,7 +3,7 @@
 **Status:** CANONICAL CONTRACT — NOT IMPLEMENTATION
 **Domain:** Supply Chain Sovereignty (SCS)
 **Renamed:** from SCS-PLATFORM-01 on 2026-09-27. Platform contracts are numbered AAB-PLATFORM-NN (AAB-PLATFORM-03, decision 1).
-**Authority:** DEFINES THE CONTRACT FOR THE SCS EVIDENCE OBJECT STORE, A PLATFORM SERVICE SHARED BY ALL SCS CAPABILITIES. Establishes no commissioning, production, Gate D, WP05, scientific-validity or regulatory authority. PROPOSED_NOT_ADMITTED. A pilot implementation exists in `scs-pilot/packages/api/src/platform/evidence-objects/`.
+**Authority:** DEFINES THE CONTRACT FOR THE SCS EVIDENCE OBJECT STORE, A PLATFORM SERVICE SHARED BY ALL SCS CAPABILITIES. Establishes no commissioning, production, Gate D, WP05, scientific-validity or regulatory authority. PROPOSED_NOT_ADMITTED. A pilot implementation exists in `scs-pilot/packages/api/src/platform/evidence-objects/`. The amendment of 2026-09-28 is built, and `behaviourally proven` for what its proof record covers (note of 2026-09-28, below).
 
 ## Amendment of 2026-09-28: object store credentials, Object Lock and retention
 
@@ -110,6 +110,20 @@ It runs on every start of the stack, so the lock configuration and the policy ar
 | An overwrite on an Object Lock bucket (tested in COMPLIANCE mode) | A new current version. The original is kept under retention |
 | The bucket policy naming the API by ARN | Enforced: the API could no longer change the lock or the policy, delete objects, or add delete markers. The admin was unaffected |
 | The same policy naming the API by bare name | **Accepted by the store, and not enforced** |
+
+## Note of 2026-09-28: built and proven
+
+Recorded with the proof. **Not an amendment: nothing in this contract changes.**
+- **The amendment of 2026-09-28 is built** in the SCS pilot (PR #65, merged as `dbb2408`), as planned in `scs-pilot/OBJECT-STORE-IDENTITIES-BUILD-PLAN.md` (PR #64). `TODO(object-store-credentials)` is gone from the code.
+- **It is `behaviourally proven`** for what its proof record covers (`governance/workstream-b/AAB-PLATFORM-01-OBJECT-STORE-PROOF-2026-09-28.md`), on CI run 36417985710 of the merge commit:
+  - the three identities;
+  - GOVERNANCE retention for 2,192 days;
+  - the ARN policy, and a bare-name policy not enforced;
+  - the override credential refused by the store;
+  - the setup step and the API's startup checks;
+  - overwrites versioned and detected;
+  - backup and restore on the scoped identities.
+- **What still blocks real data is the override credential's governance** (section 4): who holds it, what a use requires, and how each use is recorded. It must be defined before any real data is admitted. Until then, the credential is never used.
 
 ## Plain-English boundary statement
 

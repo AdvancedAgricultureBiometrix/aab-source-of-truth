@@ -36,6 +36,8 @@ It also records that a mandate verification assessment is not a governance decis
 
 **Note of 2026-09-28: signing-key history proven.** Not an amendment: nothing in this contract changes. AAB-PLATFORM-09's section 11 proof exists (`governance/workstream-b/AAB-PLATFORM-09-KEY-REGISTRY-PROOF-2026-09-28.md`, merged in PR #59), covering the link endpoints and representative submission as built. **Signing-key history no longer blocks real data** for this capability, and **the interim rule that a key is never rotated while records it signed are in use is lifted.** Real data remains blocked by `TODO(object-store-credentials)` (AAB-PLATFORM-01).
 
+**Note of 2026-09-28 (later): object-store credentials proven.** Not an amendment. `TODO(object-store-credentials)` is resolved: AAB-PLATFORM-01's amendment of 2026-09-28 is built and proven (`governance/workstream-b/AAB-PLATFORM-01-OBJECT-STORE-PROOF-2026-09-28.md`). Real data now remains blocked by the override credential's governance (AAB-PLATFORM-01, amendment of 2026-09-28, section 4).
+
 **Decisions recorded on 2026-09-27:**
 1. **All three additions go together.** Without mandate verification, links deliver nothing usable: an unverified mandate cannot be acted under.
 2. **`IS_SUBJECT` is for natural persons only, and `ACTS_FOR_SUBJECT` for organisations only.** A natural person acting for another natural person does so under a mandate, not a link.
