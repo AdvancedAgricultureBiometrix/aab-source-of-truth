@@ -8,6 +8,10 @@
 
 Signing-key history, on which this contract's signatures depend (sections 4 and 13), is defined by AAB-PLATFORM-09 Governed Public-Key Registry. The condition in section 13 is that contract's section 11 proof. Nothing else in this contract changes.
 
+## Note of 2026-09-28: signing-key history proven
+
+Not an amendment: nothing in this contract changes. **AAB-PLATFORM-09's section 11 proof exists** (`governance/workstream-b/AAB-PLATFORM-09-KEY-REGISTRY-PROOF-2026-09-28.md`, merged in PR #59). **The condition in section 13 is met:** a signature is verified against the key the decider held when the server accepted it, and that is proven for rotation, restoration, compromise and cross-issuer evidence. Signing-key history no longer stands in the way of a domain adoption going live with real data. Each adoption still needs its own amendment, and the other open items below remain.
+
 ## What "decision", "review" and "currency" mean here
 
 **A human decision is a permanent record of one named person's judgement on exactly one governed object.** The words are used on the platform for other things, and this contract means none of them:
@@ -301,7 +305,7 @@ Confirmed in review:
 
 ## Open items
 
-- **Signing-key history** (BLOCKING before real data): **no domain adoption of this contract can go live with real data until signing-key history is implemented.** Without it, no human decision's signature can be verified against the key the decider held when they signed.
+- **Signing-key history: closed** (note of 2026-09-28, `governance/workstream-b/AAB-PLATFORM-09-KEY-REGISTRY-PROOF-2026-09-28.md`). It no longer blocks real data. As first recorded (BLOCKING before real data): **no domain adoption of this contract can go live with real data until signing-key history is implemented.** Without it, no human decision's signature can be verified against the key the decider held when they signed.
 - **The history of the actor directory,** so that the accountable name held for a decider at the time of a decision can be established later, within the country.
 - **How authority grants are issued, scoped and revoked** for deciding roles: AAB-PLATFORM-03 defines the grant; its governance is not defined here.
 - **The named-only human decision and approval capability** on the roadmap may become this primitive's implementation. That is not decided here.

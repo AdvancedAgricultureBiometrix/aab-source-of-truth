@@ -6,7 +6,8 @@
 **Updated again (2026-09-27):** to `main` at `67b6ba8`, after the representation path, PRs #37 to #43 (`scs-pilot/REPRESENTATION-PATH-BUILD-PLAN.md`): ActorReference version 2, actor–party links, mandate verification and representative submission are built.
 **Updated again (2026-09-28):** to `main` at `c1586c6`, after PRs #44 to #49, from the stock-take `governance/AAB-STOCK-TAKE-2026-09-28.md`, section 11: the platform dependency audit, a completed working document (PR #45), and the platform contracts AAB-PLATFORM-05 to 08 (PRs #46 to #49), all `designed`.
 **Updated again (2026-09-28):** to `main` at `fa84240`, after PRs #50 and #51: AAB-PLATFORM-09 Governed Public-Key Registry (`designed`) contracts signing-key history.
-**Authority:** RECORDS THE STATE OF EVERY AAB PLATFORM PRIMITIVE AND CAPABILITY, AS DEMONSTRATED BY THE CONTRACTS, CODE, TESTS AND PROOFS ON `main` AT `9f17cc2`, UPDATED TO `634295a`, TO `67b6ba8`, TO `c1586c6` AND TO `fa84240`, AND WHAT MUST EXIST BEFORE WHAT. Admits no capability, grants no implementation, commissioning, production, regulatory or scientific authority, changes no control's status, and does not satisfy Gate D or begin WP05.
+**Updated again (2026-09-28):** to `main` at `16d21cc`, after PRs #52 to #59: signing-key history is built and proven (`scs-pilot/SIGNING-KEY-HISTORY-BUILD-PLAN.md`), and AAB-PLATFORM-09 is `behaviourally proven` (`governance/workstream-b/AAB-PLATFORM-09-KEY-REGISTRY-PROOF-2026-09-28.md`). `TODO(signing-key-history)` no longer blocks real data; `TODO(object-store-credentials)` is the remaining blocker before real data is stored. **Also new:** the AGR rehearsal migration workstream (section 8).
+**Authority:** RECORDS THE STATE OF EVERY AAB PLATFORM PRIMITIVE AND CAPABILITY, AS DEMONSTRATED BY THE CONTRACTS, CODE, TESTS AND PROOFS ON `main` AT `9f17cc2`, UPDATED TO `634295a`, TO `67b6ba8`, TO `c1586c6`, TO `fa84240` AND TO `16d21cc`, AND WHAT MUST EXIST BEFORE WHAT. Admits no capability, grants no implementation, commissioning, production, regulatory or scientific authority, changes no control's status, and does not satisfy Gate D or begin WP05.
 **Sources:**
 - `governance/AAB-PLATFORM-PURPOSE-AND-VALUES-REVISION-2026-09-25.md`
 - `governance/AAB-PLATFORM-DOMAIN-SEPARATION-DECISION-2026-09-25.md`
@@ -17,7 +18,7 @@
 - `governance/AAB-current-technical-contract-catalogue-2026-09-20.md`
 - `simulation/cap34/capability-fidelity-manifest.json` (snapshot 008)
 - the SCS pilot READMEs in `scs-pilot/packages/api/src/capabilities/`
-- the two SCS pilot proof records
+- the SCS pilot proof records, and the AAB-PLATFORM-09 proof record
 - the Phase-1 sovereignty register
 - every `TODO(` in the repository
 
@@ -59,8 +60,8 @@ The domain separation decision (25 September) names eleven platform primitives. 
 
 | # | Primitive | Where it exists | Current state | What it does not yet do |
 |---|---|---|---|---|
-| 1 | Canonical runtime schemas | JSON Schema 2020-12 with strict Ajv; generated types; the whole registry compiled up front (`foundation/validation.ts`) | `implemented`, exercised by every endpoint and the 666-test suite | No platform-level schema registry; schemas live in `scs-pilot` |
-| 2 | Governed identity and authority | `foundation/auth.ts`: static bearer tokens stored as SHA-256; ActorReference version 2 (AAB-PLATFORM-03) with issuer and scoped authority, read through `holdsRole` and `sameActor`; Ed25519 signatures made outside the server; actor–subject links (AAB-PLATFORM-04) and representation under a verified mandate | `implemented`; links and representative submission `behaviourally proven` (SCS-CAP-02 README, PR #43) | `TODO(oidc)`; `TODO(role-registry)`; **`TODO(signing-key-history)`, blocking before any real data:** contracted as **AAB-PLATFORM-09 Governed Public-Key Registry** (`designed`, PR #51), not built; keys still live in the actors file, one per actor; party-scoped grants are operator configuration, not signed, evidenced acts; AAB-PLATFORM-03, 04 and 09 are proposed, not admitted |
+| 1 | Canonical runtime schemas | JSON Schema 2020-12 with strict Ajv; generated types; the whole registry compiled up front (`foundation/validation.ts`) | `implemented`, exercised by every endpoint and the 723-test suite | No platform-level schema registry; schemas live in `scs-pilot` |
+| 2 | Governed identity and authority | `foundation/auth.ts`: static bearer tokens stored as SHA-256; ActorReference version 2 (AAB-PLATFORM-03) with issuer and scoped authority, read through `holdsRole` and `sameActor`; Ed25519 signatures made outside the server, each verified against the key its statement names, as at its acceptance, from the public-key registry (AAB-PLATFORM-09); actor–subject links (AAB-PLATFORM-04) and representation under a verified mandate | `implemented`; links and representative submission `behaviourally proven` (SCS-CAP-02 README, PR #43); signing-key history `behaviourally proven` (AAB-PLATFORM-09 proof record, PR #59) | `TODO(oidc)`; `TODO(role-registry)`; actor-directory history (section 6.1); party-scoped grants are operator configuration, not signed, evidenced acts; both registries' first keys are self-attested, a disclosed pilot position, and no real key ceremony has been performed; AAB-PLATFORM-03, 04 and 09 are proposed, not admitted |
 | 3 | Immutable evidence objects | AAB-PLATFORM-01: content-addressed by SHA-256, conditional write, never overwritten | `implemented` (upload only) | Retrieval, retention and read access are undefined in the contract; `TODO(object-store-credentials)`; SCS-CAP-02 and SCS-CAP-03 evidence ids are not linked to stored objects (`TODO(evidence-id-model)`) |
 | 4 | Provenance | Submitter, submission time, cited and linked lineage, recorded at admission | `implemented` | **Contract: AAB-PLATFORM-05 (`designed`, PR #46).** Not adopted by any domain; each capability still records its own provenance, and no gaps are carried into what is built from a record |
 | 5 | Admission decisions | SCS-CAP-02 to SCS-CAP-05: admit, or admit with limitations, fail closed | `implemented` | **Contract: AAB-PLATFORM-06 (`designed`, PR #47).** Not adopted. `REJECTED` and `QUARANTINED` are reserved everywhere; under the contract, `REJECTED` is only a reviewer's decision on a held record, and quarantine is a status record after admission. No hold or quarantine operation exists |
@@ -69,7 +70,7 @@ The domain separation decision (25 September) names eleven platform primitives. 
 | 8 | Governed package compilation | SCS-CAP-08 with AAB-PLATFORM-02 rendition; digest over content only; `verifyPackageIntegrity` | `implemented` | The evidence export bundle; operator listing; the operator declaration; the authorised representative |
 | 9 | Receipts and auditability | A receipt in the same transaction as the decision, a canonical digest, correlation ids, append-only tables guarded by triggers | `implemented`, exercised by every write | `TODO(idempotency-retention)`; failed attempts leave no audit record (SCS-CAP-08) |
 | 10 | Country isolation | Internal network with no route outside; a pinned edge container; `scs_api` restricted by grants and RLS | `behaviourally proven` for one environment (access isolation proof; CI runs 36225055661 and 36225819409) | Isolation between environments on a shared host (`TODO(tenant-network-policy)`); organisation-level rows (`TODO(tenant-scope)`); log content; an independent security review |
-| 11 | Backup and reconstruction | `scs-pilot/backup/`: full backup, restore into a fresh environment, verified | `behaviourally proven` for the pilot stack (backup-restore proof; CI run 36227701973) | `TODO(backup-encryption)`; signed backups; backup without an outage; recovery objectives; point-in-time recovery; backup location; deletion |
+| 11 | Backup and reconstruction | `scs-pilot/backup/`: full backup, restore into a fresh environment, verified; the restore re-verifies every signature and the public-key registry, with a rotated key's records included | `behaviourally proven` for the pilot stack (backup-restore proof, CI run 36227701973; now 18 steps, CI run 36369519581, cited by the AAB-PLATFORM-09 proof record) | `TODO(backup-encryption)`; signed backups; backup without an outage; recovery objectives; point-in-time recovery; backup location; deletion |
 
 **Mechanisms built alongside the eleven primitives,** in the same pilot:
 - the migration runner: owner only, checksums, fail closed;
@@ -100,11 +101,11 @@ The domain separation decision allows extraction only after an independent depen
 | AAB-PLATFORM-06 Admission Decisions | `designed` | Primitive 5 | Contract only (PR #47) |
 | AAB-PLATFORM-07 Frozen Evaluation Snapshots | `designed` | Primitive 6 | Contract only (PR #48) |
 | AAB-PLATFORM-08 Attributable Human Review with Currency | `designed` | Primitive 7 | Contract only (PR #49) |
-| AAB-PLATFORM-09 Governed Public-Key Registry | `designed` | Primitive 2 (signing keys) | Contract only (PR #51). The pilot's keys are in the actors file, one per actor |
+| AAB-PLATFORM-09 Governed Public-Key Registry | `behaviourally proven` | Primitive 2 (signing keys) | Built by PRs #53 to #59 (migrations 023 and 024, `/aab/v1/` registry endpoints, the control plane as a separate instance); proven for rotation, restoration, compromise and cross-issuer evidence (`governance/workstream-b/AAB-PLATFORM-09-KEY-REGISTRY-PROOF-2026-09-28.md`). Keys are no longer in the actors file |
 
-**All nine are proposed, not admitted.** AAB-PLATFORM-05 to 08 are written domain-neutrally: each domain adopts them by amendment to its own contracts, mapping its existing records when read and never rewriting them. No domain has adopted them yet. **No adoption of AAB-PLATFORM-08 can go live with real data until signing-key history is implemented** (section 6.1).
+**All nine are proposed, not admitted.** AAB-PLATFORM-05 to 08 are written domain-neutrally: each domain adopts them by amendment to its own contracts, mapping its existing records when read and never rewriting them. No domain has adopted them yet. AAB-PLATFORM-08's own precondition, that no adoption goes live with real data until signing-key history is implemented, **is now met** (PR #59); an adoption still needs its own amendment.
 
-**AAB-PLATFORM-09** defines signing-key history: an issuer-owned, append-only registry of public keys, verification against the key active at the server's `acceptedAt`, and compromise as its own record. **No registry can start until its first key is registered** (its section 3a). The pilot positions, both disclosed and neither a production solution: the Platform Owner's first key is self-attested in a documented ceremony; a country registry's first key is self-attested by the country's authorised representative, in a ceremony the Platform Owner witnesses and co-signs.
+**AAB-PLATFORM-09** defines signing-key history: an issuer-owned, append-only registry of public keys, verification against the key active at the server's `acceptedAt`, and compromise as its own record. **It is built and `behaviourally proven`** (PR #59): its section 11 conditions, rotation, restoration, compromise and cross-issuer evidence, pass in CI, and the proof record names each test. **No registry can start until its first key is registered** (its section 3a). The pilot positions, both disclosed and neither a production solution: the Platform Owner's first key is self-attested in a documented ceremony; a country registry's first key is self-attested by the country's authorised representative, in a ceremony the Platform Owner witnesses and co-signs. The procedure is `scs-pilot/KEY-BOOTSTRAP-CEREMONY-RUNBOOK.md`; **no real ceremony has been performed.** The interim rule that a key is never rotated while records it signed are in use is lifted.
 
 **The naming rule** (the dependency audit's step 0, decided on 2026-09-27): what is already stored or externally visible keeps its SCS name; everything new takes an AAB name. `/scs/v1` platform routes are kept as aliases and new ones use `/aab/v1/`; the `scs` schema is kept; new platform schemas use `urn:aab:schema:`; `SCS-PLATFORM` stays in error envelopes until a platform envelope contract exists.
 
@@ -138,9 +139,9 @@ The SCS domain definition and the SCS capability roster name **twelve** SCS capa
 
 **The pilot's standard for `MINIMUM_VERTICAL_SLICE_PROVEN`:** records feed an SCS-CAP-06 evaluation that runs end to end, honestly, over real admitted evidence, as the restricted `scs_api` role. It does not mean a best-case outcome. **No pilot evaluation can reach `SUFFICIENT`** (`TODO(postgis)`); the best pilot outcome is `GAPS_REQUIRE_HUMAN_DECISION`. The READMEs require that pilot partners be told this.
 
-**The whole chain runs end to end in CI on every pull request,** in two places:
+**The whole chain runs end to end in CI on every pull request,** in three places:
 - the `test` job's SCS-CAP-08 test: framework → parties → plot → evidence file → evaluation → review decision → package and PDF;
-- the backup-restore proof, which rebuilds that chain in a restored environment, now with a signed actor–party link whose signatures are re-verified after restore;
+- the backup-restore proof, which rebuilds that chain in a restored environment, with two signed actor–party links, one signed with a key since rotated, whose signatures and the public-key registry are re-verified after restore;
 - the representation path's end-to-end test: a signed link, a verified mandate, three representative submissions, a suspension that refuses the next one, and a reinstatement.
 
 ### 2.2 Each capability
@@ -171,7 +172,7 @@ The SCS domain definition and the SCS capability roster name **twelve** SCS capa
   - No registry of verifying authorities.
   - No sub-national jurisdictions.
 - **Open TODOs:** `TODO(evidence-id-model)`, `TODO(evidence)`, `TODO(party-versions)`, `TODO(framework-association-arrays)`, `TODO(other-action)`, `TODO(role-registry)`.
-- **Contract amendments for the representation path:** the amendment of 2026-09-27 (PR #34), and the second (PR #37), third (PR #40), fourth (PR #41) and fifth (PR #42) amendments, each made before or while building the part it settles.
+- **Contract amendments for the representation path:** the amendment of 2026-09-27 (PR #34), and the second (PR #37), third (PR #40), fourth (PR #41) and fifth (PR #42) amendments, each made before or while building the part it settles. **For signing-key history:** the sixth amendment (PR #53), and a note of 2026-09-28 recording its proof and lifting the interim rule on key rotation.
 - **Depends on:** SCS-CAP-01 (an ACTIVE framework, for relationships, mandates and role claims).
 
 **SCS-CAP-03 Plot and Land Unit Registration — `behaviourally proven`**
@@ -197,7 +198,7 @@ The SCS domain definition and the SCS capability roster name **twelve** SCS capa
   - How a party's own staff submit on its behalf is not defined.
   - There are no criteria for `REJECTED` or `QUARANTINED`.
   - Temporal sufficiency belongs to SCS-CAP-06.
-- **Contract amendments for the representation path:** the amendment of 2026-09-27 (PR #35) and the second amendment (PR #42).
+- **Contract amendments for the representation path:** the amendment of 2026-09-27 (PR #35) and the second amendment (PR #42); for signing-key history, the third amendment (PR #53).
 - **Open TODOs:** `TODO(postgis)`, `TODO(object-store-credentials)`.
 - **Depends on:** SCS-CAP-01, SCS-CAP-02, SCS-CAP-03 and AAB-PLATFORM-01.
 
@@ -212,7 +213,7 @@ The SCS domain definition and the SCS capability roster name **twelve** SCS capa
   - Representative submission is built (PR #42), for the source party. `actingUnder` replaced the request's `submissionMandateId`, a breaking change: a request sending it is refused. `provenance.submissionMandateId` is set from `actingUnder`, and the event's mandate (`sourceParty.actingUnderMandateId`) is now also checked against the mandate's scope, still only as the limitation `MANDATE_NOT_VALID`.
   - There is no mandate action for representing a party in a transaction.
   - How a party's own staff submit on its behalf is not defined.
-- **Contract amendments for the representation path:** the amendment of 2026-09-27 (PR #35) and the second amendment (PR #42).
+- **Contract amendments for the representation path:** the amendment of 2026-09-27 (PR #35) and the second amendment (PR #42); for signing-key history, the third amendment (PR #53).
 - **Open TODOs:** `TODO(object-store-credentials)`.
 - **Depends on:** SCS-CAP-01, SCS-CAP-02, SCS-CAP-03 (optional source plots) and AAB-PLATFORM-01.
 
@@ -281,7 +282,7 @@ The SCS domain definition and the SCS capability roster name **twelve** SCS capa
 - **Built:** upload (`POST /scs/v1/evidence-objects`), up to 50 MB, six media types, never overwritten.
 - **Not defined by the contract:** retrieval, retention, read access, and who may upload.
 - **Not verified:** that the media type matches the bytes.
-- **Open TODOs:** `TODO(object-store-credentials)`, which must be done "before any real data is stored".
+- **Open TODOs:** `TODO(object-store-credentials)`, which must be done "before any real data is stored". **It is now the remaining blocker before real data** (section 6.1).
 
 **AAB-PLATFORM-02 Governed Document Rendition — `implemented`**
 - **Built:** a deterministic PDF renderer (pdfkit 0.20.2, fonts pinned by SHA-256) and `GET /scs/v1/renditions/:renditionId` with a re-hash on read.
@@ -313,7 +314,7 @@ AAB's agricultural science capabilities come from the **AAB capability landscape
   - The catalogue records 116 active gateway actions, 58 retired actions (HTTP 410), 683 browser contract files and 23 `PLAN_ONLY` tables.
   - It says it cannot prove the deployed database: "no SQL migration directory or authoritative PostgreSQL catalogue dump".
 
-**The rehearsal application runs capabilities that have no canonical contract.** It has actor-gated gateway actions for trials, formulation, observation (including community photo upload), trial learning, cognitive signals and resource intelligence. By the rule above, running code without a contract leaves a capability `named only`, with the code noted. This is the largest honesty gap between what AAB runs and what AAB has contracted.
+**The rehearsal application runs capabilities that have no canonical contract.** It has actor-gated gateway actions for trials, formulation, observation (including community photo upload), trial learning, cognitive signals and resource intelligence. By the rule above, running code without a contract leaves a capability `named only`, with the code noted. This is the largest honesty gap between what AAB runs and what AAB has contracted. **Closing it is a workstream of its own** (section 8).
 
 ### 3.2 The scientific and domain capabilities
 
@@ -470,7 +471,7 @@ flowchart LR
 **Prerequisites the diagram does not show:**
 - **Before SCS-CAP-02 and SCS-CAP-03 evidence can be confirmed as stored files,** the evidence-id model needs a contract change and a migration (`TODO(evidence-id-model)`).
 - **Before any SCS evaluation can be `SUFFICIENT`,** a spatial database is needed (`TODO(postgis)`), with country boundary data (`TODO(country-boundary-check)`).
-- **Mandate-based submission is built** (PRs #37 to #43). **Before it is used with real data,** signing-key history is needed (`TODO(signing-key-history)`): today a replaced key would invalidate every link and status record it signed. It is contracted as AAB-PLATFORM-09 (PR #51), and must be built, with its section 11 proof, first.
+- **Mandate-based submission is built** (PRs #37 to #43), **and signing-key history with it** (PRs #53 to #59): a link or status record is verified against the key that signed it, as at its acceptance, so a replaced key no longer invalidates what it signed. AAB-PLATFORM-09's section 11 proof exists. **Before it is used with real data,** `TODO(object-store-credentials)` remains (section 6.1).
 
 ### 5.2 AGR
 
@@ -538,7 +539,7 @@ flowchart LR
 - **The ten-point admission checklist.** It is reproduced verbatim only in the Evidence Watch candidate design, and written for Evidence Watch. No capability has been put through it.
 - **A shared `ActorReference` contract.** Defined as AAB-PLATFORM-03 (PR #30), and version 2 implemented (PR #39). The contract itself is proposed, not admitted (`TODO(actor-reference)`).
 - **Independent review** of each capability, by a reviewer appointed jointly under the pilot authority. None is appointed.
-- **Signing keys** for the admission decisions and reviewer assessments. None is issued.
+- **Signing keys** for the admission decisions and reviewer assessments. The registry that holds them is built and proven (AAB-PLATFORM-09); none is issued, since no real bootstrap ceremony has been performed (`scs-pilot/KEY-BOOTSTRAP-CEREMONY-RUNBOOK.md`).
 - **The capability registry and the CAP-34 fidelity manifest updated together** (checklist items 8 and 9).
   - The fidelity manifest does not list the SCS capabilities at all.
   - CAP-34's SCS roadmap preview (`simulation/cap34/scs-roadmap-preview.js`) shows them as `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED`, or `CONCEPT_PREVIEW_NOT_IMPLEMENTED`.
@@ -553,13 +554,14 @@ Gate D is not an admission prerequisite. It follows admission, and blocks commis
 
 | TODO | Gap | Stated precondition |
 |---|---|---|
-| `TODO(object-store-credentials)` | The API's object store identity has admin rights | "Before any real data is stored": a put/read-only identity with object locking |
+| `TODO(object-store-credentials)` | The API's object store identity has admin rights | "Before any real data is stored": a put/read-only identity with object locking. **The remaining blocker before real data** since signing-key history was proven (PR #59) |
 | `TODO(backup-encryption)` | Backups are unencrypted and unsigned, and hold credentials and country data | Egress spec §6: backups follow the primary data's sovereignty classification |
 | `TODO(tenant-scope)` | RLS is `USING (true)`: no organisation-level row filtering | "Sufficient only while each country deployment serves one organisation" |
 | `TODO(tenant-network-policy)` | Environments on one host are not isolated from each other | Separate hosts, or host firewall or kernel-level network policy |
 | `TODO(actor-reference)` | The contract exists (AAB-PLATFORM-03), and version 2 is implemented (PR #39); the contract is proposed, not admitted | "Before any capability is admitted" |
-| `TODO(signing-key-history)` | A signature is verified against the signer's current key: a replaced key invalidates every link and status record it signed | "Before any real data is admitted" (AAB-PLATFORM-04, second amendment of 2026-09-27). **Also:** no domain adoption of AAB-PLATFORM-08 can go live with real data until it is implemented (AAB-PLATFORM-08, section 13). **Contracted as AAB-PLATFORM-09** (PR #51): the condition for real data is its section 11, rotation, restoration, compromise and cross-issuer tests passing, with a proof record |
 | Actor-directory history (no tag yet) | The accountable name held for a decider at the time of a human decision cannot be established later, within the country | Raised by AAB-PLATFORM-08 ("Open items"). **Blocking for production:** without it, a human decision cannot be fully verified after the fact. **For the pilot,** with its fixed actors file, a disclosed limitation, not an immediate blocker (stock-take of 2026-09-28, section 5) |
+
+**Resolved: `TODO(signing-key-history)`.** It blocked real data because a signature was verified against the signer's current key, so a replaced key invalidated every link and status record it signed. AAB-PLATFORM-09 replaced that: built by PRs #53 to #59, its section 11 conditions proven in CI (`governance/workstream-b/AAB-PLATFORM-09-KEY-REGISTRY-PROOF-2026-09-28.md`). The tag is gone from the code; it remains only in dated records.
 
 ### 6.2 Limits what the pilot can conclude (disclosed in every result)
 
@@ -695,6 +697,125 @@ This is evidence for the SCS pilot stack only. It changes no control's status.
   - **Gate D follows admission.** An ungranted Gate D blocks commissioning. It does not block admission, which is blocked by its own prerequisites: an admission authority, the ten-point checklist, the shared `ActorReference` contract and independent review (section 5.5).
   - **No deployment has been assessed, and none could be granted today.** Three items block the first assessment: the admission authority, now defined (PR #28, #29) but not constituted, and with its registry not built; the first independent reviewer appointment; and the commissioning governance document.
 
+## 8. Workstream: the AGR rehearsal migration
+
+**The Agricultural Science domain's path from vision to governed capability.** A formal workstream, with its own priority and prerequisites (added on 2026-09-28). It is not a cleanup.
+
+### 8.1 Why it exists
+
+- **The rehearsal application runs working code.** It is a PHP gateway on Hostinger over PostgreSQL functions on Supabase. It covers trials, formulation, observation (including field photo capture), ingredient intelligence, formulation intelligence and learning. The Platform Owner states that this code exists and runs (2026-09-28).
+- **The governed record cannot see it.** The code is not in this repository, and none of it has a canonical contract.
+  - This repository evidences it only through the technical contract catalogue (`governance/AAB-current-technical-contract-catalogue-2026-09-20.md`). The catalogue was compiled from a website bundle dated 2 September.
+  - The catalogue records the gateway's actions and the database functions they call. It does not record the SQL behind them: "no SQL migration directory or authoritative PostgreSQL catalogue dump".
+  - This roadmap has not verified that the code runs.
+- **Under decision 4, every capability it serves stays `named only`.** This workstream brings that code under governance, one capability at a time: contract, then code, then proof.
+- **Its priority:** the AGR domain's first workstream. SCS work continues on its own path.
+
+### 8.2 The catalogue: rehearsal code with no governed contract
+
+Every active gateway group in the catalogue, all 116 actions, with the landscape capability each serves. The 58 retired actions (HTTP 410) are not counted.
+
+**A proposed mapping, requiring review.** The mapping of groups to capabilities is this roadmap's analysis of the catalogue: evidence and analysis, not a governance decision. It is reviewed before any migration work begins. Where the catalogue gives no capability, the row says so.
+
+| Gateway group | Actions | What the code does | Capability | Contract in this repository |
+|---|---:|---|---|---|
+| `AAB_TRIAL_WORKSPACE_ACTIONS` | 2 | Trial workspace list and read | CAP-08 Controlled Trials & Outcomes | None |
+| `AAB_TRIAL_ACTIVATION_ACTIONS` | 4 | Trial plots, activation submitted and decided | CAP-08 | None |
+| `AAB_OBSERVATION_CAPTURE_ACTIONS` | 5 | Trial protocols, capture targets, observation capture | CAP-08 | None |
+| `AAB_OBSERVATION_OUTCOME_ACTIONS` | 10 | Observation review, outcome recording and review, trial completion | CAP-08 | None |
+| `AAB_WORKBENCH_ACTIONS` | 9 | Formulations listed, read, created, derived, decided and sent to trial (7); ingredients listed and their intelligence read (2) | CAP-07 Formulation Intelligence; CAP-06 Ingredient Intelligence | None |
+| `AAB_PLATFORM_ACTIONS` | 5 | Ingredient submitted for review and decided (2); navigation, administration and library summaries (3) | CAP-06 (the review); platform (the rest) | None |
+| `AAB_LEARNING_MEMORY_ACTIONS` | 4 | Trial learning prepared, submitted for review and decided | CAP-09 Governed Scientific Learning, sharing its gateway scope with CAP-04 | None |
+| `AAB_OBSERVATION_ACTIONS` | 21 | Community campaigns and profiles, **field photo upload**, submissions (including offline), validation, photo assessment, review, and promotion to evidence | **No capability number** | None |
+| `AAB_COGNITIVE_ACTIONS` | 9 | Problem signals, transformation opportunities, ingredient build candidates, the cognitive loop | **No capability number** (closest: CAP-01, CAP-06) | None |
+| `AAB_RESOURCE_INTELLIGENCE_ACTIONS` | 13 | Country resources, waste streams, recovery pathways, environmental burden, resource discovery and its review | **No capability number** (closest: CAP-01, whose description names resources and waste streams) | None |
+| `AAB_COUNTRY_ACTIONS` | 34 | Country and institution setup, dashboards, activation, sharing, manufacturing transfer | Platform-wide (CAP-16, CAP-24, `named only`); `manufacturing_generate_transfer` is CAP-12 | None |
+
+**CAP-04 and CAP-05 differ from the rest.** Both have canonical design contracts (20 September), and neither has dedicated rehearsal code.
+- CAP-04's memory shares `AAB_LEARNING_MEMORY_ACTIONS` with CAP-09.
+- CAP-05's proposed action, `cap05_evaluate_evidence_landscape`, is not among the 116.
+- CAP-05 is represented in the CAP-34 simulation, which never counts as implementation.
+
+**Also in the bundle:** 683 browser contract files. Many describe plan-only tables or read-only envelopes (section 3.2), and are not working code.
+
+### 8.3 The governed migration path, for each capability
+
+Each step is reviewed before the next, one PR per step, as the SCS pilot was built.
+
+0. **Obtain the source. Mandatory, and first: no contract work begins before it.**
+   - **What it is:** a snapshot of the PHP gateway code, and a schema-only export of the rehearsal database: its PostgreSQL functions, tables and policies.
+   - **How it is kept:** committed as a dated, read-only evidence record, with its digest. It is evidence of what exists, not governed code.
+   - **Why it comes first:** without it, there is nothing authoritative to write a contract against, and step 4 has nothing to bring across.
+   - **Scope:** it covers the whole rehearsal, taken once and then kept as it is. A later snapshot is a new record, never a change to this one.
+1. **Write the canonical contract.** It brings the capability under governance discipline.
+   - It is written against the platform primitives and the platform contracts AAB-PLATFORM-05 to 09, which the platform–domain separation decision requires.
+   - For CAP-04 and CAP-05, which already have design contracts, this step is an amendment that aligns them. Both were written before the primitives were named (section 4).
+2. **Review and approve the contract** in review, before anything is committed.
+3. **Commit the contract.** The capability becomes `designed`.
+4. **Bring the implementation across and adapt it to the governed platform architecture.**
+   - The target is a country environment built on the extracted primitives. Every governed write has its receipt in the same transaction, fails closed, runs as a least-privilege role, and has tests with each endpoint.
+   - **The rehearsal code is a source, not a template.** Its sovereignty audit found production-standard failures (CR-02, CR-04, CR-06, CR-07 and others; section 7.1). Code is adapted to the platform, never deployed as it is.
+   - The capability becomes `implemented`.
+5. **Write the proof record.** The capability becomes `behaviourally proven`, for the operations the record names.
+
+### 8.4 Priority order
+
+**The order: CAP-04 → CAP-05 → CAP-08 → CAP-06 → CAP-07 → CAP-09.**
+
+**The order follows dependency, not the amount of code** (decided on 2026-09-28).
+- **CAP-04 and CAP-05 come first because everything else resolves its evidence through CAP-04** (section 5.2). They have the least rehearsal code of the six.
+- **After them, the order weighs working code and institutional value:** CAP-08 has the most code, then CAP-06, CAP-07 and CAP-09.
+
+| Order | Capability | State now | Rehearsal code (section 8.2) | Why here |
+|---:|---|---|---|---|
+| 1 | CAP-04 Governed Scientific Memory | `designed` | None of its own; shares the learning gateway scope | Every other scientific capability resolves its evidence through it (section 5.2) |
+| 2 | CAP-05 Governed Scientific Reasoning | `designed` | None; represented in the simulation | Reasons only over CAP-04's admitted evidence |
+| 3 | CAP-08 Controlled Trials & Outcomes | `named only` | 21 actions: the most of any capability | The trial and outcome lifecycle |
+| 4 | CAP-06 Ingredient Intelligence | `named only` | 4 actions | Feeds CAP-07 |
+| 5 | CAP-07 Formulation Intelligence | `named only` | 7 actions, including sending a formulation to trial (CAP-08) | Consumes CAP-06's output |
+| 6 | CAP-09 Governed Scientific Learning | `named only` | 4 actions | References admitted CAP-04 evidence, and must be separated from CAP-04's shared gateway scope together with it |
+
+**For CAP-04 and CAP-05, the migration is mostly new code plus contract alignment.** Their design contracts predate this workstream and were written without the rehearsal code in view. Step 1 for each is an amendment that aligns the contract with the primitives and accounts for what the rehearsal does, and step 4 builds rather than brings across.
+
+**A pre-workstream decision: identities for observation, cognitive intelligence and resource intelligence.** None of the three has a capability number. **Each needs a capability number and identity assigned before its migration path is defined,** and none enters the priority order until then.
+- **Observation,** including field photo capture (21 actions), **is to be its own numbered capability, not absorbed into CAP-08** (decided on 2026-09-28). Its number and identity are still to be assigned.
+- **Cognitive intelligence** (9 actions): its number and identity are to be decided. The closest landscape capabilities are CAP-01 and CAP-06.
+- **Resource intelligence** (13 actions): its number and identity are to be decided. The closest is CAP-01, whose description names resources and waste streams.
+
+**Also outside the order:**
+- **CAP-01 and CAP-02,** each represented in the simulation or by adapters that are defined and not connected.
+- **The country actions** (34). They are platform-wide, not AGR.
+
+### 8.5 Prerequisites
+
+```mermaid
+flowchart LR
+  S[step 0 source<br/>obtained] --> C[steps 1 to 3<br/>contract written,<br/>reviewed, committed]
+  V[independent verification<br/>of the dependency audit] --> X[extraction of the<br/>platform primitives]
+  X --> B[step 4<br/>code brought across]
+  C --> B
+  AD[AGR adoption of<br/>AAB-PLATFORM-05 to 08] --> B
+  B --> P[step 5<br/>proof record]
+```
+
+- **Step 0 may start now, and contract work follows it.** Steps 0 to 3 need no extraction, but no contract work begins before step 0.
+- **Before any AGR capability code is brought across (step 4),** two things must happen first, in order:
+  1. **the independent verification of the dependency audit** (section 5.3), due now, with no reviewer appointed;
+  2. **the extraction of the platform primitives** out of `scs-pilot`, which the separation decision allows only after that verification.
+
+  **This is a hard dependency.** Until both are done, no AGR code is brought across, because it would be built on SCS's domain modules. The separation decision forbids that.
+- **AGR adopts AAB-PLATFORM-05 to 08** by amendment to its own contracts, as SCS must (section 4). This happens before or with step 4 of the first capability.
+- **Before real data,** AGR is blocked as SCS is: `TODO(object-store-credentials)` (section 6.1). Before live operation, it needs a commissioned country environment (section 7).
+
+### 8.6 Impact on governance records
+
+- **State labels move one step at a time,** each only on its evidence: `named only` → `designed` at step 3, → `implemented` at step 4, → `behaviourally proven` at step 5.
+- **Each change is recorded** in this roadmap and the current stock-take when it merges. The CAP-34 fidelity manifest is updated with it (admission checklist items 8 and 9, section 5.5).
+- **The demonstration environment (aab.ag/demo) is not published** until the first capability in this workstream has its contract committed under the workstream.
+  - That means a contract that accounts for the rehearsal code, reviewed and committed under this workstream's discipline (steps 0 to 3).
+  - **CAP-04's and CAP-05's existing design contracts do not meet it.** They predate this workstream and were written without the rehearsal code in view (decided on 2026-09-28).
+- **Until then,** every AGR capability that runs in the rehearsal is shown as `named only`, with its code noted. It is never shown as `implemented`.
+
 ## Decisions recorded on 2026-09-27
 
 These points came up while compiling the roadmap and were decided in review.
@@ -707,6 +828,17 @@ These points came up while compiling the roadmap and were decided in review.
 6. **The independent dependency audit is due now,** and is required before any platform extraction begins (section 5.3). Updated on 2026-09-28: a working audit is complete (PR #45); its independent verification is what is due.
 7. **The documents that understate what exists** (section 6.5) are corrected in their own commits after this roadmap, not in it. (Done in PR #26, except `scs-roadmap-preview.js`.)
 
+## Decisions recorded on 2026-09-28
+
+8. **The AGR rehearsal migration is a formal workstream** (section 8), with its own priority, prerequisites and order: CAP-04 → CAP-05 → CAP-08 → CAP-06 → CAP-07 → CAP-09.
+9. **No AGR capability code is brought across before the dependency audit's independent verification and the extraction of the platform primitives** (section 8.5).
+10. **The demonstration environment is not published before the first capability in the workstream has its contract committed under it:** a contract that accounts for the rehearsal code, reviewed and committed under the workstream's discipline. CAP-04's and CAP-05's existing design contracts do not meet this (section 8.6).
+11. **Signing-key history is complete.** `TODO(signing-key-history)` no longer blocks real data, and `TODO(object-store-credentials)` is the remaining blocker before real data is stored (section 6.1).
+12. **The priority order follows dependency, not code volume.** CAP-04 and CAP-05 come first because everything else resolves its evidence through CAP-04 (section 8.4).
+13. **Step 0, obtaining the source, is mandatory and first.** No contract work begins before the rehearsal's gateway code and a schema-only database export are committed as a dated, read-only evidence record (section 8.3).
+14. **Observation, cognitive intelligence and resource intelligence need capability numbers and identities before their migration paths are defined.** Observation becomes its own numbered capability, not part of CAP-08 (section 8.4).
+15. **The catalogue mapping is a proposed mapping, requiring review** before any migration work begins. It is evidence and analysis, not a governance decision (section 8.2).
+
 **Still open, noted in the text:**
 - The mapping of the eleven primitives to landscape capabilities (section 4) is proposed by this roadmap, not established.
 - Whether the CAP-04 and CAP-05 contracts align with the primitives: now assessed against AAB-PLATFORM-05 to 08, and settled by AGR's adoption of them.
@@ -715,6 +847,6 @@ These points came up while compiling the roadmap and were decided in review.
 
 - It does not admit, commission or authorise any capability.
 - It does not change any control's status, and does not satisfy Gate D or begin WP05.
-- It does not schedule build work. Section 5 records dependencies, and the one next step the separation decision itself requires (the independent verification of the dependency audit).
+- It does not schedule build work. Section 5 records dependencies, and the one next step the separation decision itself requires (the independent verification of the dependency audit). Section 8 records an order for the AGR workstream, not dates.
 - It does not verify the rehearsal application, whose code is not in this repository.
 - It does not define the missing terms it reports. Gate D is defined separately (`governance/AAB-GATE-D-DEPLOYMENT-QUALIFICATION-DEFINITION-2026-09-27.md`); the admission authority and its registry are defined separately (PR #28, #29); the provisioning authority is not defined anywhere.
