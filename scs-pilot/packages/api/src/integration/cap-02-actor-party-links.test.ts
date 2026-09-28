@@ -9,7 +9,7 @@
 
 import { after, before, test } from "node:test";
 import assert from "node:assert/strict";
-import { createHash, generateKeyPairSync, randomBytes, randomUUID, sign, type KeyObject } from "node:crypto";
+import { createHash, randomBytes, randomUUID } from "node:crypto";
 import type { AddressInfo } from "node:net";
 import type { Server } from "node:http";
 
@@ -19,6 +19,10 @@ import { canonicalJson } from "../foundation/canonical.js";
 import { connectDatabase, type Database } from "../foundation/db.js";
 import { createApiServer } from "../foundation/server.js";
 import { isIntact, linkIntegrity, statusRecordIntegrity } from "../platform/actor-subject-links/links.js";
+import { keyRegistryRoutes } from "../platform/key-registry/routes.js";
+import { verifyLinkSignature, verifyStatusSignature } from "../platform/key-registry/signed-records.js";
+import { keyRegistryReader } from "../platform/key-registry/store.js";
+import { bootstrapCountryRegistry, keyRegistrarEntry, newKeyPair, registerTestKey, signWith, type TestKey } from "./signing-keys.js";
 import type { ActorSubjectLink, ActorSubjectLinkStatement, ActorSubjectLinkStatusRecord } from "../types/platform.js";
 import { issuedReference, partyRequest } from "./fixtures.js";
 import { createMigratedDatabase, type MigratedDatabase } from "./harness.js";
@@ -32,10 +36,19 @@ const ROLES: Record<Who, string[]> = {
 };
 const actors = Object.fromEntries(WHO.map((w) => [w, { actorId: `${w}-links`, actorType: w === "service" ? "SERVICE" : "HUMAN", roles: ROLES[w], authenticationMethod: "STATIC_TOKEN" }])) as Record<Who, { actorId: string; actorType: string; roles: string[]; authenticationMethod: string }>;
 const token = (w: Who) => `links-${w}-token-0123456789abcdefghijklmn`;
-const keys = Object.fromEntries(WHO.map((w) => [w, generateKeyPairSync("ed25519")])) as Record<Who, { publicKey: KeyObject; privateKey: KeyObject }>;
-const spki = (w: Who) => keys[w].publicKey.export({ format: "der", type: "spki" }).toString("base64");
 const ref = (w: Who) => ({ issuer: TH, actorId: actors[w].actorId });
-const signAs = (w: Who, statement: unknown) => sign(null, Buffer.from(canonicalJson(statement), "utf8"), keys[w].privateKey).toString("base64");
+const REGISTRAR_TOKEN = "links-key-registrar-token-0123456789abcdef";
+/** Actors with no key in the public-key registry: nokey by design; noname and service cannot hold one (the registry names HUMAN holders). */
+const UNREGISTERED: readonly Who[] = ["nokey", "noname", "service"];
+/** Each actor's key: registered in the public-key registry (AAB-PLATFORM-09) before the tests run, or, for UNREGISTERED, a key the registry does not know. */
+const keys = {} as Record<Who, TestKey>;
+/** Names w's key on a statement, making it version 2 (AAB-PLATFORM-04, third amendment). */
+const nameKey = (w: Who, statement: object) => Object.assign(statement, { statementVersion: "2", signingKeyId: keys[w].keyId });
+/** Signs a statement as version 2 with w's key. */
+const signAs = (w: Who, statement: object) => signWith(keys[w].privateKey, nameKey(w, statement));
+/** Verifies records' signatures against the registry, as at their acceptance. */
+const verifiedLink = (link: ActorSubjectLink) => api.transaction((tx) => verifyLinkSignature(keyRegistryReader(tx), link));
+const verifiedStatus = (r: ActorSubjectLinkStatusRecord) => api.transaction((tx) => verifyStatusSignature(keyRegistryReader(tx), r));
 
 let harness: MigratedDatabase;
 let api: Database;
@@ -60,7 +73,7 @@ async function call(method: "GET" | "POST", path: string, body?: unknown, opts: 
 }
 
 async function listen(auth: StaticTokenAuthenticator): Promise<void> {
-  server = createApiServer({ routes: capabilityRoutes(auth), authenticator: auth, db: api });
+  server = createApiServer({ routes: [...capabilityRoutes(auth), ...keyRegistryRoutes(auth)], authenticator: auth, db: api });
   await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
 }
@@ -83,18 +96,20 @@ before(async () => {
   parties.retired = await register("LEGAL_ENTITY");
   await harness.admin.query(`UPDATE scs.party_identity SET registration_status = 'RETIRED' WHERE party_id = $1`, [parties.retired]);
   await new Promise<void>((r) => server.close(() => r()));
-  // 2. every actor, with names, keys and the party authority grants
+  // 2. every actor, with names and the party authority grants; keys are registered in the registry below
   authenticator = StaticTokenAuthenticator.fromConfig({
-    actors: WHO.map((w) => ({
+    actors: [keyRegistrarEntry(createHash("sha256").update(REGISTRAR_TOKEN).digest("hex")), ...WHO.map((w) => ({
       tokenSha256: createHash("sha256").update(token(w)).digest("hex"),
       actor: actors[w],
       ...(w === "service" || w === "noname" ? {} : { accountableName: `Named ${w}` }),
-      ...(w === "service" || w === "nokey" ? {} : { signingPublicKey: spki(w) }),
       ...(w === "authority" ? { subjectGrants: [{ role: "PARTY_AUTHORITY_REPRESENTATIVE", scopeId: `SCS:PARTY:${parties.coop}` }] } : {}),
       ...(w === "authorityElsewhere" ? { subjectGrants: [{ role: "PARTY_AUTHORITY_REPRESENTATIVE", scopeId: `SCS:PARTY:${parties.coop2}` }] } : {}),
-    })),
+    }))],
   }, TH_OPTS);
   await listen(authenticator);
+  const registry = { base, token: () => REGISTRAR_TOKEN, issuer: TH };
+  const registrar = await bootstrapCountryRegistry(registry);
+  for (const w of WHO) keys[w] = UNREGISTERED.includes(w) ? { keyId: randomUUID(), ...newKeyPair() } : await registerTestKey(registry, registrar, actors[w].actorId);
 });
 
 const TH_OPTS = { issuerCountry: "TH" };
@@ -149,7 +164,9 @@ async function linkStatement(o: LinkOpts = {}): Promise<ActorSubjectLinkStatemen
 /** POST a link; by default signed by the creator named in the statement, sent by the linker. */
 async function postLink(o: LinkOpts = {}, send: { who?: Who; signer?: Who; signature?: string; key?: string } = {}): Promise<Res & { statement: ActorSubjectLinkStatement }> {
   const statement = await linkStatement(o);
-  const signature = send.signature ?? signAs(send.signer ?? o.creator ?? "linker", statement);
+  const signer = send.signer ?? o.creator ?? "linker";
+  const signature = send.signature ?? signAs(signer, statement);
+  nameKey(signer, statement);
   const r = await call("POST", "/scs/v1/actor-party-links", { linkStatement: statement, statementSignature: signature }, { who: send.who ?? o.creator ?? "linker", ...(send.key === undefined ? {} : { key: send.key }) });
   return { ...r, statement };
 }
@@ -163,7 +180,9 @@ async function created(o: LinkOpts = {}, send: { who?: Who; signer?: Who } = {})
 
 async function postStatus(link: { linkId: string; linkDigest: string }, action: "SUSPEND" | "REINSTATE" | "REVOKE", who: Who = "linker", o: { statement?: Record<string, unknown>; signer?: Who } = {}): Promise<Res> {
   const statusStatement = { statementType: "ACTOR_SUBJECT_LINK_STATUS", linkId: link.linkId, linkDigest: link.linkDigest, action, reason: `${action} for the test.`, writer: ref(who), ...o.statement };
-  return call("POST", `/scs/v1/actor-party-links/${link.linkId}/status-records`, { statusStatement, statementSignature: signAs(o.signer ?? who, statusStatement) }, { who });
+  const statementSignature = signAs(o.signer ?? who, statusStatement);
+  if (o.signer !== undefined) nameKey(who, statusStatement); // the statement names the writer's key; another person signed it
+  return call("POST", `/scs/v1/actor-party-links/${link.linkId}/status-records`, { statusStatement, statementSignature }, { who });
 }
 
 const getLink = (linkId: string, who: Who = "officer") => call("GET", `/scs/v1/actor-party-links/${linkId}`, undefined, { who });
@@ -208,7 +227,9 @@ test("a signed link → 201 CREATED: every check true, the record digested as re
   assert.deepEqual(link.linkStatement, r.statement, "the statement is stored exactly as signed");
   assert.equal(link.relation, "ACTS_FOR_SUBJECT");
   assert.deepEqual(link.createdBy, d["decidedBy"]);
-  assert.ok(isIntact(linkIntegrity(link, keys.linker.publicKey)), "signature, statement and digest verify from what is read back");
+  const verified = await verifiedLink(link);
+  assert.equal(verified.result, "VERIFIED", verified.reason);
+  assert.ok(isIntact(linkIntegrity(link, verified.result)), "signature, statement and digest verify from what is read back, against the registry");
   staffCoop = { linkId: link.linkId, linkDigest: link.linkDigest };
 });
 
@@ -311,12 +332,23 @@ test("rule 6: one ACTIVE link per actor, party and relation; a SUSPENDED one blo
   await assertRefused(postLink({ actor, party: "coop", supersedes: randomUUID() }), 404, "LINK_NOT_FOUND");
 });
 
+test("a version 1 statement, naming no key, is refused: there is no transition period (AAB-PLATFORM-04, third amendment)", async () => {
+  const statement = await linkStatement({ actor: "person2", party: "person2" });
+  const v1 = signWith(keys.linker.privateKey, statement); // signed as it is, with no statementVersion or signingKeyId
+  const r = await call("POST", "/scs/v1/actor-party-links", { linkStatement: statement, statementSignature: v1 });
+  assert.equal(r.status, 400, r.text);
+  assert.equal(r.json["error"], "REQUEST_VALIDATION_FAILED");
+  const statusStatement = { statementType: "ACTOR_SUBJECT_LINK_STATUS", linkId: staffCoop.linkId, linkDigest: staffCoop.linkDigest, action: "SUSPEND", reason: "v1.", writer: ref("linker") };
+  const s = await call("POST", `/scs/v1/actor-party-links/${staffCoop.linkId}/status-records`, { statusStatement, statementSignature: signWith(keys.linker.privateKey, statusStatement) });
+  assert.equal(s.status, 400, s.text);
+});
+
 test("rule 7: the creator is a named human who signed exactly this statement → otherwise 422 LINK_SIGNATURE_INVALID", async () => {
   const code = "LINK_SIGNATURE_INVALID";
   const reason = async (p: Promise<Res>) => ((await assertRefused(p, 422, code)).json["reasons"] as string[])[0]!;
   assert.match(await reason(postLink({ actor: "person2", party: "person2", creator: "service" })), /is a SERVICE, not a HUMAN/);
   assert.match(await reason(postLink({ actor: "person2", party: "person2", creator: "noname" })), /no accountable name/);
-  assert.match(await reason(postLink({ actor: "person2", party: "person2", creator: "nokey" })), /No signing key/);
+  assert.match(await reason(postLink({ actor: "person2", party: "person2", creator: "nokey" })), /cannot be resolved/, "a key the registry does not hold");
   assert.match(await reason(postLink({ actor: "person2", party: "person2", creator: "linker2" }, { who: "linker", signer: "linker2" })), /creator \(linker2-links\) is not the authenticated actor/);
   assert.match(await reason(postLink({ actor: "person2", party: "person2" }, { signer: "linker2" })), /does not verify/, "signed with another person's key");
   const other = await linkStatement({ actor: "person2", party: "person2", relation: "IS_SUBJECT" });
@@ -365,7 +397,7 @@ test("the creating role suspends, reinstates and revokes; each record is signed,
   const records = read.json["statusRecords"] as ActorSubjectLinkStatusRecord[];
   assert.deepEqual(records.map((r) => r.statusStatement.action), ["SUSPEND", "REINSTATE", "SUSPEND", "REVOKE"]);
   assert.ok(records.every((r, i) => i === 0 || Date.parse(r.recordedAt) > Date.parse(records[i - 1]!.recordedAt)), "strictly increasing recordedAt");
-  for (const r of records) assert.ok(isIntact(statusRecordIntegrity(r, read.json["link"] as ActorSubjectLink, keys.linker.publicKey)));
+  for (const r of records) assert.ok(isIntact(statusRecordIntegrity(r, read.json["link"] as ActorSubjectLink, (await verifiedStatus(r)).result)));
 });
 
 test("an action impossible from the link's state → 409 LINK_STATUS_NOT_PERMITTED", async () => {

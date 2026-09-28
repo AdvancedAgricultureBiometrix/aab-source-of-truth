@@ -13,6 +13,7 @@
     "decision",
     "writerCapacity",
     "eligibilityChecks",
+    "signatureAcceptance",
     "resultingState",
     "recordDigest",
     "decisionReasons",
@@ -84,6 +85,10 @@
           "const": true
         }
       }
+    },
+    "signatureAcceptance": {
+      "description": "SCS-CAP-02 sixth amendment (AAB-PLATFORM-09 section 6): the signature accepted — the server's acceptedAt, the key it was verified with, and that key's digests.",
+      "$ref": "urn:aab:schema:platform:key-signature-acceptance:1"
     },
     "resultingState": {
       "type": "string",

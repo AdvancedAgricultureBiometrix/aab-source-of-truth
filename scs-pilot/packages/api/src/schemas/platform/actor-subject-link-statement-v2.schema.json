@@ -1,33 +1,25 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:aab:scs:schema:platform:actor-subject-link:1",
-  "title": "ActorSubjectLink",
-  "description": "AAB-PLATFORM-04 ActorSubjectLink: a write-once record binding one actor to one domain subject, as it (IS_SUBJECT) or for it (ACTS_FOR_SUBJECT). Its fields are the signed statement's; the server sets linkId, createdAt and createdBy, then linkDigest over everything else. It grants no authority. Its state is derived when read.",
+  "$id": "urn:aab:scs:schema:platform:actor-subject-link-statement:2",
+  "title": "ActorSubjectLinkStatementV2",
+  "description": "AAB-PLATFORM-04 ActorSubjectLinkStatement: what a link's creator decides, and signs, before submitting. Every field is known before submission. The signed bytes are its canonical JSON. Version 2 (AAB-PLATFORM-04, third amendment of 2026-09-28): names the key the creator signs with, registered in the public-key registry (AAB-PLATFORM-09). A new version 1 statement is refused.",
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "linkId",
-    "schemaVersion",
+    "statementType",
     "actor",
     "subject",
     "relation",
     "validFrom",
     "validUntil",
     "authorisationEvidence",
-    "createdAt",
-    "createdBy",
-    "linkStatement",
-    "statementSignature",
-    "linkDigest"
+    "creator",
+    "statementVersion",
+    "signingKeyId"
   ],
   "properties": {
-    "linkId": {
-      "type": "string",
-      "format": "uuid"
-    },
-    "schemaVersion": {
-      "type": "string",
-      "const": "1"
+    "statementType": {
+      "const": "ACTOR_SUBJECT_LINK"
     },
     "actor": {
       "$ref": "urn:aab:scs:schema:platform:actor-subject-link-actor:1"
@@ -82,34 +74,17 @@
       "type": "string",
       "format": "uuid"
     },
-    "createdAt": {
+    "creator": {
+      "$ref": "urn:aab:scs:schema:platform:actor-subject-link-actor:1"
+    },
+    "statementVersion": {
       "type": "string",
-      "format": "date-time"
+      "const": "2"
     },
-    "createdBy": {
-      "$ref": "urn:aab:scs:schema:shared:actor-reference:1",
-      "description": "The creator: HUMAN, with accountableName (a governance decision); never the linked actor."
-    },
-    "linkStatement": {
-      "description": "As signed: version 2, or version 1 for a record stored before the switch-over (read, never accepted again).",
-      "anyOf": [
-        {
-          "$ref": "urn:aab:scs:schema:platform:actor-subject-link-statement:2"
-        },
-        {
-          "$ref": "urn:aab:scs:schema:platform:actor-subject-link-statement:1"
-        }
-      ]
-    },
-    "statementSignature": {
-      "description": "Ed25519 signature over the statement's canonical JSON: 64 bytes, standard base64.",
+    "signingKeyId": {
       "type": "string",
-      "pattern": "^[A-Za-z0-9+/]{86}==$"
-    },
-    "linkDigest": {
-      "type": "string",
-      "pattern": "^sha256:[0-9a-f]{64}$",
-      "description": "\"sha256:\" and the SHA-256 of the canonical JSON of every other field of the record."
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "description": "The creator's key in the public-key registry, lowercase."
     }
   }
 }

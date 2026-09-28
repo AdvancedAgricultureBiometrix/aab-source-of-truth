@@ -19,17 +19,18 @@
 
 import { after, before, test } from "node:test";
 import assert from "node:assert/strict";
-import { createHash, generateKeyPairSync, randomBytes, randomUUID, sign, type KeyObject } from "node:crypto";
+import { createHash, randomBytes, randomUUID } from "node:crypto";
 import type { AddressInfo } from "node:net";
 import type { Server } from "node:http";
 
 import { capabilityRoutes } from "../capabilities/index.js";
 import { StaticTokenAuthenticator } from "../foundation/auth.js";
-import { canonicalJson } from "../foundation/canonical.js";
 import { connectDatabase, type Database } from "../foundation/db.js";
 import { createApiServer } from "../foundation/server.js";
+import { keyRegistryRoutes } from "../platform/key-registry/routes.js";
 import { frameworkRequest, partyRequest } from "./fixtures.js";
 import { createMigratedDatabase, type MigratedDatabase } from "./harness.js";
+import { bootstrapCountryRegistry, keyRegistrarEntry, registerTestKey, signWith, type TestKey } from "./signing-keys.js";
 
 const TH = { issuerType: "COUNTRY_TENANCY" as const, countryCode: "TH" };
 const WHO = ["officer", "linker", "verifier", "staff", "authority"] as const;
@@ -37,8 +38,14 @@ type Who = (typeof WHO)[number];
 const ROLES: Record<Who, string[]> = { officer: ["COMPLIANCE_OFFICER"], linker: ["LINK_OFFICER"], verifier: ["VERIFICATION_OFFICER"], staff: [], authority: [] };
 const actors = Object.fromEntries(WHO.map((w) => [w, { actorId: `${w}-e2e`, actorType: "HUMAN", roles: ROLES[w], authenticationMethod: "STATIC_TOKEN" }])) as Record<Who, { actorId: string; actorType: string; roles: string[]; authenticationMethod: string }>;
 const token = (w: Who) => `e2e-${w}-token-0123456789abcdefghijklmnop`;
-const keys = Object.fromEntries(WHO.map((w) => [w, generateKeyPairSync("ed25519")])) as Record<Who, { publicKey: KeyObject; privateKey: KeyObject }>;
-const signAs = (w: Who, s: unknown) => sign(null, Buffer.from(canonicalJson(s), "utf8"), keys[w].privateKey).toString("base64");
+const REGISTRAR_TOKEN = "e2e-key-registrar-token-0123456789abcdef";
+/** Each actor's key, registered in the public-key registry (AAB-PLATFORM-09) before the tests run. */
+const keys = {} as Record<Who, TestKey>;
+/** Signs a statement as version 2 (AAB-PLATFORM-04, third amendment): names w's key on it, then signs it with that key. */
+const signAs = (w: Who, s: object) => {
+  Object.assign(s, { statementVersion: "2", signingKeyId: keys[w].keyId });
+  return signWith(keys[w].privateKey, s);
+};
 const who = (w: Who) => ({ issuer: TH, actorId: actors[w].actorId });
 const SQUARE = [[101.5, 13.5], [101.501, 13.5], [101.501, 13.501], [101.5, 13.501], [101.5, 13.5]];
 const SCENE = [[101.4, 13.4], [101.6, 13.4], [101.6, 13.6], [101.4, 13.6], [101.4, 13.4]];
@@ -63,21 +70,20 @@ async function ok(path: string, body: unknown, w: Who): Promise<Record<string, u
   return r.json["decision"] as Record<string, unknown>;
 }
 async function listen(auth: StaticTokenAuthenticator): Promise<void> {
-  server = createApiServer({ routes: capabilityRoutes(auth), authenticator: auth, db: api });
+  server = createApiServer({ routes: [...capabilityRoutes(auth), ...keyRegistryRoutes(auth)], authenticator: auth, db: api });
   await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
 }
 /** The actors file. Once the cooperative exists, its staff member and authority representative are granted their roles for it. */
 const actorsFor = (cooperative: string | null) =>
   StaticTokenAuthenticator.fromConfig({
-    actors: WHO.map((w) => ({
+    actors: [keyRegistrarEntry(createHash("sha256").update(REGISTRAR_TOKEN).digest("hex")), ...WHO.map((w) => ({
       tokenSha256: createHash("sha256").update(token(w)).digest("hex"),
       actor: actors[w],
       accountableName: `Named ${w}`,
-      signingPublicKey: keys[w].publicKey.export({ format: "der", type: "spki" }).toString("base64"),
       ...(cooperative === null ? {} : w === "staff" ? { subjectGrants: [{ role: "PARTY_REPRESENTATIVE", scopeId: `SCS:PARTY:${cooperative}` }] }
         : w === "authority" ? { subjectGrants: [{ role: "PARTY_AUTHORITY_REPRESENTATIVE", scopeId: `SCS:PARTY:${cooperative}` }] } : {}),
-    })),
+    }))],
   }, { issuerCountry: "TH" });
 
 async function storedObject(): Promise<string> {
@@ -94,6 +100,9 @@ before(async () => {
   const role = await harness.createLoginRole("NOSUPERUSER NOCREATEDB NOCREATEROLE NOBYPASSRLS IN ROLE scs_api");
   api = await connectDatabase(harness.configFor(role.user, role.password));
   await listen(actorsFor(null));
+  const registry = { base, token: () => REGISTRAR_TOKEN, issuer: TH };
+  const registrar = await bootstrapCountryRegistry(registry);
+  for (const w of WHO) keys[w] = await registerTestKey(registry, registrar, actors[w].actorId);
   s.framework = (await ok("/scs/v1/frameworks", frameworkRequest(), "officer"))["frameworkId"] as string;
   s.smallholder = (await ok("/scs/v1/parties", partyRequest("NATURAL_PERSON"), "officer"))["partyId"] as string;
   s.cooperative = (await ok("/scs/v1/parties", partyRequest("COOPERATIVE"), "officer"))["partyId"] as string;

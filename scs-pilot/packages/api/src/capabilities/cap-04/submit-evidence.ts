@@ -44,7 +44,6 @@
 
 import { randomUUID } from "node:crypto";
 
-import type { SigningKeyDirectory } from "../../foundation/auth.js";
 import { capabilityPlatformFailure } from "../../foundation/errors.js";
 import type { OperationResult } from "../../foundation/idempotency.js";
 import { writeReceipt } from "../../foundation/receipts.js";
@@ -205,7 +204,7 @@ export function attestationExcesses(req: ScsDeforestationEvidenceSubmissionReque
   return out;
 }
 
-export const submitEvidence = (keys: SigningKeyDirectory) => async (ctx: RouteContext<ScsDeforestationEvidenceSubmissionRequest>): Promise<OperationResult> => {
+export const submitEvidence = async (ctx: RouteContext<ScsDeforestationEvidenceSubmissionRequest>): Promise<OperationResult> => {
   const tx = ctx.tx!;
   let actor = ctx.actor!;
   const req = ctx.body;
@@ -264,7 +263,7 @@ export const submitEvidence = (keys: SigningKeyDirectory) => async (ctx: RouteCo
   if (authority.kind === "REPRESENTATIVE") {
     const plotParties = [...new Set([...(association.producerOrOperatorId === null ? [] : [association.producerOrOperatorId]), ...(await findTenureClaimants(tx, plot.plotId, plot.plotVersion))])];
     try {
-      representation = await checkRepresentation(CAPABILITY_ID, tx, keys, actor, authority.actingUnder, {
+      representation = await checkRepresentation(CAPABILITY_ID, tx, actor, authority.actingUnder, {
         action: "SUBMIT_DEFORESTATION_EVIDENCE",
         forParties: plotParties,
         forDescription: `the plot's producer or operator, or a party holding a tenure claim on plot ${plot.plotId}`,

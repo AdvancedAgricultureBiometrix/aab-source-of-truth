@@ -6,15 +6,14 @@
 // redefined before it is built; the reads and quarantineCustodyEvent are
 // deferred (contract "Deferred operations").
 
-import type { SigningKeyDirectory } from "../../foundation/auth.js";
 import type { Route } from "../../foundation/server.js";
 import { SCHEMAS } from "../../schemas/registry.js";
 import type { ScsCustodyEventSubmissionRequest } from "../../types/cap-05.js";
 import { CAPABILITY_ID } from "./errors.js";
 import { submitCustodyEvent } from "./submit-custody-event.js";
 
-/** Built with the signing keys: a representative submission verifies the representative's link. */
-export const submitCustodyEventRoute = (keys: SigningKeyDirectory): Route<ScsCustodyEventSubmissionRequest> => ({
+/** A representative submission verifies the representative's link against the public-key registry (AAB-PLATFORM-09). */
+export const submitCustodyEventRoute: Route<ScsCustodyEventSubmissionRequest> = {
   method: "POST",
   path: "/scs/v1/custody-events",
   capabilityId: CAPABILITY_ID,
@@ -22,7 +21,7 @@ export const submitCustodyEventRoute = (keys: SigningKeyDirectory): Route<ScsCus
   transactional: true,
   idempotency: "required",
   requestSchema: SCHEMAS.cap05CustodyEventSubmissionRequest,
-  handle: submitCustodyEvent(keys),
-});
+  handle: submitCustodyEvent,
+};
 
-export const cap05Routes = (keys: SigningKeyDirectory): readonly Route<never>[] => [submitCustodyEventRoute(keys) as unknown as Route<never>];
+export const cap05Routes: readonly Route<never>[] = [submitCustodyEventRoute as unknown as Route<never>];

@@ -23,7 +23,6 @@
 //       "tokenSha256": "<64 hex>",
 //       "actor": { "actorId", "actorType", "roles", "authenticationMethod" },
 //       "accountableName": "…",          optional; HUMAN only
-//       "signingPublicKey": "<base64>",  optional; HUMAN only; Ed25519, SPKI DER
 //       "subjectGrants": [ { "role", "scopeId": "<domain>:<subjectType>:<subjectId>" } ]   optional
 //   } ] }
 // Hash a token with:
@@ -40,13 +39,14 @@
 //     scopeType SUBJECT. None has a grantId: the pilot has no grant records.
 //     Pilot limitation (SCS-CAP-02): these grants are operator configuration,
 //     not signed, evidenced or receipted.
-//   * One signing key per actor. TODO(signing-key-history), BLOCKING before
-//     any real data: a changed key invalidates every record signed with the
-//     old one (see foundation/signatures.ts). Never rotate a key in use.
-//   * accountableName and the signing key are NOT put in the reference. The
-//     name is personal data, recorded only on governance decisions; a
-//     capability asks the ActorDirectory for it, and for the key, when it
-//     records one.
+//   * Signing keys are not here. They are registered in the public-key
+//     registry (AAB-PLATFORM-09), with their history, and a signature is
+//     verified against the key its statement names, as at the time the server
+//     accepted it. An actors file that still carries a signingPublicKey stops
+//     the API from starting, so that a key is never silently ignored.
+//   * accountableName is NOT put in the reference. It is personal data,
+//     recorded only on governance decisions; a capability asks the
+//     ActorDirectory for it when it records one.
 //   * organizationId is refused: version 2 has no such field. An actor acts
 //     for an organisation through an actor–party link (AAB-PLATFORM-04).
 //
@@ -57,7 +57,7 @@
 // keep one registry of recognised roles and refuse an actors file that names
 // an unknown one.
 
-import { createHash, timingSafeEqual, type KeyObject } from "node:crypto";
+import { createHash, timingSafeEqual } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import type { IncomingHttpHeaders } from "node:http";
 
@@ -66,7 +66,6 @@ import { SCHEMAS } from "../schemas/registry.js";
 import type { ActorReference, ActorReferenceV1, ActorReferenceV2 } from "../types/shared.js";
 import { sameActor } from "./actor.js";
 import { runWithCorrelation } from "./correlation.js";
-import { parseSigningPublicKey } from "./signatures.js";
 import { validate } from "./validation.js";
 
 export type { ActorReference, ActorReferenceV2 };
@@ -100,12 +99,13 @@ export async function authenticateRequest(headers: IncomingHttpHeaders, authenti
   return actor;
 }
 
-// ── The actor's records: accountable name and signing key ──────────────────
+// ── The actor's records: accountable name ───────────────────────────────────
 
 /**
  * What the identity domain records about an actor beyond the reference: the
- * name for governance decisions, and the public key their signatures are
- * verified against. OIDC will implement this from the issuer's records.
+ * name for governance decisions. Signing keys are the public-key registry's
+ * (AAB-PLATFORM-09), not the directory's. OIDC will implement this from the
+ * issuer's records.
  */
 export interface ActorDirectory {
   /** The issuer every actor of this deployment is issued by. */
@@ -114,15 +114,8 @@ export interface ActorDirectory {
   actorOf(actorId: string): ActorReferenceV2 | null;
   /** The actor's accountable name, or null if none is recorded. */
   accountableNameOf(actor: ActorReference): string | null;
-  /** The actor's registered Ed25519 public key, or null if none is registered. */
-  signingKeyOf(actor: ActorReference): KeyObject | null;
 }
 
-/**
- * Only the signing keys: what an act that relies on a signed record needs to
- * verify it. It gives no access to accountable names.
- */
-export type SigningKeyDirectory = Pick<ActorDirectory, "signingKeyOf">;
 
 // ── Pilot: static tokens ─────────────────────────────────────────────────────
 
@@ -148,7 +141,6 @@ interface StaticActorEntry {
   readonly tokenSha256: Buffer;
   readonly actor: ActorReferenceV2;
   readonly accountableName: string | null;
-  readonly signingKey: KeyObject | null;
 }
 
 const ENTRY_KEYS = new Set(["tokenSha256", "actor", "accountableName", "signingPublicKey", "subjectGrants"]);
@@ -197,7 +189,6 @@ export class StaticTokenAuthenticator implements Authenticator, ActorDirectory {
     const entries: StaticActorEntry[] = [];
     const seenHashes = new Set<string>();
     const seenActors = new Set<string>();
-    const seenKeys = new Set<string>();
     list.forEach((raw: unknown, i: number) => {
       const entry = raw as { tokenSha256?: unknown; actor?: unknown; accountableName?: unknown; signingPublicKey?: unknown; subjectGrants?: unknown } | null;
       if (entry === null || typeof entry !== "object" || Object.keys(entry).some((k) => !ENTRY_KEYS.has(k))) {
@@ -239,20 +230,8 @@ export class StaticTokenAuthenticator implements Authenticator, ActorDirectory {
         } else accountableName = entry.accountableName;
       }
 
-      let signingKey: KeyObject | null = null;
       if (entry.signingPublicKey !== undefined) {
-        if (!human) problems.push(`actors[${i}].signingPublicKey is for HUMAN actors only: a service never signs a governance decision`);
-        else if (typeof entry.signingPublicKey !== "string") problems.push(`actors[${i}].signingPublicKey must be a string`);
-        else {
-          try {
-            signingKey = parseSigningPublicKey(entry.signingPublicKey);
-            const der = signingKey.export({ format: "der", type: "spki" }).toString("base64");
-            if (seenKeys.has(der)) problems.push(`actors[${i}].signingPublicKey duplicates an earlier actor's key`);
-            seenKeys.add(der);
-          } catch (err) {
-            problems.push(`actors[${i}].${(err as Error).message}`);
-          }
-        }
+        problems.push(`actors[${i}].signingPublicKey is no longer read: signing keys are registered in the public-key registry (AAB-PLATFORM-09, POST /aab/v1/signing-keys). Remove it from the actors file`);
       }
 
       const subjectGrants: Array<{ role: string; scopeType: "SUBJECT"; scopeId: string }> = [];
@@ -295,7 +274,7 @@ export class StaticTokenAuthenticator implements Authenticator, ActorDirectory {
         problems.push(...issued.envelope.reasons.map((r) => `actors[${i}] issues an invalid reference: ${r}`));
         return;
       }
-      entries.push({ tokenSha256: Buffer.from(hash, "hex"), actor: deepFreeze(actor), accountableName, signingKey });
+      entries.push({ tokenSha256: Buffer.from(hash, "hex"), actor: deepFreeze(actor), accountableName });
     });
 
     if (entries.length === 0 && problems.length === 0) problems.push("no actors configured");
@@ -332,7 +311,4 @@ export class StaticTokenAuthenticator implements Authenticator, ActorDirectory {
     return this.#entries.find((e) => sameActor(e.actor, actor))?.accountableName ?? null;
   }
 
-  signingKeyOf(actor: ActorReference): KeyObject | null {
-    return this.#entries.find((e) => sameActor(e.actor, actor))?.signingKey ?? null;
-  }
 }

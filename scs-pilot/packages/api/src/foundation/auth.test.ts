@@ -110,19 +110,16 @@ test("subject grants become SUBJECT-scoped authority, after the deployment roles
   ]);
 });
 
-test("the accountable name and signing key are kept in the directory, never in the reference", async () => {
-  const key = spki();
+test("the accountable name is kept in the directory, never in the reference", async () => {
   const auth = StaticTokenAuthenticator.fromConfig(
-    { actors: [{ tokenSha256: sha(TOKEN_A), actor: actorA, accountableName: "A. Officer", signingPublicKey: key }, { tokenSha256: sha(TOKEN_B), actor: actorB }] },
+    { actors: [{ tokenSha256: sha(TOKEN_A), actor: actorA, accountableName: "A. Officer" }, { tokenSha256: sha(TOKEN_B), actor: actorB }] },
     TH,
   );
   const a = (await auth.authenticate(TOKEN_A))!;
   assert.equal("accountableName" in a, false, "personal data stays out of operational references");
   assert.equal(auth.accountableNameOf(a), "A. Officer");
-  assert.equal(auth.signingKeyOf(a)!.export({ format: "der", type: "spki" }).toString("base64"), key);
   const b = (await auth.authenticate(TOKEN_B))!;
   assert.equal(auth.accountableNameOf(b), null);
-  assert.equal(auth.signingKeyOf(b), null);
   // version 1 references (stored records) are found by actorId; another issuer's actor is not this one
   assert.equal(auth.accountableNameOf(actorA as never), "A. Officer");
   assert.equal(auth.accountableNameOf({ ...a, issuer: { issuerType: "COUNTRY_TENANCY", countryCode: "VN" } }), null);
@@ -157,27 +154,24 @@ test("the actors config is validated in full; every problem is reported", () => 
   );
 });
 
-test("the new fields are validated too: names, keys and subject grants; organizationId is refused", () => {
+test("the new fields are validated too: names and subject grants; organizationId is refused; a signing key stops startup", () => {
   const token = (n: number) => sha(`token-${n}-0123456789-abcdefghijklmnop`);
   const human = (n: number) => ({ ...actorA, actorId: `human-${n}` });
   const service = (n: number) => ({ ...actorB, actorId: `svc-${n}` });
-  const shared = spki();
-  const rsa = generateKeyPairSync("rsa", { modulusLength: 2048 }).publicKey.export({ format: "der", type: "spki" }).toString("base64");
   const entries = [
     { tokenSha256: token(0), actor: { ...human(0), organizationId: "org-1" } },
     { tokenSha256: token(1), actor: human(1), accountableName: "  " },
     { tokenSha256: token(2), actor: service(2), accountableName: "A Service" },
-    { tokenSha256: token(3), actor: service(3), signingPublicKey: spki() },
-    { tokenSha256: token(4), actor: human(4), signingPublicKey: "not base64!" },
-    { tokenSha256: token(5), actor: human(5), signingPublicKey: rsa },
-    { tokenSha256: token(6), actor: human(6), signingPublicKey: shared },
-    { tokenSha256: token(7), actor: human(7), signingPublicKey: shared },
+    { tokenSha256: token(3), actor: human(3), signingPublicKey: spki() },
+    { tokenSha256: token(4), actor: human(4) },
+    { tokenSha256: token(5), actor: human(5) },
+    { tokenSha256: token(6), actor: human(6) },
+    { tokenSha256: token(7), actor: human(7) },
     { tokenSha256: token(8), actor: human(8), subjectGrants: [{ role: "PARTY_AUTHORITY_REPRESENTATIVE", scopeId: "SCS-PILOT-TH" }] },
     { tokenSha256: token(9), actor: human(9), subjectGrants: [{ role: "party_authority", scopeId: PARTY }] },
     { tokenSha256: token(10), actor: human(10), subjectGrants: [{ role: "PARTY_AUTHORITY_REPRESENTATIVE", scopeId: PARTY }, { role: "PARTY_AUTHORITY_REPRESENTATIVE", scopeId: PARTY }] },
     { tokenSha256: token(11), actor: human(11), subjectGrants: "all" },
     { tokenSha256: token(12), actor: human(12), roles: ["X"] },
-    { tokenSha256: token(13), actor: human(13), signingPublicKey: Buffer.from("not a key at all").toString("base64") },
   ];
   assert.throws(
     () => StaticTokenAuthenticator.fromConfig({ actors: entries }, TH),
@@ -186,20 +180,16 @@ test("the new fields are validated too: names, keys and subject grants; organiza
         "actors[0].actor.organizationId is not part of ActorReference version 2",
         "actors[1].accountableName must be a non-blank string",
         "actors[2].accountableName is for HUMAN actors only",
-        "actors[3].signingPublicKey is for HUMAN actors only",
-        "actors[4].signing public key must be standard base64",
-        "actors[5].signing public key must be Ed25519, not rsa",
-        "actors[7].signingPublicKey duplicates an earlier actor's key",
+        "actors[3].signingPublicKey is no longer read: signing keys are registered in the public-key registry (AAB-PLATFORM-09",
         "actors[8].subjectGrants[0] must be { role, scopeId",
         "actors[9].subjectGrants[0] must be { role, scopeId",
         "actors[10].subjectGrants[1] duplicates an earlier grant",
         "actors[11].subjectGrants must be an array",
         "actors[12] must be { tokenSha256, actor } with optional",
-        "actors[13].signing public key is not a DER SPKI public key",
       ]) {
         assert.ok(err.message.includes(part), `missing: ${part}\n${err.message}`);
       }
-      assert.ok(!err.message.includes("actors[6]"), "the first holder of a key is not at fault");
+      for (const n of [4, 5, 6, 7]) assert.ok(!err.message.includes(`actors[${n}]`), `actors[${n}] is valid`);
       return true;
     },
   );

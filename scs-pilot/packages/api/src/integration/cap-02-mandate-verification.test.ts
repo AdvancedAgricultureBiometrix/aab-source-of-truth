@@ -6,7 +6,7 @@
 
 import { after, before, test } from "node:test";
 import assert from "node:assert/strict";
-import { createHash, generateKeyPairSync, randomBytes, randomUUID, sign, type KeyObject } from "node:crypto";
+import { createHash, randomBytes, randomUUID } from "node:crypto";
 import type { AddressInfo } from "node:net";
 import type { Server } from "node:http";
 
@@ -18,6 +18,8 @@ import { createApiServer } from "../foundation/server.js";
 import type { ScsMandateVerificationAssessmentRequest } from "../types/cap-02.js";
 import { issuedReference, partyRequest } from "./fixtures.js";
 import { createMigratedDatabase, type MigratedDatabase } from "./harness.js";
+import { keyRegistryRoutes } from "../platform/key-registry/routes.js";
+import { bootstrapCountryRegistry, keyRegistrarEntry, registerTestKey, signWith, type TestKey } from "./signing-keys.js";
 
 const TH = { issuerType: "COUNTRY_TENANCY" as const, countryCode: "TH" };
 const WHO = ["officer", "verifier", "verifier2", "dual", "linker", "linkedVerifier", "personVerifier", "linkingVerifier", "staff"] as const;
@@ -28,8 +30,14 @@ const ROLES: Record<Who, string[]> = {
 };
 const actors = Object.fromEntries(WHO.map((w) => [w, { actorId: `${w}-mv`, actorType: "HUMAN", roles: ROLES[w], authenticationMethod: "STATIC_TOKEN" }])) as Record<Who, { actorId: string; actorType: string; roles: string[]; authenticationMethod: string }>;
 const token = (w: Who) => `mv-${w}-token-0123456789abcdefghijklmnopq`;
-const keys = Object.fromEntries(WHO.map((w) => [w, generateKeyPairSync("ed25519")])) as Record<Who, { publicKey: KeyObject; privateKey: KeyObject }>;
-const signAs = (w: Who, s: unknown) => sign(null, Buffer.from(canonicalJson(s), "utf8"), keys[w].privateKey).toString("base64");
+const REGISTRAR_TOKEN = "mv-key-registrar-token-0123456789abcdefg";
+/** Each actor's key, registered in the public-key registry (AAB-PLATFORM-09) before the tests run. */
+const keys = {} as Record<Who, TestKey>;
+/** Signs a statement as version 2 (AAB-PLATFORM-04, third amendment): names w's key on it, then signs it with that key. */
+const signAs = (w: Who, s: object) => {
+  Object.assign(s, { statementVersion: "2", signingKeyId: keys[w].keyId });
+  return signWith(keys[w].privateKey, s);
+};
 
 let harness: MigratedDatabase;
 let api: Database;
@@ -54,11 +62,17 @@ before(async () => {
   const role = await harness.createLoginRole("NOSUPERUSER NOCREATEDB NOCREATEROLE NOBYPASSRLS IN ROLE scs_api");
   api = await connectDatabase(harness.configFor(role.user, role.password));
   const authenticator = StaticTokenAuthenticator.fromConfig({
-    actors: WHO.map((w) => ({ tokenSha256: createHash("sha256").update(token(w)).digest("hex"), actor: actors[w], accountableName: `Named ${w}`, signingPublicKey: keys[w].publicKey.export({ format: "der", type: "spki" }).toString("base64") })),
+    actors: [
+      keyRegistrarEntry(createHash("sha256").update(REGISTRAR_TOKEN).digest("hex")),
+      ...WHO.map((w) => ({ tokenSha256: createHash("sha256").update(token(w)).digest("hex"), actor: actors[w], accountableName: `Named ${w}` })),
+    ],
   }, { issuerCountry: "TH" });
-  server = createApiServer({ routes: capabilityRoutes(authenticator), authenticator, db: api });
+  server = createApiServer({ routes: [...capabilityRoutes(authenticator), ...keyRegistryRoutes(authenticator)], authenticator, db: api });
   await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
   base = `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
+  const registry = { base, token: () => REGISTRAR_TOKEN, issuer: TH };
+  const registrar = await bootstrapCountryRegistry(registry);
+  for (const w of WHO) keys[w] = await registerTestKey(registry, registrar, actors[w].actorId);
   const register = async (type: "NATURAL_PERSON" | "COOPERATIVE") => {
     const r = await call("/scs/v1/parties", partyRequest(type), { who: "officer" });
     assert.equal(r.status, 201, r.text);

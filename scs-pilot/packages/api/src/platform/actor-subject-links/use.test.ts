@@ -5,7 +5,8 @@ import { generateKeyPairSync, randomUUID, sign, type KeyObject } from "node:cryp
 import { canonicalJson } from "../../foundation/canonical.js";
 import type { ActorSubjectLink, ActorSubjectLinkStatement, ActorSubjectLinkStatusRecord } from "../../types/platform.js";
 import type { ActorReferenceV2 } from "../../types/shared.js";
-import { linkDigestOf, type SubjectResolution } from "./links.js";
+import type { VerificationResult } from "../key-registry/registry.js";
+import { linkDigestOf, statusRecordDigestOf, type SubjectResolution } from "./links.js";
 import { checkLinkUse, type LinkUseInput } from "./use.js";
 
 const TH = { issuerType: "COUNTRY_TENANCY" as const, countryCode: "TH" };
@@ -29,17 +30,37 @@ function link(relation: "IS_SUBJECT" | "ACTS_FOR_SUBJECT", o: { key?: KeyObject;
   };
   return { ...unsigned, linkDigest: linkDigestOf(unsigned) };
 }
-const suspended = (l: ActorSubjectLink) => ({ link: l, statusRecords: [{ recordedAt: "2026-09-10T00:00:00.000Z", statusStatement: { action: "SUSPEND" } as ActorSubjectLinkStatusRecord["statusStatement"] }] });
-const revoked = (l: ActorSubjectLink) => ({ link: l, statusRecords: [{ recordedAt: "2026-09-10T00:00:00.000Z", statusStatement: { action: "REVOKE" } as ActorSubjectLinkStatusRecord["statusStatement"] }] });
+/** A status record against `l`, intact as recorded: its statement binds the link, its digest matches. */
+function statusRecord(l: ActorSubjectLink, action: "SUSPEND" | "REINSTATE" | "REVOKE", recordedAt: string): ActorSubjectLinkStatusRecord {
+  const statusStatement = { statementType: "ACTOR_SUBJECT_LINK_STATUS" as const, linkId: l.linkId, linkDigest: l.linkDigest, action, reason: "Review.", writer: { issuer: TH, actorId: "link-officer" } };
+  const unsigned: Omit<ActorSubjectLinkStatusRecord, "recordDigest"> = {
+    statusRecordId: randomUUID(), linkId: l.linkId, schemaVersion: "1", statusStatement, statementSignature: "A".repeat(86) + "==",
+    writerCapacity: "CREATING_ROLE", recordedAt, writtenBy: creatorRef,
+  };
+  return { ...unsigned, recordDigest: statusRecordDigestOf(unsigned) };
+}
+const suspended = (l: ActorSubjectLink) => ({ link: l, statusRecords: [statusRecord(l, "SUSPEND", "2026-09-10T00:00:00.000Z")] });
+const revoked = (l: ActorSubjectLink) => ({ link: l, statusRecords: [statusRecord(l, "REVOKE", "2026-09-10T00:00:00.000Z")] });
+const reinstated = (l: ActorSubjectLink) => ({ link: l, statusRecords: [statusRecord(l, "SUSPEND", "2026-09-10T00:00:00.000Z"), statusRecord(l, "REINSTATE", "2026-09-11T00:00:00.000Z")] });
 const plain = (l: ActorSubjectLink) => ({ link: l, statusRecords: [] });
 
-const check = (links: LinkUseInput["links"], o: { relation?: "IS_SUBJECT" | "ACTS_FOR_SUBJECT"; resolution?: SubjectResolution } = {}) =>
-  checkLinkUse({
+/**
+ * The signatures' verification results, as the registry would give them
+ * (platform/key-registry/signed-records.ts): the cryptography is tested there.
+ */
+interface Results { link?: VerificationResult; statusRecords?: VerificationResult[] }
+const check = (links: LinkUseInput["links"], o: { relation?: "IS_SUBJECT" | "ACTS_FOR_SUBJECT"; resolution?: SubjectResolution } & Results = {}) => {
+  let n = 0;
+  return checkLinkUse({
     actor: ACTOR, subject: SUBJECT, relation: o.relation ?? "ACTS_FOR_SUBJECT", links,
-    signingKeyOf: () => creator.publicKey,
+    signatures: {
+      link: async () => ({ result: o.link ?? "VERIFIED" }),
+      statusRecord: async () => ({ result: o.statusRecords?.[n++] ?? "VERIFIED" }),
+    },
     resolver: { resolve: async () => o.resolution ?? "CURRENT" },
     at: NOW,
   });
+};
 const code = async (p: ReturnType<typeof check>) => { const r = await p; return r.ok ? "OK" : r.code; };
 
 test("one ACTIVE, intact link with the act's relation, to a current subject → usable", async () => {
@@ -72,21 +93,39 @@ test("check 3: a current link of the other relation only → LINK_RELATION_NOT_P
   assert.equal(await code(check([plain(link("ACTS_FOR_SUBJECT"))], { relation: "IS_SUBJECT" })), "LINK_RELATION_NOT_PERMITTED");
 });
 
-test("check 2: SUSPENDED → LINK_NOT_ACTIVE; a signature by another key → LINK_SIGNATURE_INVALID", async () => {
+test("check 2: SUSPENDED → LINK_NOT_ACTIVE; a link signature that cannot be relied on → LINK_SIGNATURE_INVALID, naming the result", async () => {
   const r = await check([suspended(link("ACTS_FOR_SUBJECT"))]);
   assert.equal(r.ok ? "OK" : r.code, "LINK_NOT_ACTIVE");
   assert.match(!r.ok ? r.reasons[0]! : "", /is SUSPENDED/);
-  const forged = link("ACTS_FOR_SUBJECT", { key: generateKeyPairSync("ed25519").privateKey });
-  const f = await check([plain(forged)]);
-  assert.equal(f.ok ? "OK" : f.code, "LINK_SIGNATURE_INVALID");
-  assert.match(!f.ok ? f.reasons[0]! : "", /signature does not verify/);
+  for (const result of ["NOT_VERIFIABLE", "REPUDIATED"] as const) {
+    const f = await check([plain(link("ACTS_FOR_SUBJECT"))], { link: result });
+    assert.equal(f.ok ? "OK" : f.code, "LINK_SIGNATURE_INVALID", result);
+    assert.match(!f.ok ? f.reasons[0]! : "", new RegExp(`its signature is ${result}`));
+  }
+  assert.equal(await code(check([plain(link("ACTS_FOR_SUBJECT"))], { link: "AFFIRMED_AFTER_COMPROMISE" })), "OK", "affirmed after a compromise may be relied on");
   const altered = link("ACTS_FOR_SUBJECT");
   assert.equal(await code(check([plain({ ...altered, validUntil: "2027-06-01T00:00:00.000Z" })])), "LINK_SIGNATURE_INVALID", "record differs from its statement");
-  const noKey = await checkLinkUse({
-    actor: ACTOR, subject: SUBJECT, relation: "ACTS_FOR_SUBJECT", links: [plain(link("ACTS_FOR_SUBJECT"))], signingKeyOf: () => null,
-    resolver: { resolve: async () => "CURRENT" }, at: NOW,
-  });
-  assert.equal(noKey.ok ? "OK" : noKey.code, "LINK_SIGNATURE_INVALID", "no registered key");
+});
+
+test("check 2: a signature under compromise review, and nothing else wrong → LINK_SIGNATURE_UNDER_REVIEW", async () => {
+  const r = await check([plain(link("ACTS_FOR_SUBJECT"))], { link: "UNDER_COMPROMISE_REVIEW" });
+  assert.equal(r.ok ? "OK" : r.code, "LINK_SIGNATURE_UNDER_REVIEW");
+  assert.match(!r.ok ? r.reasons[0]! : "", /until a person affirms it/);
+  // a status record under review blocks the link too
+  assert.equal(await code(check([reinstated(link("ACTS_FOR_SUBJECT"))], { statusRecords: ["VERIFIED", "UNDER_COMPROMISE_REVIEW"] })), "LINK_SIGNATURE_UNDER_REVIEW");
+  // under review beside something that cannot be relied on at all: INVALID
+  assert.equal(await code(check([reinstated(link("ACTS_FOR_SUBJECT"))], { link: "UNDER_COMPROMISE_REVIEW", statusRecords: ["NOT_VERIFIABLE", "VERIFIED"] })), "LINK_SIGNATURE_INVALID");
+});
+
+test("check 2: every status record is verified at use, to the same standard as the link", async () => {
+  assert.equal(await code(check([reinstated(link("ACTS_FOR_SUBJECT"))])), "OK");
+  const r = await check([reinstated(link("ACTS_FOR_SUBJECT"))], { statusRecords: ["VERIFIED", "NOT_VERIFIABLE"] });
+  assert.equal(r.ok ? "OK" : r.code, "LINK_SIGNATURE_INVALID", "a REINSTATE whose signature cannot be verified cannot make the link ACTIVE");
+  assert.match(!r.ok ? r.reasons[0]! : "", /status record/);
+  const l = link("ACTS_FOR_SUBJECT");
+  const h = reinstated(l);
+  const bound = { ...h, statusRecords: [h.statusRecords[0]!, { ...h.statusRecords[1]!, reason: "x" } as never] };
+  assert.equal(await code(check([bound])), "LINK_SIGNATURE_INVALID", "a status record whose digest does not match");
 });
 
 test("check 4: the subject is current, as its resolver answers → otherwise LINK_SUBJECT_NOT_CURRENT", async () => {

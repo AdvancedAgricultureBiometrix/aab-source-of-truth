@@ -33,8 +33,9 @@
 // rest of the transaction, so a suspension, supersession or new assessment
 // cannot land between the check and the act.
 
+import { verifyLinkSignature, verifyStatusSignature } from "../../platform/key-registry/signed-records.js";
+import { keyRegistryReader } from "../../platform/key-registry/store.js";
 import { holdsRole, holdsSubjectGrant, isVersion2, type SubjectRef } from "../../foundation/actor.js";
-import type { SigningKeyDirectory } from "../../foundation/auth.js";
 import type { Tx } from "../../foundation/db.js";
 import { withDatabaseErrors } from "../../foundation/db-errors.js";
 import { ScsFailure, type CapabilityId } from "../../foundation/errors.js";
@@ -161,7 +162,6 @@ async function asCapability<T>(capabilityId: CapabilityId, fn: () => Promise<T>)
 export async function checkRepresentation(
   capabilityId: CapabilityId,
   tx: Tx,
-  keys: SigningKeyDirectory,
   actor: ActorReference,
   actingUnder: ScsActingUnder,
   act: RepresentedAct,
@@ -187,13 +187,17 @@ export async function checkRepresentation(
     await lockMandateVerification(tx, mandateId);
     const now = await clockNow(tx);
 
-    // 2. The link
+    // 2. The link, its signatures verified as at acceptance (AAB-PLATFORM-09)
+    const registry = keyRegistryReader(tx);
     const use = await checkLinkUse({
       actor: linkActor,
       subject,
       relation: "ACTS_FOR_SUBJECT",
       links: await findLinksForActorParty(tx, linkActor, repParty),
-      signingKeyOf: (createdBy) => keys.signingKeyOf(createdBy),
+      signatures: {
+        link: (l) => verifyLinkSignature(registry, l),
+        statusRecord: (r) => verifyStatusSignature(registry, r),
+      },
       resolver: new ScsPartyResolver(tx),
       at: now,
     });
