@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:schema:platform:key-params:1",
+  "title": "KeyPathParams",
+  "description": "Path parameters of /aab/v1/signing-keys/:keyId.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "keyId"
+  ],
+  "properties": {
+    "keyId": {
+      "type": "string",
+      "format": "uuid"
+    }
+  }
+}

@@ -133,8 +133,8 @@ No key can be registered in any registry before its first key exists.
 1. **Contract gaps (step 0):** amendments to AAB-PLATFORM-09 and AAB-PLATFORM-04; AAB-PLATFORM-03 and 08 cite AAB-PLATFORM-09.
 2. **Migrations 023 and 024 (step 1),** with the type generator and integrity-counter changes.
 3. **Foundation (step 2):** the registry library, historical verification, the capability id.
-4. **Registry endpoints 3.1 to 3.5:** bootstrap, challenges, registration, events, reads.
-5. **Compromise and cross-issuer evidence: endpoints 3.6 to 3.8,** and evidence verification.
+4. **Registry endpoints 3.1 to 3.5:** bootstrap, challenges, registration, events, reads. **Also, moved here while building it:** the control plane's issuer (`PLATFORM_CONTROL_PLANE` actors, and `AAB_REGISTRY_INSTANCE=CONTROL_PLANE`, serving the registry's routes only), without which the Platform Owner's ceremony has no actor; and checking the Platform Owner's attested evidence, without which a country's ceremony cannot verify its co-signature.
+5. **Compromise and cross-issuer evidence: endpoints 3.6 to 3.8,** and the cross-issuer tests (the control plane's registry in its own database).
 6. **The switch-over (step 4):** statements version 2, checks at use, keys out of the actors file, the integrity verifier, the changed rotation test. **The breaking change for signing clients lands here.**
 7. **The proof (step 5):** the section 11 tests, the extended backup proof, the proof record, documentation, and the removal of `TODO(signing-key-history)`.
 

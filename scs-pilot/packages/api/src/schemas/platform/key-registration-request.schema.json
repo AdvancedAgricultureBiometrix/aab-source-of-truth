@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:schema:platform:key-registration-request:1",
+  "title": "KeyRegistrationRequest",
+  "description": "POST /aab/v1/signing-keys: register a key (AAB-PLATFORM-09 section 3). The holder's proof of possession, and the registration authority's signed registration.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "publicKey",
+    "possessionStatement",
+    "possessionSignature",
+    "registrationStatement",
+    "registrationSignature"
+  ],
+  "properties": {
+    "publicKey": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9+/]{40,120}={0,2}$",
+      "description": "An Ed25519 public key, SPKI DER, standard base64."
+    },
+    "possessionStatement": {
+      "$ref": "urn:aab:schema:platform:key-possession-statement:1"
+    },
+    "possessionSignature": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9+/]{86}==$",
+      "description": "Ed25519 signature over the statement's canonical JSON: 64 bytes, standard base64, made outside the server."
+    },
+    "registrationStatement": {
+      "$ref": "urn:aab:schema:platform:key-registration-statement:1"
+    },
+    "registrationSignature": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9+/]{86}==$",
+      "description": "Ed25519 signature over the statement's canonical JSON: 64 bytes, standard base64, made outside the server."
+    }
+  }
+}

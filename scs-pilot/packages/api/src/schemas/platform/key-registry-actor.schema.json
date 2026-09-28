@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:schema:platform:key-registry-actor:1",
+  "title": "KeyRegistryActor",
+  "description": "AAB-PLATFORM-09: an actor as a signed statement names it, the pair (issuer, actorId) of AAB-PLATFORM-03.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "issuer",
+    "actorId"
+  ],
+  "properties": {
+    "issuer": {
+      "$ref": "urn:aab:schema:platform:key-registry-issuer:1"
+    },
+    "actorId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._:@-]{1,128}$"
+    }
+  }
+}

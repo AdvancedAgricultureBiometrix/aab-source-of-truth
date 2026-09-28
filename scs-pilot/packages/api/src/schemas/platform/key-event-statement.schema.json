@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:schema:platform:key-event-statement:1",
+  "title": "KeyEventStatement",
+  "description": "AAB-PLATFORM-09 section 4: a suspension, reinstatement or retirement, signed by the recorder with their own registered, active key.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "statementType",
+    "keyId",
+    "eventType",
+    "reason",
+    "signingKeyId",
+    "recordedBy"
+  ],
+  "properties": {
+    "statementType": {
+      "type": "string",
+      "const": "SIGNING_KEY_EVENT"
+    },
+    "keyId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "description": "Lowercase UUID."
+    },
+    "eventType": {
+      "type": "string",
+      "enum": [
+        "SUSPENDED",
+        "REINSTATED",
+        "RETIRED"
+      ]
+    },
+    "reason": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000,
+      "pattern": "\\S"
+    },
+    "signingKeyId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "description": "Lowercase UUID."
+    },
+    "recordedBy": {
+      "$ref": "urn:aab:schema:platform:key-registry-actor:1"
+    }
+  }
+}

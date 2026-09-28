@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:schema:platform:key-bootstrap-decision:1",
+  "title": "KeyBootstrapDecision",
+  "description": "AAB-PLATFORM-09 section 3a: a registry's first key registered, in a recorded ceremony. Every check passed; a failed check refuses and writes nothing.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decisionId",
+    "decision",
+    "ceremonyId",
+    "keyId",
+    "registry",
+    "ceremonyDigest",
+    "registrationDigest",
+    "publicKeyDigest",
+    "activeFrom",
+    "decisionReasons",
+    "decidedBy",
+    "decidedAt"
+  ],
+  "properties": {
+    "decisionId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "decision": {
+      "type": "string",
+      "const": "BOOTSTRAPPED"
+    },
+    "ceremonyId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "keyId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "registry": {
+      "$ref": "urn:aab:schema:platform:key-registry-issuer:1"
+    },
+    "ceremonyDigest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "registrationDigest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "publicKeyDigest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "activeFrom": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "pinnedAttestationKeyId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._:-]{1,128}$",
+      "description": "A key identifier in its issuer's registry."
+    },
+    "cosignatureAcceptance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "acceptedAt",
+        "signingKeyId",
+        "publicKeyDigest",
+        "registrationDigest",
+        "evidenceDigest"
+      ],
+      "properties": {
+        "acceptedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "signingKeyId": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{1,128}$",
+          "description": "A key identifier in its issuer's registry."
+        },
+        "publicKeyDigest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "registrationDigest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "evidenceDigest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        }
+      }
+    },
+    "decisionReasons": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "decidedBy": {
+      "$ref": "urn:aab:scs:schema:shared:actor-reference:1"
+    },
+    "decidedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

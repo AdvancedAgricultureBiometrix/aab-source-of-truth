@@ -49,6 +49,8 @@ export interface ReceiptInput<C extends GovernedCapabilityId, D extends ReceiptD
   readonly idempotencyKey: string | null;
   /** The capability's receipt schema; the whole receipt document is validated against it. */
   readonly schema: JsonSchema;
+  /** The receipt's id, when the record decided on must name its receipt (AAB-PLATFORM-09); generated otherwise. */
+  readonly receiptId?: string;
 }
 
 export interface WrittenReceipt<R> {
@@ -69,7 +71,7 @@ export async function writeReceipt<R, C extends GovernedCapabilityId, D extends 
   input: ReceiptInput<C, D>,
 ): Promise<WrittenReceipt<R>> {
   const document = {
-    receiptId: randomUUID(),
+    receiptId: input.receiptId ?? randomUUID(),
     receiptVersion: "1",
     capabilityId: input.capabilityId,
     decisionType: input.decisionType,

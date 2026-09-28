@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:schema:platform:key-bootstrap-ceremony-statement:1",
+  "title": "KeyBootstrapCeremonyStatement",
+  "description": "AAB-PLATFORM-09 section 3a and its amendments: the record of how a registry's first key is registered, signed by its holder with that key. The Platform Owner's ceremony declares the control plane's attestation key; a country's pins it and names the Platform Owner, who co-signs.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "statementType",
+    "registry",
+    "holder",
+    "keyId",
+    "challengeId",
+    "publicKeyDigest",
+    "record"
+  ],
+  "properties": {
+    "statementType": {
+      "type": "string",
+      "const": "KEY_BOOTSTRAP_CEREMONY"
+    },
+    "registry": {
+      "$ref": "urn:aab:schema:platform:key-registry-issuer:1"
+    },
+    "holder": {
+      "$ref": "urn:aab:schema:platform:key-registry-actor:1"
+    },
+    "keyId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "description": "Lowercase UUID."
+    },
+    "challengeId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "description": "Lowercase UUID."
+    },
+    "publicKeyDigest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "present",
+        "procedure",
+        "performedAt"
+      ],
+      "properties": {
+        "present": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000,
+            "pattern": "\\S"
+          }
+        },
+        "procedure": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000,
+          "pattern": "\\S"
+        },
+        "performedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "declaredAttestationKey": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attestationKeyId",
+        "publicKey"
+      ],
+      "properties": {
+        "attestationKeyId": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{1,128}$",
+          "description": "A key identifier in its issuer's registry."
+        },
+        "publicKey": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9+/]{40,120}={0,2}$",
+          "description": "An Ed25519 public key, SPKI DER, standard base64."
+        }
+      }
+    },
+    "pinnedAttestationKey": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attestationKeyId",
+        "publicKey"
+      ],
+      "properties": {
+        "attestationKeyId": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{1,128}$",
+          "description": "A key identifier in its issuer's registry."
+        },
+        "publicKey": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9+/]{40,120}={0,2}$",
+          "description": "An Ed25519 public key, SPKI DER, standard base64."
+        }
+      }
+    },
+    "cosigner": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "actor",
+        "accountableName",
+        "signingKeyId"
+      ],
+      "properties": {
+        "actor": {
+          "$ref": "urn:aab:schema:platform:key-registry-actor:1"
+        },
+        "accountableName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256,
+          "pattern": "\\S",
+          "description": "The Platform Owner's accountable name, as they sign it in this statement: the only way it enters the country's record."
+        },
+        "signingKeyId": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{1,128}$",
+          "description": "A key identifier in its issuer's registry."
+        }
+      }
+    }
+  }
+}

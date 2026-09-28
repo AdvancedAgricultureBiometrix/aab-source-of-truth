@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:schema:platform:key-possession-statement:1",
+  "title": "KeyPossessionStatement",
+  "description": "AAB-PLATFORM-09 section 3: the proof of possession. Signed with the private key being registered, over the registry's single-use challenge.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "statementType",
+    "keyId",
+    "actorId",
+    "issuer",
+    "publicKeyDigest",
+    "challengeId",
+    "nonce"
+  ],
+  "properties": {
+    "statementType": {
+      "type": "string",
+      "const": "SIGNING_KEY_POSSESSION"
+    },
+    "keyId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "description": "Lowercase UUID."
+    },
+    "actorId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._:@-]{1,128}$"
+    },
+    "issuer": {
+      "$ref": "urn:aab:schema:platform:key-registry-issuer:1"
+    },
+    "publicKeyDigest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "challengeId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "description": "Lowercase UUID."
+    },
+    "nonce": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9+/]{43}=$"
+    }
+  }
+}

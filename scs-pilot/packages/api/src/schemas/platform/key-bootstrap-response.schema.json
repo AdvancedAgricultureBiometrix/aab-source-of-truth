@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:schema:platform:key-bootstrap-response:1",
+  "title": "KeyBootstrapResponse",
+  "description": "Body of a successful POST /aab/v1/key-bootstrap-ceremonies (201): the decision, its immutable receipt, and the receipt's SHA-256 over canonical JSON.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decision",
+    "receipt",
+    "receiptDigest"
+  ],
+  "properties": {
+    "decision": {
+      "$ref": "urn:aab:schema:platform:key-bootstrap-decision:1"
+    },
+    "receipt": {
+      "$ref": "urn:aab:schema:platform:key-bootstrap-receipt:1"
+    },
+    "receiptDigest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

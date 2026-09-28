@@ -32,6 +32,9 @@
 // How the version 2 reference is built:
 //   * issuer: COUNTRY_TENANCY, with the country from configuration
 //     (SCS_ACTOR_ISSUER_COUNTRY). The pilot has one issuer per deployment.
+//     The control plane's registry instance (AAB-PLATFORM-09, second
+//     amendment of 2026-09-28) issues PLATFORM_CONTROL_PLANE instead, with the
+//     deployment scope AAB-CONTROL-PLANE.
 //   * authorityBasis: each of `roles` with scopeType DEPLOYMENT and the
 //     deployment's scope id (deploymentScopeId), and each subject grant with
 //     scopeType SUBJECT. None has a grantId: the pilot has no grant records.
@@ -105,6 +108,10 @@ export async function authenticateRequest(headers: IncomingHttpHeaders, authenti
  * verified against. OIDC will implement this from the issuer's records.
  */
 export interface ActorDirectory {
+  /** The issuer every actor of this deployment is issued by. */
+  readonly issuer: ActorReferenceV2["issuer"];
+  /** An actor of this deployment by actorId, as issued; null if there is none. For naming a key holder, who is not the requester. */
+  actorOf(actorId: string): ActorReferenceV2 | null;
   /** The actor's accountable name, or null if none is recorded. */
   accountableNameOf(actor: ActorReference): string | null;
   /** The actor's registered Ed25519 public key, or null if none is registered. */
@@ -120,9 +127,14 @@ export type SigningKeyDirectory = Pick<ActorDirectory, "signingKeyOf">;
 // ── Pilot: static tokens ─────────────────────────────────────────────────────
 
 export interface StaticActorOptions {
-  /** The pilot's issuer country (SCS_ACTOR_ISSUER_COUNTRY), ISO 3166-1 alpha-2. */
-  readonly issuerCountry: string;
+  /** A country deployment's issuer country (SCS_ACTOR_ISSUER_COUNTRY), ISO 3166-1 alpha-2. */
+  readonly issuerCountry?: string;
+  /** The control plane's registry instance: actors are issued by PLATFORM_CONTROL_PLANE. Exactly one of the two. */
+  readonly controlPlane?: true;
 }
+
+/** The scopeId of the control plane's DEPLOYMENT grants. */
+export const CONTROL_PLANE_SCOPE_ID = "AAB-CONTROL-PLANE";
 
 /**
  * The scopeId of the pilot's DEPLOYMENT grants. The pilot has one deployment
@@ -153,18 +165,28 @@ function deepFreeze<T>(value: T): T {
 
 export class StaticTokenAuthenticator implements Authenticator, ActorDirectory {
   readonly #entries: readonly StaticActorEntry[];
+  readonly issuer: ActorReferenceV2["issuer"];
 
-  private constructor(entries: readonly StaticActorEntry[]) {
+  private constructor(entries: readonly StaticActorEntry[], issuer: ActorReferenceV2["issuer"]) {
     this.#entries = entries;
+    this.issuer = issuer;
   }
 
   /** Validate and load actors. Throws, listing every problem, if anything is wrong. */
   static fromConfig(config: unknown, options: StaticActorOptions): StaticTokenAuthenticator {
-    if (typeof options?.issuerCountry !== "string" || !/^[A-Z]{2}$/.test(options.issuerCountry)) {
-      throw new Error("The actor issuer country must be an ISO 3166-1 alpha-2 code, e.g. TH");
+    let issuer: ActorReferenceV2["issuer"];
+    let deployment: string;
+    if (options?.controlPlane === true) {
+      if (options.issuerCountry !== undefined) throw new Error("A deployment has one issuer: a country, or the control plane, not both");
+      issuer = { issuerType: "PLATFORM_CONTROL_PLANE" };
+      deployment = CONTROL_PLANE_SCOPE_ID;
+    } else {
+      if (typeof options?.issuerCountry !== "string" || !/^[A-Z]{2}$/.test(options.issuerCountry)) {
+        throw new Error("The actor issuer country must be an ISO 3166-1 alpha-2 code, e.g. TH");
+      }
+      issuer = { issuerType: "COUNTRY_TENANCY", countryCode: options.issuerCountry };
+      deployment = deploymentScopeId(options.issuerCountry);
     }
-    const issuer = { issuerType: "COUNTRY_TENANCY" as const, countryCode: options.issuerCountry };
-    const deployment = deploymentScopeId(options.issuerCountry);
 
     const problems: string[] = [];
     const list = (config as { actors?: unknown } | null)?.actors;
@@ -278,7 +300,7 @@ export class StaticTokenAuthenticator implements Authenticator, ActorDirectory {
 
     if (entries.length === 0 && problems.length === 0) problems.push("no actors configured");
     if (problems.length > 0) throw new Error(`Invalid static actors config: ${problems.join("; ")}`);
-    return new StaticTokenAuthenticator(Object.freeze(entries));
+    return new StaticTokenAuthenticator(Object.freeze(entries), deepFreeze({ ...issuer }));
   }
 
   static async fromFile(path: string, options: StaticActorOptions): Promise<StaticTokenAuthenticator> {
@@ -300,6 +322,10 @@ export class StaticTokenAuthenticator implements Authenticator, ActorDirectory {
       if (timingSafeEqual(presented, entry.tokenSha256) && found === null) found = entry.actor;
     }
     return found;
+  }
+
+  actorOf(actorId: string): ActorReferenceV2 | null {
+    return this.#entries.find((e) => e.actor.actorId === actorId)?.actor ?? null;
   }
 
   accountableNameOf(actor: ActorReference): string | null {

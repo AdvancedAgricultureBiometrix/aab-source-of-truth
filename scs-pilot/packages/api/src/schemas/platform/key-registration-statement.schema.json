@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:schema:platform:key-registration-statement:1",
+  "title": "KeyRegistrationStatement",
+  "description": "AAB-PLATFORM-09 section 3: what the registration authority signs. For a registry's first key (section 3a) the holder signs it with the key being registered.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "statementType",
+    "keyId",
+    "actorId",
+    "issuer",
+    "publicKeyDigest",
+    "algorithm",
+    "challengeId",
+    "signingKeyId",
+    "registrationAuthority"
+  ],
+  "properties": {
+    "statementType": {
+      "type": "string",
+      "const": "SIGNING_KEY_REGISTRATION"
+    },
+    "keyId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "description": "Lowercase UUID."
+    },
+    "actorId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._:@-]{1,128}$"
+    },
+    "issuer": {
+      "$ref": "urn:aab:schema:platform:key-registry-issuer:1"
+    },
+    "publicKeyDigest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "algorithm": {
+      "type": "string",
+      "const": "Ed25519"
+    },
+    "challengeId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "description": "Lowercase UUID."
+    },
+    "signingKeyId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "description": "Lowercase UUID."
+    },
+    "replacesKeyId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "description": "Lowercase UUID."
+    },
+    "registrationAuthority": {
+      "$ref": "urn:aab:schema:platform:key-registry-actor:1"
+    }
+  }
+}

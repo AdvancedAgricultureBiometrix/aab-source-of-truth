@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:schema:platform:key-verification-evidence:1",
+  "title": "KeyVerificationEvidence",
+  "description": "AAB-PLATFORM-09 section 9: another issuer's key, attested by its registry, carried with the record that needs it, so the record verifies with no call across the boundary. Attested at or before acceptance, at most 60 minutes before it.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "issuer",
+    "keyId",
+    "registration",
+    "eventsAtAcceptance",
+    "compromisedAtAcceptance",
+    "attestedAt",
+    "attestation",
+    "attestationKeyId"
+  ],
+  "properties": {
+    "issuer": {
+      "$ref": "urn:aab:schema:platform:key-registry-issuer:1"
+    },
+    "keyId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._:-]{1,128}$",
+      "description": "A key identifier in its issuer's registry."
+    },
+    "registration": {
+      "$ref": "urn:aab:schema:platform:key-registration-view:1"
+    },
+    "eventsAtAcceptance": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "eventType",
+          "effectiveAt",
+          "recordedAt"
+        ],
+        "properties": {
+          "eventType": {
+            "type": "string",
+            "enum": [
+              "SUSPENDED",
+              "REINSTATED",
+              "RETIRED"
+            ]
+          },
+          "effectiveAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "compromisedAtAcceptance": {
+      "type": "boolean",
+      "const": false
+    },
+    "attestedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "attestation": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9+/]{86}==$",
+      "description": "Ed25519 signature over the statement's canonical JSON: 64 bytes, standard base64, made outside the server."
+    },
+    "attestationKeyId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._:-]{1,128}$",
+      "description": "A key identifier in its issuer's registry."
+    }
+  }
+}

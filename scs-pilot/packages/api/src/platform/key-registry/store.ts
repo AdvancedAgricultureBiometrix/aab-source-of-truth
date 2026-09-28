@@ -20,7 +20,8 @@ import type {
   RegistryIssuer,
 } from "./registry.js";
 
-export const CAPABILITY_ID = "AAB-PLATFORM-09" as const;
+import { CAPABILITY_ID } from "./errors.js";
+
 const db = <T>(fn: () => Promise<T>) => withDatabaseErrors(CAPABILITY_ID, fn);
 const iso = (d: Date): string => d.toISOString();
 

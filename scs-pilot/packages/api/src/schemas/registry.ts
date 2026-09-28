@@ -103,6 +103,34 @@ import cap02MandateVerificationRequest from "./cap-02/mandate-verification-reque
 import cap02MandateVerificationDecision from "./cap-02/mandate-verification-decision.schema.json" with { type: "json" };
 import cap02MandateVerificationReceipt from "./cap-02/mandate-verification-receipt.schema.json" with { type: "json" };
 import cap02MandateVerificationResponse from "./cap-02/mandate-verification-response.schema.json" with { type: "json" };
+// AAB-PLATFORM-09 public-key registry (urn:aab:schema:)
+import platformKeyRegistryIssuer from "./platform/key-registry-issuer.schema.json" with { type: "json" };
+import platformKeyRegistryActor from "./platform/key-registry-actor.schema.json" with { type: "json" };
+import platformKeyPossessionStatement from "./platform/key-possession-statement.schema.json" with { type: "json" };
+import platformKeyRegistrationStatement from "./platform/key-registration-statement.schema.json" with { type: "json" };
+import platformKeyEventStatement from "./platform/key-event-statement.schema.json" with { type: "json" };
+import platformKeyBootstrapCeremonyStatement from "./platform/key-bootstrap-ceremony-statement.schema.json" with { type: "json" };
+import platformKeyRegistrationView from "./platform/key-registration-view.schema.json" with { type: "json" };
+import platformKeyVerificationEvidence from "./platform/key-verification-evidence.schema.json" with { type: "json" };
+import platformKeyBootstrapRequest from "./platform/key-bootstrap-request.schema.json" with { type: "json" };
+import platformKeyChallengeRequest from "./platform/key-challenge-request.schema.json" with { type: "json" };
+import platformKeyRegistrationRequest from "./platform/key-registration-request.schema.json" with { type: "json" };
+import platformKeyEventRequest from "./platform/key-event-request.schema.json" with { type: "json" };
+import platformKeyParams from "./platform/key-params.schema.json" with { type: "json" };
+import platformKeySignatureAcceptance from "./platform/key-signature-acceptance.schema.json" with { type: "json" };
+import platformKeyBootstrapDecision from "./platform/key-bootstrap-decision.schema.json" with { type: "json" };
+import platformKeyChallengeDecision from "./platform/key-challenge-decision.schema.json" with { type: "json" };
+import platformKeyRegistrationDecision from "./platform/key-registration-decision.schema.json" with { type: "json" };
+import platformKeyEventDecision from "./platform/key-event-decision.schema.json" with { type: "json" };
+import platformKeyBootstrapReceipt from "./platform/key-bootstrap-receipt.schema.json" with { type: "json" };
+import platformKeyBootstrapResponse from "./platform/key-bootstrap-response.schema.json" with { type: "json" };
+import platformKeyChallengeReceipt from "./platform/key-challenge-receipt.schema.json" with { type: "json" };
+import platformKeyChallengeResponse from "./platform/key-challenge-response.schema.json" with { type: "json" };
+import platformKeyRegistrationReceipt from "./platform/key-registration-receipt.schema.json" with { type: "json" };
+import platformKeyRegistrationResponse from "./platform/key-registration-response.schema.json" with { type: "json" };
+import platformKeyEventReceipt from "./platform/key-event-receipt.schema.json" with { type: "json" };
+import platformKeyEventResponse from "./platform/key-event-response.schema.json" with { type: "json" };
+import platformKeyRead from "./platform/key-read.schema.json" with { type: "json" };
 
 import { registerSchema, type JsonSchema } from "../foundation/validation.js";
 
@@ -204,6 +232,33 @@ export const SCHEMAS = {
   cap02MandateVerificationDecision,
   cap02MandateVerificationReceipt,
   cap02MandateVerificationResponse,
+  platformKeyRegistryIssuer,
+  platformKeyRegistryActor,
+  platformKeyPossessionStatement,
+  platformKeyRegistrationStatement,
+  platformKeyEventStatement,
+  platformKeyBootstrapCeremonyStatement,
+  platformKeyRegistrationView,
+  platformKeyVerificationEvidence,
+  platformKeyBootstrapRequest,
+  platformKeyChallengeRequest,
+  platformKeyRegistrationRequest,
+  platformKeyEventRequest,
+  platformKeyParams,
+  platformKeySignatureAcceptance,
+  platformKeyBootstrapDecision,
+  platformKeyChallengeDecision,
+  platformKeyRegistrationDecision,
+  platformKeyEventDecision,
+  platformKeyBootstrapReceipt,
+  platformKeyBootstrapResponse,
+  platformKeyChallengeReceipt,
+  platformKeyChallengeResponse,
+  platformKeyRegistrationReceipt,
+  platformKeyRegistrationResponse,
+  platformKeyEventReceipt,
+  platformKeyEventResponse,
+  platformKeyRead,
 } as const satisfies Record<string, JsonSchema>;
 
 for (const schema of Object.values(SCHEMAS)) registerSchema(schema);
