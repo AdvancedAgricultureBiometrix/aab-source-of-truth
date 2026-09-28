@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:schema:platform:key-challenge-receipt:1",
+  "title": "KeyChallengeReceipt",
+  "description": "Immutable receipt for an AAB-PLATFORM-09 KEY_REGISTRATION_CHALLENGE decision, written in the same transaction as the decision (foundation/receipts.ts); the registry record names it by receiptId.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "receiptId",
+    "receiptVersion",
+    "capabilityId",
+    "decisionType",
+    "subjectId",
+    "correlationId",
+    "requestDigest",
+    "idempotencyKey",
+    "issuedAt",
+    "issuedFor",
+    "decision"
+  ],
+  "properties": {
+    "receiptId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "receiptVersion": {
+      "type": "string",
+      "const": "1"
+    },
+    "capabilityId": {
+      "type": "string",
+      "const": "AAB-PLATFORM-09"
+    },
+    "decisionType": {
+      "type": "string",
+      "const": "KEY_REGISTRATION_CHALLENGE"
+    },
+    "subjectId": {
+      "type": "string",
+      "format": "uuid",
+      "description": "challengeId of the issued challenge."
+    },
+    "correlationId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._:-]{8,128}$"
+    },
+    "requestDigest": {
+      "description": "SHA-256 (hex) of the canonical request: method, concrete path and body.",
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "idempotencyKey": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9._:-]{8,128}$"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "issuedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "issuedFor": {
+      "description": "The authenticated actor whose request produced this decision.",
+      "$ref": "urn:aab:scs:schema:shared:actor-reference:1"
+    },
+    "decision": {
+      "$ref": "urn:aab:schema:platform:key-challenge-decision:1"
+    }
+  }
+}

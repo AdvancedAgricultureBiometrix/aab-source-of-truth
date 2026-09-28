@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:schema:platform:key-challenge-request:1",
+  "title": "KeyChallengeRequest",
+  "description": "POST /aab/v1/key-registration-challenges: a single-use challenge, valid for 30 minutes, reserving the keyId for one actor's key (AAB-PLATFORM-09 section 3, second amendment).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "purpose",
+    "actorId"
+  ],
+  "properties": {
+    "purpose": {
+      "type": "string",
+      "enum": [
+        "BOOTSTRAP",
+        "REGISTRATION"
+      ]
+    },
+    "actorId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._:@-]{1,128}$"
+    }
+  }
+}

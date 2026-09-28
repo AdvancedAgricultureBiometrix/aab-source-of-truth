@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:schema:platform:key-event-request:1",
+  "title": "KeyEventRequest",
+  "description": "POST /aab/v1/signing-keys/:keyId/events: suspend, reinstate or retire a key (AAB-PLATFORM-09 section 4).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "eventStatement",
+    "statementSignature"
+  ],
+  "properties": {
+    "eventStatement": {
+      "$ref": "urn:aab:schema:platform:key-event-statement:1"
+    },
+    "statementSignature": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9+/]{86}==$",
+      "description": "Ed25519 signature over the statement's canonical JSON: 64 bytes, standard base64, made outside the server."
+    }
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:schema:platform:key-registry-issuer:1",
+  "title": "KeyRegistryIssuer",
+  "description": "AAB-PLATFORM-09: an identity issuer, whose registry holds its own actors' keys (AAB-PLATFORM-03 issuer).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "issuerType"
+  ],
+  "properties": {
+    "issuerType": {
+      "type": "string",
+      "enum": [
+        "PLATFORM_CONTROL_PLANE",
+        "COUNTRY_TENANCY"
+      ]
+    },
+    "countryCode": {
+      "description": "ISO 3166-1 alpha-2. Required for COUNTRY_TENANCY, absent for PLATFORM_CONTROL_PLANE.",
+      "type": "string",
+      "pattern": "^[A-Z]{2}$"
+    }
+  },
+  "if": {
+    "properties": {
+      "issuerType": {
+        "const": "COUNTRY_TENANCY"
+      }
+    }
+  },
+  "then": {
+    "properties": {
+      "countryCode": true
+    },
+    "required": [
+      "countryCode"
+    ]
+  },
+  "else": {
+    "properties": {
+      "countryCode": false
+    }
+  }
+}

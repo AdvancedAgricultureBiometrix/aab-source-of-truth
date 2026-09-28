@@ -38,6 +38,15 @@ Found while building the registry library (`scs-pilot/SIGNING-KEY-HISTORY-BUILD-
 - **When verification evidence is attested** (section 9). This contract said both that `attestedAt` is "at or after acceptedAt" and that the evidence is obtained at acceptance and stored with the record in the same transaction. Evidence arrives with the request, so it cannot be attested after the server accepts it. **Evidence must be attested at or before acceptance, and may be at most 60 minutes old at acceptance.** Section 9 is corrected to match.
 - **The failure interface** (section 13, new). The registry's refusals were described only in section 6's text ("nothing is written"). They are now defined explicitly: the capability identifier `AAB-PLATFORM-09`, the platform's fail-closed envelope, and the boundary flag `noWrites`.
 
+## Fourth amendment of 2026-09-28: the registry's first endpoints
+
+Settled while building the registry's first endpoints (`scs-pilot/SIGNING-KEY-HISTORY-BUILD-PLAN.md`, PR 4):
+- **The failure codes** of section 13, each with its status, are defined (section 13).
+- **The decision types** the registry's receipts carry: `KEY_BOOTSTRAP`, `KEY_REGISTRATION_CHALLENGE`, `KEY_REGISTRATION` and `KEY_EVENT`.
+- **The Platform Owner's accountable name in a country's ceremony record: a noted distinction.** A country's ceremony names the Platform Owner as co-signer, and the database records every co-signer as a named human. The Platform Owner's name enters the country's record **only in the ceremony statement they sign themselves**: it is not passed separately, and not sent by the platform. The signer chooses what their statement contains. **This is a new way a name enters a country's record,** and it is recorded here as such. It is consistent with the principle that no name crosses a boundary on its own: no name is looked up across the boundary, and no country name leaves it.
+- **Events take effect when they are recorded: a pilot position, not a permanent rule.** Section 4 allows an event to take effect later than it is recorded, and that rule stands. The pilot records every event effective at once, and does not use future-dated events.
+- **A key holder retires their own key by signing with it, so only while it is `ACTIVE`.** A holder whose key is suspended cannot use it to retire it, so a registration authority retires a suspended key (section 4).
+
 ## Why this contract is needed
 
 - **Today a signature is verified against the signer's current key** (`foundation/signatures.ts`, `TODO(signing-key-history)`). Rotating a key makes every record signed with the earlier key fail verification: every link and status record the signer made becomes unusable at once. AAB-PLATFORM-04 records this as blocking before any real data is admitted, and AAB-PLATFORM-08 makes it a precondition of any human decision going live with real data.
@@ -185,6 +194,7 @@ flowchart LR
 - **Suspension stops new signatures for a time,** while something is examined. It is not a finding of compromise, and does not affect records already accepted. Only a registration authority suspends or reinstates, and a reinstatement is never recorded by the key holder.
 - **A lost private key is retired,** not compromised, unless it may have been obtained by someone else.
 - **Who may record each event:** the key holder or a registration authority may retire a key; only a registration authority may suspend or reinstate one. Section 8 says who may declare a compromise.
+- **A holder retires their own key by signing with it,** so only while it is `ACTIVE`. A suspended key cannot sign, so a registration authority retires it (fourth amendment of 2026-09-28).
 
 ## 5. Signing
 
@@ -323,7 +333,31 @@ interface KeyRegistryFailure {
 ```
 
 - **`noWrites` is always `true`.** A refusal writes no registration, event, compromise record, notice, assessment, evidence or receipt.
-- **The failure codes** are defined, each with its status, when the registry's endpoints are built, by amendment to this section.
+- **The failure codes** (fourth amendment of 2026-09-28). The platform's own codes, such as `REQUEST_VALIDATION_FAILED` and `UNAUTHENTICATED`, apply as for every route.
+
+| Code | Status | When |
+|---|---|---|
+| `KEY_REGISTRAR_NOT_AUTHORISED` | 403 | The requester is not a named human holding the issuer's key-registration role |
+| `KEY_SELF_REGISTRATION` | 403 | A registration authority would register their own key, other than a registry's first |
+| `KEY_EVENT_NOT_AUTHORISED` | 403 | The recorder may not record this event: a key is retired by its holder or a registration authority, and suspended or reinstated only by a registration authority who is not its holder |
+| `KEY_READER_NOT_AUTHORISED` | 403 | The reader is not a registration authority, a security officer, or the key's holder; the refusal does not say whether the key exists |
+| `KEY_ISSUER_MISMATCH` | 422 | A statement names another issuer than this registry's |
+| `KEY_REGISTRY_ALREADY_STARTED` | 409 | A bootstrap into a registry that already has its first key |
+| `KEY_REGISTRY_NOT_STARTED` | 409 | A registration before the registry's first key |
+| `KEY_HOLDER_UNKNOWN` | 422 | The key's holder is not a named human of this deployment |
+| `KEY_CHALLENGE_INVALID` | 422 | The challenge was not issued, is of another kind, is for another actor or key, has been used, or has expired |
+| `KEY_PUBLIC_KEY_INVALID` | 400 | The public key is not Ed25519, or is not the key the statements name |
+| `KEY_ALREADY_REGISTERED` | 409 | The public key is already registered |
+| `KEY_POSSESSION_NOT_PROVEN` | 422 | The proof of possession does not sign the challenge's nonce, or does not verify with the key |
+| `KEY_SIGNATURE_INVALID` | 422 | A statement names another signer than the requester, or its signature does not verify with the signer's key, `ACTIVE` at acceptance |
+| `KEY_ACTIVE_KEY_EXISTS` | 409 | The actor has a key in use that the registration does not name as replaced |
+| `KEY_REPLACEMENT_INVALID` | 422 | The key named as replaced is not the actor's, or is no longer in use |
+| `KEY_NOT_FOUND` | 404 | No such key in this registry |
+| `KEY_STATE_NOT_PERMITTED` | 409 | The event is not possible from the key's current state |
+| `KEY_CEREMONY_INVALID` | 422 | A bootstrap ceremony is not what section 3a and its amendments require, or the Platform Owner's co-signature does not verify |
+| `KEY_EVIDENCE_INVALID` | 422 | Verification evidence does not verify against a pinned attestation key, is for another key, or is too old (section 9) |
+
+Codes for compromise, notices and assessments are added with their endpoints.
 
 ## What this contract does not establish
 

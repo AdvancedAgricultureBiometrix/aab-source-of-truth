@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:schema:platform:key-bootstrap-request:1",
+  "title": "KeyBootstrapRequest",
+  "description": "POST /aab/v1/key-bootstrap-ceremonies: a registry's first key (AAB-PLATFORM-09 section 3a). Three statements, each signed with the key being registered; for a country, the Platform Owner's co-signature and the attested evidence for their key.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "publicKey",
+    "possessionStatement",
+    "possessionSignature",
+    "registrationStatement",
+    "registrationSignature",
+    "ceremonyStatement",
+    "holderSignature"
+  ],
+  "properties": {
+    "publicKey": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9+/]{40,120}={0,2}$",
+      "description": "An Ed25519 public key, SPKI DER, standard base64."
+    },
+    "possessionStatement": {
+      "$ref": "urn:aab:schema:platform:key-possession-statement:1"
+    },
+    "possessionSignature": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9+/]{86}==$",
+      "description": "Ed25519 signature over the statement's canonical JSON: 64 bytes, standard base64, made outside the server."
+    },
+    "registrationStatement": {
+      "$ref": "urn:aab:schema:platform:key-registration-statement:1"
+    },
+    "registrationSignature": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9+/]{86}==$",
+      "description": "Ed25519 signature over the statement's canonical JSON: 64 bytes, standard base64, made outside the server."
+    },
+    "ceremonyStatement": {
+      "$ref": "urn:aab:schema:platform:key-bootstrap-ceremony-statement:1"
+    },
+    "holderSignature": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9+/]{86}==$",
+      "description": "Ed25519 signature over the statement's canonical JSON: 64 bytes, standard base64, made outside the server."
+    },
+    "cosignature": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9+/]{86}==$",
+      "description": "Ed25519 signature over the statement's canonical JSON: 64 bytes, standard base64, made outside the server."
+    },
+    "cosignerKeyEvidence": {
+      "$ref": "urn:aab:schema:platform:key-verification-evidence:1"
+    }
+  }
+}

@@ -9,8 +9,16 @@
 //      the bucket created if missing — an unreachable store stops startup
 //   4. listen — foundation/server.ts
 //
-// Routes: GET /health, POST /scs/v1/evidence-objects (platform/evidence-objects)
-// and every capability route in capabilities/index.ts.
+// Routes: GET /health, POST /scs/v1/evidence-objects (platform/evidence-objects),
+// every capability route in capabilities/index.ts, and the public-key
+// registry's routes under /aab/v1/ (platform/key-registry).
+//
+// The control plane's registry instance (AAB-PLATFORM-09, second amendment:
+// one implementation, two deployments) is this same program with
+// AAB_REGISTRY_INSTANCE=CONTROL_PLANE: its actors are issued by
+// PLATFORM_CONTROL_PLANE, it serves the registry's routes and nothing else,
+// and it needs no object store. It holds no country data, and no country stack
+// ever connects to it.
 
 import { capabilityRoutes } from "./capabilities/index.js";
 import { READER_ROLES as CAP08_READER_ROLES } from "./capabilities/cap-08/errors.js";
@@ -22,6 +30,7 @@ import { createApiServer } from "./foundation/server.js";
 import { objectStoreConfigFromEnv, S3ObjectStore } from "./platform/evidence-objects/object-store.js";
 import { renditionRoutes } from "./platform/renditions/routes.js";
 import { evidenceObjectRoutes } from "./platform/evidence-objects/routes.js";
+import { keyRegistryRoutes } from "./platform/key-registry/routes.js";
 
 async function main(): Promise<void> {
   let db: Database;
@@ -37,18 +46,40 @@ async function main(): Promise<void> {
     return;
   }
 
+  const instance = process.env["AAB_REGISTRY_INSTANCE"];
+  if (instance !== undefined && instance !== "CONTROL_PLANE") {
+    log.error("startup failed: AAB_REGISTRY_INSTANCE must be CONTROL_PLANE or unset", { instance });
+    await db.close();
+    process.exitCode = 1;
+    return;
+  }
+  const controlPlane = instance === "CONTROL_PLANE";
+
   let authenticator: StaticTokenAuthenticator;
   try {
     const file = process.env["SCS_AUTH_STATIC_ACTORS_FILE"];
     if (file === undefined || file.trim() === "") throw new Error("SCS_AUTH_STATIC_ACTORS_FILE is not set");
-    // The pilot's single issuer: a country tenancy (AAB-PLATFORM-03). No default.
-    const issuerCountry = process.env["SCS_ACTOR_ISSUER_COUNTRY"];
-    if (issuerCountry === undefined || issuerCountry.trim() === "") throw new Error("SCS_ACTOR_ISSUER_COUNTRY is not set");
-    authenticator = await StaticTokenAuthenticator.fromFile(file, { issuerCountry });
+    if (controlPlane) {
+      if (process.env["SCS_ACTOR_ISSUER_COUNTRY"] !== undefined) throw new Error("The control plane's registry issues PLATFORM_CONTROL_PLANE actors: unset SCS_ACTOR_ISSUER_COUNTRY");
+      authenticator = await StaticTokenAuthenticator.fromFile(file, { controlPlane: true });
+    } else {
+      // A country deployment's single issuer: its country tenancy (AAB-PLATFORM-03). No default.
+      const issuerCountry = process.env["SCS_ACTOR_ISSUER_COUNTRY"];
+      if (issuerCountry === undefined || issuerCountry.trim() === "") throw new Error("SCS_ACTOR_ISSUER_COUNTRY is not set");
+      authenticator = await StaticTokenAuthenticator.fromFile(file, { issuerCountry });
+    }
   } catch (err) {
     log.error("startup failed: authentication is not configured", { err });
     await db.close();
     process.exitCode = 1;
+    return;
+  }
+
+  const port = Number(process.env["API_PORT"] ?? 3000);
+  if (controlPlane) {
+    const server = createApiServer({ routes: [...keyRegistryRoutes(authenticator)], authenticator, db });
+    server.listen(port, () => log.info("aab control-plane key registry listening", { port }));
+    shutdownOn(server, db);
     return;
   }
 
@@ -63,15 +94,18 @@ async function main(): Promise<void> {
     return;
   }
 
-  const port = Number(process.env["API_PORT"] ?? 3000);
   const server = createApiServer({ routes: [
       ...evidenceObjectRoutes(objectStore),
       ...renditionRoutes(objectStore, { "SCS-CAP-08": CAP08_READER_ROLES }),
       ...capabilityRoutes(authenticator),
       ...cap08Routes(objectStore),
+      ...keyRegistryRoutes(authenticator),
     ], authenticator, db });
   server.listen(port, () => log.info("scs-pilot-api listening", { port }));
+  shutdownOn(server, db);
+}
 
+function shutdownOn(server: ReturnType<typeof createApiServer>, db: Database): void {
   for (const signal of ["SIGINT", "SIGTERM"] as const) {
     process.on(signal, () => {
       server.close(() => {

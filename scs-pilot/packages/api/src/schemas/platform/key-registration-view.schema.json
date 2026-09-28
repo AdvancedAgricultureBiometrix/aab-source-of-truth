@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:schema:platform:key-registration-view:1",
+  "title": "KeyRegistrationView",
+  "description": "AAB-PLATFORM-09 section 3: a key's registration as its registry holds it, as exported in verification evidence.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "keyId",
+    "issuer",
+    "actorId",
+    "algorithm",
+    "publicKey",
+    "publicKeyDigest",
+    "activeFrom",
+    "registeredAt",
+    "registrationDigest"
+  ],
+  "properties": {
+    "keyId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._:-]{1,128}$",
+      "description": "A key identifier in its issuer's registry."
+    },
+    "issuer": {
+      "$ref": "urn:aab:schema:platform:key-registry-issuer:1"
+    },
+    "actorId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._:@-]{1,128}$"
+    },
+    "algorithm": {
+      "type": "string",
+      "const": "Ed25519"
+    },
+    "publicKey": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9+/]{40,120}={0,2}$",
+      "description": "An Ed25519 public key, SPKI DER, standard base64."
+    },
+    "publicKeyDigest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "activeFrom": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "registeredAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "replacesKeyId": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._:-]{1,128}$",
+      "description": "A key identifier in its issuer's registry."
+    },
+    "registrationDigest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    }
+  }
+}

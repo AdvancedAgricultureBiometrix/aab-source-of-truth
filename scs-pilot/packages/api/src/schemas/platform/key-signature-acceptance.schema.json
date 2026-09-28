@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:aab:schema:platform:key-signature-acceptance:1",
+  "title": "KeySignatureAcceptance",
+  "description": "AAB-PLATFORM-09 section 6: the signature a decision accepted: the server's own acceptedAt, the key it was verified with, and that key's digests.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "acceptedAt",
+    "signingKeyId",
+    "publicKeyDigest",
+    "registrationDigest"
+  ],
+  "properties": {
+    "acceptedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "signingKeyId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+      "description": "Lowercase UUID."
+    },
+    "publicKeyDigest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "registrationDigest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    }
+  }
+}
