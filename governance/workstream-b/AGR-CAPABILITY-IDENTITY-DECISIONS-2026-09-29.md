@@ -16,6 +16,21 @@
 - **The other assignments stand.** Reading `cognitive_core` confirms `submit_problem_signal` for CAP-01 and `propose_ingredient_build_candidate` for CAP-06. `create_transformation_opportunity` stays with CAP-01.
 - **The CAP-05 citation in section 3** now points to the amended contract, where the design's final decision is kept unchanged ("What the rehearsal does, and how this contract accounts for it"). CAP-05's amendment also records what the loop does, from its code.
 
+## Note of 2026-09-29: eight of the 34 country actions are not platform-wide
+
+**A correction to the roadmap's mapping.** The roadmap (section 8.2) maps all 34 actions of `AAB_COUNTRY_ACTIONS` to platform-wide capabilities (CAP-16, CAP-24), with `manufacturing_generate_transfer` as CAP-12. Reading `country_core` in full for CAP-01's canonical contract shows that **eight are not platform-wide.** Decided in review of that contract on 2026-09-29 (its decision 11):
+
+| Actions | Capability | Why |
+|---|---|---|
+| `country_start_bootstrap`, `country_scan_events`, `country_generate_brief`, `country_recommendations`, `country_economic_context`, `country_scan_knowledge` | **CAP-01** | Country intelligence: the bootstrap scan and its events, the country brief, recommendations, economic facts and scan principles |
+| `country_source_status` | **CAP-02** | The list of source adapters: acquisition from external sources |
+| `country_starter_ingredients` | **CAP-06** | The starter ingredient library |
+
+- **None is brought across.** The bootstrap is narration (eleven fixed "brain" events), the economic facts are typed into code for Thailand only, the brief is a template and its recommendation fixed. CAP-01's records and dossiers replace them (`governance/workstream-b/CAP-01-COUNTRY-INTELLIGENCE-AND-DISCOVERY-CANONICAL-CONTRACT-2026-09-29.md`, "What the rehearsal does").
+- **The other 26 stay as mapped:** tenancy, membership, onboarding, institutions, sharing and preferences to the platform-wide capabilities; `manufacturing_generate_transfer` and `manufacturing_transfer_summary` to CAP-12; `country_impact` and `country_refresh_impact` unassigned, as impact reporting.
+- **CAP-01's count is unchanged at 15 rehearsal actions it absorbs.** The six country actions are assigned to it and retired, not absorbed.
+- **The roadmap's row is corrected in its next update.**
+
 ## Summary
 
 | Rehearsal group | Actions | Decision | New number |
