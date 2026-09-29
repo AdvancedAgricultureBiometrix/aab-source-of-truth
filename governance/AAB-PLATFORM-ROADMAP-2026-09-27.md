@@ -33,9 +33,15 @@
 - **CAP-01 Country Intelligence & Discovery has its contract committed under the AGR workstream** (#76): a new canonical contract, steps 1 to 3 complete. It stays `designed`, and nothing is built (decision 29).
 - **Eight of the 34 country actions are not platform-wide** (#76): six are CAP-01's, one CAP-02's and one CAP-06's, and none is brought across (decision 30).
 - **The cognitive loop is retired from the migration** (#77), with no capability number; its ideas are recorded against their owners (decision 31).
-**Authority:** RECORDS THE STATE OF EVERY AAB PLATFORM PRIMITIVE AND CAPABILITY, AS DEMONSTRATED BY THE CONTRACTS, CODE, TESTS AND PROOFS ON `main` AT `9f17cc2`, UPDATED TO `634295a`, TO `67b6ba8`, TO `c1586c6`, TO `fa84240`, TO `16d21cc`, TO `dbb2408`, TO `f1bb47d`, TO `d1bc453`, TO `695bc18`, TO `46e3e09` AND TO `7e7bbc0`, AND WHAT MUST EXIST BEFORE WHAT. Admits no capability, grants no implementation, commissioning, production, regulatory or scientific authority, changes no control's status, and does not satisfy Gate D or begin WP05.
+**Updated again (2026-09-29):** to `main` at `0461bfb`, after PRs #78 to #81. Marked "update of `0461bfb`" where it changes this roadmap.
+- **The platform's observation and brain governance is approved** (#79; `governance/AAB-PLATFORM-OBSERVATION-AND-BRAIN-GOVERNANCE-2026-09-29.md`): two observation classes, the observation chain, capability responsibilities, and the brain boundary, "automate reasoning, govern its outputs" (decision 32).
+- **The purpose and values carry the corrected brain boundary** (#80; decision 33).
+- **CAP-08 Controlled Trials & Outcomes has its contract committed under the AGR workstream** (#81): a new canonical contract, steps 1 to 3 complete. It stays `designed`, and nothing is built (decision 34).
+- **AAB-PLATFORM-01's AGR profile names `TRIAL_RECORDER` as an uploader** (#81).
+**Authority:** RECORDS THE STATE OF EVERY AAB PLATFORM PRIMITIVE AND CAPABILITY, AS DEMONSTRATED BY THE CONTRACTS, CODE, TESTS AND PROOFS ON `main` AT `9f17cc2`, UPDATED TO `634295a`, TO `67b6ba8`, TO `c1586c6`, TO `fa84240`, TO `16d21cc`, TO `dbb2408`, TO `f1bb47d`, TO `d1bc453`, TO `695bc18`, TO `46e3e09`, TO `7e7bbc0` AND TO `0461bfb`, AND WHAT MUST EXIST BEFORE WHAT. Admits no capability, grants no implementation, commissioning, production, regulatory or scientific authority, changes no control's status, and does not satisfy Gate D or begin WP05.
 **Sources:**
 - `governance/AAB-PLATFORM-PURPOSE-AND-VALUES-REVISION-2026-09-25.md`
+- `governance/AAB-PLATFORM-OBSERVATION-AND-BRAIN-GOVERNANCE-2026-09-29.md` (update of `0461bfb`)
 - `governance/AAB-PLATFORM-DOMAIN-SEPARATION-DECISION-2026-09-25.md`
 - the platform contracts AAB-PLATFORM-03 to 09 in `governance/`
 - `governance/AAB-PLATFORM-DEPENDENCY-AUDIT-2026-09-27.md`
@@ -119,7 +125,7 @@ The domain separation decision allows extraction only after an independent depen
 
 | Contract | State | Governs | What exists |
 |---|---|---|---|
-| AAB-PLATFORM-01 Evidence Object Store | `behaviourally proven` (was `implemented`) | Primitive 3 | Upload, and the amendment of 2026-09-28: scoped identities, Object Lock, verified reads (PR #65; proof record). **Amended on 2026-09-29** (PR #74; update of `46e3e09`): storage profiles, and the AGR profile. **Designed, not built:** the proof covers the SCS profile only |
+| AAB-PLATFORM-01 Evidence Object Store | `behaviourally proven` (was `implemented`) | Primitive 3 | Upload, and the amendment of 2026-09-28: scoped identities, Object Lock, verified reads (PR #65; proof record). **Amended on 2026-09-29** (PR #74; update of `46e3e09`): storage profiles, and the AGR profile. **Designed, not built:** the proof covers the SCS profile only. **Amended again** (PR #81; update of `0461bfb`): `TRIAL_RECORDER` may upload under the AGR profile |
 | AAB-PLATFORM-02 Governed Document Rendition | `implemented` | Primitive 8 (rendition) | Render and download |
 | AAB-PLATFORM-03 ActorReference | `implemented` | Primitive 2 | Version 2 issued for every new record (PR #39); version 1 records stay readable. No proof record names it |
 | AAB-PLATFORM-04 Actor–Subject Link | `behaviourally proven` | Primitive 2 | As adopted by SCS-CAP-02 (PRs #40, #42; README, PR #43) |
@@ -366,7 +372,7 @@ Names, fidelity and horizon are taken from the CAP-34 fidelity manifest (snapsho
 | CAP-05 Governed Scientific Reasoning | `designed` | Canonical contract, **committed under the AGR workstream** (amendment of 2026-09-29, PR #71; `governance/workstream-b/CAP-05-GOVERNED-SCIENTIFIC-REASONING-CANONICAL-CONTRACT-2026-09-20.md`). It adopts AAB-PLATFORM-03 and 05 to 09. A scientist lists admitted CAP-04 records and assigns each a stance; CAP-05 returns "a landscape, not a verdict", written once with its frozen snapshot and receipt. A scientist may review it, and a review can be challenged (update of `46e3e09`; #73). No automated stance, no historical landscapes, no automated runs. Its routes are under `/agr/v1/`. Nothing is built. Simulation: real logic, synthetic data. | Launch release |
 | CAP-06 Ingredient Intelligence | `named only` | Simulation: real logic, synthetic data. Rehearsal gateway: "Direct wire" (`get_workbench_ingredient_intelligence`). | Launch release |
 | CAP-07 Formulation Intelligence | `named only` | Simulation: real logic, synthetic data. Rehearsal gateway: "Direct wire" (`AAB_WORKBENCH_ACTIONS`, 9 actions). | Launch release |
-| CAP-08 Controlled Trials & Outcomes | `named only` | Rehearsal gateway: trial workspace, activation, observation capture and outcome actions (21 actions). The manifest: `NOT_YET_REPRESENTED`. | Launch release |
+| CAP-08 Controlled Trials & Outcomes | **`designed`** (update of `0461bfb`; was `named only`) | **Canonical contract, committed under the AGR workstream** (PR #81; `governance/workstream-b/CAP-08-CONTROLLED-TRIALS-AND-OUTCOMES-CANONICAL-CONTRACT-2026-09-29.md`). It adopts AAB-PLATFORM-01, 03 and 05 to 09, and CAP-04, and cites the observation and brain governance as binding. A protocol declared first and locked at activation, with a control arm; activation by a scientist who did not design the trial, on a declared safety basis; trial observations admitted by rule, a safety signal held at once; a descriptive, machine-generated outcome summary with no efficacy verdict; an independent outcome review; closure that never requires a positive result. Results reach CAP-04 only on a person's submission. Nothing is built. The manifest: `NOT_YET_REPRESENTED`. | Launch release |
 | CAP-09 Governed Scientific Learning | `named only` | Simulation: real logic, synthetic data. Rehearsal gateway: "Direct wire" (`prepare_trial_learning`, `submit_learning_review`, `decide_learning_review`), which shares a gateway scope with CAP-04. | Launch release |
 | CAP-10 Safety & Ecological Intelligence | `named only` | The manifest: `NOT_YET_REPRESENTED` | Launch release |
 | CAP-11 Regulatory Translation & Dossier Support | `named only` | The manifest: `CONCEPT_PREVIEW_NOT_IMPLEMENTED` | Post-launch |
@@ -527,6 +533,9 @@ flowchart LR
   A04 --> A01[CAP-01 Country Intelligence<br/>designed]
   A01 -->|referral| A06
   A10[CAP-10 Safety & Ecology<br/>named only] -.-> A01
+  A07 -->|material under test| A08[CAP-08 Trials<br/>designed]
+  A08 -->|a person submits| A04
+  A10 -.-> A08
   A02[CAP-02 Acquisition<br/>named only] --> HSM[Historical Scientific<br/>Memory Recovery]
   A04 --> HSM
   A03[CAP-03 Integrity & Provenance<br/>named only] --> EXP[Export-Compliance<br/>Evidence pathway]
@@ -540,6 +549,7 @@ flowchart LR
 - Evidence Watch consumes CAP-04 and CAP-05, and must never run CAP-05 on its own initiative. **Update of `695bc18`:** only a person requests a landscape (CAP-05 amendment, decision 10).
 - CAP-07 consumes CAP-06's output.
 - **CAP-01 cites admitted CAP-04 evidence, and refers subjects to CAP-06** on a scientist's valid, current review (update of `7e7bbc0`). Safety and ecology are CAP-10's; until CAP-10 has a contract, CAP-01 discloses them as not assessed.
+- **CAP-08 tests material from CAP-07 or CAP-06, and its accepted results reach CAP-04 only when a person submits them** (update of `0461bfb`). CAP-04 admits them as evidence; CAP-09 decides any learning. Until CAP-10 exists, a trial is activated on a declared safety basis, and discloses that safety and ecology are not assessed.
 
 ### 5.3 The next required step: independent verification of the dependency audit
 
@@ -814,7 +824,7 @@ Each step is reviewed before the next, one PR per step, as the SCS pilot was bui
 | 1 | CAP-04 Governed Scientific Memory | `designed`: **steps 1 to 3 complete** (PR #67); **both prerequisites before any code met** (#70, #74; update of `46e3e09`) | None of its own; the shared gateway scope is CAP-09's | Every other scientific capability resolves its evidence through it (section 5.2) |
 | 2 | CAP-05 Governed Scientific Reasoning | `designed`: **steps 1 to 3 complete** (PR #71) | None; represented in the simulation. The cognitive loop is not CAP-05 | Reasons only over CAP-04's admitted evidence |
 | 3 | CAP-01 Country Intelligence & Discovery | `designed`: **steps 1 to 3 complete** (PR #76; update of `7e7bbc0`) | 15 actions: resource intelligence (13) and two cognitive actions (identity decisions of 2026-09-29, and its note of the same date) | Country resources, waste streams, problems and opportunities; hands candidates to CAP-06 |
-| 4 | CAP-08 Controlled Trials & Outcomes | `named only` | 21 actions: the most of any capability | The trial and outcome lifecycle |
+| 4 | CAP-08 Controlled Trials & Outcomes | `designed`: **steps 1 to 3 complete** (PR #81; update of `0461bfb`) | 21 actions: the most of any capability | The trial and outcome lifecycle |
 | 5 | CAP-06 Ingredient Intelligence | `named only` | 4 actions, and `propose_ingredient_build_candidate` | Feeds CAP-07 |
 | 6 | CAP-07 Formulation Intelligence | `named only` | 7 actions, including sending a formulation to trial (CAP-08) | Consumes CAP-06's output |
 | 7 | CAP-09 Governed Scientific Learning | `named only` | 4 actions | References admitted CAP-04 evidence, and must be separated from CAP-04's shared gateway scope together with it |
@@ -865,6 +875,7 @@ flowchart LR
   - **CAP-04's and CAP-05's existing design contracts do not meet it.** They predate this workstream and were written without the rehearsal code in view (decided on 2026-09-28).
   - **CAP-05's contract is also committed under the workstream** (update of `695bc18`; PR #71), with the rehearsal, `cognitive_core` included, accounted for.
   - **So is CAP-01's** (update of `7e7bbc0`; PR #76), with `agriculture`, `country_core` and `cognitive_core` read in full.
+  - **And CAP-08's** (update of `0461bfb`; PR #81), with the trial path and `observation_core` read in full.
   - **Met on 2026-09-29** (update of `f1bb47d`): CAP-04's amendment, committed under the workstream by PR #67, accounts for the rehearsal code and was reviewed and approved before commit. **Meeting the condition does not publish anything.** Publishing is a separate decision, and what is shown remains bound by the rule below.
 - **Until then,** every AGR capability that runs in the rehearsal is shown as `named only`, with its code noted. It is never shown as `implemented`.
 
@@ -917,11 +928,19 @@ These points came up while compiling the roadmap and were decided in review.
 30. **Eight of the 34 country actions are not platform-wide** (update of `7e7bbc0`; the identity record's note of 2026-09-29). Six are CAP-01's, one CAP-02's and one CAP-06's. None is brought across: the bootstrap is narration, the economic facts are typed into code for Thailand only, and the brief is a template. The other 26 stay as mapped in section 8.2.
 31. **The cognitive loop is retired from the migration** (update of `7e7bbc0`; PR #77; the identity record's note of 2026-09-29). It gets no capability number: it is not CAP-33, since there is no cross-domain reasoning; not a platform primitive, since it is hard-wired to agriculture and makes judgements; and not a capability, since it fails the checklist. **Its ideas go to their owners:** new-evidence reassessment to the Evidence Watch candidate (proposed CAP-35), which may only notify; knowledge-gap-driven investigation to CAP-04 and CAP-05 gap findings and CAP-01 dossiers, with a person deciding; activity telemetry to platform observability, if ever wanted. Its automatic runs after approvals are not carried across. The priority order is unchanged.
 
+## Decisions recorded on 2026-09-29, after `7e7bbc0`
+
+32. **The platform's observation and brain governance is approved** (update of `0461bfb`; PR #79; `governance/AAB-PLATFORM-OBSERVATION-AND-BRAIN-GOVERNANCE-2026-09-29.md`). **A platform rule, binding every capability contract and brain implementation.** Two observation classes: unverified field observations, and controlled trial observations. The canonical observation chain, with scientific analysis only after intake and a person's triage. Each capability's responsibility: proposed CAP-36 owns field observation, the Evidence Watch candidate (proposed CAP-35) owns monitoring, CAP-04 admission, CAP-05 reasoning, CAP-08 trials. **Brains may reason automatically; their outputs are labelled, linked, versioned, explainable and supersedable, and never become facts, evidence, conclusions, approvals or memory without the required human decision.** Machine state is not governed scientific state. Missing evidence produces `EVIDENCE REQUIRED`.
+33. **The purpose and values carry the corrected brain boundary** (update of `0461bfb`; PR #80): "automate reasoning, govern its outputs", extending the value of honest gap disclosure to automated reasoning. The revision had no explicit brain boundary before.
+34. **CAP-08 has its contract committed under the AGR workstream** (update of `0461bfb`; PR #81). A new canonical contract; steps 1 to 3 are complete. Its thirteen decisions, approved in review: the protocol declared first and locked at activation, with a control arm required; activation by a scientist who did not design the trial; **safety and ecology are CAP-10's, and a trial is activated on a declared safety basis with `SAFETY_ECOLOGY_NOT_ASSESSED` on every trial;** permits, ethics and consent declared and addressed, not verified; observations admitted by rule, with a safety signal held at once; **a descriptive outcome summary only, labelled machine-generated, with no significance test or efficacy verdict;** an independent outcome review that accepts a trial record, never a claim; closure that never requires a positive result; nothing automatic, and no brain analysing trial observations; trial and field observations never mixed; four roles; trial data kept in the country. **Eight interim positions** from the observation and brain governance are recorded with it, among them that no brain is yet defined for observations and no safety escalation path exists. AAB-PLATFORM-01's AGR profile names `TRIAL_RECORDER` as an uploader. CAP-08 stays `designed`, and waits on CAP-04 being built and the extraction.
+
 **Still open, noted in the text:**
 - The mapping of the eleven primitives to landscape capabilities (section 4) is proposed by this roadmap, not established.
 - Whether the CAP-04 and CAP-05 contracts align with the primitives: now assessed against AAB-PLATFORM-05 to 08, and settled by AGR's adoption of them. **Update of `695bc18`:** both have adopted them by amendment (#67, #71).
 - **The cognitive loop's identity** (section 8.4): a platform primitive, CAP-33, or a capability of its own, now that `cognitive_core` has been read. **Closed** (update of `7e7bbc0`): retired from the migration, with no number (decision 31).
 - **An invalidated admission in AAB-PLATFORM-07** (update of `46e3e09`): its comparison has no change kind for a snapshot member whose admission is invalidated by an upheld challenge, so a review's triggers do not fire on it. It needs its own amendment (CAP-04 and CAP-05, "Open gaps").
+- **A safety escalation path** (update of `0461bfb`; CAP-08, interim position 8): a safety signal in a trial is quarantined at once, but who must be told, how fast, and who may stop a trial need a future governance decision.
+- **The automated reasoning pathway for observations** (update of `0461bfb`; CAP-08, interim position 2): no brain is defined to receive field or trial observations. The Evidence Watch candidate has no contract.
 - **Legal hold's governance, lock renewal and staging** (update of `46e3e09`; AAB-PLATFORM-01, amendment of 2026-09-29): legal hold before real data; renewal before the AGR profile's locks end; staging, not decided.
 
 ## What this document does not establish
