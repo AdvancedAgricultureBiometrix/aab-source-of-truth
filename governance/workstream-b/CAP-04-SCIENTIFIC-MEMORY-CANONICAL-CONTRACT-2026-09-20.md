@@ -4,7 +4,7 @@
 **Domain:** Agricultural Science (AGR)
 **Capability:** CAP-04 Governed Scientific Memory. It is not SCS-CAP-04 (Deforestation Evidence Admission), a different capability in another domain.
 **Authority:** DEFINES THE CONTRACT FOR CAP-04: WHAT MAY ENTER GOVERNED SCIENTIFIC MEMORY, HOW IT IS ADMITTED, HELD, QUARANTINED AND SUPERSEDED, HOW ADMITTED MEMORY IS READ, AND THE BOUNDARY WITH CAP-05 AND CAP-09. Establishes no commissioning, production, Gate D, WP05, scientific-validity or regulatory authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
-**Amended:** 2026-09-29, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3): aligned with the platform contracts, and the rehearsal accounted for (see "Amendment of 2026-09-29").
+**Amended:** 2026-09-29, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3): aligned with the platform contracts, and the rehearsal accounted for (see "Amendment of 2026-09-29: canonical alignment, and the rehearsal accounted for"). Amended again on 2026-09-29, with two corrections following CAP-05's canonical amendment (see "Amendment of 2026-09-29: two corrections following CAP-05 canonical amendment").
 **History:** first written on 2026-09-20 as a governance design contract, resolving the "design decision required before wiring" finding for CAP-04 in `governance/AAB-CAPABILITY-GATEWAY-RECONCILIATION-2026-09-20.md`. It was not part of PR #16. The 2026-09-20 text is in the repository's history.
 
 ## Amendment of 2026-09-29: canonical alignment, and the rehearsal accounted for
@@ -54,6 +54,17 @@ AAB-PLATFORM-04 (actor–subject links) is **not adopted**: CAP-04 has no submis
 - **A platform decision on the object store's parameters for AGR content:** retention, media types and size limits. AAB-PLATFORM-01's were set for EUDR supply-chain evidence, and scientific memory is not to inherit them by default. It is decided before the object store is used for AGR content.
 
 **Nothing is implemented by this amendment.** It adopts the platform contracts; it does not implement them. Every rule of 2026-09-20 not changed above is kept.
+
+## Amendment of 2026-09-29: two corrections following CAP-05 canonical amendment
+
+**Why.** CAP-05's canonical amendment of 2026-09-29 (`governance/workstream-b/CAP-05-GOVERNED-SCIENTIFIC-REASONING-CANONICAL-CONTRACT-2026-09-20.md`) takes every evidence landscape over a frozen snapshot at the platform's clock, and **takes no historical landscapes** (AAB-PLATFORM-07, section 4). It selects every admitted record by default, disclosing limitations and unverified originals. Two statements in "Reading admitted memory" said otherwise. **No other rule of CAP-04 changes, and the as-of read itself is unchanged.**
+
+**The corrections**, each marked in place with "(corrected on 2026-09-29)":
+
+| Statement | Was | Now |
+|---|---|---|
+| An as-of read | "CAP-05's evidence landscapes and the Governed Evidence Watch candidate need it." | It is for display and inspection, and never the input to an evaluation: an evaluation reads through a snapshot taken at the platform's clock |
+| What CAP-05 receives | "CAP-05's contract asks for records with `integrityStatus: "VERIFIED"` and admission `ADMITTED`." | Each listed record, read for the purpose `SCIENTIFIC_EVIDENCE_EVALUATION`, with its derived state. Which records CAP-05 selects stays CAP-05's disclosed policy |
 
 ## The boundary, in plain English
 
@@ -455,12 +466,12 @@ interface Cap04MemoryRecordRead {
   - **Purpose is required.** A record is returned only if its `permittedUses` includes the purpose. The request's purpose is recorded with the read.
   - **Excluded by default:** held, rejected, superseded and quarantined records. A request may include superseded or quarantined records only by saying so, and the response marks each.
   - **The selection policy is disclosed** in the response: what was included and what was excluded, with counts and reasons. A limitation never silently removes a record.
-  - **An as-of read** returns what was admitted, and not superseded or quarantined, at that time. CAP-05's evidence landscapes and the Governed Evidence Watch candidate need it.
+  - **An as-of read** returns what was admitted, and not superseded or quarantined, at that time. It is for display and inspection. It is never the input to an evaluation: an evaluation reads through a snapshot taken at the platform's clock (AAB-PLATFORM-07, section 4). (corrected on 2026-09-29)
 - **Held records** are readable only by reviewers, and rejected ones only by reviewers and the submitter.
 
 **Snapshot membership (AAB-PLATFORM-07).** An admitted record can be a member of a frozen evaluation snapshot. It supplies its `recordId`, `recordVersion`, its admission decision's digest (never an original's digest alone), `admissionDecisionId`, limitations, gaps and quarantine state. Every exclusion reason AAB-PLATFORM-07 names is derivable: held, rejected, superseded, withdrawn and quarantined.
 
-**What CAP-05 receives.** CAP-05's contract asks for records with `integrityStatus: "VERIFIED"` and admission `ADMITTED`. Here, a record's integrity is its provenance's `original.integrityStatus`, and its admission is its derived state. Which records CAP-05 selects is CAP-05's disclosed policy, not CAP-04's.
+**What CAP-05 receives.** Each listed record, read for the purpose `SCIENTIFIC_EVIDENCE_EVALUATION`, with its derived state. A record's integrity is its provenance's `original.integrityStatus`, and its admission is its derived state. Which records CAP-05 selects is CAP-05's disclosed policy, not CAP-04's. (corrected on 2026-09-29)
 
 ## Receipts
 
