@@ -6,6 +6,74 @@ and `0afec5a`)
 **Authority:** RECORDS THE PURPOSE AND VALUES OF THE WHOLE AAB PLATFORM. Admits no
 capability, grants no implementation authority, and does not alter commissioning status,
 Gate D, WP05, or any production, regulatory or scientific authority.
+**Amended:** 2026-09-29, with the corrected and extended brain boundary (see "Amendment of
+2026-09-29: corrected and extended brain boundary").
+
+## Amendment of 2026-09-29: corrected and extended brain boundary
+
+**Why.** This revision states, as a platform value, that AAB does not manufacture sufficiency
+and does not resolve a conflict by selecting the more convenient source ("Honest gap
+disclosure"). It says nothing about what AAB's automated reasoning, its brains, may do by
+itself. The platform governance record approved on 2026-09-29,
+`governance/AAB-PLATFORM-OBSERVATION-AND-BRAIN-GOVERNANCE-2026-09-29.md`, corrects and extends
+that principle for brains. **That record is the governing document for the full framework:**
+observation classes, the observation chain, capability responsibilities, consent, authority,
+privacy and fail-closed requirements. This amendment carries its brain boundary into the
+platform's purpose and values. Nothing else in this revision changes.
+
+**The corrected principle: automate reasoning, govern its outputs.** Automated reasoning does
+not confer scientific authority. AAB may think automatically. Its outputs acquire governed
+status only through the applicable evidence, scientific, institutional, country and governance
+decisions.
+
+**What a brain may do automatically:**
+- process eligible evidence;
+- compare observations;
+- detect patterns and anomalies;
+- maintain temporary computational state, separately from governed scientific records;
+- generate signals;
+- form candidate hypotheses;
+- identify contradictions and knowledge gaps;
+- propose reassessment;
+- suggest possible investigations.
+
+**What a brain must never do automatically:**
+- manufacture facts;
+- conceal or silently resolve contradictions;
+- convert observations into accepted evidence;
+- promote hypotheses into scientific conclusions;
+- approve trials or treatments;
+- create operational authority;
+- promote outputs into canonical learning or memory;
+- bypass scientist, institution, country or governance authority;
+- use quarantined observations for training or persistent learning without explicit
+  authorisation.
+
+**Every automated output must be:**
+- clearly labelled as machine-generated;
+- linked to its source evidence;
+- versioned and timestamped;
+- explainable to the level its capability requires;
+- reproducible where technically possible;
+- accompanied by its uncertainty and limitations;
+- open to rejection, correction or supersession;
+- kept separate from accepted scientific conclusions and canonical memory.
+
+**Machine state is not governed scientific state.** A brain may change its internal working
+state while it reasons. That state is never to be confused with governed scientific truth.
+Any persistent belief, confidence or reasoning state must be:
+- versioned, never silently overwritten;
+- traceable to the evidence and the prior state it came from;
+- identified as machine state;
+- reversible or supersedable;
+- prevented from acquiring authoritative status without the required human decision.
+
+**How it relates to this revision's values.** It extends "Honest gap disclosure" to automated
+reasoning: a brain that fills a gap, or settles a contradiction, by itself would be the
+platform manufacturing sufficiency. It is consistent with step 3 of the operating chain,
+"Governed reasoning": traceable, reproducible, and never claiming more than the evidence
+supports. It does not change the five maturity states, the domain separation, or the public
+wording rules.
 
 ## Why this revision was required
 
@@ -126,3 +194,6 @@ after this revision has been reviewed. Until then:
   above.
 - It does not admit or commission any capability, or alter Gate D, WP05, or any production,
   regulatory or scientific authority.
+- Its amendment of 2026-09-29 does not itself define any brain, capability or
+  implementation. The full framework is
+  `governance/AAB-PLATFORM-OBSERVATION-AND-BRAIN-GOVERNANCE-2026-09-29.md`.
