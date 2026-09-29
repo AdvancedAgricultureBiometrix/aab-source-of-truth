@@ -224,11 +224,11 @@ CAP-04's code also waits on the dependency audit's independent verification and 
 1. **CAP-04's challenging role.** A follow-up agreed in review of #71: AAB-PLATFORM-08 (section 13) requires a domain to name one, and CAP-04's amendment does not. Small, and it closes a known contract gap.
 2. **The object store's parameters for AGR content:** retention, media types and size limits. CAP-04's second prerequisite before any code, resolved before CAP-04's implementation begins. A governance decision, not a build task.
 3. **CAP-01's step 1,** the next capability in the workstream's order. It follows the object-store decision.
-4. **The cognitive loop's identity decision.** It needs more reading and deliberation, and runs in parallel with the others as understanding develops. It does not block the workstream.
+4. **The cognitive loop's identity decision.** It needs more reading and deliberation, and runs in parallel with the others as understanding develops. It does not block the workstream. **Decided on 2026-09-29: loop retired from migration, ideas redistributed** (the identity record's note of 2026-09-29).
 
 **Update of `46e3e09`:** no work in flight on the repository beyond this update. **Items 1 and 2 above are done:** CAP-04's challenging role (#73, with CAP-05's challenge operations), and the object store's parameters for AGR content (#74). Next:
 - **CAP-01's step 1,** its canonical contract, the next capability in the workstream's order;
-- **the cognitive loop's identity decision,** in parallel, not blocking;
+- **the cognitive loop's identity decision,** in parallel, not blocking. **Decided: loop retired from migration, ideas redistributed,** with no number (the identity record's note of 2026-09-29);
 - **recorded, not ordered:** an AAB-PLATFORM-07 amendment for a snapshot member whose admission is invalidated (section 9).
 
 The aab.ag legacy application tree is a separate cleanup, outside this repository, for another session. The owner is aware of it.

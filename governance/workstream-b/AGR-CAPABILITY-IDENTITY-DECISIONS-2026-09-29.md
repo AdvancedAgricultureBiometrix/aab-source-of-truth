@@ -31,13 +31,47 @@
 - **CAP-01's count is unchanged at 15 rehearsal actions it absorbs.** The six country actions are assigned to it and retired, not absorbed.
 - **The roadmap's row is corrected in its next update.**
 
+## Note of 2026-09-29: the cognitive loop retired from the migration
+
+**The decision on the held group** (section 3), made in review on 2026-09-29, after `cognitive_core` was read in full for CAP-05's amendment and again for CAP-01's contract (`governance/workstream-b/CAP-05-GOVERNED-SCIENTIFIC-REASONING-CANONICAL-CONTRACT-2026-09-20.md` and `governance/workstream-b/CAP-01-COUNTRY-INTELLIGENCE-AND-DISCOVERY-CANONICAL-CONTRACT-2026-09-29.md`, each under "What the rehearsal does"):
+- **The cognitive loop is retired from the migration.** Nothing of it is brought across, and it gets **no capability number.**
+- **Its sound ideas are recorded against the capabilities that own them** (below). None is carried across as code.
+- **The held group is closed.** The six actions it held are retired with the loop. Cognitive intelligence is now fully decided: two actions to CAP-01, one to CAP-06, six retired.
+
+**The retired actions:** `run_agriculture_cognitive_loop`, `compute_cognitive_node_state`, `agriculture_cognitive_loop_workspace`, `live_intelligence_surface`, `intelligence_activity_timeline` and `cognitive_foundation_workspace`.
+
+**Why none of the three identities fits** (section 3 named them):
+
+| Identity | Why not |
+|---|---|
+| **CAP-33 Cross-Domain Scientific Reasoning** | **There is no cross-domain reasoning.** No function reads two domains' nodes together or combines their evidence. Its only "cross-domain" quantity counts the domain labels of a node's neighbours, divided by four (`cognitive_core/functions.sql`, lines 90–91). CAP-33 stays `named only`, unaffected |
+| **A platform primitive** | **It is not domain-agnostic.** Its "universal" tables carry foreign keys into the agriculture schema, and every capability check it makes honours agriculture's scope only. It has no contract. **And it makes judgements:** it infers stance from record type, writes belief states and raises problem signals on its own. A platform primitive provides a mechanism; the domain provides the policy (the platform–domain separation decision) |
+| **A capability of its own** | **It fails the checklist.** Its responsibility is owned elsewhere (item 1): evidence evaluation by CAP-05, new-evidence watching by the Evidence Watch candidate. Its dependencies are implicit (item 5). And its core, automatic inference that changes beliefs and starts investigations without a person, is what CAP-05's contract and the Evidence Watch candidate forbid |
+
+**What it is, as read:** an agriculture-specific materialiser and heuristic scorer, run automatically after approvals, with a read and telemetry surface. Four of the six retired actions only read. The ten "algorithms" it reports are labels in the gateway; several are constants or averages of constants. Its reassessment queue is written, and can never be resolved.
+
+**Where its ideas go:**
+
+| Idea | Owner | How |
+|---|---|---|
+| **Reassessment when new evidence arrives** (`reassessment_queue`, `api_propagate_reassessment`) | **The Governed Evidence Watch candidate (proposed CAP-35)** | A watch defined by a scientist, anchored to a persisted landscape, that may only notify. It never changes a belief, runs CAP-05, or begins an investigation. The rehearsal's version fired only on contradictions and negative learning, and nothing could resolve it |
+| **Investigation driven by knowledge gaps** (`next_investigation_candidate`) | **CAP-04 and CAP-05**, and CAP-01's dossiers | Gaps are findings derived in a CAP-05 landscape or a CAP-01 dossier, with content-derived identifiers. **A person decides** whether to investigate |
+| **Activity telemetry** (`intelligence_activity_event`, the live surface, the timeline) | **Platform observability, if it is ever wanted** | Operational events with no scientific meaning. Never presented as reasoning, and never naming a component that does not run |
+| **Problem, opportunity and ingredient-candidate chain** | CAP-01 and CAP-06 | Already assigned (section 3). The loop's automatic problem signals are not carried across (CAP-01, decision 9) |
+
+**Not carried across, with no owner:** the node graph and its materialisation; the belief state vector and `api_compute_node_state`; the brain, algorithm and domain-inheritance registries; the foundation dashboard; and the validators that delete rows by hand. **A governed model of belief,** if it is ever wanted, would be a new capability through the ten-point checklist, with its method versioned and disclosed, never inferred from record types.
+
+**The automatic runs are not carried across either.** The rehearsal runs the loop after every approved observation, outcome and learning review, and every completed trial (`api.php`, lines 980, 1017, 1032, 1131). When CAP-08, CAP-09 and proposed CAP-36 are contracted, those approvals call nothing automatically.
+
+**What this changes:** the loop no longer needs an identity decision, and nothing in the workstream waits on it. The priority order is unchanged: CAP-04 → CAP-05 → CAP-01 → CAP-08 → CAP-06 → CAP-07 → CAP-09. Sections 3 and 4, the summary and decision 3 are marked in place.
+
 ## Summary
 
 | Rehearsal group | Actions | Decision | New number |
 |---|---:|---|---|
 | **Observation** (`AAB_OBSERVATION_ACTIONS`) | 21 | Its own capability, not part of CAP-08 | **CAP-36, proposed.** Not canonical until the ten-point checklist is met |
 | **Resource intelligence** (`AAB_RESOURCE_INTELLIGENCE_ACTIONS`) | 13 | Belongs to **CAP-01** Country Intelligence & Discovery | None |
-| **Cognitive intelligence** (`AAB_COGNITIVE_ACTIONS`) | 9 | Split: three actions to **CAP-01** and **CAP-06**; the loop, its reads and `cognitive_foundation_workspace` held (note of 2026-09-29) | None assigned. The loop's identity is undecided |
+| **Cognitive intelligence** (`AAB_COGNITIVE_ACTIONS`) | 9 | Split: three actions to **CAP-01** and **CAP-06**; the loop, its reads and `cognitive_foundation_workspace` held (note of 2026-09-29). **Retired from the migration** (note of 2026-09-29: the cognitive loop retired) | None. The loop gets no number (note of 2026-09-29: the cognitive loop retired) |
 
 **How a number becomes canonical.** A number is never canonical because it is free: "CAP-35 must not become canonical merely because it is numerically available" (`governance/AAB-CAPABILITY-ADMISSION-AUTHORITY-DEFINITION-2026-09-27.md`, section 2.2). It becomes canonical only when the ten-point identity checklist is met, and the capability registry, the CAP-34 fidelity manifest and the validators are updated together (checklist items 8 to 10). **This record proposes; it does not make canonical.**
 
@@ -112,7 +146,7 @@
 - **A defect found in the rehearsal:** `run_resource_discovery` always calls the safety gate with toxicity and ecology `UNASSESSED` (`source-b/agriculture/functions.sql`, line 2582), which forces review. No gateway action re-assesses the gate. So a review can never be approved through the gateway, and the bridge can never run.
 - **Nothing active consumes the bridge's output:** the rehearsal's discovery-candidate reads (`list_discovery_candidates`, `get_discovery_candidate`) are in the gateway's legacy Airtable action list (`api.php`, from line 248), not among its active actions.
 
-## 3. Cognitive intelligence: split across CAP-01 and CAP-06; the loop held
+## 3. Cognitive intelligence: split across CAP-01 and CAP-06; the loop held, now retired (note of 2026-09-29: the cognitive loop retired)
 
 **The decision.** The 9 actions of `AAB_COGNITIVE_ACTIONS` do not get a number of their own. Four go to existing capabilities; the loop and its reads are held.
 
@@ -120,13 +154,13 @@
 |---|---|---|
 | `submit_problem_signal`, `create_transformation_opportunity` (`cognitive_foundation_workspace` moved to Held: note of 2026-09-29) | **CAP-01** | Agricultural problems and overlooked opportunities are CAP-01's description |
 | `propose_ingredient_build_candidate` | **CAP-06** | CAP-06 investigates "candidate new ones from evidence and country resources" (the platform overview, line 200) |
-| `run_agriculture_cognitive_loop`, `compute_cognitive_node_state`, `agriculture_cognitive_loop_workspace`, `live_intelligence_surface`, `intelligence_activity_timeline`, and `cognitive_foundation_workspace` (moved from CAP-01: note of 2026-09-29) | **Held** | See below |
+| `run_agriculture_cognitive_loop`, `compute_cognitive_node_state`, `agriculture_cognitive_loop_workspace`, `live_intelligence_surface`, `intelligence_activity_timeline`, and `cognitive_foundation_workspace` (moved from CAP-01: note of 2026-09-29) | **Held.** **Retired from the migration** (note of 2026-09-29: the cognitive loop retired) | See below |
 
 **The actions** (`api.php`, from line 1268). All nine call `cognitive_core` functions.
 
 **Not CAP-05.** CAP-05's contract excludes this group in terms: "CAP-05 should not be wired to either `submit_problem_signal` or `run_agriculture_cognitive_loop`" (`governance/workstream-b/CAP-05-GOVERNED-SCIENTIFIC-REASONING-CANONICAL-CONTRACT-2026-09-20.md`, line 347 of the 2026-09-20 text; kept in its amendment of 2026-09-29: note of 2026-09-29).
 
-**Why the loop is held.**
+**Why the loop is held.** **Decided:** retired from the migration, with no number (note of 2026-09-29: the cognitive loop retired).
 - **The gateway calls it a platform foundation:** "Shared cognitive foundation inherited by every registered AAB domain" (`api.php`, line 1266). It materialises nodes and relationships, recomputes their states with named algorithms (among them evidence-weighted belief, contradiction pressure, knowledge-gap density and expected information gain), and reports investigation candidates for human review.
 - **Its identity is one of three things, and cannot be decided from the gateway alone:**
   - **a platform primitive,** in which case it gets no capability number, under the platform–domain separation decision;
@@ -142,20 +176,20 @@
 |---|---|
 | **Observation (CAP-36, proposed)** | The ten-point checklist met (items 1 and 3 to 10, above), with its contract and the registry, manifest and validator changes reviewed together. **Its release classification decided.** Its place in the workstream's priority order decided (it is not in the order today) |
 | **Resource intelligence (CAP-01)** | **CAP-01's canonical contract,** which absorbs the 13 actions, the three cognitive actions above, their dependencies on CAP-10 and CAP-06, and the gate defect. **CAP-01 enters the workstream's priority order** (decided on 2026-09-29, below) |
-| **Cognitive intelligence** | **A reading of `cognitive_core`,** then the loop's identity decided: a platform primitive, CAP-33, or a capability of its own through the checklist. `propose_ingredient_build_candidate` follows CAP-06 in the order |
+| **Cognitive intelligence** | **A reading of `cognitive_core`,** then the loop's identity decided: a platform primitive, CAP-33, or a capability of its own through the checklist. `propose_ingredient_build_candidate` follows CAP-06 in the order. **Done:** read, and the loop retired (note of 2026-09-29: the cognitive loop retired) |
 
 ## Decisions recorded on 2026-09-29
 
 1. **Observation is CAP-36 Governed Observation and Field Evidence, proposed:** its own capability, not part of CAP-08. It is not canonical until the ten-point checklist is completed, with the registry, the CAP-34 fidelity manifest and the validators updated together (section 1).
 2. **Resource intelligence belongs to CAP-01,** with no new number (section 2).
-3. **Cognitive intelligence is split:** three actions to CAP-01 and one to CAP-06. The loop and its four reads are held until `cognitive_core` is read and understood, and no number is assigned (section 3).
+3. **Cognitive intelligence is split:** three actions to CAP-01 and one to CAP-06. The loop and its four reads are held until `cognitive_core` is read and understood, and no number is assigned (section 3). **Decided:** the loop and every held action are retired from the migration, with no number (note of 2026-09-29: the cognitive loop retired).
 4. **CAP-01 enters the workstream's priority order, third:** CAP-04 → CAP-05 → **CAP-01** → CAP-08 → CAP-06 → CAP-07 → CAP-09. **The reason:** CAP-01 now holds 16 rehearsal actions (13 of resource intelligence and 3 of cognitive intelligence), so it has a real migration path. It enters the order when its contract is written, which depends on the resource and cognitive identity decisions, and those are now settled. It comes after CAP-04 and CAP-05 because both remain dependencies for everything else, and before CAP-08.
 
 ## What this record does not establish
 
 - It does not make CAP-36, or any number, canonical: that needs the ten-point checklist, and the registry, manifest and validators updated together.
 - It does not write, amend or admit any capability's contract, including CAP-01's, CAP-06's or CAP-08's.
-- It does not decide the cognitive loop's identity.
+- It does not decide the cognitive loop's identity. **Decided by its note of 2026-09-29:** retired from the migration, with no number.
 - It changes the workstream's priority order only by adding CAP-01 (decision 4). It adds neither CAP-36 nor the cognitive loop.
 - It does not bring any rehearsal code across, or establish that any of it is correct.
 - It does not alter commissioning status, satisfy Gate D, close WP05, or grant any production or commissioning authority.
