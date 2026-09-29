@@ -4,7 +4,7 @@
 **Domain:** Agricultural Science (AGR)
 **Capability:** CAP-04 Governed Scientific Memory. It is not SCS-CAP-04 (Deforestation Evidence Admission), a different capability in another domain.
 **Authority:** DEFINES THE CONTRACT FOR CAP-04: WHAT MAY ENTER GOVERNED SCIENTIFIC MEMORY, HOW IT IS ADMITTED, HELD, QUARANTINED AND SUPERSEDED, HOW ADMITTED MEMORY IS READ, AND THE BOUNDARY WITH CAP-05 AND CAP-09. Establishes no commissioning, production, Gate D, WP05, scientific-validity or regulatory authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
-**Amended:** 2026-09-29, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3): aligned with the platform contracts, and the rehearsal accounted for (see "Amendment of 2026-09-29: canonical alignment, and the rehearsal accounted for"). Amended again on 2026-09-29, with two corrections following CAP-05's canonical amendment (see "Amendment of 2026-09-29: two corrections following CAP-05 canonical amendment").
+**Amended:** 2026-09-29, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3): aligned with the platform contracts, and the rehearsal accounted for (see "Amendment of 2026-09-29: canonical alignment, and the rehearsal accounted for"). Amended again on 2026-09-29, with two corrections following CAP-05's canonical amendment (see "Amendment of 2026-09-29: two corrections following CAP-05 canonical amendment"), and for challenges to its human decisions (see "Amendment of 2026-09-29: challenges to CAP-04's human decisions").
 **History:** first written on 2026-09-20 as a governance design contract, resolving the "design decision required before wiring" finding for CAP-04 in `governance/AAB-CAPABILITY-GATEWAY-RECONCILIATION-2026-09-20.md`. It was not part of PR #16. The 2026-09-20 text is in the repository's history.
 
 ## Amendment of 2026-09-29: canonical alignment, and the rehearsal accounted for
@@ -65,6 +65,21 @@ AAB-PLATFORM-04 (actor–subject links) is **not adopted**: CAP-04 has no submis
 |---|---|---|
 | An as-of read | "CAP-05's evidence landscapes and the Governed Evidence Watch candidate need it." | It is for display and inspection, and never the input to an evaluation: an evaluation reads through a snapshot taken at the platform's clock |
 | What CAP-05 receives | "CAP-05's contract asks for records with `integrityStatus: "VERIFIED"` and admission `ADMITTED`." | Each listed record, read for the purpose `SCIENTIFIC_EVIDENCE_EVALUATION`, with its derived state. Which records CAP-05 selects stays CAP-05's disclosed policy |
+
+## Amendment of 2026-09-29: challenges to CAP-04's human decisions
+
+**Why.** AAB-PLATFORM-08 requires every adopting domain to name its challenging role (section 13), and to say what must happen to anything that relied on a decision later invalidated (section 8). CAP-04's canonical amendment adopted AAB-PLATFORM-08, and said only that challenges "follow AAB-PLATFORM-08, section 8": it named no challenging role, and said nothing of invalidation. Found in the review of CAP-05's amendment, and agreed there as a follow-up (stock-take, section 3). **This amendment completes CAP-04's adoption of AAB-PLATFORM-08.** No other rule changes.
+
+**Decisions recorded on 2026-09-29** (approved by the Platform Owner in review):
+1. **Who may challenge:** a `MEMORY_REVIEWER` or `MEMORY_QUARANTINE_OFFICER` in the record's country workspace, other than the challenged decision's decider; and **the record's submitter,** for any decision on their own record. No new role.
+2. **Who resolves:** a `MEMORY_REVIEWER`, for a challenge to a held resolution; a `MEMORY_QUARANTINE_OFFICER`, for a challenge to a quarantine or a release. Never the challenger, the challenged decision's decider, or the record's submitter.
+3. **An open challenge suspends nothing.** The decision stands until a challenge is upheld, and every read shows that a challenge is open. Otherwise, a challenge would be a way to withdraw evidence without a decision.
+4. **An upheld challenge returns the record to where it was before the invalidated decision:** a held record is held again, awaiting a new resolution; a quarantine no longer applies; a released quarantine applies again. **Past uses are unchanged,** as for quarantine.
+5. **A held resolution may be superseded only after it is invalidated.** "Resolved at most once" is kept for a valid resolution. A reviewer who no longer stands by one challenges it; they do not supersede it.
+6. **One open challenge per decision,** and **a challenge resolution is final in CAP-04:** it is not itself challenged. A later challenge of the same decision, with new grounds, is allowed. This is the pilot position. Whether resolutions should be challengeable under AAB-PLATFORM-08 remains an open platform question.
+7. **One decider per decision.** No CAP-04 decision kind needs more than one.
+
+**Nothing is implemented by this amendment.**
 
 ## The boundary, in plain English
 
@@ -332,6 +347,7 @@ CAP-04 adopts AAB-PLATFORM-06 by this amendment. The rules below are **rules ver
 - **Owning institution:** when the submitter's grant is scoped to the institution the record names as `ownership.ownerOrganizationId`, the source authority check passes. When it is not, the record is held for a reviewer to decide whether the submitter may provide it.
 - **Reviewing held records:** **`MEMORY_REVIEWER`**, a `HUMAN`, never the submitter.
 - **Quarantine and release:** **`MEMORY_QUARANTINE_OFFICER`**, a `HUMAN`. The submitter never releases a quarantine on their own record.
+- **Challenging a human decision** (amended on 2026-09-29, challenges): a **`MEMORY_REVIEWER`** or **`MEMORY_QUARANTINE_OFFICER`** in the workspace, other than the decision's decider; or the record's submitter, for a decision on their own record ("Challenges").
 - **Reading:** **`MEMORY_READER`**, within the country workspace, and only for the purposes a record permits ("Reading admitted memory"). Any role above also reads what its duty requires.
 - **Authority is resolved by the platform, never taken from the request.**
 
@@ -384,7 +400,7 @@ The checks run in this order. A refusal names the first check that failed, with 
 
 - **The reviewer addresses every reason the record was held,** and every limitation, as AAB-PLATFORM-08 requires. For automated content, they state what they checked against the original. For traditional knowledge, they state the basis on which it may be held and used. For personal information, the basis on which it may be held ("Open gaps").
 - **The reviewer is never the submitter,** and never holds a declared conflict with the owning institution.
-- **A held decision is resolved at most once.** What a held record now is, is derived from its decisions.
+- **A held decision is resolved at most once,** while the resolution is valid. A resolution invalidated by an upheld challenge is superseded by a new one, under AAB-PLATFORM-08, section 6 (amended on 2026-09-29, challenges). What a held record now is, is derived from its decisions.
 
 ### Quarantine, and its release
 
@@ -448,6 +464,7 @@ interface Cap04MemoryRecordRead {
     state: "HELD" | "ADMITTED" | "REJECTED";
     quarantined: boolean;
     supersededBy?: { memoryRecordId: string };
+    openChallenges: Array<{ challengeId: string; challengedDecisionId: string }>;  // amended on 2026-09-29, challenges
     eligibleForScientificMemory: boolean;  // ADMITTED, not quarantined, not superseded
     epistemicStatus:
       | "SOURCE_MATERIAL"                  // the record is the source as received: no generation
@@ -483,6 +500,8 @@ Every governed write has its receipt, in the same transaction:
 | `MEMORY_HELD_RESOLUTION` | A reviewer resolves a held record |
 | `MEMORY_QUARANTINE` | A record is quarantined |
 | `MEMORY_QUARANTINE_RELEASE` | A quarantine is released |
+| `MEMORY_DECISION_CHALLENGE` | A human decision is challenged (amended on 2026-09-29, challenges) |
+| `MEMORY_CHALLENGE_RESOLUTION` | A challenge is resolved |
 
 The receipt names `capabilityId: "CAP-04"`, the decision type, the record as its subject, the requester and the decision's digest. **The pilot's receipt table accepts only SCS capability identifiers and AAB-PLATFORM-09.** Extending it to AGR capability identifiers is a platform migration, and a prerequisite before any CAP-04 endpoint is built ("Open gaps").
 
@@ -491,7 +510,37 @@ The receipt names `capabilityId: "CAP-04"`, the decision type, the record as its
 - **The three decision kinds** `MEMORY_HELD_RESOLUTION`, `MEMORY_QUARANTINE` and `MEMORY_QUARANTINE_RELEASE` are AAB-PLATFORM-08 human decisions: one named person, `HUMAN`, in their own name, with a verified scoped grant, never under representation.
 - **Each is signed** by the decider with their registered key, and verified against the key that was active when the server accepted it (AAB-PLATFORM-09). Only a decision whose signature is `VERIFIED` or `AFFIRMED_AFTER_COMPROMISE` is relied on.
 - **Currency does not apply.** These decisions act on records that never change (AAB-PLATFORM-08, section 1).
-- **Challenges** follow AAB-PLATFORM-08, section 8.
+- **Challenges** follow AAB-PLATFORM-08, section 8, as below (amended on 2026-09-29, challenges).
+- **One decider per decision.** No CAP-04 decision kind needs more than one (AAB-PLATFORM-08, section 7).
+
+### Challenges
+
+**Every CAP-04 human decision can be challenged:** a held resolution, a quarantine and a release.
+
+| Challenged decision | Who may challenge | Who resolves |
+|---|---|---|
+| `MEMORY_HELD_RESOLUTION` | A `MEMORY_REVIEWER` or `MEMORY_QUARANTINE_OFFICER` in the workspace, other than its decider; or the record's submitter | A `MEMORY_REVIEWER` |
+| `MEMORY_QUARANTINE` | As above | A `MEMORY_QUARANTINE_OFFICER` |
+| `MEMORY_QUARANTINE_RELEASE` | As above | A `MEMORY_QUARANTINE_OFFICER` |
+
+- **A challenge is an attributable record:** a `HUMAN`, in their own name, with a verified scoped grant, signed, written once. It names the challenged decision and its digest, and states its grounds. The submitter challenges through their `MEMORY_SUBMITTER` grant, for their own record only.
+- **It is resolved by a `CHALLENGE_RESOLUTION` decision,** outcome `UPHELD` or `DISMISSED`, with reasoning that answers the grounds. The resolver is never the challenger, the challenged decision's decider, or the record's submitter, and holds the role in the table.
+- **One open challenge per decision.** A second is refused while one is open.
+- **A challenge resolution is final in CAP-04.** It is not itself challenged. A later challenge of the same decision, with new grounds, is allowed. This is the pilot position. Whether resolutions should be challengeable under AAB-PLATFORM-08 remains an open platform question.
+- **An open challenge suspends nothing.** The decision stands until a challenge is upheld. Every read of the record shows its open challenges (`derived.openChallenges`).
+- **Validity is derived when read:** `VALID`, `UNDER_CHALLENGE` or `INVALIDATED` (AAB-PLATFORM-08, section 8). An invalidated decision stays on the record, with its outcome, and is never relied on again.
+
+**What an upheld challenge does** (AAB-PLATFORM-08, section 8: "The domain says what must happen to anything that relied on it"):
+
+| Invalidated decision | The record, derived when read | What follows |
+|---|---|---|
+| `MEMORY_HELD_RESOLUTION`, outcome `ADMIT` | Held again, and excluded from new reads of admitted memory | A new resolution, superseding the invalidated one |
+| `MEMORY_HELD_RESOLUTION`, outcome `REJECT` or `REQUIRE_INFORMATION` | Held again | A new resolution, superseding the invalidated one |
+| `MEMORY_QUARANTINE` | Not quarantined | Nothing further. A new quarantine is a new decision |
+| `MEMORY_QUARANTINE_RELEASE` | Quarantined again | Nothing further. A new release is a new decision |
+
+- **Past uses are unchanged.** A snapshot, landscape or learning decision that cited the record while the decision was valid still names it, as it was. A later comparison with the store shows the record's new state ("Open gaps": an invalidated admission).
+- **An automated admission is not a human decision,** and is not challenged. A record wrongly admitted at submission is quarantined, or superseded.
 
 ## Operations and routes
 
@@ -503,6 +552,8 @@ interface ScientificMemoryProvider {
   resolveHeldRecord(request: ResolveHeldRecordRequest): Promise<HumanDecision>;
   quarantineRecord(request: QuarantineRequest): Promise<HumanDecision>;
   releaseQuarantine(request: ReleaseQuarantineRequest): Promise<HumanDecision>;
+  challengeDecision(request: ChallengeDecisionRequest): Promise<DecisionChallenge>;
+  resolveChallenge(request: ResolveChallengeRequest): Promise<HumanDecision>;
   getMemoryRecord(memoryRecordId: string, asOf?: string): Promise<Cap04MemoryRecordRead>;
   searchAdmittedMemory(request: ScientificMemorySearchRequest): Promise<ScientificMemorySearchResult>;
 }
@@ -517,6 +568,8 @@ interface ScientificMemoryProvider {
 | `resolveHeldRecord` | `POST /agr/v1/memory-records/:memoryRecordId/held-resolutions` |
 | `quarantineRecord` | `POST /agr/v1/memory-records/:memoryRecordId/quarantines` |
 | `releaseQuarantine` | `POST /agr/v1/memory-records/:memoryRecordId/quarantine-releases` |
+| `challengeDecision` | `POST /agr/v1/memory-records/:memoryRecordId/challenges`, naming the decision (amended on 2026-09-29, challenges) |
+| `resolveChallenge` | `POST /agr/v1/memory-records/:memoryRecordId/challenges/:challengeId/resolutions` |
 | `getMemoryRecord` | `GET /agr/v1/memory-records/:memoryRecordId?asOf=` |
 | `searchAdmittedMemory` | `GET /agr/v1/memory-records?purpose=&…` |
 
@@ -551,6 +604,11 @@ interface Cap04Failure {
     | "DECIDER_NOT_INDEPENDENT"
     | "REASONING_INCOMPLETE"
     | "DECISION_SIGNATURE_INVALID"
+    // Challenges (amended on 2026-09-29, challenges)
+    | "CHALLENGED_DECISION_NOT_FOUND"
+    | "CHALLENGE_ALREADY_OPEN"
+    | "CHALLENGE_NOT_OPEN"
+    | "CHALLENGE_NOT_PERMITTED"
     // Reads
     | "PURPOSE_NOT_PERMITTED"
     | "CROSS_BOUNDARY_REQUEST_BLOCKED"
@@ -575,12 +633,16 @@ interface Cap04Failure {
 | `SUPERSESSION_NOT_PERMITTED` | 409 | The superseded record does not exist in the workspace, is already superseded, or is not the submitter's to supersede |
 | `MEMORY_RECORD_NOT_FOUND` | 404 | No record with that identifier in the workspace, or none the actor may see |
 | `RECORD_NOT_HELD` | 409 | A held resolution for a record that was not held |
-| `HELD_RECORD_ALREADY_RESOLVED` | 409 | The held decision was already resolved |
+| `HELD_RECORD_ALREADY_RESOLVED` | 409 | The held decision was already resolved, by a resolution that is not invalidated |
 | `RECORD_NOT_ADMITTED` | 409 | A quarantine of a record that is not admitted |
 | `RECORD_ALREADY_QUARANTINED`, `RECORD_NOT_QUARANTINED` | 409 | Quarantine or release that does not match the record's state |
-| `DECIDER_NOT_INDEPENDENT` | 403 | The decider is the record's submitter, or otherwise not independent |
+| `DECIDER_NOT_INDEPENDENT` | 403 | The decider is the record's submitter, or otherwise not independent; for a challenge resolution, also the challenger or the challenged decision's decider |
 | `REASONING_INCOMPLETE` | 422 | A reason for holding, or a limitation, is not addressed |
 | `DECISION_SIGNATURE_INVALID` | 422 | The decision's signature does not verify against the decider's key as at acceptance |
+| `CHALLENGED_DECISION_NOT_FOUND` | 404 | No human decision with that identifier on the record, or none the actor may see |
+| `CHALLENGE_ALREADY_OPEN` | 409 | The decision already has an open challenge |
+| `CHALLENGE_NOT_OPEN` | 409 | A resolution of a challenge already resolved |
+| `CHALLENGE_NOT_PERMITTED` | 409 | The decision is a challenge resolution, or an automated admission, which are not challenged |
 | `PURPOSE_NOT_PERMITTED` | 403 | A read without a purpose, or for a purpose the actor may not declare |
 | `CROSS_BOUNDARY_REQUEST_BLOCKED` | 403 | A request for records outside the actor's country workspace |
 | `DEPENDENCY_UNAVAILABLE` | 503 | The database or the object store could not be reached |
@@ -633,6 +695,8 @@ The promoted knowledge record retains permanent references to the CAP-04 records
 **Contract gap: purposes.** `permittedUses` and the purpose declared on a read are strings, and there is no governed vocabulary of purposes yet, nor a rule for which roles may declare which purpose. Until there is, a read's purpose is matched exactly against a record's permitted uses.
 
 **Contract gap: sharing across institutions and countries.** Records are read within their country workspace. Reading another institution's records within the workspace is governed only by `permittedUses` and `sharingClassification`. Cross-country reading needs an explicit, authorised sharing arrangement (AAB-PLATFORM-05, section 4), which is not defined. The AGR cross-institutional landscape candidate's independent review asked for this to be reconciled with CAP-23 and CAP-24.
+
+**Platform gap: an invalidated admission** (amended on 2026-09-29, challenges). When a challenge to an `ADMIT` resolution is upheld, the record is held again. AAB-PLATFORM-07's comparison with the store has no change kind for a member that is no longer admitted for this reason: `MEMBER_SUPERSEDED` and `MEMBER_QUARANTINED` do not describe it. Until AAB-PLATFORM-07 names one, a comparison reports it as the member's current state, disclosed, and a domain's review triggers do not fire on it. It is AAB-PLATFORM-07's to settle, not CAP-04's.
 
 **Contract gap: an admission feed.** The Governed Evidence Watch candidate needs new admissions as events. Until one is defined, it reads admitted memory by admission time.
 

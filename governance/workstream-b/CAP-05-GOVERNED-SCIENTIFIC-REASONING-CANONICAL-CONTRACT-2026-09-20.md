@@ -4,7 +4,7 @@
 **Domain:** Agricultural Science (AGR)
 **Capability:** CAP-05 Governed Scientific Reasoning. It is not SCS-CAP-05 (Supply Chain Custody Evidence Admission), a different capability in another domain.
 **Authority:** DEFINES THE CONTRACT FOR CAP-05: HOW A SCIENTIST'S QUESTION IS EVALUATED OVER A FROZEN SET OF CAP-04 ADMITTED EVIDENCE, WHAT THE RESULTING EVIDENCE LANDSCAPE CONTAINS AND DOES NOT, HOW IT IS RECORDED, REVIEWED AND COMPARED WITH LATER EVIDENCE, AND ITS BOUNDARY WITH THE REHEARSAL'S COGNITIVE LOOP, EVIDENCE WATCH AND CAP-09. Establishes no commissioning, production, Gate D, WP05, scientific-validity or regulatory authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
-**Amended:** 2026-09-29, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3): aligned with the platform contracts and with CAP-04 as amended, and the rehearsal accounted for (see "Amendment of 2026-09-29").
+**Amended:** 2026-09-29, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3): aligned with the platform contracts and with CAP-04 as amended, and the rehearsal accounted for (see "Amendment of 2026-09-29: canonical alignment, and the rehearsal accounted for"). Amended again on 2026-09-29, for challenges to landscape reviews (see "Amendment of 2026-09-29: challenges to landscape reviews").
 **History:** first written on 2026-09-20 as a governance design contract, resolving the "design decision required before wiring" finding for CAP-05 in `governance/AAB-CAPABILITY-GATEWAY-RECONCILIATION-2026-09-20.md`. It was not part of PR #16. The 2026-09-20 text is in the repository's history.
 
 ## Amendment of 2026-09-29: canonical alignment, and the rehearsal accounted for
@@ -47,6 +47,17 @@
 11. **The cognitive loop is not CAP-05, and CAP-05 never depends on it.** Confirmed by reading `cognitive_core` ("What the rehearsal does").
 
 **Nothing is implemented by this amendment.** Every rule of 2026-09-20 not changed above is kept.
+
+## Amendment of 2026-09-29: challenges to landscape reviews
+
+**Why.** CAP-05's canonical amendment named who may challenge a landscape review, and a receipt for resolving a challenge, but no receipt for filing one, no operations or routes, and no failure codes. CAP-04's amendment of the same date, for challenges to its human decisions, found the gap. **This amendment completes CAP-05's challenge infrastructure to match CAP-04's.** Who may challenge and who resolves are unchanged.
+
+**What it adds** (approved in review on 2026-09-29, with CAP-04's):
+- **The rules,** under "Review of a landscape": one open challenge per review; a challenge resolution is final, as in CAP-04, as the pilot position; what an upheld challenge does.
+- **A receipt** for filing a challenge, **two operations and their routes,** and **four failure codes,** the same as CAP-04's.
+- **The platform gap on invalidated admissions,** recorded in "Open gaps", as it bears on review currency.
+
+**Nothing is implemented by this amendment.**
 
 ## The boundary, in plain English
 
@@ -305,6 +316,11 @@ interface Cap05EvidenceLandscape {
   - **Lapse:** 12 months, set as `reliableUntil`.
 - **One decider per review.** Several reviews of one landscape are several decisions, combined when read; none removes another's dissent (AAB-PLATFORM-08, section 7).
 - **Challenge:** any `LANDSCAPE_REVIEWER` in the workspace other than the review's decider may challenge it, with grounds. The challenge is resolved by a `CHALLENGE_RESOLUTION` decision, by a `LANDSCAPE_REVIEWER` who is neither party.
+  - **A challenge is an attributable record:** `HUMAN`, in the challenger's own name, with a verified scoped grant, signed, written once, naming the review and its digest, and stating its grounds (amended on 2026-09-29, challenges).
+  - **One open challenge per review.** A second is refused while one is open.
+  - **A challenge resolution is final in CAP-05.** It is not itself challenged. A later challenge of the same review, with new grounds, is allowed. This is the pilot position. Whether resolutions should be challengeable under AAB-PLATFORM-08 remains an open platform question.
+  - **An open challenge prevents reliance.** Unlike a CAP-04 decision, a review is relied on only while it is `VALID` and `CURRENT` (AAB-PLATFORM-08, section 9). That is the platform's rule, and CAP-05 does not relax it.
+  - **An upheld challenge invalidates the review.** It stays on the record with its outcome, and is never relied on again. A new review of the landscape supersedes it. What happens to anything that relied on it is CAP-09's to decide (below).
 - **What relies on a review** is for CAP-09's contract to decide, including what happens to what relied on a review later invalidated. CAP-05 does not decide what a review permits.
 
 ## Adopting AAB-PLATFORM-07 and AAB-PLATFORM-08
@@ -341,6 +357,7 @@ interface Cap05EvidenceLandscape {
 |---|---|
 | `EVIDENCE_LANDSCAPE_EVALUATION` | An evaluation is recorded, with its snapshot |
 | `LANDSCAPE_REVIEW` | A landscape is reviewed |
+| `LANDSCAPE_REVIEW_CHALLENGE` | A review is challenged (amended on 2026-09-29, challenges) |
 | `LANDSCAPE_REVIEW_CHALLENGE_RESOLUTION` | A challenge to a review is resolved (AAB-PLATFORM-08, section 8) |
 
 Receipts carry `capabilityId: "CAP-05"`, which migration 025 admits.
@@ -350,6 +367,8 @@ Receipts carry `capabilityId: "CAP-05"`, which migration 025 admits.
 | `evaluateEvidenceLandscape` | `POST /agr/v1/evidence-landscapes`: `201` with `{ landscape, snapshot, receipt }` |
 | `getEvidenceLandscape` | `GET /agr/v1/evidence-landscapes/:evaluationId`, with its comparison with the store, derived |
 | `reviewEvidenceLandscape` | `POST /agr/v1/evidence-landscapes/:evaluationId/reviews` |
+| `challengeLandscapeReview` | `POST /agr/v1/evidence-landscapes/:evaluationId/reviews/:decisionId/challenges` (amended on 2026-09-29, challenges) |
+| `resolveLandscapeReviewChallenge` | `POST /agr/v1/evidence-landscapes/:evaluationId/reviews/:decisionId/challenges/:challengeId/resolutions` |
 
 Every write requires an `Idempotency-Key`. The interface stays provider-neutral, and the design's gateway group name, `AAB_GOVERNED_REASONING_ACTIONS`, is kept for a gateway adapter.
 
@@ -376,6 +395,11 @@ interface Cap05Failure {
     | "REASONING_INCOMPLETE"
     | "BINDING_MISMATCH"
     | "DECISION_SIGNATURE_INVALID"
+    // Challenges (amended on 2026-09-29, challenges)
+    | "CHALLENGED_DECISION_NOT_FOUND"
+    | "CHALLENGE_ALREADY_OPEN"
+    | "CHALLENGE_NOT_OPEN"
+    | "CHALLENGE_NOT_PERMITTED"
     | "DEPENDENCY_UNAVAILABLE";
 
   reasons: string[];
@@ -394,10 +418,14 @@ interface Cap05Failure {
 | `STANCE_ASSIGNMENT_INVALID` | 422 | A listed record has no stance, or more than one, or a stance names a record not listed |
 | `EVIDENCE_SET_EMPTY` | 422 | Every listed record was excluded. The exclusions are named, within what the requester may see |
 | `LANDSCAPE_NOT_FOUND` | 404 | No landscape with that identifier the actor may read |
-| `REVIEWER_NOT_INDEPENDENT` | 403 | The reviewer is the requester, or the submitter of a member |
+| `REVIEWER_NOT_INDEPENDENT` | 403 | The reviewer is the requester, or the submitter of a member; for a challenge resolution, also the challenger or the challenged review's decider |
 | `REASONING_INCOMPLETE` | 422 | A finding not addressed, or a disclosure not acknowledged |
 | `BINDING_MISMATCH` | 409 | The landscape's or snapshot's digests no longer match what is stored |
 | `DECISION_SIGNATURE_INVALID` | 422 | The review's signature does not verify against the reviewer's key as at acceptance |
+| `CHALLENGED_DECISION_NOT_FOUND` | 404 | No review with that identifier on the landscape, or none the actor may see |
+| `CHALLENGE_ALREADY_OPEN` | 409 | The review already has an open challenge |
+| `CHALLENGE_NOT_OPEN` | 409 | A resolution of a challenge already resolved |
+| `CHALLENGE_NOT_PERMITTED` | 409 | The decision is a challenge resolution, which is not challenged |
 | `DEPENDENCY_UNAVAILABLE` | 503 | CAP-04, the database or the store could not be reached |
 
 **Retired from 2026-09-20:** `EVIDENCE_RECORD_NOT_FOUND`, `EVIDENCE_ACCESS_DENIED` and `EVIDENCE_NOT_ADMITTED` are exclusions now, never refusals, so that a landscape never reveals a record the requester cannot see. `AUTHORITY_SCOPE_INVALID` is `ROLE_NOT_AUTHORISED`. `CLASSIFICATION_INCOMPLETE` is `STANCE_ASSIGNMENT_INVALID`, since CAP-04 uses the old name for something else. `OPERATIONAL_INTENT_BLOCKED` is unreachable ("The request").
@@ -413,6 +441,8 @@ interface Cap05Failure {
 **Contract gap: cross-institution and cross-country evidence.** A landscape uses only what its requester may read in their country workspace. Evaluating across institutions under an explicit sharing arrangement, as the AGR cross-institutional landscape candidate proposes, is not defined, and waits on CAP-23 and CAP-24.
 
 **Contract gap: erasure.** A landscape names its members permanently. What a lawful erasure of a member's original leaves in a landscape is CAP-04's open erasure gap, and is not defined here.
+
+**Platform gap: an invalidated admission** (amended on 2026-09-29, challenges). When a challenge to a CAP-04 `ADMIT` resolution is upheld, the record is held again (CAP-04, "Challenges"). AAB-PLATFORM-07 has no change kind for a member that is no longer admitted for this reason, so a review of a landscape with that member does not become `POTENTIALLY_STALE` through it. A comparison shows the member's current state, disclosed. It is AAB-PLATFORM-07's to settle, by its own amendment.
 
 **Contract gap: Evidence Watch.** The candidate's design stores notices and an as-of time; this contract anchors it to persisted landscapes and derived staleness. Its own contract must align with this.
 
