@@ -16,7 +16,11 @@
 - **The demonstration environment's condition is met** (section 8.6).
 - **The AGR route prefix `/agr/v1/` is decided,** as a platform decision (decision 18).
 - **AAB-PLATFORM-06 is amended** for checks that hold a record for review (#67).
-**Authority:** RECORDS THE STATE OF EVERY AAB PLATFORM PRIMITIVE AND CAPABILITY, AS DEMONSTRATED BY THE CONTRACTS, CODE, TESTS AND PROOFS ON `main` AT `9f17cc2`, UPDATED TO `634295a`, TO `67b6ba8`, TO `c1586c6`, TO `fa84240`, TO `16d21cc`, TO `dbb2408` AND TO `f1bb47d`, AND WHAT MUST EXIST BEFORE WHAT. Admits no capability, grants no implementation, commissioning, production, regulatory or scientific authority, changes no control's status, and does not satisfy Gate D or begin WP05.
+**Updated again (2026-09-29):** to `main` at `d1bc453`, after PR #68, with the AGR capability identity decisions (`governance/workstream-b/AGR-CAPABILITY-IDENTITY-DECISIONS-2026-09-29.md`).
+- **Observation is CAP-36 Governed Observation and Field Evidence, proposed:** its own capability, not part of CAP-08, and not canonical until the ten-point checklist is met.
+- **Resource intelligence belongs to CAP-01,** with no new number. **Cognitive intelligence is split** between CAP-01 and CAP-06, and its loop is held until `cognitive_core` is read.
+- **CAP-01 enters the workstream's priority order,** after CAP-05 (decision 22).
+**Authority:** RECORDS THE STATE OF EVERY AAB PLATFORM PRIMITIVE AND CAPABILITY, AS DEMONSTRATED BY THE CONTRACTS, CODE, TESTS AND PROOFS ON `main` AT `9f17cc2`, UPDATED TO `634295a`, TO `67b6ba8`, TO `c1586c6`, TO `fa84240`, TO `16d21cc`, TO `dbb2408`, TO `f1bb47d` AND TO `d1bc453`, AND WHAT MUST EXIST BEFORE WHAT. Admits no capability, grants no implementation, commissioning, production, regulatory or scientific authority, changes no control's status, and does not satisfy Gate D or begin WP05.
 **Sources:**
 - `governance/AAB-PLATFORM-PURPOSE-AND-VALUES-REVISION-2026-09-25.md`
 - `governance/AAB-PLATFORM-DOMAIN-SEPARATION-DECISION-2026-09-25.md`
@@ -357,10 +361,10 @@ Names, fidelity and horizon are taken from the CAP-34 fidelity manifest (snapsho
 | CAP-32 Domain-Specific Scientific Intelligence | `named only` | The manifest: `NOT_YET_REPRESENTED` | Launch release |
 | CAP-33 Cross-Domain Scientific Reasoning | `named only` | The manifest: `NOT_YET_REPRESENTED`; carries an `EXCEPTIONAL` disclosure burden | Future platform |
 
-**Also in the rehearsal application, not assigned to any capability number:**
-- **Observation** (21 gateway actions): community photo upload, campaigns, validation, photo assessment, and promotion to evidence.
-- **Resource intelligence** (13 actions): resources, waste streams, environmental burden.
-- **Cognitive** (9 actions): `submit_problem_signal`, `run_agriculture_cognitive_loop`.
+**Also in the rehearsal application, not assigned to any capability number** until the identity decisions of 2026-09-29 (`governance/workstream-b/AGR-CAPABILITY-IDENTITY-DECISIONS-2026-09-29.md`):
+- **Observation** (21 gateway actions): community photo upload, campaigns, validation, photo assessment, and promotion to evidence. **Now CAP-36 Governed Observation and Field Evidence, proposed,** not canonical until the ten-point checklist is met.
+- **Resource intelligence** (13 actions): resources, waste streams, environmental burden. **Now CAP-01.**
+- **Cognitive** (9 actions): `submit_problem_signal`, `run_agriculture_cognitive_loop`. **Now split:** three actions to CAP-01, one to CAP-06, and the loop with its four reads held.
 - **Browser contracts only,** with `PLAN_ONLY` tables for water and aquaculture:
   - soil (14 contracts);
   - water (12);
@@ -747,9 +751,9 @@ Every active gateway group in the catalogue, all 116 actions, with the landscape
 | `AAB_WORKBENCH_ACTIONS` | 9 | Formulations listed, read, created, derived, decided and sent to trial (7); ingredients listed and their intelligence read (2) | CAP-07 Formulation Intelligence; CAP-06 Ingredient Intelligence | None |
 | `AAB_PLATFORM_ACTIONS` | 5 | Ingredient submitted for review and decided (2); navigation, administration and library summaries (3) | CAP-06 (the review); platform (the rest) | None |
 | `AAB_LEARNING_MEMORY_ACTIONS` | 4 | Trial learning prepared, submitted for review and decided | CAP-09 Governed Scientific Learning. **All four actions are CAP-09's** (update of `f1bb47d`): its "memory" is promoted learning, not CAP-04's admitted evidence | None |
-| `AAB_OBSERVATION_ACTIONS` | 21 | Community campaigns and profiles, **field photo upload**, submissions (including offline), validation, photo assessment, review, and promotion to evidence | **No capability number** | None |
-| `AAB_COGNITIVE_ACTIONS` | 9 | Problem signals, transformation opportunities, ingredient build candidates, the cognitive loop | **No capability number** (closest: CAP-01, CAP-06) | None |
-| `AAB_RESOURCE_INTELLIGENCE_ACTIONS` | 13 | Country resources, waste streams, recovery pathways, environmental burden, resource discovery and its review | **No capability number** (closest: CAP-01, whose description names resources and waste streams) | None |
+| `AAB_OBSERVATION_ACTIONS` | 21 | Community campaigns and profiles, **field photo upload**, submissions (including offline), validation, photo assessment, review, and promotion to evidence | **CAP-36 Governed Observation and Field Evidence, proposed** (identity decisions of 2026-09-29): not canonical until the ten-point checklist is met | None |
+| `AAB_COGNITIVE_ACTIONS` | 9 | Problem signals, transformation opportunities, ingredient build candidates, the cognitive loop | **Split** (identity decisions of 2026-09-29): `submit_problem_signal`, `create_transformation_opportunity` and `cognitive_foundation_workspace` to CAP-01; `propose_ingredient_build_candidate` to CAP-06; the loop and its four reads held until `cognitive_core` is read | None |
+| `AAB_RESOURCE_INTELLIGENCE_ACTIONS` | 13 | Country resources, waste streams, recovery pathways, environmental burden, resource discovery and its review | **CAP-01 Country Intelligence & Discovery** (identity decisions of 2026-09-29): its description names resources and waste streams; no new number | None |
 | `AAB_COUNTRY_ACTIONS` | 34 | Country and institution setup, dashboards, activation, sharing, manufacturing transfer | Platform-wide (CAP-16, CAP-24, `named only`); `manufacturing_generate_transfer` is CAP-12 | None |
 
 **CAP-04 and CAP-05 differ from the rest.** Both have canonical design contracts (20 September), and neither has dedicated rehearsal code.
@@ -781,30 +785,33 @@ Each step is reviewed before the next, one PR per step, as the SCS pilot was bui
 
 ### 8.4 Priority order
 
-**The order: CAP-04 → CAP-05 → CAP-08 → CAP-06 → CAP-07 → CAP-09.**
+**The order: CAP-04 → CAP-05 → CAP-01 → CAP-08 → CAP-06 → CAP-07 → CAP-09.** CAP-01 entered the order on 2026-09-29 (decision 22).
 
 **The order follows dependency, not the amount of code** (decided on 2026-09-28).
 - **CAP-04 and CAP-05 come first because everything else resolves its evidence through CAP-04** (section 5.2). They have the least rehearsal code of the six.
 - **After them, the order weighs working code and institutional value:** CAP-08 has the most code, then CAP-06, CAP-07 and CAP-09.
+- **CAP-01 comes third** (decided on 2026-09-29). It now holds 16 of the rehearsal's actions: the 13 of resource intelligence and 3 of cognitive intelligence. It enters the order now that those identity decisions are settled, and its contract comes after CAP-04's and CAP-05's, because both remain dependencies for everything else.
 
 | Order | Capability | State now | Rehearsal code (section 8.2) | Why here |
 |---:|---|---|---|---|
 | 1 | CAP-04 Governed Scientific Memory | `designed`: **steps 1 to 3 complete** (PR #67) | None of its own; the shared gateway scope is CAP-09's | Every other scientific capability resolves its evidence through it (section 5.2) |
 | 2 | CAP-05 Governed Scientific Reasoning | `designed` | None; represented in the simulation | Reasons only over CAP-04's admitted evidence |
-| 3 | CAP-08 Controlled Trials & Outcomes | `named only` | 21 actions: the most of any capability | The trial and outcome lifecycle |
-| 4 | CAP-06 Ingredient Intelligence | `named only` | 4 actions | Feeds CAP-07 |
-| 5 | CAP-07 Formulation Intelligence | `named only` | 7 actions, including sending a formulation to trial (CAP-08) | Consumes CAP-06's output |
-| 6 | CAP-09 Governed Scientific Learning | `named only` | 4 actions | References admitted CAP-04 evidence, and must be separated from CAP-04's shared gateway scope together with it |
+| 3 | CAP-01 Country Intelligence & Discovery | `named only` | 16 actions: resource intelligence (13) and three cognitive actions (identity decisions of 2026-09-29) | Country resources, waste streams, problems and opportunities; hands candidates to CAP-06 |
+| 4 | CAP-08 Controlled Trials & Outcomes | `named only` | 21 actions: the most of any capability | The trial and outcome lifecycle |
+| 5 | CAP-06 Ingredient Intelligence | `named only` | 4 actions, and `propose_ingredient_build_candidate` | Feeds CAP-07 |
+| 6 | CAP-07 Formulation Intelligence | `named only` | 7 actions, including sending a formulation to trial (CAP-08) | Consumes CAP-06's output |
+| 7 | CAP-09 Governed Scientific Learning | `named only` | 4 actions | References admitted CAP-04 evidence, and must be separated from CAP-04's shared gateway scope together with it |
 
 **For CAP-04 and CAP-05, the migration is mostly new code plus contract alignment.** Their design contracts predate this workstream and were written without the rehearsal code in view. Step 1 for each is an amendment that aligns the contract with the primitives and accounts for what the rehearsal does, and step 4 builds rather than brings across.
 
-**A pre-workstream decision: identities for observation, cognitive intelligence and resource intelligence.** None of the three has a capability number. **Each needs a capability number and identity assigned before its migration path is defined,** and none enters the priority order until then.
-- **Observation,** including field photo capture (21 actions), **is to be its own numbered capability, not absorbed into CAP-08** (decided on 2026-09-28). Its number and identity are still to be assigned.
-- **Cognitive intelligence** (9 actions): its number and identity are to be decided. The closest landscape capabilities are CAP-01 and CAP-06.
-- **Resource intelligence** (13 actions): its number and identity are to be decided. The closest is CAP-01, whose description names resources and waste streams.
+**A pre-workstream decision: identities for observation, cognitive intelligence and resource intelligence.** None of the three had a capability number. **Decided, and recorded on 2026-09-29** (`governance/workstream-b/AGR-CAPABILITY-IDENTITY-DECISIONS-2026-09-29.md`):
+- **Observation,** including field photo capture (21 actions), **is its own capability, not absorbed into CAP-08** (decided on 2026-09-28): **CAP-36 Governed Observation and Field Evidence, proposed.** It is not canonical until the ten-point checklist is met, with the capability registry, the CAP-34 fidelity manifest and the validators updated together. It enters the priority order when its identity is canonical and its release classification decided.
+- **Cognitive intelligence** (9 actions): **split, no new number.** Three actions go to CAP-01, and `propose_ingredient_build_candidate` to CAP-06. The loop and its four reads are held until `cognitive_core` is read: it may be a platform primitive, CAP-33, or a capability of its own.
+- **Resource intelligence** (13 actions): **CAP-01,** whose description names resources and waste streams. No new number.
 
 **Also outside the order:**
-- **CAP-01 and CAP-02,** each represented in the simulation or by adapters that are defined and not connected.
+- **CAP-02,** represented by adapters that are defined and not connected. (CAP-01 entered the order on 2026-09-29.)
+- **CAP-36 (proposed),** until its identity is canonical, and **the cognitive loop,** until its identity is decided.
 - **The country actions** (34). They are platform-wide, not AGR.
 
 ### 8.5 Prerequisites
@@ -855,19 +862,21 @@ These points came up while compiling the roadmap and were decided in review.
 
 ## Decisions recorded on 2026-09-28
 
-8. **The AGR rehearsal migration is a formal workstream** (section 8), with its own priority, prerequisites and order: CAP-04 → CAP-05 → CAP-08 → CAP-06 → CAP-07 → CAP-09.
+8. **The AGR rehearsal migration is a formal workstream** (section 8), with its own priority, prerequisites and order: CAP-04 → CAP-05 → CAP-08 → CAP-06 → CAP-07 → CAP-09. **Amended by decision 22** (2026-09-29): CAP-01 enters the order third.
 9. **No AGR capability code is brought across before the dependency audit's independent verification and the extraction of the platform primitives** (section 8.5).
 10. **The demonstration environment is not published before the first capability in the workstream has its contract committed under it:** a contract that accounts for the rehearsal code, reviewed and committed under the workstream's discipline. CAP-04's and CAP-05's existing design contracts do not meet this (section 8.6).
 11. **Signing-key history is complete.** `TODO(signing-key-history)` no longer blocks real data, and `TODO(object-store-credentials)` is the remaining blocker before real data is stored (section 6.1).
 12. **The priority order follows dependency, not code volume.** CAP-04 and CAP-05 come first because everything else resolves its evidence through CAP-04 (section 8.4).
 13. **Step 0, obtaining the source, is mandatory and first.** No contract work begins before the rehearsal's gateway code and a schema-only database export are committed as a dated, read-only evidence record (section 8.3).
-14. **Observation, cognitive intelligence and resource intelligence need capability numbers and identities before their migration paths are defined.** Observation becomes its own numbered capability, not part of CAP-08 (section 8.4).
+14. **Observation, cognitive intelligence and resource intelligence need capability numbers and identities before their migration paths are defined.** Observation becomes its own numbered capability, not part of CAP-08 (section 8.4). **Decided** (update of `d1bc453`): see decision 21.
 15. **The catalogue mapping is a proposed mapping, requiring review** before any migration work begins. It is evidence and analysis, not a governance decision (section 8.2).
 16. **Object-store credentials are complete** (update of `dbb2408`). AAB-PLATFORM-01's amendment is built and proven. `TODO(object-store-credentials)` no longer blocks real data. The override credential's governance, which the amendment requires before any real data is admitted, is now the remaining blocker (section 6.1).
 17. **Step 0 of the AGR workstream is done** (update of `dbb2408`). The rehearsal's source is committed as dated, read-only evidence: `agr-rehearsal/snapshot-2026-09-28/` (PR #61: the deployed gateway PHP, and the schemas of `agriculture`, `platform` and `public`) and `agr-rehearsal/snapshot-2026-09-28-supplementary/` (PR #62: the eight other application schemas, which the first snapshot missed). Contract work may begin (section 8.3).
 18. **AGR's route prefix is `/agr/v1/`** (update of `f1bb47d`; CAP-04 amendment, decision 2). **A platform decision, made there for the first time:** it establishes AGR's separation from SCS at the API level. Every AGR capability's routes are under `/agr/v1/`, as SCS's are under `/scs/v1/`, and platform routes are under `/aab/v1/`. AGR has its own database schema (`agr`) and JSON schema namespace (`urn:aab:schema:agr:`).
 19. **CAP-04 has its contract committed under the AGR workstream** (update of `f1bb47d`; PR #67). Steps 1 to 3 are complete, and the demonstration environment's condition (section 8.6) is met. CAP-04 stays `designed`: nothing is built, and it waits on its two prerequisites (section 8.5), the dependency audit's independent verification and the extraction.
 20. **AAB-PLATFORM-06 is amended** (update of `f1bb47d`; PR #67). A check whose failure holds a record for review is `NOT_PASSED` only in a `HELD_FOR_REVIEW` decision, named in `heldBecause`, and never discloses a limitation by itself. CAP-04 was the first domain to need it.
+21. **The AGR capability identities are decided** (update of `d1bc453`; `governance/workstream-b/AGR-CAPABILITY-IDENTITY-DECISIONS-2026-09-29.md`). Observation is **CAP-36 Governed Observation and Field Evidence, proposed:** its own capability, not part of CAP-08. **CAP-36 is not canonical** until the ten-point checklist is completed, and completing it requires the capability registry, the CAP-34 fidelity manifest and the validators to be updated together. No PR may treat it as canonical without that work. Resource intelligence belongs to CAP-01, with no new number. Cognitive intelligence is split between CAP-01 and CAP-06, with its loop held until `cognitive_core` is read.
+22. **CAP-01 enters the workstream's priority order,** third, after CAP-04 and CAP-05 and before CAP-08 (update of `d1bc453`). It now holds 16 rehearsal actions, and its contract depends on the resource and cognitive identity decisions, which are settled. The order is CAP-04 → CAP-05 → CAP-01 → CAP-08 → CAP-06 → CAP-07 → CAP-09.
 
 **Still open, noted in the text:**
 - The mapping of the eleven primitives to landscape capabilities (section 4) is proposed by this roadmap, not established.
