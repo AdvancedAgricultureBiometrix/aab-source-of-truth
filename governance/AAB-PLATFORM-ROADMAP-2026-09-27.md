@@ -20,7 +20,12 @@
 - **Observation is CAP-36 Governed Observation and Field Evidence, proposed:** its own capability, not part of CAP-08, and not canonical until the ten-point checklist is met.
 - **Resource intelligence belongs to CAP-01,** with no new number. **Cognitive intelligence is split** between CAP-01 and CAP-06, and its loop is held until `cognitive_core` is read.
 - **CAP-01 enters the workstream's priority order,** after CAP-05 (decision 22).
-**Authority:** RECORDS THE STATE OF EVERY AAB PLATFORM PRIMITIVE AND CAPABILITY, AS DEMONSTRATED BY THE CONTRACTS, CODE, TESTS AND PROOFS ON `main` AT `9f17cc2`, UPDATED TO `634295a`, TO `67b6ba8`, TO `c1586c6`, TO `fa84240`, TO `16d21cc`, TO `dbb2408`, TO `f1bb47d` AND TO `d1bc453`, AND WHAT MUST EXIST BEFORE WHAT. Admits no capability, grants no implementation, commissioning, production, regulatory or scientific authority, changes no control's status, and does not satisfy Gate D or begin WP05.
+**Updated again (2026-09-29):** to `main` at `695bc18`, after PRs #69 to #71. Marked "update of `695bc18`" where it changes this roadmap.
+- **Receipts accept AAB identifiers** (#70, migration 025): `CAP-01` to `CAP-99` except the retired `CAP-29`, and `AAB-PLATFORM-01` to `AAB-PLATFORM-99`, by pattern. **Format only: it makes no capability canonical.** CAP-04's receipt prerequisite is met in the database; the application's capability types open in the extraction's step 2 (decision 23).
+- **CAP-05 Governed Scientific Reasoning has its contract committed under the AGR workstream** (#71): steps 1 to 3 are complete. It stays `designed`, and nothing is built (decision 24).
+- **`cognitive_core` is read in full,** for CAP-05's amendment. The cognitive loop is not CAP-05, and CAP-05 never depends on it. `cognitive_foundation_workspace` moves from CAP-01 to the held group, so CAP-01 holds 15 rehearsal actions (decision 25).
+- **CAP-04 is amended again,** with two corrections following CAP-05's amendment (#71).
+**Authority:** RECORDS THE STATE OF EVERY AAB PLATFORM PRIMITIVE AND CAPABILITY, AS DEMONSTRATED BY THE CONTRACTS, CODE, TESTS AND PROOFS ON `main` AT `9f17cc2`, UPDATED TO `634295a`, TO `67b6ba8`, TO `c1586c6`, TO `fa84240`, TO `16d21cc`, TO `dbb2408`, TO `f1bb47d`, TO `d1bc453` AND TO `695bc18`, AND WHAT MUST EXIST BEFORE WHAT. Admits no capability, grants no implementation, commissioning, production, regulatory or scientific authority, changes no control's status, and does not satisfy Gate D or begin WP05.
 **Sources:**
 - `governance/AAB-PLATFORM-PURPOSE-AND-VALUES-REVISION-2026-09-25.md`
 - `governance/AAB-PLATFORM-DOMAIN-SEPARATION-DECISION-2026-09-25.md`
@@ -81,7 +86,7 @@ The domain separation decision (25 September) names eleven platform primitives. 
 | 6 | Frozen evaluation snapshots | SCS-CAP-06: one REPEATABLE READ snapshot, a manifest, a pure evaluation, content-derived ids | `implemented` | **Contract: AAB-PLATFORM-07 (`designed`, PR #48).** Not adopted. The snapshot is embedded in the evaluation, with no digest over its input and no recorded exclusions; some inputs are read but not recorded; stored files are not re-hashed at evaluation time |
 | 7 | Attributable human review | SCS-CAP-06 conflict resolution (independent `CONFLICT_RESOLVER`); SCS-CAP-09 review decisions with derived currency | `implemented` | **Contract: AAB-PLATFORM-08 (`designed`, PR #49).** Not adopted. Reviewer authority is declared, not verified; decisions are not signed; a decision cannot be challenged or corrected; eight staleness triggers have no operation that can fire them |
 | 8 | Governed package compilation | SCS-CAP-08 with AAB-PLATFORM-02 rendition; digest over content only; `verifyPackageIntegrity` | `implemented` | The evidence export bundle; operator listing; the operator declaration; the authorised representative |
-| 9 | Receipts and auditability | A receipt in the same transaction as the decision, a canonical digest, correlation ids, append-only tables guarded by triggers | `implemented`, exercised by every write | `TODO(idempotency-retention)`; failed attempts leave no audit record (SCS-CAP-08) |
+| 9 | Receipts and auditability | A receipt in the same transaction as the decision, a canonical digest, correlation ids, append-only tables guarded by triggers | `implemented`, exercised by every write | `TODO(idempotency-retention)`; failed attempts leave no audit record (SCS-CAP-08). **Update of `695bc18`:** receipts accept AAB landscape and platform contract identifiers by pattern (migration 025, #70); the application's capability types are still closed (dependency audit, V3) |
 | 10 | Country isolation | Internal network with no route outside; a pinned edge container; `scs_api` restricted by grants and RLS | `behaviourally proven` for one environment (access isolation proof; CI runs 36225055661 and 36225819409) | Isolation between environments on a shared host (`TODO(tenant-network-policy)`); organisation-level rows (`TODO(tenant-scope)`); log content; an independent security review |
 | 11 | Backup and reconstruction | `scs-pilot/backup/`: full backup, restore into a fresh environment, verified; the restore re-verifies every signature and the public-key registry, with a rotated key's records included | `behaviourally proven` for the pilot stack (backup-restore proof, CI run 36227701973; now 18 steps, CI run 36369519581, cited by the AAB-PLATFORM-09 proof record) | `TODO(backup-encryption)`; signed backups; backup without an outage; recovery objectives; point-in-time recovery; backup location; deletion |
 
@@ -116,7 +121,7 @@ The domain separation decision allows extraction only after an independent depen
 | AAB-PLATFORM-08 Attributable Human Review with Currency | `designed` | Primitive 7 | Contract only (PR #49) |
 | AAB-PLATFORM-09 Governed Public-Key Registry | `behaviourally proven` | Primitive 2 (signing keys) | Built by PRs #53 to #59 (migrations 023 and 024, `/aab/v1/` registry endpoints, the control plane as a separate instance); proven for rotation, restoration, compromise and cross-issuer evidence (`governance/workstream-b/AAB-PLATFORM-09-KEY-REGISTRY-PROOF-2026-09-28.md`). Keys are no longer in the actors file |
 
-**All nine are proposed, not admitted.** AAB-PLATFORM-05 to 08 are written domain-neutrally: each domain adopts them by amendment to its own contracts, mapping its existing records when read and never rewriting them. No domain has adopted them yet. AAB-PLATFORM-08's own precondition, that no adoption goes live with real data until signing-key history is implemented, **is now met** (PR #59); an adoption still needs its own amendment.
+**All nine are proposed, not admitted.** AAB-PLATFORM-05 to 08 are written domain-neutrally: each domain adopts them by amendment to its own contracts, mapping its existing records when read and never rewriting them. No domain has adopted them yet. **Update of `695bc18`:** AGR's CAP-04 (#67) and CAP-05 (#71) adopt them by amendment, as contracts; nothing implements an adoption, and SCS has not adopted them. AAB-PLATFORM-08's own precondition, that no adoption goes live with real data until signing-key history is implemented, **is now met** (PR #59); an adoption still needs its own amendment.
 
 **AAB-PLATFORM-09** defines signing-key history: an issuer-owned, append-only registry of public keys, verification against the key active at the server's `acceptedAt`, and compromise as its own record. **It is built and `behaviourally proven`** (PR #59): its section 11 conditions, rotation, restoration, compromise and cross-issuer evidence, pass in CI, and the proof record names each test. **No registry can start until its first key is registered** (its section 3a). The pilot positions, both disclosed and neither a production solution: the Platform Owner's first key is self-attested in a documented ceremony; a country registry's first key is self-attested by the country's authorised representative, in a ceremony the Platform Owner witnesses and co-signs. The procedure is `scs-pilot/KEY-BOOTSTRAP-CEREMONY-RUNBOOK.md`; **no real ceremony has been performed.** The interim rule that a key is never rotated while records it signed are in use is lifted.
 
@@ -331,10 +336,10 @@ The SCS domain definition and the SCS capability roster name **twelve** SCS capa
 ### 3.1 Where the evidence is
 
 AAB's agricultural science capabilities come from the **AAB capability landscape**, CAP-01 to CAP-34. It was frozen on 19 September, before the platform–domain split, so it does not say which capabilities are AGR and which belong to the platform. There are three kinds of evidence for them, and none of them is the SCS pilot's kind:
-- **Canonical contracts** in this repository: CAP-04 and CAP-05 (design contracts), CAP-20 and CAP-21.
+- **Canonical contracts** in this repository: CAP-04 and CAP-05 (design contracts of 20 September, both amended under the AGR workstream on 2026-09-29: #67 and #71), CAP-20 and CAP-21.
 - **The CAP-34 simulation** (`simulation/cap34/`): real logic over synthetic or reference data, with behavioural tests that CI does not run.
 - **The Supabase rehearsal application.** It is evidenced only by the technical contract catalogue, compiled from a website bundle (`public_html (54)(1).zip`, dated 2 September).
-  - **Its code is not in this repository.** `aab-local/` holds two PHP files.
+  - **Its code is not in this repository.** `aab-local/` holds two PHP files. **Update of `695bc18`:** its deployed gateway and its database schemas are now in the repository, as the step 0 evidence snapshots (`agr-rehearsal/`, #61 and #62; section 8.3). They are evidence, not governed code.
   - The catalogue records 116 active gateway actions, 58 retired actions (HTTP 410), 683 browser contract files and 23 `PLAN_ONLY` tables.
   - It says it cannot prove the deployed database: "no SQL migration directory or authoritative PostgreSQL catalogue dump".
 
@@ -350,7 +355,7 @@ Names, fidelity and horizon are taken from the CAP-34 fidelity manifest (snapsho
 | CAP-02 Governed Scientific Data Acquisition & Interoperability | `named only` | Five source adapters in the rehearsal bundle, each `*_DEFINED_NOT_CONNECTED` (Airtable agriculture, aquaculture). The manifest: `CONCEPT_PREVIEW_NOT_IMPLEMENTED`. | Launch release |
 | CAP-03 Evidence Integrity & Provenance | `named only` | The manifest: `CONCEPT_PREVIEW_NOT_IMPLEMENTED` | Launch release |
 | CAP-04 Governed Scientific Memory | `designed` | Canonical contract, **committed under the AGR workstream** (amendment of 2026-09-29, PR #67; `governance/workstream-b/CAP-04-SCIENTIFIC-MEMORY-CANONICAL-CONTRACT-2026-09-20.md`). It adopts AAB-PLATFORM-01, 03 and 05 to 09. One submission, decided in one transaction: refused, held for review, or admitted with or without limitations. Automated and sensitive content is always held. Its routes are under `/agr/v1/`. Nothing is built, and two platform prerequisites come before any code (section 8.5). | Launch release |
-| CAP-05 Governed Scientific Reasoning | `designed` | Design contract, not implementation. Returns "a landscape, not a verdict"; proposes the gateway action `cap05_evaluate_evidence_landscape`. Simulation: real logic, synthetic data. | Launch release |
+| CAP-05 Governed Scientific Reasoning | `designed` | Canonical contract, **committed under the AGR workstream** (amendment of 2026-09-29, PR #71; `governance/workstream-b/CAP-05-GOVERNED-SCIENTIFIC-REASONING-CANONICAL-CONTRACT-2026-09-20.md`). It adopts AAB-PLATFORM-03 and 05 to 09. A scientist lists admitted CAP-04 records and assigns each a stance; CAP-05 returns "a landscape, not a verdict", written once with its frozen snapshot and receipt. A scientist may review it. No automated stance, no historical landscapes, no automated runs. Its routes are under `/agr/v1/`. Nothing is built. Simulation: real logic, synthetic data. | Launch release |
 | CAP-06 Ingredient Intelligence | `named only` | Simulation: real logic, synthetic data. Rehearsal gateway: "Direct wire" (`get_workbench_ingredient_intelligence`). | Launch release |
 | CAP-07 Formulation Intelligence | `named only` | Simulation: real logic, synthetic data. Rehearsal gateway: "Direct wire" (`AAB_WORKBENCH_ACTIONS`, 9 actions). | Launch release |
 | CAP-08 Controlled Trials & Outcomes | `named only` | Rehearsal gateway: trial workspace, activation, observation capture and outcome actions (21 actions). The manifest: `NOT_YET_REPRESENTED`. | Launch release |
@@ -364,7 +369,7 @@ Names, fidelity and horizon are taken from the CAP-34 fidelity manifest (snapsho
 **Also in the rehearsal application, not assigned to any capability number** until the identity decisions of 2026-09-29 (`governance/workstream-b/AGR-CAPABILITY-IDENTITY-DECISIONS-2026-09-29.md`):
 - **Observation** (21 gateway actions): community photo upload, campaigns, validation, photo assessment, and promotion to evidence. **Now CAP-36 Governed Observation and Field Evidence, proposed,** not canonical until the ten-point checklist is met.
 - **Resource intelligence** (13 actions): resources, waste streams, environmental burden. **Now CAP-01.**
-- **Cognitive** (9 actions): `submit_problem_signal`, `run_agriculture_cognitive_loop`. **Now split:** three actions to CAP-01, one to CAP-06, and the loop with its four reads held.
+- **Cognitive** (9 actions): `submit_problem_signal`, `run_agriculture_cognitive_loop`. **Now split:** three actions to CAP-01, one to CAP-06, and the loop with its four reads held. **Update of `695bc18`:** two to CAP-01; `cognitive_foundation_workspace` is a dashboard for the whole kernel, and is held with the loop (identity record, note of 2026-09-29).
 - **Browser contracts only,** with `PLAN_ONLY` tables for water and aquaculture:
   - soil (14 contracts);
   - water (12);
@@ -376,7 +381,7 @@ Names, fidelity and horizon are taken from the CAP-34 fidelity manifest (snapsho
 - **CAP-35 Governed Evidence Watch (candidate)** — `named only` (candidate design record).
   - `PROPOSED_NOT_ADMITTED`, post-launch.
   - None of the ten admission points is met.
-  - Consumes CAP-04 admission events and CAP-05 landscape snapshots.
+  - Consumes CAP-04 admission events and CAP-05 landscape snapshots. **Update of `695bc18`:** CAP-05's amendment anchors it to persisted landscapes, derives what has changed when read, and lets it only suggest a new evaluation. Its design, which stores notices and an as-of time, must align when it is written as a contract.
 - **AGR-CROSS-INSTITUTIONAL-LANDSCAPE-CANDIDATE-01** — a composition profile of CAP-04 then CAP-05, "not a new numbered capability".
   - The independent review found it "SUPPORTED WITH CORRECTIONS REQUIRED".
   - Its remediation (eight items) is not recorded as complete on `main`.
@@ -436,8 +441,8 @@ The eleven primitives of section 1 are what every domain builds on. This section
 | 3 | Immutable evidence objects | `behaviourally proven` (AAB-PLATFORM-01) | CAP-04 `preserveOriginal` (`designed`); the rehearsal's community photo upload | CAP-03 (`named only`) |
 | 4 | Provenance | `implemented` | CAP-04 record envelope (`designed`) | CAP-03 (`named only`) |
 | 5 | Admission decisions | `implemented` (SCS-CAP-02 to 05) | CAP-04 `MemoryAdmissionDecision` (`designed`) | CAP-04 (`designed`) |
-| 6 | Frozen evaluation snapshots | `implemented` (SCS-CAP-06) | CAP-05 `EvidenceLandscapeSnapshotIdentity` (`designed`) | CAP-05 (`designed`) |
-| 7 | Attributable human review | `implemented` (SCS-CAP-06, SCS-CAP-09) | The rehearsal's `decide_learning_review` and `decide_observation_review` | CAP-25 (`named only`); CAP-09 (`named only`) |
+| 6 | Frozen evaluation snapshots | `implemented` (SCS-CAP-06) | CAP-05 adopts AAB-PLATFORM-07 (`designed`; update of `695bc18`; it replaced `EvidenceLandscapeSnapshotIdentity`) | CAP-05 (`designed`) |
+| 7 | Attributable human review | `implemented` (SCS-CAP-06, SCS-CAP-09) | The rehearsal's `decide_learning_review` and `decide_observation_review`. **Update of `695bc18`:** CAP-04's held-record resolutions and CAP-05's `LANDSCAPE_REVIEW` adopt AAB-PLATFORM-08 (`designed`) | CAP-25 (`named only`); CAP-09 (`named only`) |
 | 8 | Governed package compilation | `implemented` (SCS-CAP-08, AAB-PLATFORM-02) | None | CAP-11 (`named only`, post-launch) |
 | 9 | Receipts and auditability | `implemented` | CAP-34 disclosure receipt (simulation only) | CAP-30 (`named only`) |
 | 10 | Country isolation | `behaviourally proven`, one environment | The rehearsal: Phase-1 findings CR-02 and CR-04 are production-standard failures | CAP-26 (`named only`); CAP-16 (`named only`) |
@@ -446,7 +451,7 @@ The eleven primitives of section 1 are what every domain builds on. This section
 **What the table shows:**
 - Every primitive exists in working, tested form only inside the SCS pilot.
 - AGR's two designed capabilities, CAP-04 and CAP-05, specify their own versions of primitives 3 to 6.
-- The platform–domain separation decision requires AGR to be "designed against the primitives listed here, not against SCS's domain modules". The CAP-04 and CAP-05 contracts predate that decision (20 September). Whether they align with the primitives has not been assessed.
+- The platform–domain separation decision requires AGR to be "designed against the primitives listed here, not against SCS's domain modules". The CAP-04 and CAP-05 contracts predate that decision (20 September). Whether they align with the primitives has not been assessed. **Update of `695bc18`:** both are now amended to adopt the platform contracts (#67, #71).
 - **Primitives 4 to 7 now have platform contracts** (AAB-PLATFORM-05 to 08). AGR's alignment is assessed against those contracts, not against the SCS code, and AGR adopts them by amendment, as SCS must. The surveys for those contracts found where CAP-04 and CAP-05 differ from them, and each contract's "Settled here" section records how.
 
 ## 5. Dependencies
@@ -518,10 +523,10 @@ flowchart LR
 ```
 
 **The chain, in words:**
-- CAP-05 evidence must resolve through CAP-04: admitted, with integrity verified.
+- CAP-05 evidence must resolve through CAP-04: admitted, with integrity verified. **Update of `695bc18`:** admitted, read for a declared purpose, and frozen in a snapshot. Unverified integrity and limitations are disclosed, not excluded, unless the requester chooses a narrower, disclosed policy (CAP-05 amendment, decision 5).
 - CAP-09 must reference admitted CAP-04 evidence ids, never raw source material.
 - CAP-04 and CAP-09 share the rehearsal's `AAB_LEARNING_MEMORY_ACTIONS` scope, and must be separated together. **Update of `f1bb47d`:** all four of its actions are CAP-09's. The rehearsal's "scientific memory" (`agriculture.scientific_memory_entry`) is promoted learning, CAP-09's end state, not admitted evidence (CAP-04 amendment of 2026-09-29).
-- Evidence Watch consumes CAP-04 and CAP-05, and must never run CAP-05 on its own initiative.
+- Evidence Watch consumes CAP-04 and CAP-05, and must never run CAP-05 on its own initiative. **Update of `695bc18`:** only a person requests a landscape (CAP-05 amendment, decision 10).
 - CAP-07 consumes CAP-06's output.
 
 ### 5.3 The next required step: independent verification of the dependency audit
@@ -546,7 +551,7 @@ flowchart LR
   - It establishes the actual dependency graph: every place a primitive depends on the SCS domain, and every place the domain depends on a primitive in an undeclared way.
   - The extraction plan is based on the audit, not on the decision record.
   - It is independent.
-- **What the verification should also cover:** whether the CAP-04 and CAP-05 contracts, written on 20 September before the primitives were named, align with the primitives, now assessed against AAB-PLATFORM-05 to 08.
+- **What the verification should also cover:** whether the CAP-04 and CAP-05 contracts, written on 20 September before the primitives were named, align with the primitives, now assessed against AAB-PLATFORM-05 to 08. **Update of `695bc18`:** both are amended to adopt them (#67, #71); the verification checks the amendments.
 - **Its constraint on extraction:** every existing behavioural test and proof must pass unchanged afterwards. An extraction that changes proven behaviour is a redesign, and needs its own decision.
 - **Until then,** the decision authorises no refactor, code move or database change.
 
@@ -729,7 +734,7 @@ This is evidence for the SCS pilot stack only. It changes no control's status.
 ### 8.1 Why it exists
 
 - **The rehearsal application runs working code.** It is a PHP gateway on Hostinger over PostgreSQL functions on Supabase. It covers trials, formulation, observation (including field photo capture), ingredient intelligence, formulation intelligence and learning. The Platform Owner states that this code exists and runs (2026-09-28).
-- **The governed record cannot see it.** The code is not in this repository, and none of it has a canonical contract.
+- **The governed record cannot see it.** The code is not in this repository, and none of it has a canonical contract. **Update of `695bc18`:** the step 0 snapshots now hold its source as evidence (#61, #62); none of it has a canonical contract.
   - This repository evidences it only through the technical contract catalogue (`governance/AAB-current-technical-contract-catalogue-2026-09-20.md`). The catalogue was compiled from a website bundle dated 2 September.
   - The catalogue records the gateway's actions and the database functions they call. It does not record the SQL behind them: "no SQL migration directory or authoritative PostgreSQL catalogue dump".
   - This roadmap has not verified that the code runs.
@@ -752,13 +757,13 @@ Every active gateway group in the catalogue, all 116 actions, with the landscape
 | `AAB_PLATFORM_ACTIONS` | 5 | Ingredient submitted for review and decided (2); navigation, administration and library summaries (3) | CAP-06 (the review); platform (the rest) | None |
 | `AAB_LEARNING_MEMORY_ACTIONS` | 4 | Trial learning prepared, submitted for review and decided | CAP-09 Governed Scientific Learning. **All four actions are CAP-09's** (update of `f1bb47d`): its "memory" is promoted learning, not CAP-04's admitted evidence | None |
 | `AAB_OBSERVATION_ACTIONS` | 21 | Community campaigns and profiles, **field photo upload**, submissions (including offline), validation, photo assessment, review, and promotion to evidence | **CAP-36 Governed Observation and Field Evidence, proposed** (identity decisions of 2026-09-29): not canonical until the ten-point checklist is met | None |
-| `AAB_COGNITIVE_ACTIONS` | 9 | Problem signals, transformation opportunities, ingredient build candidates, the cognitive loop | **Split** (identity decisions of 2026-09-29): `submit_problem_signal`, `create_transformation_opportunity` and `cognitive_foundation_workspace` to CAP-01; `propose_ingredient_build_candidate` to CAP-06; the loop and its four reads held until `cognitive_core` is read | None |
+| `AAB_COGNITIVE_ACTIONS` | 9 | Problem signals, transformation opportunities, ingredient build candidates, the cognitive loop | **Split** (identity decisions of 2026-09-29): `submit_problem_signal`, `create_transformation_opportunity` and `cognitive_foundation_workspace` to CAP-01; `propose_ingredient_build_candidate` to CAP-06; the loop and its four reads held until `cognitive_core` is read. **Update of `695bc18`:** `cognitive_foundation_workspace` moved to the held group (identity record, note of 2026-09-29) | None |
 | `AAB_RESOURCE_INTELLIGENCE_ACTIONS` | 13 | Country resources, waste streams, recovery pathways, environmental burden, resource discovery and its review | **CAP-01 Country Intelligence & Discovery** (identity decisions of 2026-09-29): its description names resources and waste streams; no new number | None |
 | `AAB_COUNTRY_ACTIONS` | 34 | Country and institution setup, dashboards, activation, sharing, manufacturing transfer | Platform-wide (CAP-16, CAP-24, `named only`); `manufacturing_generate_transfer` is CAP-12 | None |
 
 **CAP-04 and CAP-05 differ from the rest.** Both have canonical design contracts (20 September), and neither has dedicated rehearsal code.
 - CAP-04's memory shares `AAB_LEARNING_MEMORY_ACTIONS` with CAP-09. **Update of `f1bb47d`:** read from the step 0 snapshots, the rehearsal has no CAP-04 code at all. Its nearest counterparts are evidence packets, an eligibility verdict overwritten in place, and source, provenance and quarantine tables that nothing writes. CAP-04 is new code, not a port.
-- CAP-05's proposed action, `cap05_evaluate_evidence_landscape`, is not among the 116.
+- CAP-05's proposed action, `cap05_evaluate_evidence_landscape`, is not among the 116. **Update of `695bc18`:** read from the step 0 snapshots, the rehearsal has no CAP-05 code. The nearest thing, the cognitive loop in `cognitive_core`, runs automatically after approvals, infers stance from record type, and overwrites belief states: CAP-05's amendment records why it is not CAP-05. CAP-05 is new code, not a port.
 - CAP-05 is represented in the CAP-34 simulation, which never counts as implementation.
 
 **Also in the bundle:** 683 browser contract files. Many describe plan-only tables or read-only envelopes (section 3.2), and are not working code.
@@ -790,13 +795,13 @@ Each step is reviewed before the next, one PR per step, as the SCS pilot was bui
 **The order follows dependency, not the amount of code** (decided on 2026-09-28).
 - **CAP-04 and CAP-05 come first because everything else resolves its evidence through CAP-04** (section 5.2). They have the least rehearsal code of the six.
 - **After them, the order weighs working code and institutional value:** CAP-08 has the most code, then CAP-06, CAP-07 and CAP-09.
-- **CAP-01 comes third** (decided on 2026-09-29). It now holds 16 of the rehearsal's actions: the 13 of resource intelligence and 3 of cognitive intelligence. It enters the order now that those identity decisions are settled, and its contract comes after CAP-04's and CAP-05's, because both remain dependencies for everything else.
+- **CAP-01 comes third** (decided on 2026-09-29). It now holds 16 of the rehearsal's actions: the 13 of resource intelligence and 3 of cognitive intelligence. **Update of `695bc18`:** 15, with two of cognitive intelligence. It enters the order now that those identity decisions are settled, and its contract comes after CAP-04's and CAP-05's, because both remain dependencies for everything else.
 
 | Order | Capability | State now | Rehearsal code (section 8.2) | Why here |
 |---:|---|---|---|---|
 | 1 | CAP-04 Governed Scientific Memory | `designed`: **steps 1 to 3 complete** (PR #67) | None of its own; the shared gateway scope is CAP-09's | Every other scientific capability resolves its evidence through it (section 5.2) |
-| 2 | CAP-05 Governed Scientific Reasoning | `designed` | None; represented in the simulation | Reasons only over CAP-04's admitted evidence |
-| 3 | CAP-01 Country Intelligence & Discovery | `named only` | 16 actions: resource intelligence (13) and three cognitive actions (identity decisions of 2026-09-29) | Country resources, waste streams, problems and opportunities; hands candidates to CAP-06 |
+| 2 | CAP-05 Governed Scientific Reasoning | `designed`: **steps 1 to 3 complete** (PR #71) | None; represented in the simulation. The cognitive loop is not CAP-05 | Reasons only over CAP-04's admitted evidence |
+| 3 | CAP-01 Country Intelligence & Discovery | `named only` | 15 actions: resource intelligence (13) and two cognitive actions (identity decisions of 2026-09-29, and its note of the same date) | Country resources, waste streams, problems and opportunities; hands candidates to CAP-06 |
 | 4 | CAP-08 Controlled Trials & Outcomes | `named only` | 21 actions: the most of any capability | The trial and outcome lifecycle |
 | 5 | CAP-06 Ingredient Intelligence | `named only` | 4 actions, and `propose_ingredient_build_candidate` | Feeds CAP-07 |
 | 6 | CAP-07 Formulation Intelligence | `named only` | 7 actions, including sending a formulation to trial (CAP-08) | Consumes CAP-06's output |
@@ -806,12 +811,12 @@ Each step is reviewed before the next, one PR per step, as the SCS pilot was bui
 
 **A pre-workstream decision: identities for observation, cognitive intelligence and resource intelligence.** None of the three had a capability number. **Decided, and recorded on 2026-09-29** (`governance/workstream-b/AGR-CAPABILITY-IDENTITY-DECISIONS-2026-09-29.md`):
 - **Observation,** including field photo capture (21 actions), **is its own capability, not absorbed into CAP-08** (decided on 2026-09-28): **CAP-36 Governed Observation and Field Evidence, proposed.** It is not canonical until the ten-point checklist is met, with the capability registry, the CAP-34 fidelity manifest and the validators updated together. It enters the priority order when its identity is canonical and its release classification decided.
-- **Cognitive intelligence** (9 actions): **split, no new number.** Three actions go to CAP-01, and `propose_ingredient_build_candidate` to CAP-06. The loop and its four reads are held until `cognitive_core` is read: it may be a platform primitive, CAP-33, or a capability of its own.
+- **Cognitive intelligence** (9 actions): **split, no new number.** Three actions go to CAP-01, and `propose_ingredient_build_candidate` to CAP-06. The loop and its four reads are held until `cognitive_core` is read: it may be a platform primitive, CAP-33, or a capability of its own. **Update of `695bc18`:** `cognitive_foundation_workspace` moved from CAP-01 to the held group. `cognitive_core` has been read in full for CAP-05's amendment; the loop's identity decision is still to be made.
 - **Resource intelligence** (13 actions): **CAP-01,** whose description names resources and waste streams. No new number.
 
 **Also outside the order:**
 - **CAP-02,** represented by adapters that are defined and not connected. (CAP-01 entered the order on 2026-09-29.)
-- **CAP-36 (proposed),** until its identity is canonical, and **the cognitive loop,** until its identity is decided.
+- **CAP-36 (proposed),** until its identity is canonical, and **the cognitive loop,** until its identity is decided, with `cognitive_foundation_workspace` (update of `695bc18`).
 - **The country actions** (34). They are platform-wide, not AGR.
 
 ### 8.5 Prerequisites
@@ -832,10 +837,11 @@ flowchart LR
   2. **the extraction of the platform primitives** out of `scs-pilot`, which the separation decision allows only after that verification.
 
   **This is a hard dependency.** Until both are done, no AGR code is brought across, because it would be built on SCS's domain modules. The separation decision forbids that.
-- **AGR adopts AAB-PLATFORM-05 to 08** by amendment to its own contracts, as SCS must (section 4). This happens before or with step 4 of the first capability. **Update of `f1bb47d`:** CAP-04's amendment adopts them, with AAB-PLATFORM-01, 03 and 09.
+- **AGR adopts AAB-PLATFORM-05 to 08** by amendment to its own contracts, as SCS must (section 4). This happens before or with step 4 of the first capability. **Update of `f1bb47d`:** CAP-04's amendment adopts them, with AAB-PLATFORM-01, 03 and 09. **Update of `695bc18`:** so does CAP-05's, with AAB-PLATFORM-03 and 09.
 - **CAP-04's own prerequisites before any code** (decided on 2026-09-29, and recorded in its contract):
-  1. **a platform migration extending the receipt table to AGR capability identifiers,** before any CAP-04 endpoint. The pilot's receipts accept only SCS identifiers and AAB-PLATFORM-09 (the dependency audit's V3 and V5);
+  1. **a platform migration extending the receipt table to AGR capability identifiers,** before any CAP-04 endpoint. The pilot's receipts accept only SCS identifiers and AAB-PLATFORM-09 (the dependency audit's V3 and V5). **Met in the database** (update of `695bc18`): migration 025 (#70). The application's capability types open in the extraction's step 2, before any AGR capability code;
   2. **a platform decision on the object store's parameters for AGR content:** retention, media types and size limits. AAB-PLATFORM-01's were set for EUDR, and are not inherited. Until it is made, no AGR original is stored.
+- **CAP-05's prerequisites before any code** (update of `695bc18`; recorded in its contract): CAP-04 built first, since every landscape member is read from it; and the extraction, as for every AGR capability. Its receipts are accepted already (migration 025).
 - **Before real data,** AGR is blocked as SCS is: the override credential's governance (section 6.1; `TODO(object-store-credentials)` is resolved, update of `dbb2408`). Before live operation, it needs a commissioned country environment (section 7).
 
 ### 8.6 Impact on governance records
@@ -845,6 +851,7 @@ flowchart LR
 - **The demonstration environment (aab.ag/demo) is not published** until the first capability in this workstream has its contract committed under the workstream.
   - That means a contract that accounts for the rehearsal code, reviewed and committed under this workstream's discipline (steps 0 to 3).
   - **CAP-04's and CAP-05's existing design contracts do not meet it.** They predate this workstream and were written without the rehearsal code in view (decided on 2026-09-28).
+  - **CAP-05's contract is also committed under the workstream** (update of `695bc18`; PR #71), with the rehearsal, `cognitive_core` included, accounted for.
   - **Met on 2026-09-29** (update of `f1bb47d`): CAP-04's amendment, committed under the workstream by PR #67, accounts for the rehearsal code and was reviewed and approved before commit. **Meeting the condition does not publish anything.** Publishing is a separate decision, and what is shown remains bound by the rule below.
 - **Until then,** every AGR capability that runs in the rehearsal is shown as `named only`, with its code noted. It is never shown as `implemented`.
 
@@ -875,17 +882,24 @@ These points came up while compiling the roadmap and were decided in review.
 18. **AGR's route prefix is `/agr/v1/`** (update of `f1bb47d`; CAP-04 amendment, decision 2). **A platform decision, made there for the first time:** it establishes AGR's separation from SCS at the API level. Every AGR capability's routes are under `/agr/v1/`, as SCS's are under `/scs/v1/`, and platform routes are under `/aab/v1/`. AGR has its own database schema (`agr`) and JSON schema namespace (`urn:aab:schema:agr:`).
 19. **CAP-04 has its contract committed under the AGR workstream** (update of `f1bb47d`; PR #67). Steps 1 to 3 are complete, and the demonstration environment's condition (section 8.6) is met. CAP-04 stays `designed`: nothing is built, and it waits on its two prerequisites (section 8.5), the dependency audit's independent verification and the extraction.
 20. **AAB-PLATFORM-06 is amended** (update of `f1bb47d`; PR #67). A check whose failure holds a record for review is `NOT_PASSED` only in a `HELD_FOR_REVIEW` decision, named in `heldBecause`, and never discloses a limitation by itself. CAP-04 was the first domain to need it.
-21. **The AGR capability identities are decided** (update of `d1bc453`; `governance/workstream-b/AGR-CAPABILITY-IDENTITY-DECISIONS-2026-09-29.md`). Observation is **CAP-36 Governed Observation and Field Evidence, proposed:** its own capability, not part of CAP-08. **CAP-36 is not canonical** until the ten-point checklist is completed, and completing it requires the capability registry, the CAP-34 fidelity manifest and the validators to be updated together. No PR may treat it as canonical without that work. Resource intelligence belongs to CAP-01, with no new number. Cognitive intelligence is split between CAP-01 and CAP-06, with its loop held until `cognitive_core` is read.
-22. **CAP-01 enters the workstream's priority order,** third, after CAP-04 and CAP-05 and before CAP-08 (update of `d1bc453`). It now holds 16 rehearsal actions, and its contract depends on the resource and cognitive identity decisions, which are settled. The order is CAP-04 → CAP-05 → CAP-01 → CAP-08 → CAP-06 → CAP-07 → CAP-09.
+21. **The AGR capability identities are decided** (update of `d1bc453`; `governance/workstream-b/AGR-CAPABILITY-IDENTITY-DECISIONS-2026-09-29.md`). Observation is **CAP-36 Governed Observation and Field Evidence, proposed:** its own capability, not part of CAP-08. **CAP-36 is not canonical** until the ten-point checklist is completed, and completing it requires the capability registry, the CAP-34 fidelity manifest and the validators to be updated together. No PR may treat it as canonical without that work. Resource intelligence belongs to CAP-01, with no new number. Cognitive intelligence is split between CAP-01 and CAP-06, with its loop held until `cognitive_core` is read. **Corrected by decision 25** (update of `695bc18`): `cognitive_foundation_workspace` is held with the loop.
+22. **CAP-01 enters the workstream's priority order,** third, after CAP-04 and CAP-05 and before CAP-08 (update of `d1bc453`). It now holds 16 rehearsal actions, and its contract depends on the resource and cognitive identity decisions, which are settled. The order is CAP-04 → CAP-05 → CAP-01 → CAP-08 → CAP-06 → CAP-07 → CAP-09. **Update of `695bc18`:** CAP-01 holds 15 (decision 25); its place is unchanged.
+
+## Decisions recorded on 2026-09-29, after `d1bc453`
+
+23. **Receipts accept AAB identifiers by pattern** (update of `695bc18`; PR #70, migration 025): `CAP-01` to `CAP-99` except the retired `CAP-29`, and `AAB-PLATFORM-01` to `AAB-PLATFORM-99`. The landscape namespace is wider than AGR, and the pattern says so. The SCS capabilities stay an explicit list, until the extraction's step 5 frees the table of them. **The check governs format only, and makes no capability canonical,** CAP-36 included. The application's capability types (V3) open in the extraction's step 2.
+24. **CAP-05 has its contract committed under the AGR workstream** (update of `695bc18`; PR #71). Steps 1 to 3 are complete. Its eleven decisions, approved in review: evaluations persisted and written once; `LANDSCAPE_REVIEW` human decisions, with currency and a 12-month lapse; no historical landscapes; records listed by the requester; every admitted record used by default, limitations disclosed; stance assigned by the requester, never automatically; the question as the evaluation's subject; no integrity re-check required; the roles `LANDSCAPE_REQUESTER` and `LANDSCAPE_REVIEWER`, reading CAP-04 for the purpose `SCIENTIFIC_EVIDENCE_EVALUATION`; only a person requests a landscape; and **CAP-05 never depends on the cognitive loop.** CAP-04 is amended in the same change, with two corrections that follow. CAP-05 stays `designed`, and waits on CAP-04 being built and the extraction.
+25. **`cognitive_foundation_workspace` moves from CAP-01 to the held group** (update of `695bc18`; the identity record's note of 2026-09-29). Reading `cognitive_core` shows it is a dashboard for the whole kernel, not a CAP-01 action. Its identity is held with the loop's. CAP-01 holds 15 rehearsal actions.
 
 **Still open, noted in the text:**
 - The mapping of the eleven primitives to landscape capabilities (section 4) is proposed by this roadmap, not established.
-- Whether the CAP-04 and CAP-05 contracts align with the primitives: now assessed against AAB-PLATFORM-05 to 08, and settled by AGR's adoption of them.
+- Whether the CAP-04 and CAP-05 contracts align with the primitives: now assessed against AAB-PLATFORM-05 to 08, and settled by AGR's adoption of them. **Update of `695bc18`:** both have adopted them by amendment (#67, #71).
+- **The cognitive loop's identity** (section 8.4): a platform primitive, CAP-33, or a capability of its own, now that `cognitive_core` has been read.
 
 ## What this document does not establish
 
 - It does not admit, commission or authorise any capability.
 - It does not change any control's status, and does not satisfy Gate D or begin WP05.
 - It does not schedule build work. Section 5 records dependencies, and the one next step the separation decision itself requires (the independent verification of the dependency audit). Section 8 records an order for the AGR workstream, not dates.
-- It does not verify the rehearsal application, whose code is not in this repository.
+- It does not verify the rehearsal application, whose code is not in this repository. **Update of `695bc18`:** its source is here as the step 0 evidence snapshots; this roadmap still does not verify that it runs.
 - It does not define the missing terms it reports. Gate D is defined separately (`governance/AAB-GATE-D-DEPLOYMENT-QUALIFICATION-DEFINITION-2026-09-27.md`); the admission authority and its registry are defined separately (PR #28, #29); the provisioning authority is not defined anywhere.
