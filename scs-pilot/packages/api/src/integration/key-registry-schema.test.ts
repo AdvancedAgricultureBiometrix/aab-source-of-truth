@@ -345,7 +345,11 @@ test("registry records are never changed or removed", async () => {
   await refused(harness.admin.query("DELETE FROM scs.signing_key_registration WHERE key_id = $1", [rep]), /append-only/);
 });
 
-test("receipts carry AAB-PLATFORM-09, and no other new capability id", async () => {
+// Migration 024 added AAB-PLATFORM-09 alone. Migration 025 admits every platform
+// contract (AAB-PLATFORM-01 to 99) and AAB landscape capability by pattern, so
+// AAB-PLATFORM-10 is no longer refused; receipt-capability-ids.test.ts covers
+// the patterns. An identifier outside every admitted form is still refused.
+test("receipts carry AAB-PLATFORM-09, and an identifier outside the admitted forms is refused", async () => {
   await inTransaction((q) => receipt(q, "AAB-PLATFORM-09"));
-  await refused(inTransaction((q) => receipt(q, "AAB-PLATFORM-10")), /decision_receipt_capability_id_ck/);
+  await refused(inTransaction((q) => receipt(q, "AAB-KEY-REGISTRY")), /decision_receipt_capability_id_ck/);
 });

@@ -17,7 +17,7 @@ The Supply Chain Sovereignty pilot: the SCS vertical proof, merged to `main` in 
 | `packages/db/schema/cap-NN.sql` | Current-state definition of each capability's tables |
 | `packages/db/schema/platform.sql` | Current-state definition of the platform tables: the append-only `decision_receipt` and `idempotency_record`, evidence objects and renditions |
 | `packages/db/schema/roles-rls.sql` | Current-state definition of the `scs_api` role, grants and row-level security |
-| `packages/db/migrations/` | Applied history, 001–019. Committed migrations are immutable |
+| `packages/db/migrations/` | Applied history, 001–025. Committed migrations are immutable. 025 lets receipts carry AAB landscape capability identifiers (`CAP-01` to `CAP-99`, except the retired `CAP-29`) and platform contract identifiers (`AAB-PLATFORM-NN`), by pattern: a format check only, which makes no capability canonical |
 | `edge/`, `isolation/` | The edge container's committed nginx configuration, and the network isolation check (see the access isolation proof) |
 | `backup/` | The backup and restore procedure and its proof (see its README) |
 | `packages/api/src/migrations/` | The migration runner (`npm run migrate`, the `migrate` service): applies pending migrations in order as the owner role, records them in `scs_migration.applied_migration`, then sets the `scs_api` password |
