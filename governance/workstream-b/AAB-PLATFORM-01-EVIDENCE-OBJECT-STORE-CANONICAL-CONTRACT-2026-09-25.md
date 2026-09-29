@@ -1,10 +1,10 @@
 # AAB-PLATFORM-01 — Evidence Object Store — Canonical Contract — 2026-09-25
 
 **Status:** CANONICAL CONTRACT — NOT IMPLEMENTATION
-**Domain:** Supply Chain Sovereignty (SCS)
+**Domain:** Supply Chain Sovereignty (SCS). **Corrected on 2026-09-29:** a platform service, serving SCS and Agricultural Science (AGR), each under its own storage profile (amendment of 2026-09-29).
 **Renamed:** from SCS-PLATFORM-01 on 2026-09-27. Platform contracts are numbered AAB-PLATFORM-NN (AAB-PLATFORM-03, decision 1).
 **Amended:** 2026-09-28 (object store credentials, Object Lock and retention) and 2026-09-29 (storage profiles, and the AGR profile). Since 2026-09-29 it also serves Agricultural Science (AGR), under its own profile.
-**Authority:** DEFINES THE CONTRACT FOR THE SCS EVIDENCE OBJECT STORE, A PLATFORM SERVICE SHARED BY ALL SCS CAPABILITIES. Establishes no commissioning, production, Gate D, WP05, scientific-validity or regulatory authority. PROPOSED_NOT_ADMITTED. A pilot implementation exists in `scs-pilot/packages/api/src/platform/evidence-objects/`. The amendment of 2026-09-28 is built, and `behaviourally proven` for what its proof record covers (note of 2026-09-28, below).
+**Authority:** DEFINES THE CONTRACT FOR THE SCS EVIDENCE OBJECT STORE, A PLATFORM SERVICE SHARED BY ALL SCS CAPABILITIES (CORRECTED ON 2026-09-29: AND, UNDER ITS OWN STORAGE PROFILE, BY AGR). Establishes no commissioning, production, Gate D, WP05, scientific-validity or regulatory authority. PROPOSED_NOT_ADMITTED. A pilot implementation exists in `scs-pilot/packages/api/src/platform/evidence-objects/`. The amendment of 2026-09-28 is built, and `behaviourally proven` for what its proof record covers (note of 2026-09-28, below).
 
 ## Amendment of 2026-09-28: object store credentials, Object Lock and retention
 
