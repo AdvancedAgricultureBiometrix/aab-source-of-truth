@@ -5,6 +5,43 @@
 **Capability:** CAP-08 Controlled Trials & Outcomes. It is not SCS-CAP-08 (Due Diligence Package Compilation), a different capability in another domain.
 **Authority:** DEFINES THE CONTRACT FOR CAP-08: HOW A CONTROLLED TRIAL IS DESIGNED, AUTHORISED, OBSERVED UNDER ITS PROTOCOL, SUMMARISED, REVIEWED AND CLOSED, HOW ITS RESULTS ARE OFFERED TO CAP-04, AND ITS BOUNDARIES WITH CAP-04, CAP-07, CAP-09, CAP-10 AND PROPOSED CAP-36. Establishes no commissioning, production, Gate D, WP05, scientific-validity, efficacy or regulatory authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
 **Written:** 2026-09-29, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3). CAP-08 had no design contract before this one.
+**Amended:** 2026-09-30 (the test material, governed by CAP-07 and CAP-06), with CAP-07's canonical contract.
+
+## Amendment of 2026-09-30: the test material, governed by CAP-07 and CAP-06
+
+**Why.** This contract left the material under test declared "until CAP-06 and CAP-07 have contracts" ("Open gaps"). Both now have them. CAP-06 makes an ingredient usable in research only by its acceptance, and CAP-07 makes a formulation triallable only by an `ACCEPT_FOR_TRIAL` (CAP-07, decision 8). **This amendment makes CAP-08 rely on them,** approved by the Platform Owner in review on 2026-09-30. Nothing else in this contract changes.
+
+**1. What a trial may test.** For the kinds CAP-06 and CAP-07 govern, `testMaterial.reference` is required, and names the governed record: it is no longer declared.
+
+| `testMaterial.kind` | `reference` names | Relied on only while |
+|---|---|---|
+| `FORMULATION_VERSION` | A CAP-07 formulation, `{ recordId, recordVersion }` | Its `ACCEPT_FOR_TRIAL` is `VALID` and `CURRENT` with no open challenge, **and every component's CAP-06 `ACCEPT_FOR_FORMULATION_RESEARCH` is too** |
+| `INGREDIENT` | A CAP-06 ingredient, `{ recordId, recordVersion }`, tested on its own | Its `ACCEPT_FOR_FORMULATION_RESEARCH` is `VALID` and `CURRENT` with no open challenge |
+| `REGISTERED_PRODUCT`, `PRACTICE`, `OTHER` | Declared, as before | Not applicable |
+
+**2. What each arm applies.** A protocol arm may name its material, in the same form: `arms[].material?: { kind, reference }`. Where it names a CAP-06 or CAP-07 record, the same reliance applies, with one difference:
+- **A `CONTROL` or `REFERENCE` arm** may name a CAP-06 ingredient accepted **either** `ACCEPT_FOR_FORMULATION_RESEARCH` **or** `ACCEPT_AS_REFERENCE_MATERIAL`. This is the only place a reference material, such as a synthetic agrochemical comparator, is applied (CAP-06, decision 9).
+- **A carrier-only control** is a CAP-07 formulation of the variant kind `CARRIER_ONLY_CONTROL` (CAP-07, decision 17), and needs its own `ACCEPT_FOR_TRIAL`, like any formulation applied in the field.
+- **A `TREATMENT` arm** never names a reference material.
+- An arm with no `material` stays a declared description, as before. The protocol's schema gains this one optional field. **Its version stays `1`:** the field is additive, and nothing is built. The version is incremented when implementation begins, as a rules version is bumped only when the rules themselves change.
+
+**3. When it is checked.** The reliance is checked, and what was relied on is recorded, **at two points**:
+- **Registration.** A trial registration, or a protocol version, naming a governed record that fails the table above is refused: `TEST_MATERIAL_NOT_ACCEPTED` (422), naming the material, never revealing a record the designer may not see.
+- **Activation.** A `TRIAL_ACTIVATION` of `AUTHORISE` is refused (`TEST_MATERIAL_NOT_ACCEPTED`) unless every governed material in the registration and the locked protocol passes the table **at the moment of the decision.** The activation records each acceptance it relied on, and its reasoning addresses them by name.
+
+**4. When an acceptance changes during a trial.** A trial already active stays active: stopping a trial is a safety and governance decision, and the escalation path for it is open (interim position 8). Instead:
+- **The trial's derived state shows `TEST_MATERIAL_ACCEPTANCE_NOT_CURRENT`,** naming the material and why (its acceptance lapsed, superseded, invalidated or under challenge, or a component's).
+- **Every outcome summary discloses it** where it applies. The summary rules become `cap-08-summary-rules-2`: the rules of version 1, with `TEST_MATERIAL_ACCEPTANCE_NOT_CURRENT` added to the disclosures made where they apply.
+- **An outcome review must address it by name** (`REASONING_INCOMPLETE` otherwise).
+- **A new activation,** for a new protocol version, is refused until the acceptances are current again.
+- **This is the pilot position. Automatic suspension is an open question pending the safety escalation governance decision.** Suspending a trial when an acceptance lapses needs a defined authority and process, which do not yet exist; until they do, the trial continues, and every output says why it should be read with care.
+
+**5. What CAP-08 roles see of a formulation.** A formulation's name, version and acceptance for trial, and **never its composition** (CAP-07, decision 16). An arm's description says what is applied, how much and when; it never restates a composition. Anyone holding only a CAP-08 role who needs the composition obtains it by an explicit authorisation under CAP-07, never by default.
+
+**6. What this amendment replaces.**
+- The contract gap "the test material" is closed for formulations and ingredients. It stays open for registered products and practices, which have no governing capability.
+- The dependencies rows for CAP-07 and CAP-06 now read: **required when the material is a formulation, or an ingredient; `designed`.**
+- `TEST_MATERIAL_NOT_ACCEPTED` (422) joins the failure contract.
 
 ## Why this contract, and what it adopts
 
