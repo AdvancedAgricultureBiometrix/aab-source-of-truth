@@ -1,7 +1,7 @@
 # AAB Stock-Take — 2026-09-28
 
 **Status:** STOCK-TAKE RECORD
-**Authority:** RECORDS THE STATE OF THE REPOSITORY ON 2026-09-28, READ FROM `main` AT `c1586c6` AND UPDATED TO `fa84240`, TO `16d21cc`, TO `dbb2408`, TO `f1bb47d`, TO `d1bc453` AND TO `695bc18`, FROM GITHUB (OPEN PRS AND BRANCHES) AND FROM THE CI RUNS. It admits, commissions and decides nothing. Where a fact comes from anywhere other than the repository, it says so.
+**Authority:** RECORDS THE STATE OF THE REPOSITORY ON 2026-09-28, READ FROM `main` AT `c1586c6` AND UPDATED TO `fa84240`, TO `16d21cc`, TO `dbb2408`, TO `f1bb47d`, TO `d1bc453`, TO `695bc18` AND TO `46e3e09`, FROM GITHUB (OPEN PRS AND BRANCHES) AND FROM THE CI RUNS. It admits, commissions and decides nothing. Where a fact comes from anywhere other than the repository, it says so.
 **Supersedes, as the current stock-take:** `governance/AAB-STOCK-TAKE-2026-09-27.md` (at `634295a`), which stays unchanged as the record of that date. This stock-take covers everything merged since that record merged (`5d4edfe`, PR #36).
 **Updated (2026-09-28):** to `main` at `fa84240`, after PR #50 (this stock-take, the roadmap update and the SCS-CAP-09 amendment) and PR #51 (AAB-PLATFORM-09 Governed Public-Key Registry). The rest of this record is as it was at `c1586c6`, except where marked.
 **Updated again (2026-09-28):** to `main` at `16d21cc`, after PRs #52 to #59: the signing-key history build, complete and proven. Marked "update of `16d21cc`" where it changes this record.
@@ -9,6 +9,7 @@
 **Updated again (2026-09-29):** to `main` at `f1bb47d`, after PRs #66 and #67: the AAB-PLATFORM-01 proof record, and CAP-04's contract committed under the AGR workstream. Marked "update of `f1bb47d`" where it changes this record.
 **Updated again (2026-09-29):** to `main` at `d1bc453`, after PR #68, with the AGR capability identity decisions. Marked "update of `d1bc453`" where it changes this record.
 **Updated again (2026-09-29):** to `main` at `695bc18`, after PRs #69 to #71: the identity record, migration 025, and CAP-05's contract committed under the AGR workstream. Marked "update of `695bc18`" where it changes this record.
+**Updated again (2026-09-29):** to `main` at `46e3e09`, after PRs #72 to #74: challenges to CAP-04's and CAP-05's human decisions, and AAB-PLATFORM-01's storage profiles with the AGR profile. Marked "update of `46e3e09`" where it changes this record.
 **Read from:** every canonical contract and governance record on `main`; the SCS pilot READMEs; the proof records; every `TODO(` marker; `gh pr list`, `git branch -r` and `gh run list` on 2026-09-28; and, where marked, the session notes kept outside the repository.
 
 ## Summary
@@ -57,6 +58,13 @@
   - **`cognitive_core` is read in full.** The cognitive loop is not CAP-05. `cognitive_foundation_workspace` moves from CAP-01 to the held group, so CAP-01 holds 15 rehearsal actions.
   - **CAP-04 is amended again,** with two corrections following CAP-05's amendment.
   - **CI on `695bc18`** (run 36510903624): 752 of 752 tests, isolation, and backup-restore `PROVEN`.
+- **Updated to `46e3e09`:**
+  - **The roadmap and this record at `695bc18`** (#72), with the next four items in the order decided in review.
+  - **CAP-04 and CAP-05 name who may challenge their human decisions** (#73). Challenge resolutions are final, as the pilot position.
+  - **AAB-PLATFORM-01 defines storage profiles, and the AGR profile** (#74): `agr-evidence`, GOVERNANCE for `Years: 100`, its own media types, 100 MB and 50 GiB limits, and uploads by `MEMORY_SUBMITTER`. **The lock is protection, not expiry:** the platform never deletes on a schedule. The SCS profile is unchanged.
+  - **Both of CAP-04's prerequisites before any code are met.** CAP-04 adds check 12, `FORMAT_NOT_DECLARED`, under rules `cap-04-admission-2`.
+  - **The first two of the four next items are done.** CAP-01's step 1 is next.
+  - **CI on `46e3e09`** (run 36518359017): 752 of 752 tests, isolation, and backup-restore `PROVEN`.
 
 ## 1. What merged since `5d4edfe`
 
@@ -100,7 +108,11 @@
 | #70 | `9be45b2` | Migration 025: receipts accept AAB landscape and platform contract identifiers, by pattern, format only (update of `695bc18`) | Migration, tests |
 | #71 | `695bc18` | CAP-05 canonical amendment, step 1 of the AGR workstream: aligned with AAB-PLATFORM-03 and 05 to 09 and CAP-04, and the rehearsal, `cognitive_core` included, accounted for; CAP-04's corrections amendment; the identity record's note on `cognitive_foundation_workspace` (update of `695bc18`) | Contracts, governance |
 
-Every one of them passed all three CI jobs before it merged, and so did #50 to #71.
+| #72 | `a46635a` | The roadmap and this record at `695bc18`: CAP-05 committed under the AGR workstream; the next four items in order (update of `46e3e09`) | Governance |
+| #73 | `3450fe2` | CAP-04 and CAP-05: challenges to their human decisions; resolutions final, as the pilot position (update of `46e3e09`) | Contracts |
+| #74 | `46e3e09` | AAB-PLATFORM-01 storage profiles and the AGR profile; CAP-04 aligned, with check 12 and rules `cap-04-admission-2` (update of `46e3e09`) | Contracts |
+
+Every one of them passed all three CI jobs before it merged, and so did #50 to #74.
 
 ## 2. What is on `main`
 
@@ -118,7 +130,7 @@ State labels are the platform's maturity states: `named only`, `designed`, `impl
 | SCS-CAP-06 Due Diligence Sufficiency Evaluation | `behaviourally proven` | None. 4 of 5 |
 | SCS-CAP-08 Due Diligence Package Compilation | `behaviourally proven` | None. 3 of 5; no export bundle |
 | SCS-CAP-09 Regulatory Review and Promotion | `behaviourally proven` | 4 of 6. **Amended** (#50): currency is derived when read, never updated (drift item 4) |
-| AAB-PLATFORM-01 Evidence Object Store | **`behaviourally proven`** (update of `dbb2408`; was `implemented`, upload) | **Amended** (#63): three identities, Object Lock (GOVERNANCE, 2,192 days), the ARN bucket policy, the override credential, overwrites versioned and detected. Built (#65) and proven (`governance/workstream-b/AAB-PLATFORM-01-OBJECT-STORE-PROOF-2026-09-28.md`); a note of 2026-09-28 records it |
+| AAB-PLATFORM-01 Evidence Object Store | **`behaviourally proven`** (update of `dbb2408`; was `implemented`, upload) | **Amended** (#63): three identities, Object Lock (GOVERNANCE, 2,192 days), the ARN bucket policy, the override credential, overwrites versioned and detected. Built (#65) and proven (`governance/workstream-b/AAB-PLATFORM-01-OBJECT-STORE-PROOF-2026-09-28.md`); a note of 2026-09-28 records it. **Amended again** (#74; update of `46e3e09`): storage profiles, and the AGR profile. The SCS profile is unchanged; the AGR profile is designed, not built, and the proof covers the SCS profile only |
 | AAB-PLATFORM-02 Governed Document Rendition | `implemented` | None |
 | AAB-PLATFORM-03 ActorReference | **`implemented`** (was `designed`) | Version 2 issued for every new record (PR #39); version 1 records stay readable. No proof record names it yet. Amended (#53) to cite AAB-PLATFORM-09 for signing keys |
 | AAB-PLATFORM-04 Actor–Subject Link | **`behaviourally proven`** (was `designed`) | Second amendment (#42). Proven as adopted by SCS-CAP-02 (README, PR #43). **Update of `16d21cc`:** third amendment (#53), version 2 statements naming their key; its proof noted, and the interim rule on key rotation lifted |
@@ -127,8 +139,8 @@ State labels are the platform's maturity states: `named only`, `designed`, `impl
 | **AAB-PLATFORM-07 Frozen Evaluation Snapshots** | `designed` | **New** (#48) |
 | **AAB-PLATFORM-08 Attributable Human Review with Currency** | `designed` | **New** (#49). Amended (#53) to cite AAB-PLATFORM-09 |
 | **AAB-PLATFORM-09 Governed Public-Key Registry** | **`behaviourally proven`** (update of `16d21cc`; was `designed`) | **New** (#51; update of `fa84240`). Amended five times on 2026-09-28 (#52 to #57). Built by #53 to #59; proven in `governance/workstream-b/AAB-PLATFORM-09-KEY-REGISTRY-PROOF-2026-09-28.md`; a note of 2026-09-28 records it (#59) |
-| CAP-04 Governed Scientific Memory | `designed` | **Amended** (#67; update of `f1bb47d`): its contract committed under the AGR workstream (steps 1 to 3). It adopts AAB-PLATFORM-01, 03 and 05 to 09, and records ten decisions, the `/agr/v1/` route prefix among them (`governance/workstream-b/CAP-04-SCIENTIFIC-MEMORY-CANONICAL-CONTRACT-2026-09-20.md`). Nothing is built. **Amended again** (#71; update of `695bc18`): two corrections following CAP-05's amendment, on as-of reads and what CAP-05 receives |
-| CAP-05 Governed Scientific Reasoning | `designed` | **Amended** (#71; update of `695bc18`): its contract committed under the AGR workstream (steps 1 to 3). It adopts AAB-PLATFORM-03 and 05 to 09, and records eleven decisions: persisted landscapes over frozen snapshots, requester-assigned stance, `LANDSCAPE_REVIEW`, no historical landscapes, and no dependence on the cognitive loop (`governance/workstream-b/CAP-05-GOVERNED-SCIENTIFIC-REASONING-CANONICAL-CONTRACT-2026-09-20.md`). Nothing is built |
+| CAP-04 Governed Scientific Memory | `designed` | **Amended** (#67; update of `f1bb47d`): its contract committed under the AGR workstream (steps 1 to 3). It adopts AAB-PLATFORM-01, 03 and 05 to 09, and records ten decisions, the `/agr/v1/` route prefix among them (`governance/workstream-b/CAP-04-SCIENTIFIC-MEMORY-CANONICAL-CONTRACT-2026-09-20.md`). Nothing is built. **Amended again** (#71; update of `695bc18`): two corrections following CAP-05's amendment, on as-of reads and what CAP-05 receives. **Amended twice more** (update of `46e3e09`): challenges to its human decisions (#73); originals under AAB-PLATFORM-01's AGR profile, check 12 and rules `cap-04-admission-2` (#74) |
+| CAP-05 Governed Scientific Reasoning | `designed` | **Amended** (#71; update of `695bc18`): its contract committed under the AGR workstream (steps 1 to 3). It adopts AAB-PLATFORM-03 and 05 to 09, and records eleven decisions: persisted landscapes over frozen snapshots, requester-assigned stance, `LANDSCAPE_REVIEW`, no historical landscapes, and no dependence on the cognitive loop (`governance/workstream-b/CAP-05-GOVERNED-SCIENTIFIC-REASONING-CANONICAL-CONTRACT-2026-09-20.md`). Nothing is built. **Amended again** (#73; update of `46e3e09`): challenges to landscape reviews |
 | CAP-20 Country Capability Catalogue & Selection | `designed` | None |
 | CAP-21 Commercial Agreement & Entitlement Management | `designed` | None |
 
@@ -162,6 +174,8 @@ State labels are the platform's maturity states: `named only`, `designed`, `impl
 - **Migrations:** 25 (001 to 025). 025 replaces the receipt table's capability check: the SCS list and AAB-PLATFORM-09 as before, and AAB landscape and platform contract identifiers by pattern. Format only.
 - **CI:** 752 tests. The new ones are `integration/receipt-capability-ids.test.ts`; the key registry's refusal case now uses `AAB-KEY-REGISTRY`, since `AAB-PLATFORM-10` is now a valid format.
 - **No other code changes:** #69 and #71 are governance and contracts only. CI on `main`: run 36506127480 on `48ed174` (#69) passed, 748 tests; run 36508458527 on `9be45b2` (#70) passed, 752 tests, backup-restore `PROVEN`.
+
+**Update of `46e3e09`:** no code changes since `695bc18`: #72 to #74 are governance and contracts only. CI on `main`: run 36512567628 on `a46635a` (#72) and run 36514101249 on `3450fe2` (#73) passed; run 36518359017 on `46e3e09` (#74): 752 of 752 tests, isolation, and backup-restore `PROVEN`. The AGR profile's store behaviour was tested on 2026-09-29 in a throwaway SeaweedFS 4.47 instance, recorded in AAB-PLATFORM-01's amendment (section 10). It is not yet asserted by CI, since nothing of the AGR profile is built.
 
 ### 2.3 Governance records added since the last stock-take
 
@@ -212,6 +226,11 @@ CAP-04's code also waits on the dependency audit's independent verification and 
 3. **CAP-01's step 1,** the next capability in the workstream's order. It follows the object-store decision.
 4. **The cognitive loop's identity decision.** It needs more reading and deliberation, and runs in parallel with the others as understanding develops. It does not block the workstream.
 
+**Update of `46e3e09`:** no work in flight on the repository beyond this update. **Items 1 and 2 above are done:** CAP-04's challenging role (#73, with CAP-05's challenge operations), and the object store's parameters for AGR content (#74). Next:
+- **CAP-01's step 1,** its canonical contract, the next capability in the workstream's order;
+- **the cognitive loop's identity decision,** in parallel, not blocking;
+- **recorded, not ordered:** an AAB-PLATFORM-07 amendment for a snapshot member whose admission is invalidated (section 9).
+
 The aab.ag legacy application tree is a separate cleanup, outside this repository, for another session. The owner is aware of it.
 
 **Open PRs: twelve, unchanged since the last stock-take** (still twelve at `16d21cc`). #19 (AGR candidate remediation, based on the candidate branch) and eleven from August (#2 to #13). None has been updated since then. Their details are in the last stock-take, section 3.
@@ -250,6 +269,8 @@ New:
 - **Receipts for AGR capabilities.** A platform migration extending the receipt table, and the error types, to AGR capability identifiers. The pilot accepts only SCS identifiers and AAB-PLATFORM-09 (dependency audit, V3 and V5). It comes before any CAP-04 endpoint. **Met in the database** (update of `695bc18`): migration 025 (#70). The error types open in the extraction's step 2 (V3).
 - **The object store's parameters for AGR content.** Retention, media types and size limits, decided by the platform before the object store is used for AGR content. AAB-PLATFORM-01's were set for EUDR supply-chain evidence, and scientific memory does not inherit them. Until then, no AGR original is stored.
 
+**Update of `46e3e09`:** **both are met.** The receipts by migration 025 (#70), in the database; the store's parameters by AAB-PLATFORM-01's AGR profile (#74). CAP-04's code still waits on the dependency audit's independent verification and the extraction.
+
 **Before any CAP-05 code** (update of `695bc18`; CAP-05 amendment of 2026-09-29): CAP-04 built first, since every landscape member is read from it; and the extraction, as for every AGR capability. Its receipts are accepted already (migration 025).
 
 ## 6. What is deferred, and its trigger
@@ -263,7 +284,7 @@ New:
 | **A platform error envelope contract** | Before `SCS-PLATFORM` can change in error envelopes (the naming rule) | **New** |
 | **The AAB-PLATFORM-03 proof record** | Before AAB-PLATFORM-03 can be raised from `implemented` | **New.** The behaviour is tested; no record names it |
 | **Signed party grants** | `PARTY_REPRESENTATIVE` and `PARTY_AUTHORITY_REPRESENTATIVE` grants are operator configuration in the actors file; in production each must be a signed, evidenced act | Now relied on by representative submission, which is built |
-| AGR capabilities built on the platform | Extraction, and AGR's adoption of AAB-PLATFORM-05 to 08 | The contracts exist. **Update of `16d21cc`:** now the AGR rehearsal migration workstream (roadmap, section 8), in the order CAP-04, 05, 08, 06, 07, 09. Step 0, obtaining the rehearsal's source, may start now, and contract work follows it. **Update of `dbb2408`:** step 0 is done (#61, #62), and contract work may begin. **Update of `f1bb47d`:** CAP-04's contract is committed under the workstream (#67), and CAP-04 has two platform prerequisites before any code (section 5). Its code waits on the audit's independent verification and the extraction. Observation, cognitive and resource intelligence need capability numbers and identities first. **Update of `d1bc453`:** decided (the identity record): CAP-36 proposed, CAP-01, and the cognitive split with its loop held. The order is now CAP-04, 05, **01**, 08, 06, 07, 09. **Update of `695bc18`:** CAP-05's contract is committed under the workstream (#71), and CAP-04's receipt prerequisite is met in the database (#70). CAP-01, next in the order, holds 15 rehearsal actions; `cognitive_foundation_workspace` is held with the loop |
+| AGR capabilities built on the platform | Extraction, and AGR's adoption of AAB-PLATFORM-05 to 08 | The contracts exist. **Update of `16d21cc`:** now the AGR rehearsal migration workstream (roadmap, section 8), in the order CAP-04, 05, 08, 06, 07, 09. Step 0, obtaining the rehearsal's source, may start now, and contract work follows it. **Update of `dbb2408`:** step 0 is done (#61, #62), and contract work may begin. **Update of `f1bb47d`:** CAP-04's contract is committed under the workstream (#67), and CAP-04 has two platform prerequisites before any code (section 5). Its code waits on the audit's independent verification and the extraction. Observation, cognitive and resource intelligence need capability numbers and identities first. **Update of `d1bc453`:** decided (the identity record): CAP-36 proposed, CAP-01, and the cognitive split with its loop held. The order is now CAP-04, 05, **01**, 08, 06, 07, 09. **Update of `695bc18`:** CAP-05's contract is committed under the workstream (#71), and CAP-04's receipt prerequisite is met in the database (#70). CAP-01, next in the order, holds 15 rehearsal actions; `cognitive_foundation_workspace` is held with the loop. **Update of `46e3e09`:** CAP-04's second prerequisite is met (#74), and its and CAP-05's challenge rules are complete (#73). CAP-01's step 1 is next |
 | PDF metadata (`Producer` and `Creator` still read `SCS-PLATFORM-02`) | A deliberate change of its own: new expected digest, renderer version bump, cross-platform re-verification | None |
 | `simulation/cap34/scs-roadmap-preview.js` and the CAP-34 manifest extended to SCS | Your decision (deferred after PR #26) | None |
 | Multi-issuer idempotency keys | A second identity issuer acting in a deployment (`TODO(multi-issuer-idempotency)`) | None |
@@ -328,6 +349,11 @@ Unchanged from the last stock-take, except item 2:
 - **07:** reconstruction of the store's past state, as a possible future capability; relational storage of snapshot members carrying version and digest.
 - **All four:** implementation, as shared modules with platform schemas in `urn:aab:schema:`, and each domain's adoption amendment.
 
+**Raised by AGR's adoption** (update of `46e3e09`):
+- **07: an invalidated admission.** AAB-PLATFORM-07's comparison has no change kind for a snapshot member whose admission is invalidated by an upheld challenge, so a review's triggers do not fire on it. It needs its own amendment (CAP-04 and CAP-05, "Open gaps").
+- **08: whether a challenge resolution can be challenged.** CAP-04 and CAP-05 make resolutions final, as the pilot position. Whether they should be challengeable remains an open platform question.
+- **01: legal hold's governance,** defined with the override credential's, before real data; **renewing locks** before a profile's period ends; **staging** for originals never admitted, not decided; and the large upload route's operations, when it is built.
+
 ## 10. Outreach
 
 **Outreach is tracked separately, outside this repository.** Organisations, contacts, dates, what was sent, and follow-ups are names and commercial information, which do not belong in a governance repository. This stock-take does not record them, and does not record their state.
@@ -355,6 +381,12 @@ Unchanged from the last stock-take, except item 2:
   - step 0, obtaining the source, mandatory and first;
   - the identity decision for observation, cognitive and resource intelligence;
   - the catalogue mapping, marked as proposed and requiring review.
+
+**Updated to `46e3e09`,** in a later change, at your instruction:
+- **This record:** PRs #72 to #74 in section 1; AAB-PLATFORM-01, CAP-04 and CAP-05 amended, in the contract table; CI in section 2.2; work in progress, with items 1 and 2 done and CAP-01 next; CAP-04's prerequisites met, in section 5; section 6; the open items AGR's adoption raised, in section 9; one item in "Items that appear forgotten or drifted".
+- **The roadmap:** updated to `46e3e09`. AAB-PLATFORM-01's storage profiles in the platform contracts table and primitive 3; CAP-04's prerequisites met; the challenge rules in primitive 7 and sections 3.2 and 8.4; legal hold's governance with the override credential's, in section 6.1. New decisions 26 (challenges, and resolutions final as the pilot position), 27 (storage profiles, and the AGR profile) and 28 (the lock is protection, not expiry); three items still open.
+- **AAB-PLATFORM-01's header,** corrected in place (item 11 below). HTML re-rendered.
+- **Not changed:** the CAP-34 fidelity manifest. Nothing is built.
 
 **Updated to `695bc18`,** in a later change, at your instruction:
 - **This record:** PRs #69 to #71 in section 1; CAP-04 amended again and CAP-05 amended, in the contract table; migration 025 and the CI counts in section 2.2; the identity record in section 2.3; work in progress, with the next four items in the order decided in review; CAP-04's receipt prerequisite met in the database, and CAP-05's prerequisites, in section 5; AGR's adoption of the platform contracts, and CAP-05's step 1 done, in section 6; two items in "Items that appear forgotten or drifted".
@@ -406,4 +438,5 @@ Unchanged from the last stock-take, except item 2:
 7. **Contract file placement is still inconsistent.** AAB-PLATFORM-01 and 02 sit in `governance/workstream-b/`; AAB-PLATFORM-03 to 08 sit in `governance/`.
 8. **The queued SCS-CAP-07, 10, 11 and 12 contracts, and WP05's hardware key,** are still recorded only in session notes.
 9. **The roadmap said the rehearsal's code was not in this repository** (sections 3.1 and 8.1, and "What this document does not establish") after the step 0 snapshots merged (#61, #62). **Corrected in this change** (update of `695bc18`), marked in place.
-10. **CAP-04 names no challenging role,** which AAB-PLATFORM-08 (section 13) requires of every adopting domain. Found in the review of CAP-05's amendment. A follow-up PR, agreed in review (section 3).
+10. **CAP-04 names no challenging role,** which AAB-PLATFORM-08 (section 13) requires of every adopting domain. Found in the review of CAP-05's amendment. A follow-up PR, agreed in review (section 3). **Done** (update of `46e3e09`; #73).
+11. **AAB-PLATFORM-01's header still described an SCS-only store** after its amendment of 2026-09-29 added the AGR profile (#74): its **Domain** line read Supply Chain Sovereignty, and its **Authority** line "a platform service shared by all SCS capabilities". **Corrected in this change** (update of `46e3e09`), marked in place.
