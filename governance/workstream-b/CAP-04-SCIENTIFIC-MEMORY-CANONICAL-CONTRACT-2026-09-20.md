@@ -4,7 +4,7 @@
 **Domain:** Agricultural Science (AGR)
 **Capability:** CAP-04 Governed Scientific Memory. It is not SCS-CAP-04 (Deforestation Evidence Admission), a different capability in another domain.
 **Authority:** DEFINES THE CONTRACT FOR CAP-04: WHAT MAY ENTER GOVERNED SCIENTIFIC MEMORY, HOW IT IS ADMITTED, HELD, QUARANTINED AND SUPERSEDED, HOW ADMITTED MEMORY IS READ, AND THE BOUNDARY WITH CAP-05 AND CAP-09. Establishes no commissioning, production, Gate D, WP05, scientific-validity or regulatory authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
-**Amended:** 2026-09-29, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3): aligned with the platform contracts, and the rehearsal accounted for (see "Amendment of 2026-09-29: canonical alignment, and the rehearsal accounted for"). Amended again on 2026-09-29, with two corrections following CAP-05's canonical amendment (see "Amendment of 2026-09-29: two corrections following CAP-05 canonical amendment"), and for challenges to its human decisions (see "Amendment of 2026-09-29: challenges to CAP-04's human decisions").
+**Amended:** 2026-09-29, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3): aligned with the platform contracts, and the rehearsal accounted for (see "Amendment of 2026-09-29: canonical alignment, and the rehearsal accounted for"). Amended again on 2026-09-29, with two corrections following CAP-05's canonical amendment (see "Amendment of 2026-09-29: two corrections following CAP-05 canonical amendment"), for challenges to its human decisions (see "Amendment of 2026-09-29: challenges to CAP-04's human decisions"), and for originals stored under the AGR storage profile (see "Amendment of 2026-09-29: originals stored under the AGR storage profile").
 **History:** first written on 2026-09-20 as a governance design contract, resolving the "design decision required before wiring" finding for CAP-04 in `governance/AAB-CAPABILITY-GATEWAY-RECONCILIATION-2026-09-20.md`. It was not part of PR #16. The 2026-09-20 text is in the repository's history.
 
 ## Amendment of 2026-09-29: canonical alignment, and the rehearsal accounted for
@@ -28,7 +28,7 @@ AAB-PLATFORM-04 (actor–subject links) is **not adopted**: CAP-04 has no submis
 |---|---|
 | A staged provider interface: `registerSource`, `preserveOriginal`, `registerExtraction`, `classifyEvidence`, `evaluateAdmission`, with statuses `RECEIVED` and `CLASSIFYING` | **One submission, decided in one transaction** (AAB-PLATFORM-06). The original is stored first, as an AAB-PLATFORM-01 object; the source, provenance, extraction lineage, classification and content arrive together, and are refused, held or admitted |
 | `MemoryAdmissionDecision` with `ADMITTED`, `QUARANTINED`, `REJECTED`, `REQUIRES_REVIEW` | The platform's `AdmissionDecision`: **refused** (nothing written), **`HELD_FOR_REVIEW`**, **`ADMITTED`**, **`ADMITTED_WITH_LIMITATIONS`**. `REJECTED` exists only as a reviewer's resolution of a held record. `QUARANTINED` is after admission, a status record, never a decision |
-| `eligibilityChecks`: seven booleans | Ten checks, each `PASSED`, `NOT_PASSED` or `NOT_EVALUATED`, and each stated as refusing, limiting or holding ("The checks") |
+| `eligibilityChecks`: seven booleans | Ten checks (corrected on 2026-09-29: eleven, as "The checks" lists them; twelve since the storage profile amendment), each `PASSED`, `NOT_PASSED` or `NOT_EVALUATED`, and each stated as refusing, limiting or holding ("The checks") |
 | `admission.status` and `updatedAt` on the record | **No status on the record, and no update.** What a record is, is derived when read, from its decisions and status records |
 | `integrityStatus: "FAILED"` | Never recorded. A declared digest that contradicts the stored original refuses the submission |
 | `chainOfCustody: ProvenanceEvent[]` | The platform's `custody`: `declaredComplete`, and optional declared steps |
@@ -39,7 +39,7 @@ AAB-PLATFORM-04 (actor–subject links) is **not adopted**: CAP-04 has no submis
 
 **Decisions recorded on 2026-09-29** (approved by the Platform Owner in review):
 1. **Capability identifier.** Receipts and failures carry `capabilityId: "CAP-04"`, the landscape identifier, as CAP-20 and CAP-21 do. It is distinct from `SCS-CAP-04`. The domain is recorded as `AGR`.
-2. **Routes and schemas: the AGR route prefix `/agr/v1/`.** **This is a platform decision, made here for the first time,** not only a route for CAP-04. It establishes AGR's separation from SCS at the API level: every AGR capability's routes are under `/agr/v1/`, as SCS's are under `/scs/v1/`, and platform routes are under `/aab/v1/` (the naming rule). CAP-04's are `/agr/v1/memory-records`. AGR's database schema is its own (`agr`), as "a second domain gets its own schema", and its JSON schemas use `urn:aab:schema:agr:`. Originals are stored through AAB-PLATFORM-01's existing route until its platform route under `/aab/v1/` exists.
+2. **Routes and schemas: the AGR route prefix `/agr/v1/`.** **This is a platform decision, made here for the first time,** not only a route for CAP-04. It establishes AGR's separation from SCS at the API level: every AGR capability's routes are under `/agr/v1/`, as SCS's are under `/scs/v1/`, and platform routes are under `/aab/v1/` (the naming rule). CAP-04's are `/agr/v1/memory-records`. AGR's database schema is its own (`agr`), as "a second domain gets its own schema", and its JSON schemas use `urn:aab:schema:agr:`. Originals are stored through AAB-PLATFORM-01's existing route until its platform route under `/aab/v1/` exists. **Now:** at `POST /agr/v1/evidence-objects`, under AAB-PLATFORM-01's AGR profile (amended on 2026-09-29, storage profile).
 3. **One transaction, not stages.** The design's five staged calls and intermediate statuses are replaced by one submission (above): one transaction, one decision, one receipt. The original object is the only thing stored before it, and a stored object is never evidence until a record that cites it is admitted (AAB-PLATFORM-01).
 4. **Admission is automated; review is a person's.** At submission the rules decide (`decisionMode: "AUTOMATED"`, `requestedBy` the submitter). A person decides only a held record, a quarantine and a release. No platform primitive makes a judgement: people decide the exceptions.
 5. **Automated content is always held.** A record whose content a system produced (`generation.automated: true`) is held for a reviewer, never admitted at submission, as the gateway reconciliation required ("never structurally eligible until reviewed"). An automated extraction entering governed memory without a person's review would be exactly the silent promotion AAB exists to prevent.
@@ -50,8 +50,8 @@ AAB-PLATFORM-04 (actor–subject links) is **not adopted**: CAP-04 has no submis
 10. **How a holding check is recorded follows AAB-PLATFORM-06,** amended on 2026-09-29 for exactly this case, in the same change as this amendment. CAP-04 does not rely on a reading of its own.
 
 **Prerequisites before any code** (recorded on 2026-09-29, and in "Open gaps"):
-- **A platform migration extending the receipt table to AGR capability identifiers.** It comes before any CAP-04 endpoint is built.
-- **A platform decision on the object store's parameters for AGR content:** retention, media types and size limits. AAB-PLATFORM-01's were set for EUDR supply-chain evidence, and scientific memory is not to inherit them by default. It is decided before the object store is used for AGR content.
+- **A platform migration extending the receipt table to AGR capability identifiers.** It comes before any CAP-04 endpoint is built. **Met:** migration 025 (PR #70) (amended on 2026-09-29, storage profile).
+- **A platform decision on the object store's parameters for AGR content:** retention, media types and size limits. AAB-PLATFORM-01's were set for EUDR supply-chain evidence, and scientific memory is not to inherit them by default. It is decided before the object store is used for AGR content. **Decided:** AAB-PLATFORM-01's AGR profile, amendment of 2026-09-29 (amended on 2026-09-29, storage profile).
 
 **Nothing is implemented by this amendment.** It adopts the platform contracts; it does not implement them. Every rule of 2026-09-20 not changed above is kept.
 
@@ -78,6 +78,29 @@ AAB-PLATFORM-04 (actor–subject links) is **not adopted**: CAP-04 has no submis
 5. **A held resolution may be superseded only after it is invalidated.** "Resolved at most once" is kept for a valid resolution. A reviewer who no longer stands by one challenges it; they do not supersede it.
 6. **One open challenge per decision,** and **a challenge resolution is final in CAP-04:** it is not itself challenged. A later challenge of the same decision, with new grounds, is allowed. This is the pilot position. Whether resolutions should be challengeable under AAB-PLATFORM-08 remains an open platform question.
 7. **One decider per decision.** No CAP-04 decision kind needs more than one.
+
+**Nothing is implemented by this amendment.**
+
+## Amendment of 2026-09-29: originals stored under the AGR storage profile
+
+**Why.** CAP-04's second prerequisite before any code was a platform decision on the object store's parameters for AGR content. **It is made:** AAB-PLATFORM-01's amendment of 2026-09-29 defines storage profiles, and the AGR profile. This amendment brings CAP-04 into line with it, and adds one admission rule the Platform Owner required in the same review. Each change is marked in place "(amended on 2026-09-29, storage profile)".
+
+**What changes:**
+
+| Before | Now |
+|---|---|
+| Originals stored at `POST /scs/v1/evidence-objects`, "until its platform route exists" (decision 2; "Operations and routes") | **`POST /agr/v1/evidence-objects`,** under AAB-PLATFORM-01's AGR profile: its own bucket, `agr-evidence`, locked in GOVERNANCE mode for `Years: 100` |
+| An original cited by its object identifier | **Cited by its `agr-object:sha256:…` reference.** An object stored under another profile is not found (`ORIGINAL_NOT_FOUND`) |
+| "The store's parameters for AGR content are not yet decided," and no AGR original is stored | **Decided.** AGR originals may be stored, up to the AGR profile's limits, in its media types |
+| Any authenticated actor may upload (AAB-PLATFORM-01) | **Storing an AGR original requires `MEMORY_SUBMITTER`** |
+| Eleven admission checks; rules version `cap-04-admission-1` | **Check 12, `ORIGINAL_FORMAT_DECLARED`,** with the limitation `FORMAT_NOT_DECLARED`; rules version **`cap-04-admission-2`** |
+
+**Decision recorded on 2026-09-29** (approved by the Platform Owner in review):
+- **An original stored as `application/octet-stream` must have its format stated by the record,** in `originalFormat` (for example `"FASTQ"`). A record that cites such an original without stating it is an admission with a limitation that would otherwise go undisclosed: it is **`ADMITTED_WITH_LIMITATIONS`, with the limitation `FORMAT_NOT_DECLARED`.** It is never refused for it, and never admitted without it.
+
+**The rules version.** A change to the admission rules is a new version ("Admission rules"), so the rules are now `cap-04-admission-2`. Version 1 was never in force: nothing of CAP-04 is built, and no decision exists under it.
+
+**Both prerequisites before any code are now met:** the receipt migration (migration 025, PR #70; the application's capability types open in the extraction's step 2), and the store's parameters (this amendment). CAP-04's code still waits on the dependency audit's independent verification and the extraction.
 
 **Nothing is implemented by this amendment.**
 
@@ -213,6 +236,9 @@ interface Cap04ScientificMemoryRecord {
     subjectLabel?: string;
   };
 
+  // The original's format, when its media type does not name it: declared (amended on 2026-09-29, storage profile)
+  originalFormat?: string;              // e.g. "FASTQ", "BAM", "netCDF"; check 12
+
   // Where it came from, how it was made, and its lineage: AAB-PLATFORM-05
   provenance: Provenance;
 
@@ -298,6 +324,7 @@ interface MeasurementObservation {
 - **Every declared string is recorded exactly as given:** no normalisation, correction or inference (AAB-PLATFORM-05).
 - **`classification` is always complete.** `permittedUses` is never empty, and `traditionalKnowledgeLinked` and `personalInformationPresent` are always stated, `true` or `false`, never omitted.
 - **There is no admission status, update time or epistemic status on the record.** They are derived when read ("Reading admitted memory").
+- **`originalFormat` states the format of an original stored as `application/octet-stream`,** as declared (amended on 2026-09-29, storage profile). Without it, such a record is admitted with the limitation `FORMAT_NOT_DECLARED` (check 12).
 - **Persons named in the source are declared data.** An extractor or reviewer named in the source is recorded as the source names them. They are not actors, and naming them asserts nothing about them.
 
 **Required fields, by record type.** Every record requires `subject`, `provenance` (with `source.sourceType`), `ownership`, `context.domainCodes` and `classification`. In addition:
@@ -319,7 +346,7 @@ interface MeasurementObservation {
 
 ## Admission rules
 
-CAP-04 adopts AAB-PLATFORM-06 by this amendment. The rules below are **rules version `cap-04-admission-1`.** A change to them is a new version, and decisions made under earlier rules keep theirs.
+CAP-04 adopts AAB-PLATFORM-06 by this amendment. The rules below are **rules version `cap-04-admission-2`** (amended on 2026-09-29, storage profile); version 1 was never in force. A change to them is a new version, and decisions made under earlier rules keep theirs.
 
 ### Outcomes
 
@@ -330,20 +357,21 @@ CAP-04 adopts AAB-PLATFORM-06 by this amendment. The rules below are **rules ver
 | **`ADMITTED`** | The record, the decision and its receipt | Yes |
 | **`ADMITTED_WITH_LIMITATIONS`** | The same, with every limitation disclosed | Yes |
 
-- **`ADMITTED` is reachable:** a record of human-produced content, with a stored and verified original, an identified source, custody declared complete, every citation resolved, no sensitive content, and a submitter whose grant covers the owning institution.
+- **`ADMITTED` is reachable:** a record of human-produced content, with a stored and verified original whose format is named by its media type or stated by the record, an identified source, custody declared complete, every citation resolved, no sensitive content, and a submitter whose grant covers the owning institution.
 - **`ADMITTED_WITH_LIMITATIONS` if and only if** at least one limitation is disclosed.
 - **There is no `REJECTED` at submission.** A reviewer rejects a held record ("Held records and their review").
 
 ### The original, and its integrity
 
-- **The original is stored before the submission,** as an AAB-PLATFORM-01 object, and cited by its object identifier. Storing it admits nothing (AAB-PLATFORM-01).
+- **The original is stored before the submission,** as an AAB-PLATFORM-01 object under the AGR profile, at `POST /agr/v1/evidence-objects`, and cited by its `agr-object:sha256:…` reference (amended on 2026-09-29, storage profile). Storing it admits nothing (AAB-PLATFORM-01). An object stored under another profile is not found.
 - **When an original is cited:** it must be in the store, and its bytes must re-hash to its identifier on the read the admission makes. If the submitter declared a digest, it must equal the stored object's. Otherwise the submission is refused. `original.integrityStatus` is then `VERIFIED`.
 - **When an original is held elsewhere** (`original.externalReference`), or cannot be stored, it is `UNVERIFIED`, and the gaps are disclosed as limitations. Historical institutional records often have no stored original; they may still be admitted, with their limitations.
-- **The store's parameters for AGR content are not yet decided** (a prerequisite, "Open gaps"). Until they are, no AGR original is stored, and a record is admitted, if at all, with its original held elsewhere and its limitations disclosed.
+- **The store's parameters for AGR content are decided** (amended on 2026-09-29, storage profile): AAB-PLATFORM-01's AGR profile. Its media types, its limits of 100 MB by standard upload and 50 GiB by the large upload route, and its hundred-year lock apply. **An original larger than 50 GiB is not stored:** it is cited where it is held (`original.externalReference`), `UNVERIFIED`, with its limitations disclosed.
 
 ### Authority
 
 - **Submitting:** an actor holding **`MEMORY_SUBMITTER`**, through a scoped grant (AAB-PLATFORM-03) whose scope covers the country workspace. They submit in their own name. Submission on behalf of another party is not defined ("Open gaps").
+- **Storing an original:** **`MEMORY_SUBMITTER`**, as AAB-PLATFORM-01's AGR profile requires (amended on 2026-09-29, storage profile).
 - **Owning institution:** when the submitter's grant is scoped to the institution the record names as `ownership.ownerOrganizationId`, the source authority check passes. When it is not, the record is held for a reviewer to decide whether the submitter may provide it.
 - **Reviewing held records:** **`MEMORY_REVIEWER`**, a `HUMAN`, never the submitter.
 - **Quarantine and release:** **`MEMORY_QUARANTINE_OFFICER`**, a `HUMAN`. The submitter never releases a quarantine on their own record.
@@ -368,6 +396,7 @@ The checks run in this order. A refusal names the first check that failed, with 
 | 9 | `CONTENT_HUMAN_PRODUCED`: the content was not produced by an automated system | `extractionTraceable` (in part) | `PASSED` or `NOT_PASSED` | **Held:** `AUTOMATED_CONTENT` |
 | 10 | `SOURCE_AUTHORITY`: the submitter's grant is scoped to the owning institution | `authorityConfirmed` (in part) | `PASSED` or `NOT_PASSED` | **Held:** `SOURCE_AUTHORITY_UNCONFIRMED` |
 | 11 | `SENSITIVE_CONTENT`: neither traditional knowledge nor personal information is declared | — | `PASSED` or `NOT_PASSED` | **Held:** `TRADITIONAL_KNOWLEDGE` or `PERSONAL_INFORMATION` |
+| 12 | `ORIGINAL_FORMAT_DECLARED` (amended on 2026-09-29, storage profile): an original stored as `application/octet-stream` has its format stated in `originalFormat` | — | `PASSED`, `NOT_PASSED`, or `NOT_EVALUATED` when no original is stored, or its media type names its format | **Limitation:** `FORMAT_NOT_DECLARED` |
 
 - **A refusing check never appears in a decision:** it either passed, or nothing was written.
 - **Held checks are evaluated after every refusing check has passed.** A record is held when any of checks 9 to 11 did not pass, and `heldBecause` names each.
@@ -384,6 +413,7 @@ The checks run in this order. A refusal names the first check that failed, with 
 | `CUSTODY_INCOMPLETE` | The submitter declared custody of the original incomplete | `CUSTODY_DECLARED_INCOMPLETE` |
 | `CUSTODY_NOT_DECLARED` | An original exists, and no custody was declared | `CUSTODY_NOT_DECLARED` |
 | `CITATION_UNRESOLVED` | A cited record was not found among admitted records in the workspace | `CITATION_UNRESOLVED` |
+| `FORMAT_NOT_DECLARED` (amended on 2026-09-29, storage profile) | An original stored as `application/octet-stream` has no stated format | None: CAP-04's own. The platform's provenance records no format |
 
 **The gap mapping:** every platform gap is a disclosed limitation. None refuses a submission, because an institution's historical record may lack any of them and still be worth remembering, honestly limited.
 
@@ -423,7 +453,7 @@ The decision is the platform's `AdmissionDecision` (AAB-PLATFORM-06, section 3),
 ```typescript
 interface Cap04MemoryAdmissionDecision extends AdmissionDecision {
   // recordId is the memoryRecordId; recordVersion and recordDigest are the record's
-  rulesVersion: "cap-04-admission-1";
+  rulesVersion: "cap-04-admission-2";
 
   boundary: {
     admissionIsNotVerification: true;         // the platform's three
@@ -563,7 +593,7 @@ interface ScientificMemoryProvider {
 
 | Operation | Route |
 |---|---|
-| Store an original | `POST /scs/v1/evidence-objects` (AAB-PLATFORM-01), until its platform route exists |
+| Store an original | `POST /agr/v1/evidence-objects` (AAB-PLATFORM-01, the AGR profile) (amended on 2026-09-29, storage profile) |
 | `submitMemoryRecord` | `POST /agr/v1/memory-records`: `201` admitted, `202` held, with `{ record, decision, receipt }` |
 | `resolveHeldRecord` | `POST /agr/v1/memory-records/:memoryRecordId/held-resolutions` |
 | `quarantineRecord` | `POST /agr/v1/memory-records/:memoryRecordId/quarantines` |
@@ -686,7 +716,7 @@ The promoted knowledge record retains permanent references to the CAP-04 records
 
 **Contract gap: submission on behalf of another party.** A submitter acts in their own name, with a grant for the institution. Submission as, or for, an institution by someone who is not its member, under AAB-PLATFORM-04 links and mandates, is not defined. AGR has no party registry or mandate concept yet.
 
-**Prerequisite, and a platform decision: the object store's parameters for AGR content.** AAB-PLATFORM-01's six media types, 50 MB limit and six-year retention were set for EUDR supply-chain evidence, and its route and `scs-object:` references are SCS's. Scientific memory will need different parameters: potentially longer retention, other media types (datasets, spreadsheets), and larger files. **They are a deliberate platform decision, made before the object store is used for AGR content,** never an inheritance from EUDR's assumptions. Until that decision, no AGR original is stored.
+**Prerequisite, and a platform decision: the object store's parameters for AGR content.** AAB-PLATFORM-01's six media types, 50 MB limit and six-year retention were set for EUDR supply-chain evidence, and its route and `scs-object:` references are SCS's. Scientific memory will need different parameters: potentially longer retention, other media types (datasets, spreadsheets), and larger files. **They are a deliberate platform decision, made before the object store is used for AGR content,** never an inheritance from EUDR's assumptions. Until that decision, no AGR original is stored. **Decided on 2026-09-29:** AAB-PLATFORM-01's AGR profile (amended on 2026-09-29, storage profile).
 
 **Contract gap: erasure.** A record is never deleted. Where the law requires personal information to be erased, the platform's override credential is the only way to erase a stored original, and its governance is not defined (AAB-PLATFORM-01). What an erasure leaves of a record that cites the original, and of the snapshots, landscapes and learning decisions that cite the record, is not defined either. Until both are, records declaring personal information are held, and admitted only on a reviewer's decision.
 
@@ -702,7 +732,7 @@ The promoted knowledge record retains permanent references to the CAP-04 records
 
 **Contract gap: bringing rehearsal data across.** No rehearsal data is a CAP-04 record (decision 9). Importing any of it would be a submission like any other, with its provenance declaring the rehearsal as its source. Whether to do so, and how, is a separate decision.
 
-**Prerequisite: receipts for AGR capabilities.** The pilot's receipt table and error types accept only SCS capability identifiers and AAB-PLATFORM-09. **A platform migration extending them to AGR capability identifiers comes before any CAP-04 endpoint is built.** It is the change the dependency audit records (V3, V5), made for AGR.
+**Prerequisite: receipts for AGR capabilities.** The pilot's receipt table and error types accept only SCS capability identifiers and AAB-PLATFORM-09. **A platform migration extending them to AGR capability identifiers comes before any CAP-04 endpoint is built.** It is the change the dependency audit records (V3, V5), made for AGR. **Met in the database:** migration 025 (PR #70) (amended on 2026-09-29, storage profile). The error types open in the extraction's step 2.
 
 **Current system limit: no implementation, and no extraction yet.** Nothing of CAP-04 is built. It is built (step 4) only after the dependency audit's independent verification and the extraction of the platform primitives (roadmap, section 8.5).
 
