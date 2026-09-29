@@ -63,11 +63,15 @@ CREATE TABLE scs.decision_receipt (
   created_at          timestamptz NOT NULL DEFAULT now(),
 
   CONSTRAINT decision_receipt_pk PRIMARY KEY (receipt_id),
-  -- AAB-PLATFORM-09 added by migration 024 (the public-key registry)
+  -- AAB-PLATFORM-09 added by migration 024 (the public-key registry); AAB
+  -- landscape capabilities and platform contracts, by pattern, by migration 025.
+  -- Format only: this makes no capability canonical.
   CONSTRAINT decision_receipt_capability_id_ck
     CHECK (capability_id IN ('SCS-CAP-01', 'SCS-CAP-02', 'SCS-CAP-03', 'SCS-CAP-04',
                              'SCS-CAP-05', 'SCS-CAP-06', 'SCS-CAP-08', 'SCS-CAP-09',
-                             'AAB-PLATFORM-09')),
+                             'AAB-PLATFORM-09')
+           OR (capability_id ~ '^CAP-(0[1-9]|[1-9][0-9])$' AND capability_id <> 'CAP-29')
+           OR capability_id ~ '^AAB-PLATFORM-(0[1-9]|[1-9][0-9])$'),
   CONSTRAINT decision_receipt_text_not_blank_ck
     CHECK (btrim(decision_type) <> '' AND btrim(decision) <> ''),
   CONSTRAINT decision_receipt_correlation_id_ck
