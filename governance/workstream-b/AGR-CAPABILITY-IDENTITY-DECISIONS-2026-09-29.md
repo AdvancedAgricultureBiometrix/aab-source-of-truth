@@ -7,13 +7,22 @@
 **Required by:** `governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.4 and decision 14: "Observation, cognitive intelligence and resource intelligence need capability numbers and identities before their migration paths are defined."
 **Evidence:** the step 0 snapshots, `agr-rehearsal/snapshot-2026-09-28/` and `agr-rehearsal/snapshot-2026-09-28-supplementary/`. The gateway is `source-a/aab-local/app/_rebuild/api.php` in the first.
 
+## Note of 2026-09-29: `cognitive_foundation_workspace` moved from CAP-01 to the held group
+
+**A correction to section 3.** `cognitive_foundation_workspace` was assigned to CAP-01 on the gateway alone. Reading its function in `cognitive_core` for CAP-05's canonical amendment of 2026-09-29 shows otherwise: **it is a dashboard for the whole kernel,** not a CAP-01 action. It returns the brain and algorithm registries, every domain's brain inheritance, targets, problems, transformation opportunities, ingredient build candidates and the reassessment queue. It takes no domain, and filters only by country membership (`agr-rehearsal/snapshot-2026-09-28-supplementary/source-b/cognitive_core/`, `api_get_foundation_workspace`).
+
+- **It moves from CAP-01 to the held group,** and its identity is held with the loop's, until `cognitive_core` is read and understood for that decision. Section 3 and the summary are marked in place.
+- **CAP-01 now holds 15 rehearsal actions,** not 16: the 13 of resource intelligence, `submit_problem_signal` and `create_transformation_opportunity`. Decision 4 stands: CAP-01 keeps its place in the order, third.
+- **The other assignments stand.** Reading `cognitive_core` confirms `submit_problem_signal` for CAP-01 and `propose_ingredient_build_candidate` for CAP-06. `create_transformation_opportunity` stays with CAP-01.
+- **The CAP-05 citation in section 3** now points to the amended contract, where the design's final decision is kept unchanged ("What the rehearsal does, and how this contract accounts for it"). CAP-05's amendment also records what the loop does, from its code.
+
 ## Summary
 
 | Rehearsal group | Actions | Decision | New number |
 |---|---:|---|---|
 | **Observation** (`AAB_OBSERVATION_ACTIONS`) | 21 | Its own capability, not part of CAP-08 | **CAP-36, proposed.** Not canonical until the ten-point checklist is met |
 | **Resource intelligence** (`AAB_RESOURCE_INTELLIGENCE_ACTIONS`) | 13 | Belongs to **CAP-01** Country Intelligence & Discovery | None |
-| **Cognitive intelligence** (`AAB_COGNITIVE_ACTIONS`) | 9 | Split: four actions to **CAP-01** and **CAP-06**; the loop and its reads held | None assigned. The loop's identity is undecided |
+| **Cognitive intelligence** (`AAB_COGNITIVE_ACTIONS`) | 9 | Split: three actions to **CAP-01** and **CAP-06**; the loop, its reads and `cognitive_foundation_workspace` held (note of 2026-09-29) | None assigned. The loop's identity is undecided |
 
 **How a number becomes canonical.** A number is never canonical because it is free: "CAP-35 must not become canonical merely because it is numerically available" (`governance/AAB-CAPABILITY-ADMISSION-AUTHORITY-DEFINITION-2026-09-27.md`, section 2.2). It becomes canonical only when the ten-point identity checklist is met, and the capability registry, the CAP-34 fidelity manifest and the validators are updated together (checklist items 8 to 10). **This record proposes; it does not make canonical.**
 
@@ -94,13 +103,13 @@
 
 | Actions | Capability | Why |
 |---|---|---|
-| `submit_problem_signal`, `create_transformation_opportunity`, `cognitive_foundation_workspace` | **CAP-01** | Agricultural problems and overlooked opportunities are CAP-01's description |
+| `submit_problem_signal`, `create_transformation_opportunity` (`cognitive_foundation_workspace` moved to Held: note of 2026-09-29) | **CAP-01** | Agricultural problems and overlooked opportunities are CAP-01's description |
 | `propose_ingredient_build_candidate` | **CAP-06** | CAP-06 investigates "candidate new ones from evidence and country resources" (the platform overview, line 200) |
-| `run_agriculture_cognitive_loop`, `compute_cognitive_node_state`, `agriculture_cognitive_loop_workspace`, `live_intelligence_surface`, `intelligence_activity_timeline` | **Held** | See below |
+| `run_agriculture_cognitive_loop`, `compute_cognitive_node_state`, `agriculture_cognitive_loop_workspace`, `live_intelligence_surface`, `intelligence_activity_timeline`, and `cognitive_foundation_workspace` (moved from CAP-01: note of 2026-09-29) | **Held** | See below |
 
 **The actions** (`api.php`, from line 1268). All nine call `cognitive_core` functions.
 
-**Not CAP-05.** CAP-05's contract excludes this group in terms: "CAP-05 should not be wired to either `submit_problem_signal` or `run_agriculture_cognitive_loop`" (`governance/workstream-b/CAP-05-GOVERNED-SCIENTIFIC-REASONING-CANONICAL-CONTRACT-2026-09-20.md`, line 347).
+**Not CAP-05.** CAP-05's contract excludes this group in terms: "CAP-05 should not be wired to either `submit_problem_signal` or `run_agriculture_cognitive_loop`" (`governance/workstream-b/CAP-05-GOVERNED-SCIENTIFIC-REASONING-CANONICAL-CONTRACT-2026-09-20.md`, line 347 of the 2026-09-20 text; kept in its amendment of 2026-09-29: note of 2026-09-29).
 
 **Why the loop is held.**
 - **The gateway calls it a platform foundation:** "Shared cognitive foundation inherited by every registered AAB domain" (`api.php`, line 1266). It materialises nodes and relationships, recomputes their states with named algorithms (among them evidence-weighted belief, contradiction pressure, knowledge-gap density and expected information gain), and reports investigation candidates for human review.
