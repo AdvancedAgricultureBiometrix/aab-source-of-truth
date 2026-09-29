@@ -3,7 +3,7 @@
 **Status:** CANONICAL CONTRACT — NOT IMPLEMENTATION
 **Domain:** Supply Chain Sovereignty (SCS). **Corrected on 2026-09-29:** a platform service, serving SCS and Agricultural Science (AGR), each under its own storage profile (amendment of 2026-09-29).
 **Renamed:** from SCS-PLATFORM-01 on 2026-09-27. Platform contracts are numbered AAB-PLATFORM-NN (AAB-PLATFORM-03, decision 1).
-**Amended:** 2026-09-28 (object store credentials, Object Lock and retention) and 2026-09-29 (storage profiles, and the AGR profile). Since 2026-09-29 it also serves Agricultural Science (AGR), under its own profile.
+**Amended:** 2026-09-28 (object store credentials, Object Lock and retention) and 2026-09-29 (storage profiles, and the AGR profile; trial recorders upload under the AGR profile). Since 2026-09-29 it also serves Agricultural Science (AGR), under its own profile.
 **Authority:** DEFINES THE CONTRACT FOR THE SCS EVIDENCE OBJECT STORE, A PLATFORM SERVICE SHARED BY ALL SCS CAPABILITIES (CORRECTED ON 2026-09-29: AND, UNDER ITS OWN STORAGE PROFILE, BY AGR). Establishes no commissioning, production, Gate D, WP05, scientific-validity or regulatory authority. PROPOSED_NOT_ADMITTED. A pilot implementation exists in `scs-pilot/packages/api/src/platform/evidence-objects/`. The amendment of 2026-09-28 is built, and `behaviourally proven` for what its proof record covers (note of 2026-09-28, below).
 
 ## Amendment of 2026-09-28: object store credentials, Object Lock and retention
@@ -174,7 +174,7 @@ Recorded with the proof. **Not an amendment: nothing in this contract changes.**
 | Retention | GOVERNANCE, 2,192 days | **GOVERNANCE, `Years: 100`** |
 | Media types | The six in "Upload" | Section 5 |
 | Size | 50 MB | **100 MB standard; 50 GiB by the large upload route** (section 6) |
-| Who may upload | Any authenticated actor | **`MEMORY_SUBMITTER`** (section 7) |
+| Who may upload | Any authenticated actor | **`MEMORY_SUBMITTER`** (section 7), or **`TRIAL_RECORDER`** (amended on 2026-09-29, trial recorders) |
 
 ### 2. AGR retention
 
@@ -238,7 +238,7 @@ Recorded with the proof. **Not an amendment: nothing in this contract changes.**
 
 ### 7. Who may upload to the AGR profile
 
-- **An actor holding `MEMORY_SUBMITTER`** (CAP-04), through a scoped grant covering the country workspace. Any other actor is refused (`ROLE_NOT_AUTHORISED`, 403).
+- **An actor holding `MEMORY_SUBMITTER`** (CAP-04), or **`TRIAL_RECORDER`** (CAP-08) (amended on 2026-09-29, trial recorders), through a scoped grant covering the country workspace. Any other actor is refused (`ROLE_NOT_AUTHORISED`, 403).
 - **Why:** an object stored under a hundred-year lock can be removed only by the governed override. Who may store one is not a minor question.
 - **SCS keeps "any authenticated actor" for now.** Tightening it is a candidate for a later amendment (open gaps).
 
@@ -252,7 +252,7 @@ Recorded with the proof. **Not an amendment: nothing in this contract changes.**
 
 | Code | HTTP | Meaning |
 |---|---:|---|
-| `ROLE_NOT_AUTHORISED` | 403 | An upload to the AGR profile by an actor without `MEMORY_SUBMITTER` |
+| `ROLE_NOT_AUTHORISED` | 403 | An upload to the AGR profile by an actor without `MEMORY_SUBMITTER` or `TRIAL_RECORDER` (amended on 2026-09-29, trial recorders) |
 | `EVIDENCE_OBJECT_TOO_LARGE` | 413 | Over the route's limit. Above 50 GiB, the reasons say that the original is cited where it is held |
 | `EVIDENCE_OBJECT_DIGEST_MISMATCH` | 422 | A large upload whose bytes do not match its declared digest or size. Nothing is stored |
 
@@ -270,6 +270,10 @@ Recorded with the proof. **Not an amendment: nothing in this contract changes.**
 | An upload in parts, to an Object Lock bucket | Completed, and given the bucket's default lock |
 | Completing an upload in parts, conditionally, when the key exists | **Refused** (412). One version remains |
 | Cancelling an upload in parts | Nothing stored: no version, and nothing locked |
+
+## Amendment of 2026-09-29: trial recorders upload under the AGR profile
+
+**Why.** CAP-08 Controlled Trials & Outcomes records trial photographs and files as objects under the AGR profile (CAP-08's canonical contract of 2026-09-29, decision 12). The people who record trial observations hold `TRIAL_RECORDER`, not CAP-04's `MEMORY_SUBMITTER`. **This amendment adds `TRIAL_RECORDER` to the AGR profile's uploaders.** Nothing else changes: the profile's bucket, lock, media types and limits are the same, and an object stored by a trial recorder is under the same hundred-year lock. Marked in place "(amended on 2026-09-29, trial recorders)".
 
 ## Plain-English boundary statement
 
