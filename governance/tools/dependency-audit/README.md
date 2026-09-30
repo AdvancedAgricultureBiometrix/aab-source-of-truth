@@ -14,11 +14,13 @@ node governance/tools/dependency-audit/boundary-edges.mjs graph.json > boundary-
 node governance/tools/dependency-audit/vocab-scan.mjs > vocab-scan.tsv
 ```
 
+`vocab-scan.mjs` also takes the database root as a second argument (default: the source root's `../../db`).
+
 Each tool takes the source root as an optional argument (default `scs-pilot/packages/api/src`), so an older commit can be examined from an extracted copy:
 
 ```bash
 mkdir -p /tmp/at-eb9f338
-git archive eb9f338 scs-pilot/packages/api/src | tar -x -C /tmp/at-eb9f338
+git archive eb9f338 scs-pilot/packages/api/src scs-pilot/packages/db | tar -x -C /tmp/at-eb9f338
 cd /tmp/at-eb9f338
 node <repository>/governance/tools/dependency-audit/import-graph.mjs > graph.json
 ```
@@ -29,7 +31,7 @@ node <repository>/governance/tools/dependency-audit/import-graph.mjs > graph.jso
 |---|---|
 | `import-graph.mjs` | JSON: file counts, counts by category, every source file with its category, every import edge with its line and kind (`static`, `side-effect`, `dynamic`), and any unresolved import |
 | `boundary-edges.mjs` | Tab-separated: every edge from platform code to SCS domain code (`PLATFORM->DOMAIN`) or to the mixed schema registry (`PLATFORM->REGISTRY`), production and test separately; then a count of every other direction; then any unresolved import, which must be none |
-| `vocab-scan.mjs` | Tab-separated: every occurrence of the audit's SCS vocabulary in platform-side code, comments excluded, production and test separately; then counts |
+| `vocab-scan.mjs` | Tab-separated: every occurrence of the audit's SCS vocabulary in platform-side code, comments excluded, production and test separately; and, as `DOMAIN_TABLE`, every SCS domain table (derived from `db/schema/cap-*.sql`) named, with or without `scs.`, in platform-side code or the platform's database files, reported as `database` for the latter; then counts |
 | `lib.mjs` | Shared: listing, comment removal that keeps line numbers, the categories, import resolution, ordering |
 
 **The categories** are the audit's, assigned by path (`lib.mjs`, `areaOf`).
@@ -40,7 +42,7 @@ node <repository>/governance/tools/dependency-audit/import-graph.mjs > graph.jso
 
 - Only imports with a literal specifier are seen. An import built at runtime is not.
 - Template literals are scanned one level deep for nested code.
-- The vocabulary scan finds the terms it lists, not every possible coupling.
+- The vocabulary scan finds the terms it lists, not every possible coupling. **Corrected on 2026-09-30** (the audit's amendment 1): until then it searched tables only with the `scs.` prefix, and read no database file, so a domain table named bare, as in a type, a schema enum or a constraint, could not be found. `DOMAIN_TABLE` closes that gap.
 - Paths outside the source root (such as `scripts/`) are recorded as `outside-root`, not followed.
 
 ## Validation
