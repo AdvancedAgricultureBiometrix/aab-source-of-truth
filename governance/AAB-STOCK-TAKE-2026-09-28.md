@@ -1,7 +1,7 @@
 # AAB Stock-Take — 2026-09-28
 
 **Status:** STOCK-TAKE RECORD
-**Authority:** RECORDS THE STATE OF THE REPOSITORY ON 2026-09-28, READ FROM `main` AT `c1586c6` AND UPDATED TO `fa84240`, TO `16d21cc`, TO `dbb2408`, TO `f1bb47d`, TO `d1bc453`, TO `695bc18`, TO `46e3e09`, TO `7e7bbc0`, TO `0461bfb`, TO `a0f0082`, TO `0370bbc` AND TO `cb0540d`, FROM GITHUB (OPEN PRS AND BRANCHES) AND FROM THE CI RUNS. It admits, commissions and decides nothing. Where a fact comes from anywhere other than the repository, it says so.
+**Authority:** RECORDS THE STATE OF THE REPOSITORY ON 2026-09-28, READ FROM `main` AT `c1586c6` AND UPDATED TO `fa84240`, TO `16d21cc`, TO `dbb2408`, TO `f1bb47d`, TO `d1bc453`, TO `695bc18`, TO `46e3e09`, TO `7e7bbc0`, TO `0461bfb`, TO `a0f0082`, TO `0370bbc`, TO `cb0540d` AND TO `4e26c78`, FROM GITHUB (OPEN PRS AND BRANCHES) AND FROM THE CI RUNS. It admits, commissions and decides nothing. Where a fact comes from anywhere other than the repository, it says so.
 **Supersedes, as the current stock-take:** `governance/AAB-STOCK-TAKE-2026-09-27.md` (at `634295a`), which stays unchanged as the record of that date. This stock-take covers everything merged since that record merged (`5d4edfe`, PR #36).
 **Updated (2026-09-28):** to `main` at `fa84240`, after PR #50 (this stock-take, the roadmap update and the SCS-CAP-09 amendment) and PR #51 (AAB-PLATFORM-09 Governed Public-Key Registry). The rest of this record is as it was at `c1586c6`, except where marked.
 **Updated again (2026-09-28):** to `main` at `16d21cc`, after PRs #52 to #59: the signing-key history build, complete and proven. Marked "update of `16d21cc`" where it changes this record.
@@ -15,6 +15,7 @@
 **Updated again (2026-09-30):** to `main` at `a0f0082`, after PRs #82 to #84: CAP-06's contract committed under the AGR workstream, and the domain register and cognitive architecture approved. Marked "update of `a0f0082`" where it changes this record.
 **Updated again (2026-09-30):** to `main` at `0370bbc`, after PRs #85 to #87: the roadmap and this record at `a0f0082`, the public overview revised, and CAP-07's contract committed under the AGR workstream with CAP-08 amended. Marked "update of `0370bbc`" where it changes this record.
 **Updated again (2026-09-30):** to `main` at `cb0540d`, after PRs #88 and #89: the roadmap and this record at `0370bbc`, and CAP-09's contract committed under the AGR workstream, completing its contract phase. Marked "update of `cb0540d`" where it changes this record.
+**Updated again (2026-09-30):** to `main` at `4e26c78`, after PRs #90 to #94: the roadmap and this record at `cb0540d`, the public overview's one revision, the dependency audit's addendum, the independent review pack, and the addendum's correction. Marked "update of `4e26c78`" where it changes this record.
 **Read from:** every canonical contract and governance record on `main`; the SCS pilot READMEs; the proof records; every `TODO(` marker; `gh pr list`, `git branch -r` and `gh run list` on 2026-09-28; and, where marked, the session notes kept outside the repository.
 
 ## Summary
@@ -109,6 +110,13 @@
   - **The contract phase of the AGR workstream is complete:** all seven capabilities in its order are `designed`. None is built.
   - **Next:** the one revision of the public overview, and then the dependency audit's independent verification, which gates every AGR capability's code.
   - **CI on `cb0540d`** (run 36650653765): 752 of 752 tests, isolation, and backup-restore `PROVEN`.
+- **Updated to `4e26c78`:**
+  - **The roadmap and this record at `cb0540d`** (#90).
+  - **The public overview's one revision** (#91): seven AGR capabilities `designed`, none built. Open decision 6 and drift item 15 are closed.
+  - **The dependency audit's addendum at `405fbe8`** (#92; `governance/AAB-PLATFORM-DEPENDENCY-AUDIT-ADDENDUM-2026-09-30.md`): INTERNAL REVIEW COMPLETE, INDEPENDENT VERIFICATION REQUIRED. Its tools and evidence are committed for the first time. A new version of an existing schema keeps its namespace. Its V8 count corrected (#94).
+  - **The independent review pack is issued** (#93; `governance/review-packs/AAB-PLATFORM-DEPENDENCY-AUDIT-REVIEW-PACK/`), pinned to `c91ce33`. **The reviewer is not appointed** (open decision 8).
+  - **Canonical contracts: 26,** unchanged.
+  - **CI on `4e26c78`** (run 36670152574): 752 of 752 tests, isolation, and backup-restore `PROVEN`.
 
 ## 1. What merged since `5d4edfe`
 
@@ -176,7 +184,13 @@
 | #88 | `985bd6c` | The roadmap and this record at `0370bbc`: CAP-07 committed, CAP-08 amended (update of `cb0540d`) | Governance |
 | #89 | `cb0540d` | CAP-09 Governed Scientific Learning: a new canonical contract (update of `cb0540d`) | Contract |
 
-Every one of them passed all three CI jobs before it merged, and so did #50 to #89. #84 merged before #83.
+| #90 | `4d35509` | The roadmap and this record at `cb0540d`: CAP-09 committed, the contract phase complete (update of `4e26c78`) | Governance |
+| #91 | `405fbe8` | AAB-OVERVIEW-01 revised once, with every AGR migration contract on `main` (update of `4e26c78`) | Governance |
+| #92 | `c91ce33` | The dependency audit's addendum at `405fbe8`, with its tools and evidence (update of `4e26c78`) | Governance |
+| #93 | `a329973` | The dependency audit's independent review pack, version 1 (update of `4e26c78`) | Governance |
+| #94 | `4e26c78` | The addendum's V8 count corrected (update of `4e26c78`) | Governance |
+
+Every one of them passed all three CI jobs before it merged, and so did #50 to #94. #84 merged before #83. #90's first `backup-restore` run failed at `npm ci` inside its Docker build, before the proof took a step, and passed on a re-run: a transient package-registry failure, not caused by the change.
 
 ## 2. What is on `main`
 
@@ -256,6 +270,8 @@ State labels are the platform's maturity states: `named only`, `designed`, `impl
 
 **Update of `cb0540d`:** no code changes since `0370bbc`: #88 and #89 are governance and contracts only. CI on `main`: run 36648494859 on `985bd6c` (#88) passed; run 36650653765 on `cb0540d` (#89): 752 of 752 tests, isolation, and backup-restore `PROVEN`.
 
+**Update of `4e26c78`:** no code changes since `cb0540d`: #90 to #94 are governance, tools outside the application, and evidence only; `scs-pilot/` is unchanged. CI on `main`: run 36653548258 on `4d35509` (#90), run 36656170292 on `405fbe8` (#91), run 36659891544 on `c91ce33` (#92) and run 36668344706 on `a329973` (#93) passed, each 752 of 752 tests, isolation, and backup-restore `PROVEN`; run 36670152574 on `4e26c78` (#94): 752 of 752 tests, isolation, and backup-restore `PROVEN`.
+
 ### 2.3 Governance records added since the last stock-take
 
 | Record | What it establishes | State |
@@ -273,6 +289,8 @@ State labels are the platform's maturity states: `named only`, `designed`, `impl
 | The platform's observation and brain governance (#79; update of `0461bfb`) | Two observation classes; the observation chain; capability responsibilities; the brain boundary, "automate reasoning, govern its outputs"; machine state; consent, authority and privacy; fail-closed requirements (`governance/AAB-PLATFORM-OBSERVATION-AND-BRAIN-GOVERNANCE-2026-09-29.md`, internal reference AAB-GOV-DEC-OBSERVATION-BRAIN-01) | **Approved** in the governance session of 2026-09-29. A platform rule; every capability contract and brain implementation cites it |
 | The purpose and values' amendment (#80; update of `0461bfb`) | The corrected and extended brain boundary, in `governance/AAB-PLATFORM-PURPOSE-AND-VALUES-REVISION-2026-09-25.md` | Amends the revision; nothing else in it changes |
 | The domain register and cognitive architecture (#84; update of `a0f0082`) | AAB's independent knowledge domains, planned and provisional, distinguished from the capabilities that operate across them; how domains exchange knowledge; the cognitive architecture of domain brains, the Main Brain (a working name) and human governance; minimum-necessary governed packets; sovereignty applied to brain activity (`governance/AAB-PLATFORM-DOMAIN-REGISTER-AND-COGNITIVE-ARCHITECTURE-2026-09-29.md`, internal reference AAB-GOV-DEC-DOMAIN-COGNITIVE-01) | **Approved** on 2026-09-30. A platform rule. Creates no official register, and assigns no identifier |
+| The dependency audit's addendum (#92, corrected by #94; update of `4e26c78`) | The audit brought to `405fbe8`: V1 to V12 at the current code, the 21 new platform modules, one omission corrected, the schema-version decision; the tools (`governance/tools/dependency-audit/`) and their outputs (`governance/audits/platform-dependency/2026-09-30/`) (`governance/AAB-PLATFORM-DEPENDENCY-AUDIT-ADDENDUM-2026-09-30.md`) | **INTERNAL REVIEW COMPLETE, INDEPENDENT VERIFICATION REQUIRED** |
+| The independent review pack, version 1 (#93; update of `4e26c78`) | For the independent verification of the dependency audit: pinned to `c91ce33`; a 41-item checklist; a conflict-of-interest declaration; a findings template; three results, never PRODUCTION AUTHORISED (`governance/review-packs/AAB-PLATFORM-DEPENDENCY-AUDIT-REVIEW-PACK/`) | **Issued.** Immutable; the reviewer is not appointed |
 | AAB-PLATFORM-01 proof record (update of `dbb2408`) | The amendment of 2026-09-28, section by section; SeaweedFS 4.47's behaviours asserted in CI; its limits (`governance/workstream-b/AAB-PLATFORM-01-OBJECT-STORE-PROOF-2026-09-28.md`) | Cites CI run 36417985710, on the merge commit |
 
 **The naming rule** (the audit's step 0, decided on 2026-09-27): what is already stored or externally visible keeps its SCS name; everything new takes an AAB name. `SCS-PLATFORM` stays in error envelopes until a platform envelope contract exists; the `/scs/v1` platform routes are kept permanently as aliases and new platform routes use `/aab/v1/`; the `scs` database schema is kept; new platform schemas use `urn:aab:schema:`. **Update of `f1bb47d`:** AGR's routes are under `/agr/v1/`, with its own database schema (`agr`) and JSON schema namespace (`urn:aab:schema:agr:`). A platform decision, made in CAP-04's amendment (roadmap, decision 18).
@@ -334,6 +352,10 @@ CAP-04's code also waits on the dependency audit's independent verification and 
 - **the dependency audit's independent verification** (roadmap, section 5.3), which gates step 4 for every AGR capability, and has no reviewer appointed;
 - **recorded, not ordered:** an AAB-PLATFORM-07 amendment for a snapshot member whose admission is invalidated; a safety escalation path, deciding automatic suspension too; the automated reasoning pathway for observations; reconciling the domain and brain registers; disclosing one formulation's composition; two reviewers for wide-boundary learning claims (section 9).
 
+**Update of `4e26c78`:** no work in flight on the repository beyond this update. **The overview's revision, the audit's addendum and the review pack are done** (#91 to #94). Next:
+- **appointing the dependency audit's independent reviewer** (open decision 8), which gates every AGR capability's code; the pack is ready to hand over;
+- **recorded, not ordered:** the six open items in section 9.
+
 The aab.ag legacy application tree is a separate cleanup, outside this repository, for another session. The owner is aware of it.
 
 **Open PRs: twelve, unchanged since the last stock-take** (still twelve at `16d21cc`). #19 (AGR candidate remediation, based on the candidate branch) and eleven from August (#2 to #13). None has been updated since then. Their details are in the last stock-take, section 3.
@@ -354,8 +376,9 @@ New:
 
 New (update of `a0f0082`):
 
-6. **The public overview** (AAB-OVERVIEW-01): whether, and when, to correct its public wording, now out of date (drift item 12). **Closed** (update of `0370bbc`): revised by #86. **Out of date again** for CAP-07 (drift item 15). **Decided on 2026-09-30:** it is revised once, at the end of the workstream, when every AGR capability contract is on `main`. **Update of `cb0540d`:** every AGR capability contract is on `main`; the one revision is next.
+6. **The public overview** (AAB-OVERVIEW-01): whether, and when, to correct its public wording, now out of date (drift item 12). **Closed** (update of `0370bbc`): revised by #86. **Out of date again** for CAP-07 (drift item 15). **Decided on 2026-09-30:** it is revised once, at the end of the workstream, when every AGR capability contract is on `main`. **Update of `cb0540d`:** every AGR capability contract is on `main`; the one revision is next. **Closed** (update of `4e26c78`): revised once, as decided (#91).
 7. **A live read of the domain and brain registers:** whether to authorise it, to reconcile the registered domains and brains with the domain register and cognitive architecture. The Platform Owner decided on 2026-09-30 that it is a separate governed decision, not part of that record's review.
+8. **Appointing the dependency audit's independent reviewer** (update of `4e26c78`): who, and on what terms. The review pack is issued (#93); the reviewer's conflict-of-interest declaration is returned before the review begins, and whether a declared interest disqualifies them is decided then.
 
 ## 5. What blocks real data, and production
 
@@ -385,14 +408,14 @@ New (update of `a0f0082`):
 
 | Item | Trigger | Change since the last stock-take |
 |---|---|---|
-| **Independent verification of the dependency audit** | **Due now.** It precedes any extraction | The audit exists as a working document (#45); the independent reviewer is not appointed |
+| **Independent verification of the dependency audit** | **Due now.** It precedes any extraction. **Update of `4e26c78`:** the review pack is issued (#93); the reviewer is not appointed (open decision 8) | The audit exists as a working document (#45); the independent reviewer is not appointed |
 | Extraction of the platform primitives | The independent verification, and, for primitives 4 to 7, their platform contracts (now on `main`) | The contracts precondition is met for primitives 4 to 7 |
 | **The signing-key history build** (update of `fa84240`) | AAB-PLATFORM-09 is on `main`, and both bootstrap pilot positions are recorded. Next: a build plan, for review before any code | **Complete** (update of `16d21cc`): PRs #53 to #59 |
 | **Domain adoption of AAB-PLATFORM-05 to 08** | An amendment to each domain's contracts, mapping existing records when read, never rewriting them | **New.** No domain has adopted them. For AAB-PLATFORM-08, also signing-key history (section 5): **met** (update of `16d21cc`). **Update of `695bc18`:** AGR's CAP-04 (#67) and CAP-05 (#71) adopt them by amendment, as contracts; nothing implements an adoption, and SCS has not adopted them |
 | **A platform error envelope contract** | Before `SCS-PLATFORM` can change in error envelopes (the naming rule) | **New** |
 | **The AAB-PLATFORM-03 proof record** | Before AAB-PLATFORM-03 can be raised from `implemented` | **New.** The behaviour is tested; no record names it |
 | **Signed party grants** | `PARTY_REPRESENTATIVE` and `PARTY_AUTHORITY_REPRESENTATIVE` grants are operator configuration in the actors file; in production each must be a signed, evidenced act | Now relied on by representative submission, which is built |
-| AGR capabilities built on the platform | Extraction, and AGR's adoption of AAB-PLATFORM-05 to 08 | The contracts exist. **Update of `16d21cc`:** now the AGR rehearsal migration workstream (roadmap, section 8), in the order CAP-04, 05, 08, 06, 07, 09. Step 0, obtaining the rehearsal's source, may start now, and contract work follows it. **Update of `dbb2408`:** step 0 is done (#61, #62), and contract work may begin. **Update of `f1bb47d`:** CAP-04's contract is committed under the workstream (#67), and CAP-04 has two platform prerequisites before any code (section 5). Its code waits on the audit's independent verification and the extraction. Observation, cognitive and resource intelligence need capability numbers and identities first. **Update of `d1bc453`:** decided (the identity record): CAP-36 proposed, CAP-01, and the cognitive split with its loop held. The order is now CAP-04, 05, **01**, 08, 06, 07, 09. **Update of `695bc18`:** CAP-05's contract is committed under the workstream (#71), and CAP-04's receipt prerequisite is met in the database (#70). CAP-01, next in the order, holds 15 rehearsal actions; `cognitive_foundation_workspace` is held with the loop. **Update of `46e3e09`:** CAP-04's second prerequisite is met (#74), and its and CAP-05's challenge rules are complete (#73). CAP-01's step 1 is next. **Update of `7e7bbc0`:** CAP-01's contract is committed (#76), and the loop is retired from the migration (#77). CAP-08's step 1 is next. **Update of `0461bfb`:** CAP-08's contract is committed (#81), bound by the platform's observation and brain governance (#79). CAP-06's step 1 is next. **Update of `a0f0082`:** CAP-06's contract is committed (#83). CAP-07's step 1 is next **Update of `0370bbc`:** CAP-07's contract is committed and CAP-08 amended (#87). CAP-09's step 1 is next **Update of `cb0540d`:** CAP-09's contract is committed (#89): **the contract phase is complete.** Every AGR capability's code now waits on the dependency audit's independent verification and the extraction |
+| AGR capabilities built on the platform | Extraction, and AGR's adoption of AAB-PLATFORM-05 to 08 | The contracts exist. **Update of `16d21cc`:** now the AGR rehearsal migration workstream (roadmap, section 8), in the order CAP-04, 05, 08, 06, 07, 09. Step 0, obtaining the rehearsal's source, may start now, and contract work follows it. **Update of `dbb2408`:** step 0 is done (#61, #62), and contract work may begin. **Update of `f1bb47d`:** CAP-04's contract is committed under the workstream (#67), and CAP-04 has two platform prerequisites before any code (section 5). Its code waits on the audit's independent verification and the extraction. Observation, cognitive and resource intelligence need capability numbers and identities first. **Update of `d1bc453`:** decided (the identity record): CAP-36 proposed, CAP-01, and the cognitive split with its loop held. The order is now CAP-04, 05, **01**, 08, 06, 07, 09. **Update of `695bc18`:** CAP-05's contract is committed under the workstream (#71), and CAP-04's receipt prerequisite is met in the database (#70). CAP-01, next in the order, holds 15 rehearsal actions; `cognitive_foundation_workspace` is held with the loop. **Update of `46e3e09`:** CAP-04's second prerequisite is met (#74), and its and CAP-05's challenge rules are complete (#73). CAP-01's step 1 is next. **Update of `7e7bbc0`:** CAP-01's contract is committed (#76), and the loop is retired from the migration (#77). CAP-08's step 1 is next. **Update of `0461bfb`:** CAP-08's contract is committed (#81), bound by the platform's observation and brain governance (#79). CAP-06's step 1 is next. **Update of `a0f0082`:** CAP-06's contract is committed (#83). CAP-07's step 1 is next **Update of `0370bbc`:** CAP-07's contract is committed and CAP-08 amended (#87). CAP-09's step 1 is next **Update of `cb0540d`:** CAP-09's contract is committed (#89): **the contract phase is complete.** Every AGR capability's code now waits on the dependency audit's independent verification and the extraction **Update of `4e26c78`:** the audit is current (#92) and its review pack issued (#93); the reviewer is not appointed |
 | PDF metadata (`Producer` and `Creator` still read `SCS-PLATFORM-02`) | A deliberate change of its own: new expected digest, renderer version bump, cross-platform re-verification | None |
 | `simulation/cap34/scs-roadmap-preview.js` and the CAP-34 manifest extended to SCS | Your decision (deferred after PR #26) | None |
 | Multi-issuer idempotency keys | A second identity issuer acting in a deployment (`TODO(multi-issuer-idempotency)`) | None |
@@ -505,6 +528,11 @@ Unchanged from the last stock-take, except item 2:
   - the identity decision for observation, cognitive and resource intelligence;
   - the catalogue mapping, marked as proposed and requiring review.
 
+**Updated to `4e26c78`,** in a later change, at your instruction:
+- **This record:** PRs #90 to #94 in section 1; CI in section 2.2; the addendum and the review pack in section 2.3; work in progress, with the reviewer's appointment next; open decision 6 closed and open decision 8 added; section 6; drift item 15 closed, and items 16 and 17.
+- **The roadmap:** updated to `4e26c78`. The addendum and the review pack among its sources. Section 5.3 (the addendum, the tools, the pack; the verification's scope, which excludes the CAP-04 and CAP-05 amendments); section 8.5; section 6.5. New decisions 42 (the addendum), 43 (a schema's new version keeps its namespace) and 44 (the review pack issued); "Still open" gains the reviewer's appointment.
+- **Not changed:** the CAP-34 fidelity manifest, the public overview, and the review pack, which is immutable.
+
 **Updated to `cb0540d`,** in a later change, at your instruction:
 - **This record:** PRs #88 and #89 in section 1; CAP-09 in the contract table, which now counts 26; CI in section 2.2; work in progress, with the contract phase complete and the overview revision next; open decision 6; section 6; two new open items in section 9; drift item 15.
 - **The roadmap:** updated to `cb0540d`. CAP-09 `designed`, in sections 3.1, 3.2, 5.2 (with its place in the dependency diagram), 8.2, 8.4 and 8.6. The public overview in section 6.5. New decisions 40 (CAP-09 committed) and 41 (the contract phase complete); "Still open" gains two reviewers for wide-boundary learning claims.
@@ -591,4 +619,6 @@ Unchanged from the last stock-take, except item 2:
 12. **The public overview is out of date** (update of `a0f0082`): it shows CAP-01, CAP-06 and CAP-08 as `named only`, counts two AGR capabilities `designed` where there are five, and says no future domain is named. **Not corrected** (open decision 6).
 13. **The roadmap's catalogue mapping missed five CAP-06 actions** (update of `a0f0082`): an ungrouped write block and a read bridge, found while writing CAP-06's contract. **Corrected in this change** (roadmap, sections 8.2 and 8.4).
 14. **The roadmap's section 3.1 did not name CAP-08's contract** after #81. **Corrected in this change** (update of `a0f0082`).
-15. **The public overview is out of date again** (update of `0370bbc`): revised by #86 at `a0f0082`, it shows CAP-07 as `named only` and counts five AGR capabilities `designed`, where there are now six. **Not corrected.** **Decided on 2026-09-30:** it is revised once, at the end of the workstream, when every AGR capability contract is on `main`. **Update of `cb0540d`:** and for CAP-09. Every AGR capability contract is on `main`; the one revision is next.
+15. **The public overview is out of date again** (update of `0370bbc`): revised by #86 at `a0f0082`, it shows CAP-07 as `named only` and counts five AGR capabilities `designed`, where there are now six. **Not corrected.** **Decided on 2026-09-30:** it is revised once, at the end of the workstream, when every AGR capability contract is on `main`. **Update of `cb0540d`:** and for CAP-09. Every AGR capability contract is on `main`; the one revision is next. **Closed** (update of `4e26c78`): revised once (#91).
+16. **The dependency audit's import-graph script was never committed** (update of `4e26c78`): the audit said it was reproducible, but PR #45 added only the audit. **Corrected** by the addendum (#92), which commits the tools and their outputs.
+17. **The addendum's V8 count was wrong** (update of `4e26c78`): it said migration `023` adds one function to `scs`; it adds nine. Found while preparing the review pack, disclosed in the pack's section 5.1, and **corrected** by #94.
