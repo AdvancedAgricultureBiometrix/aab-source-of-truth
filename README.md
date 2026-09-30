@@ -1,6 +1,8 @@
 # AAB Source of Truth
 
-Private governed source repository for the Advanced Agriculture Biometrix (AAB) platform.
+Governed source repository for the Advanced Agriculture Biometrix (AAB) platform.
+
+> **Licence status:** This repository is publicly accessible for inspection and independent technical audit. It is not currently licensed as open-source software. No production, commercial, redistribution or derivative-use permission is granted.
 
 ## Mandatory continuity reading
 
