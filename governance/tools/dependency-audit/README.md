@@ -42,7 +42,7 @@ node <repository>/governance/tools/dependency-audit/import-graph.mjs > graph.jso
 
 - Only imports with a literal specifier are seen. An import built at runtime is not.
 - Template literals are scanned one level deep for nested code.
-- The vocabulary scan finds the terms it lists, not every possible coupling. **Corrected on 2026-09-30** (the audit's amendment 1): until then it searched tables only with the `scs.` prefix, and read no database file, so a domain table named bare, as in a type, a schema enum or a constraint, could not be found. `DOMAIN_TABLE` closes that gap.
+- The vocabulary scan finds the terms it lists, not every possible coupling. **Corrected on 2026-09-30** (the audit's amendment 1): until then it searched tables only with the `scs.` prefix, and read no database file, so a domain table named bare, as in a type, a schema enum or a constraint, could not be found. `DOMAIN_TABLE` closes that gap. **Its own limit** (noted 2026-10-01): it derives the domain tables from conventional `CREATE TABLE scs.…` declarations in `db/schema/cap-*.sql`; a domain view or function, unconventionally generated SQL, or an identifier built at runtime needs a separate detection rule.
 - Paths outside the source root (such as `scripts/`) are recorded as `outside-root`, not followed.
 
 ## Validation
