@@ -54,7 +54,11 @@
 - **The dependency audit has an addendum at `405fbe8`** (#92; `governance/AAB-PLATFORM-DEPENDENCY-AUDIT-ADDENDUM-2026-09-30.md`): INTERNAL REVIEW COMPLETE, INDEPENDENT VERIFICATION REQUIRED, with its tools and evidence committed for the first time (decision 42). Its V8 count is corrected (#94).
 - **A new version of an existing schema keeps its namespace** (#92; decision 43).
 - **The independent review pack is issued** (#93; `governance/review-packs/AAB-PLATFORM-DEPENDENCY-AUDIT-REVIEW-PACK/`), pinned to `c91ce3349856865ce28fb37ead94b8997abcfa8c` (decision 44). **The reviewer is not appointed.**
-**Authority:** RECORDS THE STATE OF EVERY AAB PLATFORM PRIMITIVE AND CAPABILITY, AS DEMONSTRATED BY THE CONTRACTS, CODE, TESTS AND PROOFS ON `main` AT `9f17cc2`, UPDATED TO `634295a`, TO `67b6ba8`, TO `c1586c6`, TO `fa84240`, TO `16d21cc`, TO `dbb2408`, TO `f1bb47d`, TO `d1bc453`, TO `695bc18`, TO `46e3e09`, TO `7e7bbc0`, TO `0461bfb`, TO `a0f0082`, TO `0370bbc`, TO `cb0540d` AND TO `4e26c78`, AND WHAT MUST EXIST BEFORE WHAT. Admits no capability, grants no implementation, commissioning, production, regulatory or scientific authority, changes no control's status, and does not satisfy Gate D or begin WP05.
+**Updated again (2026-09-30):** to `main` at `adda4e8`, after PRs #95 to #98. Marked "update of `adda4e8`" where it changes this roadmap.
+- **The repository is public, deliberately, and carries no licence** (#96): a review access notice at its root, and a licence status notice in the README (decision 45).
+- **An internal dry run of review pack version 1 produced NOT VERIFIED;** the audit's amendment 1 responds (#97; `governance/AAB-PLATFORM-DEPENDENCY-AUDIT-AMENDMENT-1-2026-09-30.md`): **violation V13,** three corrections to the addendum, and the vocabulary scanner corrected (decision 46).
+- **Review pack version 2 is issued** (#98; `governance/review-packs/AAB-PLATFORM-DEPENDENCY-AUDIT-REVIEW-PACK-V2/`), pinned to `a797f54f26bb8a8f1a35f3cc7e1b2b92ba4e2afa`. It supersedes version 1 for the review (decision 47). **The reviewer is not appointed.**
+**Authority:** RECORDS THE STATE OF EVERY AAB PLATFORM PRIMITIVE AND CAPABILITY, AS DEMONSTRATED BY THE CONTRACTS, CODE, TESTS AND PROOFS ON `main` AT `9f17cc2`, UPDATED TO `634295a`, TO `67b6ba8`, TO `c1586c6`, TO `fa84240`, TO `16d21cc`, TO `dbb2408`, TO `f1bb47d`, TO `d1bc453`, TO `695bc18`, TO `46e3e09`, TO `7e7bbc0`, TO `0461bfb`, TO `a0f0082`, TO `0370bbc`, TO `cb0540d`, TO `4e26c78` AND TO `adda4e8`, AND WHAT MUST EXIST BEFORE WHAT. Admits no capability, grants no implementation, commissioning, production, regulatory or scientific authority, changes no control's status, and does not satisfy Gate D or begin WP05.
 **Sources:**
 - `governance/AAB-PLATFORM-PURPOSE-AND-VALUES-REVISION-2026-09-25.md`
 - `governance/AAB-PLATFORM-OBSERVATION-AND-BRAIN-GOVERNANCE-2026-09-29.md` (update of `0461bfb`)
@@ -62,7 +66,8 @@
 - `governance/AAB-PLATFORM-DOMAIN-SEPARATION-DECISION-2026-09-25.md`
 - the platform contracts AAB-PLATFORM-03 to 09 in `governance/`
 - `governance/AAB-PLATFORM-DEPENDENCY-AUDIT-2026-09-27.md`, and its addendum `governance/AAB-PLATFORM-DEPENDENCY-AUDIT-ADDENDUM-2026-09-30.md` (update of `4e26c78`)
-- the independent review pack, `governance/review-packs/AAB-PLATFORM-DEPENDENCY-AUDIT-REVIEW-PACK/` (update of `4e26c78`)
+- the independent review pack, `governance/review-packs/AAB-PLATFORM-DEPENDENCY-AUDIT-REVIEW-PACK/` (update of `4e26c78`), superseded for the review by version 2, `governance/review-packs/AAB-PLATFORM-DEPENDENCY-AUDIT-REVIEW-PACK-V2/` (update of `adda4e8`)
+- the audit's amendment 1, `governance/AAB-PLATFORM-DEPENDENCY-AUDIT-AMENDMENT-1-2026-09-30.md` (update of `adda4e8`)
 - every contract and record in `governance/workstream-b/`
 - `governance/AAB-CAP-20-…` and `governance/AAB-CAP-21-…`
 - `governance/AAB-current-technical-contract-catalogue-2026-09-20.md`
@@ -583,12 +588,22 @@ flowchart LR
 - **The review pack** (#93; `governance/review-packs/AAB-PLATFORM-DEPENDENCY-AUDIT-REVIEW-PACK/`) pins `c91ce3349856865ce28fb37ead94b8997abcfa8c`, whose `scs-pilot/` is identical to `405fbe8`. It is written so that a qualified architect with no knowledge of AAB can complete it without asking the Platform Owner anything: a 41-item checklist, a conflict-of-interest declaration made before starting, a findings template, and three results, **VERIFIED FOR DEFINED SCOPE, NOT VERIFIED or EVIDENCE REQUIRED, never PRODUCTION AUTHORISED.** Every reproduction command but one was run end to end on a fresh clone.
 - **The reviewer is not appointed.** Appointing one is the Platform Owner's decision, and the only step between the pack and the verification.
 
+**Update of `adda4e8`: the internal dry run, amendment 1, and version 2.**
+- **An internal dry run of version 1 produced NOT VERIFIED,** on items C3 (beyond the listed vocabulary) and K2 (completeness). Every reproduction step passed and every digest matched; the completeness check found that **the platform key registry names SCS-CAP-02's link tables, `actor_party_link` and `actor_party_link_status`, in a platform type, two published platform schemas and two platform-table constraints, and reads them.** Neither the audit nor the addendum recorded it. Under the pack's rule, that is the correct result. The dry run was internal: the independent verification has not begun.
+- **Amendment 1** (#97; `governance/AAB-PLATFORM-DEPENDENCY-AUDIT-AMENDMENT-1-2026-09-30.md`; INTERNAL REVIEW COMPLETE, INDEPENDENT VERIFICATION REQUIRED) records it as **V13,** a new finding: not V9, not an AAB-PLATFORM-04 storage dependency, not V1, V3, V5 or V11. It corrects three statements in the addendum (two `scs.` references counted under V8 are V13; the key registry has V2, V3, V9 **and V13**; V1's link queries are lines 153 to 162), and records `roles-rls.sql`'s grants as not a violation. V13 came in with the key registry, after the audit.
+- **The vocabulary scanner is corrected:** a `DOMAIN_TABLE` term derives the SCS domain tables from `db/schema/cap-*.sql` and searches for each, with or without `scs.`, in platform code and the platform's database files. Every earlier row is unchanged. Its evidence is in `governance/audits/platform-dependency/2026-09-30-amendment-1/`.
+- **Review pack version 2** (#98; `governance/review-packs/AAB-PLATFORM-DEPENDENCY-AUDIT-REVIEW-PACK-V2/`) is self-contained and pinned to `a797f54f26bb8a8f1a35f3cc7e1b2b92ba4e2afa`, whose `scs-pilot/` is still identical to `405fbe8`. It supersedes version 1 for the review; version 1 stays on record as issued. It has 43 checklist items, among them C5 (domain tables) and F13 (V13). Its every command but one was run end to end on a fresh clone.
+- **V13's fix** (a registration of signed record kinds, with the domain's lookups; a migration for the two constraints; a contract decision for the published enums) is extraction work, best designed with step 3 (V11): both need the link-store interface.
+
 ```mermaid
 flowchart LR
   V[SCS vertical proof<br/>complete, PR #25] --> A[dependency audit<br/>working document<br/>complete, PR #45]
   A --> AD[addendum at 405fbe8<br/>internal review complete<br/>PR #92]
-  AD --> RP[review pack issued<br/>PR #93]
-  RP --> I[independent verification<br/>reviewer not appointed]
+  AD --> RP[review pack v1 issued<br/>PR #93]
+  RP --> DR[internal dry run<br/>NOT VERIFIED: C3, K2]
+  DR --> AM1[amendment 1: V13<br/>scanner corrected<br/>PR #97]
+  AM1 --> RP2[review pack v2 issued<br/>PR #98]
+  RP2 --> I[independent verification<br/>reviewer not appointed]
   C[platform contracts<br/>AAB-PLATFORM-05 to 08<br/>designed, PRs #46 to #49] --> E
   I --> E[extraction of the<br/>platform primitives]
   E --> G[AGR and future domains<br/>build on the primitives]
@@ -891,7 +906,7 @@ flowchart LR
 
 - **Step 0 is done** (PRs #61 and #62; decision 17), **and contract work may begin.** Steps 0 to 3 need no extraction.
 - **Before any AGR capability code is brought across (step 4),** two things must happen first, in order:
-  1. **the independent verification of the dependency audit** (section 5.3), due now, with no reviewer appointed; **Update of `4e26c78`:** the review pack is issued (#93); the reviewer is not appointed.
+  1. **the independent verification of the dependency audit** (section 5.3), due now, with no reviewer appointed; **Update of `4e26c78`:** the review pack is issued (#93); the reviewer is not appointed. **Update of `adda4e8`:** version 2 of the pack supersedes version 1 (#98); the reviewer is not appointed.
   2. **the extraction of the platform primitives** out of `scs-pilot`, which the separation decision allows only after that verification.
 
   **This is a hard dependency.** Until both are done, no AGR code is brought across, because it would be built on SCS's domain modules. The separation decision forbids that.
@@ -995,6 +1010,12 @@ These points came up while compiling the roadmap and were decided in review.
 43. **A new version of an existing schema is the existing schema** (update of `4e26c78`; PR #92). The naming decision of 2026-09-27 is forward-looking: a version 2 of a schema that existed before it keeps its namespace, since changing it would break compatibility with the version 1 records that cite it. Only schemas new after 2026-09-27 must use `urn:aab:schema:`. Of the 44 schemas added since `eb9f338`, 42 do; the two version 2 link schemas are the decided exception.
 44. **The independent review pack is issued** (update of `4e26c78`; PR #93; `governance/review-packs/AAB-PLATFORM-DEPENDENCY-AUDIT-REVIEW-PACK/`). Pinned to `c91ce3349856865ce28fb37ead94b8997abcfa8c`. Its scope is the dependency audit's only: not domain capability contracts, agricultural science or country commissioning, and never PRODUCTION AUTHORISED. The twelve npm packages are recorded in an annex, out of scope. `PH2-SEC-RESTORE-FUNCTION-GRANT-01` (WP04, reconstruction root cause open) is a related item outside its scope, which no finding changes. The pack is immutable: a corrected pack is a new, dated pack. **VERIFIED FOR DEFINED SCOPE satisfies rule 3 of the separation decision for the pinned commit; starting extraction remains the Platform Owner's decision under rule 1.**
 
+## Decisions recorded on 2026-09-30, after `4e26c78`
+
+45. **The repository is public, deliberately** (update of `adda4e8`; PR #96). Made public for the independent reviewer's access, and for transparency about AAB's governance and architecture. **It carries no licence.** `REVIEW-ACCESS-NOTICE.md` at its root: publicly accessible for technical inspection and independent audit only; AAB retains full copyright; no licence, expressly or by implication, for production deployment, commercial use, redistribution or derivative works; the AAB name, branding and trademarks not licensed; an appointed reviewer may run the supplied audit tools and make temporary working copies solely to complete the review; protected data never introduced into review outputs; any other purpose needs the Platform Owner's written permission. The README carries a licence status notice, and no longer calls the repository private. The rehearsal snapshot was checked for credentials and personal data before it was committed; its hostname and project identifier being visible is accepted, since the rehearsal is not production and its unauthenticated reads are blocked.
+46. **V13, and the audit's amendment 1** (update of `adda4e8`; PR #97; `governance/AAB-PLATFORM-DEPENDENCY-AUDIT-AMENDMENT-1-2026-09-30.md`). In response to an internal dry run of review pack version 1 that produced NOT VERIFIED on C3 and K2. **V13: the platform key registry knows SCS-CAP-02's link tables by name, in a platform type, published platform schemas and two platform-table constraints, and reads them.** A new finding, classified against V1, V3, V5, V9, V11 and AAB-PLATFORM-04 and fitting none. Three corrections to the addendum. The vocabulary scanner corrected (`DOMAIN_TABLE`), as a tool correction, not a finding change. `roles-rls.sql`'s grants on the first seven domain tables recorded as not a violation: each capability's access to its own tables, placed in the role's file by migration order, and read by no platform code. No V14.
+47. **Review pack version 2 is issued, and supersedes version 1 for the review** (update of `adda4e8`; PR #98; `governance/review-packs/AAB-PLATFORM-DEPENDENCY-AUDIT-REVIEW-PACK-V2/`). A full, self-contained version rather than an amendment, so that a reviewer with no prior context works from one document and reconciles nothing. Pinned to `a797f54f26bb8a8f1a35f3cc7e1b2b92ba4e2afa`. Version 1 stays on record as issued. The independent reviewer assesses the original evidence and amendment 1 together, through version 2.
+
 **Still open, noted in the text:**
 - The mapping of the eleven primitives to landscape capabilities (section 4) is proposed by this roadmap, not established.
 - Whether the CAP-04 and CAP-05 contracts align with the primitives: now assessed against AAB-PLATFORM-05 to 08, and settled by AGR's adoption of them. **Update of `695bc18`:** both have adopted them by amendment (#67, #71).
@@ -1004,7 +1025,7 @@ These points came up while compiling the roadmap and were decided in review.
 - **The automated reasoning pathway for observations** (update of `0461bfb`; CAP-08, interim position 2): no brain is defined to receive field or trial observations. The Evidence Watch candidate has no contract.
 - **Reconciling the domain and brain registers** (update of `a0f0082`; decision 37): the 10 registered domains and 11 registered brains of the earlier system evidence stay unconfirmed until a separately authorised read of the live registries, reported to the Platform Owner before anything is committed.
 - **The domain register's other open questions** (update of `a0f0082`): the Environment–Ecosystem boundary; whether environmental restoration is part of Environment; how the Regulatory, Manufacturing, Commercial and Governance domains relate to CAP-20, CAP-21 and CAP-25; the Main Brain's canonical name and identity, and whether it may rank or recommend; the governed knowledge packet and the Intelligent Node Model as contracts.
-- **Appointing the dependency audit's independent reviewer** (update of `4e26c78`; decision 44): the pack is issued; nothing else stands between it and the verification.
+- **Appointing the dependency audit's independent reviewer** (update of `4e26c78`; decision 44): the pack is issued; nothing else stands between it and the verification. **Update of `adda4e8`:** the reviewer works from version 2 (decision 47).
 - **Two reviewers for wide-boundary learning claims** (update of `cb0540d`; CAP-09, open gaps): the right long-term discipline, not required now, since before the Evidence Watch candidate exists it would leave wide-boundary promotions blocked. What counts as a wide boundary is undefined.
 - **Disclosing one formulation's composition** (update of `0370bbc`; CAP-07, decision 16): a governed act disclosing it to a named person for a stated need is not defined. Until it is, the only authorisation is a `FORMULATION_READER` grant.
 - **Legal hold's governance, lock renewal and staging** (update of `46e3e09`; AAB-PLATFORM-01, amendment of 2026-09-29): legal hold before real data; renewal before the AGR profile's locks end; staging, not decided.

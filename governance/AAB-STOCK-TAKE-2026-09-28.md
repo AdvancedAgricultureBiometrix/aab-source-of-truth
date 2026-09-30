@@ -1,7 +1,7 @@
 # AAB Stock-Take — 2026-09-28
 
 **Status:** STOCK-TAKE RECORD
-**Authority:** RECORDS THE STATE OF THE REPOSITORY ON 2026-09-28, READ FROM `main` AT `c1586c6` AND UPDATED TO `fa84240`, TO `16d21cc`, TO `dbb2408`, TO `f1bb47d`, TO `d1bc453`, TO `695bc18`, TO `46e3e09`, TO `7e7bbc0`, TO `0461bfb`, TO `a0f0082`, TO `0370bbc`, TO `cb0540d` AND TO `4e26c78`, FROM GITHUB (OPEN PRS AND BRANCHES) AND FROM THE CI RUNS. It admits, commissions and decides nothing. Where a fact comes from anywhere other than the repository, it says so.
+**Authority:** RECORDS THE STATE OF THE REPOSITORY ON 2026-09-28, READ FROM `main` AT `c1586c6` AND UPDATED TO `fa84240`, TO `16d21cc`, TO `dbb2408`, TO `f1bb47d`, TO `d1bc453`, TO `695bc18`, TO `46e3e09`, TO `7e7bbc0`, TO `0461bfb`, TO `a0f0082`, TO `0370bbc`, TO `cb0540d`, TO `4e26c78` AND TO `adda4e8`, FROM GITHUB (OPEN PRS AND BRANCHES) AND FROM THE CI RUNS. It admits, commissions and decides nothing. Where a fact comes from anywhere other than the repository, it says so.
 **Supersedes, as the current stock-take:** `governance/AAB-STOCK-TAKE-2026-09-27.md` (at `634295a`), which stays unchanged as the record of that date. This stock-take covers everything merged since that record merged (`5d4edfe`, PR #36).
 **Updated (2026-09-28):** to `main` at `fa84240`, after PR #50 (this stock-take, the roadmap update and the SCS-CAP-09 amendment) and PR #51 (AAB-PLATFORM-09 Governed Public-Key Registry). The rest of this record is as it was at `c1586c6`, except where marked.
 **Updated again (2026-09-28):** to `main` at `16d21cc`, after PRs #52 to #59: the signing-key history build, complete and proven. Marked "update of `16d21cc`" where it changes this record.
@@ -16,6 +16,7 @@
 **Updated again (2026-09-30):** to `main` at `0370bbc`, after PRs #85 to #87: the roadmap and this record at `a0f0082`, the public overview revised, and CAP-07's contract committed under the AGR workstream with CAP-08 amended. Marked "update of `0370bbc`" where it changes this record.
 **Updated again (2026-09-30):** to `main` at `cb0540d`, after PRs #88 and #89: the roadmap and this record at `0370bbc`, and CAP-09's contract committed under the AGR workstream, completing its contract phase. Marked "update of `cb0540d`" where it changes this record.
 **Updated again (2026-09-30):** to `main` at `4e26c78`, after PRs #90 to #94: the roadmap and this record at `cb0540d`, the public overview's one revision, the dependency audit's addendum, the independent review pack, and the addendum's correction. Marked "update of `4e26c78`" where it changes this record.
+**Updated again (2026-09-30):** to `main` at `adda4e8`, after PRs #95 to #98: the roadmap and this record at `4e26c78`, the review access notice, the audit's amendment 1 with V13, and review pack version 2. Marked "update of `adda4e8`" where it changes this record.
 **Read from:** every canonical contract and governance record on `main`; the SCS pilot READMEs; the proof records; every `TODO(` marker; `gh pr list`, `git branch -r` and `gh run list` on 2026-09-28; and, where marked, the session notes kept outside the repository.
 
 ## Summary
@@ -117,6 +118,13 @@
   - **The independent review pack is issued** (#93; `governance/review-packs/AAB-PLATFORM-DEPENDENCY-AUDIT-REVIEW-PACK/`), pinned to `c91ce33`. **The reviewer is not appointed** (open decision 8).
   - **Canonical contracts: 26,** unchanged.
   - **CI on `4e26c78`** (run 36670152574): 752 of 752 tests, isolation, and backup-restore `PROVEN`.
+- **Updated to `adda4e8`:**
+  - **The roadmap and this record at `4e26c78`** (#95).
+  - **The repository is public, deliberately, with no licence** (#96): `REVIEW-ACCESS-NOTICE.md` at the root, and a licence status notice in the README.
+  - **An internal dry run of review pack version 1 produced NOT VERIFIED** (C3, K2). **The audit's amendment 1** (#97; `governance/AAB-PLATFORM-DEPENDENCY-AUDIT-AMENDMENT-1-2026-09-30.md`) records **V13,** corrects three statements in the addendum, and corrects the vocabulary scanner.
+  - **Review pack version 2 is issued** (#98; `governance/review-packs/AAB-PLATFORM-DEPENDENCY-AUDIT-REVIEW-PACK-V2/`), pinned to `a797f54`, superseding version 1 for the review. **The reviewer is not appointed** (open decision 8).
+  - **Canonical contracts: 26,** unchanged.
+  - **CI on `adda4e8`** (run 36675880058): 752 of 752 tests, isolation, and backup-restore `PROVEN`.
 
 ## 1. What merged since `5d4edfe`
 
@@ -190,7 +198,12 @@
 | #93 | `a329973` | The dependency audit's independent review pack, version 1 (update of `4e26c78`) | Governance |
 | #94 | `4e26c78` | The addendum's V8 count corrected (update of `4e26c78`) | Governance |
 
-Every one of them passed all three CI jobs before it merged, and so did #50 to #94. #84 merged before #83. #90's first `backup-restore` run failed at `npm ci` inside its Docker build, before the proof took a step, and passed on a re-run: a transient package-registry failure, not caused by the change.
+| #95 | `24d5fdf` | The roadmap and this record at `4e26c78`: the audit addendum and review pack issued (update of `adda4e8`) | Governance |
+| #96 | `f2c527d` | The review access notice, and the README's licence status (update of `adda4e8`) | Governance |
+| #97 | `a797f54` | The dependency audit's amendment 1: V13, three corrections, the vocabulary scanner corrected (update of `adda4e8`) | Governance |
+| #98 | `adda4e8` | The dependency audit's independent review pack, version 2 (update of `adda4e8`) | Governance |
+
+Every one of them passed all three CI jobs before it merged, and so did #50 to #98. #84 merged before #83; #96 merged before #95. #90's first `backup-restore` run failed at `npm ci` inside its Docker build, before the proof took a step, and passed on a re-run: a transient package-registry failure, not caused by the change.
 
 ## 2. What is on `main`
 
@@ -272,6 +285,8 @@ State labels are the platform's maturity states: `named only`, `designed`, `impl
 
 **Update of `4e26c78`:** no code changes since `cb0540d`: #90 to #94 are governance, tools outside the application, and evidence only; `scs-pilot/` is unchanged. CI on `main`: run 36653548258 on `4d35509` (#90), run 36656170292 on `405fbe8` (#91), run 36659891544 on `c91ce33` (#92) and run 36668344706 on `a329973` (#93) passed, each 752 of 752 tests, isolation, and backup-restore `PROVEN`; run 36670152574 on `4e26c78` (#94): 752 of 752 tests, isolation, and backup-restore `PROVEN`.
 
+**Update of `adda4e8`:** no code changes since `4e26c78`: #95 to #98 are governance, a tool outside the application and its evidence; `scs-pilot/` is unchanged. CI on `main`: run 36673332110 on `f2c527d` (#96), run 36673355893 on `24d5fdf` (#95) and run 36674894727 on `a797f54` (#97) passed, each 752 of 752 tests, isolation, and backup-restore `PROVEN`; run 36675880058 on `adda4e8` (#98): 752 of 752 tests, isolation, and backup-restore `PROVEN`.
+
 ### 2.3 Governance records added since the last stock-take
 
 | Record | What it establishes | State |
@@ -290,7 +305,10 @@ State labels are the platform's maturity states: `named only`, `designed`, `impl
 | The purpose and values' amendment (#80; update of `0461bfb`) | The corrected and extended brain boundary, in `governance/AAB-PLATFORM-PURPOSE-AND-VALUES-REVISION-2026-09-25.md` | Amends the revision; nothing else in it changes |
 | The domain register and cognitive architecture (#84; update of `a0f0082`) | AAB's independent knowledge domains, planned and provisional, distinguished from the capabilities that operate across them; how domains exchange knowledge; the cognitive architecture of domain brains, the Main Brain (a working name) and human governance; minimum-necessary governed packets; sovereignty applied to brain activity (`governance/AAB-PLATFORM-DOMAIN-REGISTER-AND-COGNITIVE-ARCHITECTURE-2026-09-29.md`, internal reference AAB-GOV-DEC-DOMAIN-COGNITIVE-01) | **Approved** on 2026-09-30. A platform rule. Creates no official register, and assigns no identifier |
 | The dependency audit's addendum (#92, corrected by #94; update of `4e26c78`) | The audit brought to `405fbe8`: V1 to V12 at the current code, the 21 new platform modules, one omission corrected, the schema-version decision; the tools (`governance/tools/dependency-audit/`) and their outputs (`governance/audits/platform-dependency/2026-09-30/`) (`governance/AAB-PLATFORM-DEPENDENCY-AUDIT-ADDENDUM-2026-09-30.md`) | **INTERNAL REVIEW COMPLETE, INDEPENDENT VERIFICATION REQUIRED** |
-| The independent review pack, version 1 (#93; update of `4e26c78`) | For the independent verification of the dependency audit: pinned to `c91ce33`; a 41-item checklist; a conflict-of-interest declaration; a findings template; three results, never PRODUCTION AUTHORISED (`governance/review-packs/AAB-PLATFORM-DEPENDENCY-AUDIT-REVIEW-PACK/`) | **Issued.** Immutable; the reviewer is not appointed |
+| The dependency audit's amendment 1 (#97; update of `adda4e8`) | V13: the platform key registry knows SCS-CAP-02's link tables by name, and reads them; three corrections to the addendum; the vocabulary scanner corrected (`DOMAIN_TABLE`), with its evidence in `governance/audits/platform-dependency/2026-09-30-amendment-1/`; `roles-rls.sql`'s grants not a violation (`governance/AAB-PLATFORM-DEPENDENCY-AUDIT-AMENDMENT-1-2026-09-30.md`) | **INTERNAL REVIEW COMPLETE, INDEPENDENT VERIFICATION REQUIRED** |
+| The independent review pack, version 2 (#98; update of `adda4e8`) | Self-contained; pinned to `a797f54`; the audit, addendum and amendment 1 together; a 43-item checklist (`governance/review-packs/AAB-PLATFORM-DEPENDENCY-AUDIT-REVIEW-PACK-V2/`) | **Issued.** Supersedes version 1 for the review. Immutable; the reviewer is not appointed |
+| The review access notice (#96; update of `adda4e8`) | `REVIEW-ACCESS-NOTICE.md`: the terms on which the public repository may be inspected and audited; no licence granted | In force |
+| The independent review pack, version 1 (#93; update of `4e26c78`) | For the independent verification of the dependency audit: pinned to `c91ce33`; a 41-item checklist; a conflict-of-interest declaration; a findings template; three results, never PRODUCTION AUTHORISED (`governance/review-packs/AAB-PLATFORM-DEPENDENCY-AUDIT-REVIEW-PACK/`) | **Issued.** Immutable; the reviewer is not appointed. **Superseded for the review by version 2** (update of `adda4e8`); kept on record as issued |
 | AAB-PLATFORM-01 proof record (update of `dbb2408`) | The amendment of 2026-09-28, section by section; SeaweedFS 4.47's behaviours asserted in CI; its limits (`governance/workstream-b/AAB-PLATFORM-01-OBJECT-STORE-PROOF-2026-09-28.md`) | Cites CI run 36417985710, on the merge commit |
 
 **The naming rule** (the audit's step 0, decided on 2026-09-27): what is already stored or externally visible keeps its SCS name; everything new takes an AAB name. `SCS-PLATFORM` stays in error envelopes until a platform envelope contract exists; the `/scs/v1` platform routes are kept permanently as aliases and new platform routes use `/aab/v1/`; the `scs` database schema is kept; new platform schemas use `urn:aab:schema:`. **Update of `f1bb47d`:** AGR's routes are under `/agr/v1/`, with its own database schema (`agr`) and JSON schema namespace (`urn:aab:schema:agr:`). A platform decision, made in CAP-04's amendment (roadmap, decision 18).
@@ -356,6 +374,10 @@ CAP-04's code also waits on the dependency audit's independent verification and 
 - **appointing the dependency audit's independent reviewer** (open decision 8), which gates every AGR capability's code; the pack is ready to hand over;
 - **recorded, not ordered:** the six open items in section 9.
 
+**Update of `adda4e8`:** no work in flight on the repository beyond this update. **The access notice, amendment 1 and review pack version 2 are done** (#96 to #98). Next:
+- **appointing the dependency audit's independent reviewer** (open decision 8), who works from version 2;
+- **recorded, not ordered:** the six open items in section 9, and V13's fix, which is extraction work.
+
 The aab.ag legacy application tree is a separate cleanup, outside this repository, for another session. The owner is aware of it.
 
 **Open PRs: twelve, unchanged since the last stock-take** (still twelve at `16d21cc`). #19 (AGR candidate remediation, based on the candidate branch) and eleven from August (#2 to #13). None has been updated since then. Their details are in the last stock-take, section 3.
@@ -378,7 +400,7 @@ New (update of `a0f0082`):
 
 6. **The public overview** (AAB-OVERVIEW-01): whether, and when, to correct its public wording, now out of date (drift item 12). **Closed** (update of `0370bbc`): revised by #86. **Out of date again** for CAP-07 (drift item 15). **Decided on 2026-09-30:** it is revised once, at the end of the workstream, when every AGR capability contract is on `main`. **Update of `cb0540d`:** every AGR capability contract is on `main`; the one revision is next. **Closed** (update of `4e26c78`): revised once, as decided (#91).
 7. **A live read of the domain and brain registers:** whether to authorise it, to reconcile the registered domains and brains with the domain register and cognitive architecture. The Platform Owner decided on 2026-09-30 that it is a separate governed decision, not part of that record's review.
-8. **Appointing the dependency audit's independent reviewer** (update of `4e26c78`): who, and on what terms. The review pack is issued (#93); the reviewer's conflict-of-interest declaration is returned before the review begins, and whether a declared interest disqualifies them is decided then.
+8. **Appointing the dependency audit's independent reviewer** (update of `4e26c78`): who, and on what terms. The review pack is issued (#93); the reviewer's conflict-of-interest declaration is returned before the review begins, and whether a declared interest disqualifies them is decided then. **Update of `adda4e8`:** the reviewer works from review pack version 2 (#98), and receives the repository link and that folder's name.
 
 ## 5. What blocks real data, and production
 
@@ -528,6 +550,11 @@ Unchanged from the last stock-take, except item 2:
   - the identity decision for observation, cognitive and resource intelligence;
   - the catalogue mapping, marked as proposed and requiring review.
 
+**Updated to `adda4e8`,** in a later change, at your instruction:
+- **This record:** PRs #95 to #98 in section 1; CI in section 2.2; amendment 1, review pack version 2 and the access notice in section 2.3, and version 1 marked superseded for the review; work in progress; open decision 8; drift items 18 and 19.
+- **The roadmap:** updated to `adda4e8`. Amendment 1 and version 2 among its sources. Section 5.3 (the dry run, amendment 1 with V13, the scanner, version 2, and V13's fix beside step 3); section 8.5. New decisions 45 (the repository public, with the access notice), 46 (V13 and amendment 1) and 47 (version 2 supersedes version 1); "Still open" updated.
+- **Not changed:** the CAP-34 fidelity manifest, the public overview, and both review packs, which are immutable.
+
 **Updated to `4e26c78`,** in a later change, at your instruction:
 - **This record:** PRs #90 to #94 in section 1; CI in section 2.2; the addendum and the review pack in section 2.3; work in progress, with the reviewer's appointment next; open decision 6 closed and open decision 8 added; section 6; drift item 15 closed, and items 16 and 17.
 - **The roadmap:** updated to `4e26c78`. The addendum and the review pack among its sources. Section 5.3 (the addendum, the tools, the pack; the verification's scope, which excludes the CAP-04 and CAP-05 amendments); section 8.5; section 6.5. New decisions 42 (the addendum), 43 (a schema's new version keeps its namespace) and 44 (the review pack issued); "Still open" gains the reviewer's appointment.
@@ -622,3 +649,5 @@ Unchanged from the last stock-take, except item 2:
 15. **The public overview is out of date again** (update of `0370bbc`): revised by #86 at `a0f0082`, it shows CAP-07 as `named only` and counts five AGR capabilities `designed`, where there are now six. **Not corrected.** **Decided on 2026-09-30:** it is revised once, at the end of the workstream, when every AGR capability contract is on `main`. **Update of `cb0540d`:** and for CAP-09. Every AGR capability contract is on `main`; the one revision is next. **Closed** (update of `4e26c78`): revised once (#91).
 16. **The dependency audit's import-graph script was never committed** (update of `4e26c78`): the audit said it was reproducible, but PR #45 added only the audit. **Corrected** by the addendum (#92), which commits the tools and their outputs.
 17. **The addendum's V8 count was wrong** (update of `4e26c78`): it said migration `023` adds one function to `scs`; it adds nine. Found while preparing the review pack, disclosed in the pack's section 5.1, and **corrected** by #94.
+18. **The addendum's vocabulary accounting and its summary of the key registry were wrong** (update of `adda4e8`): two of the new `scs.` references it counted under V8 are SCS domain tables, and the key registry, which it called clean except for V2, V3 and V9, also depends on SCS domain storage by name. Found by the internal dry run of review pack version 1 (NOT VERIFIED, C3 and K2). **Corrected** by amendment 1 (#97), which records V13.
+19. **The vocabulary scanner could not see a domain table named without the `scs.` prefix, and read no database file** (update of `adda4e8`). **Corrected** by amendment 1 (#97): the `DOMAIN_TABLE` term, derived from the capability schema files.
