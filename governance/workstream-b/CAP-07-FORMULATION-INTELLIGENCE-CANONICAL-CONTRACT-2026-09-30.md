@@ -5,6 +5,40 @@
 **Capability:** CAP-07 Formulation Intelligence.
 **Authority:** DEFINES THE CONTRACT FOR CAP-07: HOW A FORMULATION OBJECTIVE IS DECLARED, HOW RESEARCH FORMULATIONS ARE COMPOSED FROM ACCEPTED INGREDIENTS, VERSIONED, DERIVED AND COMPARED, ASSEMBLED INTO A FORMULATION DOSSIER, REVIEWED BY A SCIENTIST AND ACCEPTED FOR TRIAL, AND ITS BOUNDARIES WITH CAP-01, CAP-04, CAP-06, CAP-08, CAP-10, CAP-11 AND CAP-12. Establishes no commissioning, production, Gate D, WP05, scientific-validity, safety, regulatory or manufacturing authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
 **Written:** 2026-09-30, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3). CAP-07 had no design contract before this one.
+**Amended:** 2026-10-02 (safety and ecology, governed by CAP-10), with CAP-10's canonical contract.
+
+## Amendment of 2026-10-02: safety and ecology, governed by CAP-10
+
+**Why.** This contract accepted formulations for trial on a declared safety and handling basis "until CAP-10 has a contract" (decision 11), recorded that component interactions are assessed by no one, and left undefined how one formulation's composition is disclosed to a named person (decision 16; "Open gaps"). CAP-10 now has a contract (`governance/workstream-b/CAP-10-SAFETY-AND-ECOLOGICAL-INTELLIGENCE-CANONICAL-CONTRACT-2026-10-02.md`). **This amendment makes CAP-07 rely on it, and defines the disclosure CAP-10 needs,** approved by the Platform Owner in review on 2026-10-02. Nothing else in this contract changes.
+
+**1. Composition access, for a safety assessment.** A new record, `COMPOSITION_ACCESS_GRANT`, written once:
+- **Made by** the formulation's `FORMULATION_AUTHOR` or a `FORMULATION_REVIEWER`, in its country workspace, **for one named person,** **one formulation version,** **the purpose `SAFETY_ASSESSMENT`,** and **one CAP-10 assessment request.**
+- **What it discloses:** the version's composition, and the confidential technical inputs the CAP-10 request carries for it (concentrations, carriers and adjuvants, manufacturing process, impurities, batch information, degradation products), all `PROTECTED_COMMERCIAL` in CAP-10.
+- **Time-limited:** it expires when the assessment is decided, or at a stated date, **at most 180 days after it is made** (pilot position). A new grant is needed after.
+- **Revocable,** at any time, by its maker, any `FORMULATION_REVIEWER`, or CAP-10's `SAFETY_GOVERNOR`, with reasons. Revocation never removes what was read; it stops further reading.
+- **Logged:** every read under a grant records who, when, and for which request.
+- **Never searchable:** a grant lets its holder read the one version, by its identifier, within the one request. It never widens a list, a search or a comparison.
+- **No onward disclosure:** what the holder writes in CAP-10 from it is `PROTECTED_COMMERCIAL` there, and a CAP-10 conclusion must stand without it.
+- **One grant per person:** an elevated CAP-10 assessment with two deciders needs two grants.
+- **A grant is a CAP-07 decision of the kind `COMPOSITION_ACCESS_GRANT`** (AAB-PLATFORM-08), signed, with the receipt `CAP07_COMPOSITION_ACCESS_GRANT`; a revocation is `CAP07_COMPOSITION_ACCESS_REVOCATION`.
+- **Declining to grant is permitted.** CAP-10 then cannot reach an affirmative outcome on the formulation, and the formulation cannot be applied in a trial (CAP-08's amendment of 2026-10-02).
+
+**2. What a dossier says about safety.** The dossier rules become `cap-07-dossier-rules-2`: the rules of version 1, with these changes:
+- **Where a CAP-10 combined outcome on this formulation version is affirmative, `VALID` and `CURRENT`,** for the use stage `RESEARCH_HANDLING` or `CONTROLLED_FIELD_TRIAL`, `SAFETY_ECOLOGY_NOT_ASSESSED` is replaced by **`SAFETY_ECOLOGY_ASSESSED_WITHIN_BOUNDARY`,** shown with CAP-10's display block. **Otherwise `SAFETY_ECOLOGY_NOT_ASSESSED` stays,** as before. Outcomes on the components never replace it (CAP-10, decision 8).
+- **New findings:** `SAFETY_ASSESSMENT_NEGATIVE`, naming any valid `NOT_ACCEPTABLE_WITHIN_BOUNDARY` outcome on the version, and its use stage; `SAFETY_SIGNAL_OPEN`, for any CAP-10 signal concerning the version that is not closed.
+
+**3. Acceptance.**
+- **The reasoning addresses** the CAP-10 outcome relied on, by name, with its conditions, or, where there is none, the declared safety and handling basis and `SAFETY_ECOLOGY_NOT_ASSESSED`, as before; and every new finding.
+- **Refused outright** (`DECISION_NOT_PERMITTED`), in addition: any acceptance while a valid, current `NOT_ACCEPTABLE_WITHIN_BOUNDARY` outcome on this version covers `RESEARCH_HANDLING`. **A declared basis never overrides a negative assessment.** A negative outcome for field use alone is a finding the reviewer addresses; CAP-08 refuses the field use it covers.
+- **`ACCEPT_FOR_TRIAL` no longer suffices alone for a trial to apply the formulation.** CAP-08 also requires a CAP-10 outcome for the use (CAP-08's amendment of 2026-10-02). A `CARRIER_ONLY_CONTROL` is applied in the field, and needs one too.
+- **Currency** gains two triggers: a CAP-10 outcome relied on ceasing to be `VALID` or `CURRENT`; and a CAP-10 signal concerning the version entering `PRECAUTIONARY_HOLD`, `SUBSTANTIATED` or `INCONCLUSIVE_EVIDENCE_REQUIRED`.
+
+**4. What this amendment replaces.**
+- **Decision 11** now reads: safety and ecology are CAP-10's; acceptance for trial rests on a CAP-10 outcome where one exists, and otherwise on a declared safety and handling basis with `SAFETY_ECOLOGY_NOT_ASSESSED`; a negative CAP-10 outcome for handling refuses acceptance.
+- **The contract gap "CAP-10"** is narrowed: component interactions are assessed by CAP-10 for every formulation it assesses (CAP-10, decision 8). **A formulation with no CAP-10 outcome still has its interactions assessed by no one,** and says so.
+- **The contract gap "disclosing a composition"** is closed for the purpose `SAFETY_ASSESSMENT` by point 1. It stays open for every other purpose, such as a trial protocol.
+- **The dependencies row for CAP-10** now reads: **optional at acceptance; required by CAP-08 for field use; CAP-07 grants composition access for it; `designed`.**
+- **Decision 16 is unchanged:** a composition is still disclosed only to people holding a CAP-07 role, or now by a grant under point 1.
 
 ## Why this contract, and what it adopts
 

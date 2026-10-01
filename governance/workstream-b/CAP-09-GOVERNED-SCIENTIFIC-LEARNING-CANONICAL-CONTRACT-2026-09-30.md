@@ -5,6 +5,19 @@
 **Capability:** CAP-09 Governed Scientific Learning.
 **Authority:** DEFINES THE CONTRACT FOR CAP-09: HOW A LEARNING CLAIM DRAWN FROM ADMITTED EVIDENCE IS PROPOSED, BOUNDED, ASSEMBLED INTO A LEARNING DOSSIER, REVIEWED BY A SCIENTIST AND PROMOTED, OR NOT, TO SCIENTIFIC KNOWLEDGE VALID WITHIN A RECORDED BOUNDARY, HOW A PROMOTION STAYS CURRENT, AND ITS BOUNDARIES WITH CAP-04, CAP-05, CAP-06, CAP-07, CAP-08 AND CAP-10. Establishes no commissioning, production, Gate D, WP05, scientific-validity, safety or regulatory authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
 **Written:** 2026-09-30, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3). CAP-09 had no design contract before this one. Its promotion decision was first sketched in CAP-04's contract of 2026-09-20, and moved here by CAP-04's amendment of 2026-09-29 (decision 8).
+**Amended:** 2026-10-02 (the safety label, and adverse effects, under CAP-10), with CAP-10's canonical contract.
+
+## Amendment of 2026-10-02: the safety label, and adverse effects, under CAP-10
+
+**Why.** This contract carried `SAFETY_ECOLOGY_NOT_ASSESSED` "until CAP-10 has a contract" (decision 10; "The learning dossier"). CAP-10 now has a contract (`governance/workstream-b/CAP-10-SAFETY-AND-ECOLOGICAL-INTELLIGENCE-CANONICAL-CONTRACT-2026-10-02.md`). Approved by the Platform Owner in review on 2026-10-02. **Decision 10 stands: CAP-09 never promotes a claim that anything is safe.** Nothing else in this contract changes.
+
+**1. The label is permanent in CAP-09.** A learning claim is never a CAP-10 subject, and a promotion is never a safety assessment. **`SAFETY_ECOLOGY_NOT_ASSESSED` is always present** on every dossier and promotion. The words "until CAP-10 has a contract" no longer apply. A CAP-10 outcome on a material a claim names may be shown beside the claim, with CAP-10's display block, and never replaces the label.
+
+**2. A promoted adverse effect is a trigger in CAP-10.** A promoted `ADVERSE_EFFECT` claim naming a material among `boundary.materials` makes CAP-10's assessments of that material **potentially stale** (CAP-10, "Currency"). **This is consistent with decision 9:** it changes no record, suppresses, blocks or rejects nothing, and acts on nothing; it makes a person look at the assessment again before anything relies on it. Whether a promoted adverse effect should also be reported as a safety signal is a person's decision, in CAP-10.
+
+**3. What this amendment replaces.**
+- **The contract gap "CAP-10"** now reads: adverse effects are recorded as observations of harm and are never safety assessments; a promoted one makes CAP-10's assessments of the material potentially stale.
+- **The dependencies row for CAP-10** now reads: **owns safety; CAP-09 never promotes a claim of safety; a promoted adverse effect is a currency trigger in CAP-10; `designed`.**
 
 ## Why this contract, and what it adopts
 

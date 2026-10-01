@@ -5,7 +5,7 @@
 **Capability:** CAP-08 Controlled Trials & Outcomes. It is not SCS-CAP-08 (Due Diligence Package Compilation), a different capability in another domain.
 **Authority:** DEFINES THE CONTRACT FOR CAP-08: HOW A CONTROLLED TRIAL IS DESIGNED, AUTHORISED, OBSERVED UNDER ITS PROTOCOL, SUMMARISED, REVIEWED AND CLOSED, HOW ITS RESULTS ARE OFFERED TO CAP-04, AND ITS BOUNDARIES WITH CAP-04, CAP-07, CAP-09, CAP-10 AND PROPOSED CAP-36. Establishes no commissioning, production, Gate D, WP05, scientific-validity, efficacy or regulatory authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
 **Written:** 2026-09-29, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3). CAP-08 had no design contract before this one.
-**Amended:** 2026-09-30 (the test material, governed by CAP-07 and CAP-06), with CAP-07's canonical contract.
+**Amended:** 2026-09-30 (the test material, governed by CAP-07 and CAP-06), with CAP-07's canonical contract; and 2026-10-02 (safety and ecology, governed by CAP-10), with CAP-10's canonical contract.
 
 ## Amendment of 2026-09-30: the test material, governed by CAP-07 and CAP-06
 
@@ -42,6 +42,55 @@
 - The contract gap "the test material" is closed for formulations and ingredients. It stays open for registered products and practices, which have no governing capability.
 - The dependencies rows for CAP-07 and CAP-06 now read: **required when the material is a formulation, or an ingredient; `designed`.**
 - `TEST_MATERIAL_NOT_ACCEPTED` (422) joins the failure contract.
+
+## Amendment of 2026-10-02: safety and ecology, governed by CAP-10
+
+**Why.** This contract activated trials on a declared safety basis "until CAP-10 has a contract" (decision 4), left safety escalation open (interim position 8), and left open whether a trial is suspended automatically when an acceptance lapses (the amendment of 2026-09-30, point 4). CAP-10 now has a contract (`governance/workstream-b/CAP-10-SAFETY-AND-ECOLOGICAL-INTELLIGENCE-CANONICAL-CONTRACT-2026-10-02.md`). **This amendment makes CAP-08 rely on it,** approved by the Platform Owner in review on 2026-10-02. Nothing else in this contract changes.
+
+**1. What every applied material needs at activation.** A `TRIAL_ACTIVATION` of `AUTHORISE` is refused unless every material applied in the trial, as test material or in any arm, meets this table **at the moment of the decision**:
+
+| Material applied | Needs |
+|---|---|
+| A CAP-06 ingredient, as test material or in any arm (a reference material included), or a CAP-07 formulation (a `CARRIER_ONLY_CONTROL` included) | **A CAP-10 combined outcome** `ASSESSED_ACCEPTABLE_FOR_CONTROLLED_TRIAL_WITHIN_BOUNDARY` or `ASSESSED_ACCEPTABLE_WITH_CONDITIONS`, for the use stage `CONTROLLED_FIELD_TRIAL`, on **that exact version**, in the trial's country workspace, `VALID` and `CURRENT`, unexpired, with no open challenge, **covering the protocol's use** (point 2). A CAP-06 reference material may instead meet the next row |
+| `REGISTERED_PRODUCT` | **Either** a declared on-label use (point 3), addressed condition by condition, **or** a CAP-10 outcome on a `REGISTERED_PRODUCT_USE`, as in the row above |
+| `PRACTICE`, with no material applied | The declared safety basis, as before |
+| `OTHER` | **Not activatable.** The material must first be registered in CAP-06, or be a registered product: `MATERIAL_NOT_GOVERNED` |
+| No material (an untreated control) | Nothing |
+
+- **The activation records each CAP-10 outcome it relied on,** with its currency, and its reasoning addresses each by name, **with every condition and stop condition.** A CAP-07 `ACCEPT_FOR_TRIAL` and a CAP-06 acceptance are still required, as the amendment of 2026-09-30 says; **neither is a safety assessment, and neither suffices alone.**
+- **Registration** of a trial is not refused for want of a CAP-10 outcome: assessment may follow registration. The trial shows `SAFETY_ASSESSMENT_REQUIRED_BEFORE_ACTIVATION`, naming each material, until activation.
+- **An outcome expiring before the trial's planned end** is shown as `SAFETY_ASSESSMENT_EXPIRES_DURING_TRIAL`, and addressed in the activation.
+
+**2. The use, within the boundary.** Each protocol arm naming a material declares its application: `arms[].application?: { method: string; rate: { value: string; unit: string; basis: string }; frequency: { count: number; per: string }; timing: string }`, required for every arm that applies a material. **Activation checks, element by element, that the trial's use lies within the outcome's boundary:** the method among its routes; the trial's crops among its crops; the rate and frequency at or below its maxima, in the same unit and basis; the site among its site types; the trial's period within its period. **Matching is exact** (CAP-10, "Open gaps"); a use outside the boundary is refused (`SAFETY_ASSESSMENT_NOT_APPLICABLE_TO_USE`), naming each element. **A stop condition must name a metric of a template bound to the protocol,** or activation is refused (`STOP_CONDITION_NOT_OBSERVABLE`). The protocol's schema stays at version `1`: nothing is built, as the amendment of 2026-09-30 decided.
+
+**3. A registered product used exactly within its registration.** `testMaterial` and `arms[].material` of the kind `REGISTERED_PRODUCT` declare the registration (country, number, holder, product and formulation identity, crops, rates, frequency, method, conditions, expiry), and **declare, for each of the following, that the trial's use conforms:** valid in that country; current; the exact product and formulation; the intended crop; the proposed rate and frequency; the proposed method; under the registered conditions; and not mixed, combined or carried experimentally. **The activation addresses each by name. Any one not conforming requires a CAP-10 assessment** of a `REGISTERED_PRODUCT_USE`. AAB never verifies a registration: `REGISTRATION_DECLARED_NOT_VERIFIED` is shown.
+
+**4. What a trial says about safety.** **Every applied arm shows its own safety status:** `SAFETY_ECOLOGY_ASSESSED_WITHIN_BOUNDARY`, with CAP-10's display block; or `REGISTERED_USE_DECLARED`, with `SAFETY_ECOLOGY_NOT_ASSESSED`; or, for a practice, `SAFETY_ECOLOGY_NOT_ASSESSED`. **The trial-level `SAFETY_ECOLOGY_NOT_ASSESSED` is removed only when every applied arm relies on a CAP-10 outcome.** The summary rules become `cap-08-summary-rules-3`: the rules of version 2, with these statuses, every hold and direction (point 6), and `SAFETY_ASSESSMENT_NOT_CURRENT` (point 7), each disclosed where it applies.
+
+**5. Safety signals become CAP-10 signals.** Admission check 11 (`NO_SAFETY_SIGNAL`) still holds the record at once. **In the same transaction, CAP-08 writes a CAP-10 safety signal** (channel `CAP08_OBSERVATION` or `CAP08_ADVERSE_EVENT`), naming the trial, the arms and the material. **Every `ADVERSE_EVENT` writes one,** whatever it declares. An observation or field event declaring a safety concern, and every adverse event, declares the signal's kind, its severity and its critical facts (CAP-10, "Safety signals"), each required. The admission rules become `cap-08-admission-2`. **The held record stays quarantined in CAP-08 until the CAP-10 signal is closed;** a `TRIAL_REVIEWER` may then admit or reject it into the trial record, which never changes the signal.
+
+**6. Holds and directions, in the trial's state.** A trial's derived state adds, from CAP-10: `PRECAUTIONARY_HOLD`, with its basis (a person's report, or the rule that fired); `APPLICATION_SUSPENDED`; and `TRIAL_STOP_REQUIRED`. `SAFETY_SIGNAL_OPEN` now means **any CAP-10 signal concerning the trial that is not closed.** While a hold or a suspension is in force:
+- **observations and field events are still admitted,** because harm must still be observed;
+- **a new activation, or a new protocol version, is refused** (`SAFETY_HOLD_IN_FORCE`);
+- **every outcome summary discloses it,** and an outcome review addresses it by name;
+- **an application made in breach is recorded as a `PROTOCOL_DEVIATION`,** and disclosed. AAB cannot physically prevent one.
+
+**While `TRIAL_STOP_REQUIRED` is in force, a `TRIAL_CLOSURE` may be only `TERMINATED_EARLY` or `ABANDONED`;** `COMPLETED` is refused (`DECISION_NOT_PERMITTED`). Closing the trial is still a `TRIAL_REVIEWER`'s decision.
+
+**7. When an acceptance or an assessment lapses during a trial.** **The safety escalation decision the amendment of 2026-09-30 waited for is made,** and divides lapses in two:
+- **An administrative lapse** (an acceptance or a CAP-10 outcome reaching its expiry, or superseded by a new version of the material) **suspends nothing automatically.** The trial continues, and shows `TEST_MATERIAL_ACCEPTANCE_NOT_CURRENT` or `SAFETY_ASSESSMENT_NOT_CURRENT`, disclosed and addressed as that amendment's point 4 says. **This remains the pilot position.**
+- **A safety-driven lapse** (a CAP-10 outcome relied on is invalidated, superseded by `NOT_ACCEPTABLE_WITHIN_BOUNDARY`, or made potentially stale by a safety signal) **places a precautionary hold at once** (CAP-10, rule `CR-06`).
+
+**8. Who sees an adverse event.** The fields of an observation or field event that declare a safety concern carry CAP-10's visibility classes. **The trial's `TRIAL_DESIGNER`s and `TRIAL_REVIEWER`s see its description;** health information, the identity of affected people, exact locations and photographs showing people are `PROTECTED_PERSONAL`, seen only by the CAP-10 assessors handling the signal and the `SAFETY_GOVERNOR`; **every other trial participant sees the `SUMMARY`:** that a hold exists, on what, and what they must do. The recorder always sees what they recorded.
+
+**9. What this amendment replaces.**
+- **Decision 4** now reads: safety and ecology are CAP-10's; activation requires a CAP-10 outcome for every applied material, as point 1 says; a declared safety basis remains only for practices, and as narrative.
+- **Interim position 8 is closed.** Who is told, how fast, who may stop a trial, and how a stop is recorded are CAP-10's ("Safety signals" there).
+- **The contract gaps "CAP-10" and "safety escalation" are closed.** What remains open is recorded in CAP-10's "Open gaps". **The contract gap "the test material"** stays open only for practices.
+- **The dependencies row for CAP-10** now reads: **required at activation for every applied material, except a registered product used within its registration; receives safety signals; its holds and directions are read into the trial's state; `designed`.**
+- **`preconditions.safetyBasis`** stays in the registration, as declared narrative. It is no longer sufficient for any applied material.
+- **The activation's preconditions** address CAP-10's outcomes, conditions and stop conditions by name, and `SAFETY_ECOLOGY_NOT_ASSESSED` only for arms that still carry it.
+- **The failure contract gains:** `SAFETY_ASSESSMENT_REQUIRED` (422: an applied material has no valid, current outcome), `SAFETY_ASSESSMENT_NOT_APPLICABLE_TO_USE` (422), `STOP_CONDITION_NOT_OBSERVABLE` (422), `MATERIAL_NOT_GOVERNED` (422) and `SAFETY_HOLD_IN_FORCE` (409).
 
 ## Why this contract, and what it adopts
 
