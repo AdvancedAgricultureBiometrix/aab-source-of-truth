@@ -5,6 +5,30 @@
 **Capability:** CAP-06 Ingredient Intelligence. It is not SCS-CAP-06 (Due Diligence Sufficiency Evaluation), a different capability in another domain.
 **Authority:** DEFINES THE CONTRACT FOR CAP-06: HOW A COUNTRY'S KNOWN INGREDIENTS AND CANDIDATE NEW ONES ARE REGISTERED, EVIDENCED, ASSEMBLED INTO AN INGREDIENT DOSSIER, REVIEWED BY A SCIENTIST AND ACCEPTED FOR FORMULATION RESEARCH, HOW CAP-01'S REFERRALS ARE RECEIVED AND CLOSED, AND ITS BOUNDARIES WITH CAP-01, CAP-04, CAP-07, CAP-08, CAP-10 AND CAP-11. Establishes no commissioning, production, Gate D, WP05, scientific-validity, safety or regulatory authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
 **Written:** 2026-09-29, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3). CAP-06 had no design contract before this one.
+**Amended:** 2026-10-02 (safety and ecology, governed by CAP-10), with CAP-10's canonical contract.
+
+## Amendment of 2026-10-02: safety and ecology, governed by CAP-10
+
+**Why.** This contract accepted ingredients on a declared safety and handling basis "until CAP-10 has a contract" (decision 7). CAP-10 now has a contract (`governance/workstream-b/CAP-10-SAFETY-AND-ECOLOGICAL-INTELLIGENCE-CANONICAL-CONTRACT-2026-10-02.md`). **This amendment makes CAP-06 rely on it,** approved by the Platform Owner in review on 2026-10-02. Nothing else in this contract changes.
+
+**1. What CAP-10 may assess.** An ingredient version may be assessed for `RESEARCH_HANDLING` or `CONTROLLED_FIELD_TRIAL`; **a candidate version for `RESEARCH_HANDLING` only,** because it is not a trial material until it is an ingredient (CAP-10, "Subjects"). CAP-10 treats a candidate, and an ingredient registered from one, as novel: its assessment always needs two deciders.
+
+**2. What a dossier says about safety.** The dossier rules become `cap-06-dossier-rules-2`: the rules of version 1, with these changes:
+- **Where a CAP-10 combined outcome on this version is affirmative, `VALID` and `CURRENT`,** for the use stage `RESEARCH_HANDLING` or `CONTROLLED_FIELD_TRIAL`, `SAFETY_ECOLOGY_NOT_ASSESSED` is replaced by **`SAFETY_ECOLOGY_ASSESSED_WITHIN_BOUNDARY`,** shown with CAP-10's display block. **Otherwise `SAFETY_ECOLOGY_NOT_ASSESSED` stays,** as before.
+- **New findings:** `SAFETY_ASSESSMENT_NEGATIVE`, naming any valid `NOT_ACCEPTABLE_WITHIN_BOUNDARY` outcome on the version, and its use stage; `SAFETY_SIGNAL_OPEN`, for any CAP-10 signal concerning the version that is not closed.
+- **A candidate from CAP-01** still carries the referral's `SAFETY_ECOLOGY_NOT_ASSESSED`. A CAP-10 hazard screen of the CAP-01 resource is shown on the referral's receipt where one exists, and **never replaces the label:** a screen assesses handling raw material, never the material as an ingredient.
+
+**3. Acceptance.**
+- **The reasoning addresses** the CAP-10 outcome relied on, by name, with its conditions, or, where there is none, the declared safety and handling basis and `SAFETY_ECOLOGY_NOT_ASSESSED`, as before; and every new finding.
+- **Refused outright** (`DECISION_NOT_PERMITTED`), in addition: any acceptance while a valid, current `NOT_ACCEPTABLE_WITHIN_BOUNDARY` outcome on this version covers `RESEARCH_HANDLING`. **A declared basis never overrides a negative assessment.** A negative outcome for field use alone is a finding the reviewer addresses; CAP-08 refuses the field use it covers.
+- **An acceptance is not a safety assessment, and no longer suffices alone for field use.** An ingredient applied in a trial on its own, or as a reference material, needs a CAP-10 outcome for the use, or, for a reference material, a declared on-label registration (CAP-08's amendment of 2026-10-02).
+- **Currency** gains two triggers: a CAP-10 outcome relied on ceasing to be `VALID` or `CURRENT`; and a CAP-10 signal concerning the version entering `PRECAUTIONARY_HOLD`, `SUBSTANTIATED` or `INCONCLUSIVE_EVIDENCE_REQUIRED`.
+
+**4. What this amendment replaces.**
+- **Decision 7** now reads: safety and ecology are CAP-10's; acceptance rests on a CAP-10 outcome where one exists, and otherwise on a declared safety and handling basis with `SAFETY_ECOLOGY_NOT_ASSESSED`; a negative CAP-10 outcome for handling refuses acceptance.
+- **The contract gap "CAP-10"** now reads: an ingredient with no CAP-10 outcome rests on a declared basis that AAB does not assess, disclosed on every dossier and acceptance. **Until CAP-10 is built, that is every ingredient.**
+- **The dependencies row for CAP-10** now reads: **optional at acceptance; required by CAP-08 for field use; `designed`.**
+- **The material classes `PROHIBITED_OR_RESTRICTED_MATERIAL` and `UNSAFE_OR_UNIDENTIFIED_MATERIAL`** are still refused any acceptance, as declared classes. A CAP-10 outcome never makes them acceptable; a material reclassified is a new version.
 
 ## Why this contract, and what it adopts
 

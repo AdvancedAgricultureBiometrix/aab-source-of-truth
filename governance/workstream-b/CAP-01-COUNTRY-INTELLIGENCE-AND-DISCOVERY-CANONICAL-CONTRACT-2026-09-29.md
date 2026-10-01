@@ -5,6 +5,25 @@
 **Capability:** CAP-01 Country Intelligence & Discovery. It is not SCS-CAP-01 (Regulatory Framework Registration), a different capability in another domain.
 **Authority:** DEFINES THE CONTRACT FOR CAP-01: HOW A COUNTRY'S AGRICULTURAL PROBLEMS, RESOURCES, WASTE STREAMS AND OVERLOOKED OPPORTUNITIES ARE RECORDED, EVIDENCED, ASSEMBLED INTO A DISCOVERY DOSSIER, REVIEWED BY A SCIENTIST AND REFERRED FOR INVESTIGATION, AND ITS BOUNDARIES WITH CAP-02, CAP-04, CAP-06, CAP-10 AND THE REHEARSAL'S COGNITIVE LOOP. Establishes no commissioning, production, Gate D, WP05, scientific-validity or regulatory authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
 **Written:** 2026-09-29, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3). CAP-01 had no design contract before this one.
+**Amended:** 2026-10-02 (hazard screens, and the safety label, under CAP-10), with CAP-10's canonical contract.
+
+## Amendment of 2026-10-02: hazard screens, and the safety label, under CAP-10
+
+**Why.** This contract disclosed safety and ecology as not assessed "until CAP-10 has a contract and an assessment it defines can be cited" (decision 8; "The discovery dossier"). CAP-10 now has a contract (`governance/workstream-b/CAP-10-SAFETY-AND-ECOLOGICAL-INTELLIGENCE-CANONICAL-CONTRACT-2026-10-02.md`), with a limited assessment type, the **hazard screen,** for raw material handled during discovery. Approved by the Platform Owner in review on 2026-10-02. **Decision 8 stands: CAP-01 has no safety gate.** Nothing else in this contract changes.
+
+**1. Hazard screens of CAP-01 records.** A `COUNTRY_RESOURCE` or `WASTE_STREAM` version may be the subject of a CAP-10 `INVESTIGATION_MATERIAL_HAZARD_SCREEN`, requested in CAP-10 by a person holding `SAFETY_REQUESTER` there. **A screen determines only whether authorised sampling, collection, transport or laboratory handling of the material may proceed, and under what precautions.** It never assesses the resource as an ingredient, never affects a discovery review, and never blocks a referral.
+
+**2. What CAP-01 shows.** The dossier rules become `cap-01-dossier-rules-2`: the rules of version 1, with these changes:
+- **For every resource and waste stream in a dossier,** the current hazard screen is shown with CAP-10's display block, or, where there is none, **`HAZARD_SCREEN_NOT_PERFORMED`,** a disclosure. A discovery review acknowledges it, as every disclosure.
+- **Where a CAP-10 hold or `HANDLING_SUSPENDED` direction concerns handling under a screen,** it is shown on the record, in `SUMMARY`.
+- **`SAFETY_ECOLOGY_NOT_ASSESSED` is always present,** on every dossier and every referral. **A hazard screen never replaces it.** The words "until CAP-10 has a contract and an assessment it defines can be cited" no longer apply: a CAP-01 subject is never assessed as an ingredient, so the label is permanent in CAP-01.
+
+**3. Reporting.** A person holding a CAP-01 role may report a safety signal in CAP-10 concerning handling under a screen (CAP-10, "Safety signals").
+
+**4. What this amendment replaces.**
+- **Decision 8** now reads: safety and ecology are CAP-10's, never CAP-01's; CAP-01 has no safety gate; every dossier and referral discloses `SAFETY_ECOLOGY_NOT_ASSESSED`, always; CAP-10 may screen a resource or waste stream for handling, and the screen is shown, never gating.
+- **The contract gap "CAP-10"** is closed. Safety and ecology are assessed in CAP-10 only once the material is a CAP-06 subject; until then, only its handling may be screened.
+- **The dependencies row for CAP-10** now reads: **optional: hazard screens of resources and waste streams, shown; `designed`.**
 
 ## Why this contract, and what it adopts
 
