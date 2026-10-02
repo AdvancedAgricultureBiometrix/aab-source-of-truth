@@ -5,12 +5,29 @@
 **Capability:** CAP-12 Controlled Manufacturing Transfer. It is not SCS-CAP-12 (Cross-Boundary Evidence Reference), a different capability in another domain.
 **Authority:** DEFINES THE CONTRACT FOR CAP-12: HOW A GOVERNED MANUFACTURING SPECIFICATION IS ASSEMBLED FROM A CAP-07 FORMULATION VERSION; HOW ITS DISCLOSURE TO A NAMED MANUFACTURER, FOR A NAMED STAGE, SITE AND PURPOSE, IS AUTHORISED, ACCEPTED AND RECORDED; WHAT EACH STAGE REQUIRES FIRST; HOW PILOT AND VALIDATION BATCHES ARE TRACED; HOW A TRANSFER IS HELD WHEN ITS BASIS LAPSES; AND ITS BOUNDARIES WITH CAP-04, CAP-07, CAP-08, CAP-09, CAP-10, CAP-11 AND THE PLANNED MANUFACTURING DOMAIN. Establishes no commissioning, production, Gate D, WP05, scientific-validity, quality-certification, intellectual-property, regulatory-approval or market-access authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
 **Written:** 2026-10-02, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3). CAP-12 had no design contract before this one. Its horizon stays **post-launch** in the CAP-34 fidelity manifest.
+**Amended:** 2026-10-02 (integrity, lineage and the AGR vocabulary, under CAP-03), with CAP-03's canonical contract.
 
 ## The governing principle
 
 > **AAB may assemble a governed manufacturing specification and record a controlled transfer. It does not authorise sale, release a batch, certify quality, grant intellectual-property rights or substitute for a regulator or a manufacturer's qualified authority.**
 >
 > **A controlled transfer may proceed only when the exact specification, evidence basis, safety conditions, regulatory pathway, rights authority, recipient, site and permitted purpose are established. Missing or stale mandatory evidence returns EVIDENCE REQUIRED, and the transfer does not proceed.**
+
+## Amendment of 2026-10-02: integrity, lineage and the AGR vocabulary, under CAP-03
+
+**Why.** CAP-03 now has a contract (`governance/workstream-b/CAP-03-EVIDENCE-INTEGRITY-AND-PROVENANCE-CANONICAL-CONTRACT-2026-10-02.md`). It provides the integrity re-check and lineage AGR's evaluations lacked, and the AGR provenance vocabulary, which every AGR capability adopts before implementation (CAP-03, decision 16). Approved by the Platform Owner in review on 2026-10-02. Nothing else in this contract changes.
+
+**1. Integrity re-check and lineage.** A transfer evidence basis may request a CAP-03 verification run over its snapshot's members. The evidence-basis rules become `cap-12-evidence-basis-rules-2`: version 1, with this change. **Where a cited run covers every member, `INTEGRITY_RECHECK_NOT_PERFORMED` is replaced by the run's findings, by kind,** and `integrityRecheck` is `PERFORMED`; otherwise the disclosure stays. **A lineage evaluation** may be requested for any of its specifications, evidence bases, authorisations, packages and batch attestations. **No finding is ever shown as "verified" in general,** and none says the evidence is true, sufficient or authentic in the world.
+
+**2. The vocabulary.** CAP-12 adopts `cap-03-vocabulary-1`: its batches map to `MANUFACTURED_FROM` and `APPLIED_IN`, and its rights, QC and contract documents to `RIGHTS_OR_CONTRACT_DOCUMENT` and `MANUFACTURER_RECORD` (CAP-03, "Mappings from existing terms"). **No record is renamed.** A term of CAP-12's own, added later, is registered here and mapped to the vocabulary, or refused (`VOCABULARY_TERM_UNMAPPED`).
+
+**3. How its outputs reference CAP-03.** Each of its specifications, evidence bases, authorisations, packages and batch attestations may carry `integrity?: { verificationRunIds: string[]; lineageEvaluationId?: string }`, set by the system when a run or evaluation is cited, and shown with the findings by kind and whether they are current.
+
+**4. Failures stay visible.** CAP-03's findings are currency triggers for CAP-12's decisions (CAP-03, "Integrity findings and their consequences"). **Material evidence becoming `INTEGRITY_COMPROMISED` or `UNDETERMINED`** is treated as material evidence superseded: `EVIDENCE_REQUIRED`, and a `TRANSFER_HOLD` pending reassessment (CAP-12, "Holds"). **Historical decisions are never rewritten;** their current reliance changes, derived when read. **Missing or failed mandatory verification is always shown,** never hidden or treated as a pass.
+
+**5. Before implementation.** CAP-12's step 4 (code) uses the vocabulary and CAP-03's verification as adopted here.
+
+**6. What this amendment replaces.** The dependencies gain a row: **CAP-03 Evidence Integrity & Provenance: integrity re-check, lineage, the AGR vocabulary and integrity incidents; `designed`, launch release.**
 
 ## Why this contract, and what it adopts
 

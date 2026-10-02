@@ -5,7 +5,7 @@
 **Capability:** CAP-07 Formulation Intelligence.
 **Authority:** DEFINES THE CONTRACT FOR CAP-07: HOW A FORMULATION OBJECTIVE IS DECLARED, HOW RESEARCH FORMULATIONS ARE COMPOSED FROM ACCEPTED INGREDIENTS, VERSIONED, DERIVED AND COMPARED, ASSEMBLED INTO A FORMULATION DOSSIER, REVIEWED BY A SCIENTIST AND ACCEPTED FOR TRIAL, AND ITS BOUNDARIES WITH CAP-01, CAP-04, CAP-06, CAP-08, CAP-10, CAP-11 AND CAP-12. Establishes no commissioning, production, Gate D, WP05, scientific-validity, safety, regulatory or manufacturing authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
 **Written:** 2026-09-30, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3). CAP-07 had no design contract before this one.
-**Amended:** 2026-10-02 (safety and ecology, governed by CAP-10), with CAP-10's canonical contract; and 2026-10-02, second (regulatory status, governed by CAP-11), with CAP-11's canonical contract; and 2026-10-02, third (composition for manufacturing transfer, governed by CAP-12), with CAP-12's canonical contract.
+**Amended:** 2026-10-02 (safety and ecology, governed by CAP-10), with CAP-10's canonical contract; and 2026-10-02, second (regulatory status, governed by CAP-11), with CAP-11's canonical contract; and 2026-10-02, third (composition for manufacturing transfer, governed by CAP-12), with CAP-12's canonical contract; and 2026-10-02, fourth (integrity, lineage and the AGR vocabulary, under CAP-03), with CAP-03's canonical contract.
 
 ## Amendment of 2026-10-02: safety and ecology, governed by CAP-10
 
@@ -76,6 +76,22 @@
 - **Decision 16** is unchanged in substance: composition is disclosed only to CAP-07 roles, or by a grant for a safety assessment or a manufacturing transfer.
 - **The contract gap "disclosing a composition"** is closed for the purposes `SAFETY_ASSESSMENT` and `MANUFACTURING_TRANSFER`; it stays open for every other purpose.
 - **The dependencies row for CAP-12** now reads: **CAP-12 Controlled Manufacturing Transfer: owns manufacturing transfer; CAP-07 grants composition access for it; `designed`, post-launch.**
+
+## Amendment of 2026-10-02 (fourth): integrity, lineage and the AGR vocabulary, under CAP-03
+
+**Why.** CAP-03 now has a contract (`governance/workstream-b/CAP-03-EVIDENCE-INTEGRITY-AND-PROVENANCE-CANONICAL-CONTRACT-2026-10-02.md`). It provides the integrity re-check and lineage AGR's evaluations lacked, and the AGR provenance vocabulary, which every AGR capability adopts before implementation (CAP-03, decision 16). Approved by the Platform Owner in review on 2026-10-02. Nothing else in this contract changes.
+
+**1. Integrity re-check and lineage.** A `FORMULATION_DOSSIER_EVALUATION` may request a CAP-03 verification run over its snapshot's members. The dossier rules become `cap-07-dossier-rules-4`: version 3, with this change. **Where a cited run covers every member, `INTEGRITY_RECHECK_NOT_PERFORMED` is replaced by the run's findings, by kind,** and `integrityRecheck` is `PERFORMED`; otherwise the disclosure stays. **A lineage evaluation** may be requested for any of its formulation dossiers and acceptances for trial. **No finding is ever shown as "verified" in general,** and none says the evidence is true, sufficient or authentic in the world.
+
+**2. The vocabulary.** CAP-07 adopts `cap-03-vocabulary-1`: its evidence `supports: <aspect>` maps to `SUPPORTS`, with the aspect kept (CAP-03, "Mappings from existing terms"). **No record is renamed.** A term of CAP-07's own, added later, is registered here and mapped to the vocabulary, or refused (`VOCABULARY_TERM_UNMAPPED`).
+
+**3. How its outputs reference CAP-03.** Each of its formulation dossiers and acceptances for trial may carry `integrity?: { verificationRunIds: string[]; lineageEvaluationId?: string }`, set by the system when a run or evaluation is cited, and shown with the findings by kind and whether they are current.
+
+**4. Failures stay visible.** CAP-03's findings are currency triggers for CAP-07's decisions (CAP-03, "Integrity findings and their consequences"). **An `ACCEPT_FOR_TRIAL` relying on a record `INTEGRITY_COMPROMISED`** may not be relied on by CAP-08 or CAP-12; one relying on a record `UNDETERMINED` waits. **Historical decisions are never rewritten;** their current reliance changes, derived when read. **Missing or failed mandatory verification is always shown,** never hidden or treated as a pass.
+
+**5. Before implementation.** CAP-07's step 4 (code) uses the vocabulary and CAP-03's verification as adopted here.
+
+**6. What this amendment replaces.** The dependencies gain a row: **CAP-03 Evidence Integrity & Provenance: integrity re-check, lineage, the AGR vocabulary and integrity incidents; `designed`, launch release.**
 
 ## Why this contract, and what it adopts
 

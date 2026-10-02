@@ -5,7 +5,7 @@
 **Capability:** CAP-08 Controlled Trials & Outcomes. It is not SCS-CAP-08 (Due Diligence Package Compilation), a different capability in another domain.
 **Authority:** DEFINES THE CONTRACT FOR CAP-08: HOW A CONTROLLED TRIAL IS DESIGNED, AUTHORISED, OBSERVED UNDER ITS PROTOCOL, SUMMARISED, REVIEWED AND CLOSED, HOW ITS RESULTS ARE OFFERED TO CAP-04, AND ITS BOUNDARIES WITH CAP-04, CAP-07, CAP-09, CAP-10 AND PROPOSED CAP-36. Establishes no commissioning, production, Gate D, WP05, scientific-validity, efficacy or regulatory authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
 **Written:** 2026-09-29, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3). CAP-08 had no design contract before this one.
-**Amended:** 2026-09-30 (the test material, governed by CAP-07 and CAP-06), with CAP-07's canonical contract; and 2026-10-02 (safety and ecology, governed by CAP-10), with CAP-10's canonical contract; and 2026-10-02, second (permits, governed by CAP-11), with CAP-11's canonical contract; and 2026-10-02, third (pilot batches as trial material, from CAP-12), with CAP-12's canonical contract.
+**Amended:** 2026-09-30 (the test material, governed by CAP-07 and CAP-06), with CAP-07's canonical contract; and 2026-10-02 (safety and ecology, governed by CAP-10), with CAP-10's canonical contract; and 2026-10-02, second (permits, governed by CAP-11), with CAP-11's canonical contract; and 2026-10-02, third (pilot batches as trial material, from CAP-12), with CAP-12's canonical contract; and 2026-10-02, fourth (integrity, lineage and the AGR vocabulary, under CAP-03), with CAP-03's canonical contract.
 
 ## Amendment of 2026-09-30: the test material, governed by CAP-07 and CAP-06
 
@@ -133,6 +133,22 @@ The activation records each attestation it relied on. **The CAP-10 outcome and C
 **4. What this amendment replaces.**
 - **The dependencies** gain a row: **CAP-12 Controlled Manufacturing Transfer: the source of pilot batches, traceable to their specification; its holds are shown on the trial; `designed`, post-launch.**
 - **The failure contract gains** `BATCH_NOT_TRACEABLE` (422).
+
+## Amendment of 2026-10-02 (fourth): integrity, lineage and the AGR vocabulary, under CAP-03
+
+**Why.** CAP-03 now has a contract (`governance/workstream-b/CAP-03-EVIDENCE-INTEGRITY-AND-PROVENANCE-CANONICAL-CONTRACT-2026-10-02.md`). It provides the integrity re-check and lineage AGR's evaluations lacked, and the AGR provenance vocabulary, which every AGR capability adopts before implementation (CAP-03, decision 16). Approved by the Platform Owner in review on 2026-10-02. Nothing else in this contract changes.
+
+**1. Integrity re-check and lineage.** An outcome summary may request a CAP-03 verification run over its snapshot's members. The summary rules become `cap-08-summary-rules-6`: version 5, with this change. **Where a cited run covers every member, `INTEGRITY_RECHECK_NOT_PERFORMED` is replaced by the run's findings, by kind,** and `integrityRecheck` is `PERFORMED`; otherwise the disclosure stays. **A lineage evaluation** may be requested for any of its outcome summaries, activations, outcome reviews and closures. **No finding is ever shown as "verified" in general,** and none says the evidence is true, sufficient or authentic in the world.
+
+**2. The vocabulary.** CAP-08 adopts `cap-03-vocabulary-1`: its observations map to `OBSERVED_IN`, its arm material and batches to `APPLIED_IN`, and its gates to `RELIED_ON` (CAP-03, "Mappings from existing terms"). **No record is renamed.** A term of CAP-08's own, added later, is registered here and mapped to the vocabulary, or refused (`VOCABULARY_TERM_UNMAPPED`).
+
+**3. How its outputs reference CAP-03.** Each of its outcome summaries, activations, outcome reviews and closures may carry `integrity?: { verificationRunIds: string[]; lineageEvaluationId?: string }`, set by the system when a run or evaluation is cited, and shown with the findings by kind and whether they are current.
+
+**4. Failures stay visible.** CAP-03's findings are currency triggers for CAP-08's decisions (CAP-03, "Integrity findings and their consequences"). **An activation is refused** while any gate it relies on (a CAP-06 or CAP-07 acceptance, a CAP-10 outcome, a CAP-11 determination, a CAP-12 batch) rests on a record `INTEGRITY_COMPROMISED` or `UNDETERMINED`. **During an active trial,** a CAP-10 outcome relied on becoming `INTEGRITY_COMPROMISED` is a safety-driven lapse (CAP-10, rule `CR-06`); every other compromise is disclosed on the trial and addressed by the outcome review. **Historical decisions are never rewritten;** their current reliance changes, derived when read. **Missing or failed mandatory verification is always shown,** never hidden or treated as a pass.
+
+**5. Before implementation.** CAP-08's step 4 (code) uses the vocabulary and CAP-03's verification as adopted here.
+
+**6. What this amendment replaces.** The dependencies gain a row: **CAP-03 Evidence Integrity & Provenance: integrity re-check, lineage, the AGR vocabulary and integrity incidents; `designed`, launch release.**
 
 ## Why this contract, and what it adopts
 

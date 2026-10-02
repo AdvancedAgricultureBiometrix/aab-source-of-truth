@@ -5,7 +5,7 @@
 **Capability:** CAP-09 Governed Scientific Learning.
 **Authority:** DEFINES THE CONTRACT FOR CAP-09: HOW A LEARNING CLAIM DRAWN FROM ADMITTED EVIDENCE IS PROPOSED, BOUNDED, ASSEMBLED INTO A LEARNING DOSSIER, REVIEWED BY A SCIENTIST AND PROMOTED, OR NOT, TO SCIENTIFIC KNOWLEDGE VALID WITHIN A RECORDED BOUNDARY, HOW A PROMOTION STAYS CURRENT, AND ITS BOUNDARIES WITH CAP-04, CAP-05, CAP-06, CAP-07, CAP-08 AND CAP-10. Establishes no commissioning, production, Gate D, WP05, scientific-validity, safety or regulatory authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
 **Written:** 2026-09-30, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3). CAP-09 had no design contract before this one. Its promotion decision was first sketched in CAP-04's contract of 2026-09-20, and moved here by CAP-04's amendment of 2026-09-29 (decision 8).
-**Amended:** 2026-10-02 (the safety label, and adverse effects, under CAP-10), with CAP-10's canonical contract.
+**Amended:** 2026-10-02 (the safety label, and adverse effects, under CAP-10), with CAP-10's canonical contract; and 2026-10-02, second (integrity, lineage and the AGR vocabulary, under CAP-03), with CAP-03's canonical contract.
 
 ## Amendment of 2026-10-02: the safety label, and adverse effects, under CAP-10
 
@@ -18,6 +18,22 @@
 **3. What this amendment replaces.**
 - **The contract gap "CAP-10"** now reads: adverse effects are recorded as observations of harm and are never safety assessments; a promoted one makes CAP-10's assessments of the material potentially stale.
 - **The dependencies row for CAP-10** now reads: **owns safety; CAP-09 never promotes a claim of safety; a promoted adverse effect is a currency trigger in CAP-10; `designed`.**
+
+## Amendment of 2026-10-02 (second): integrity, lineage and the AGR vocabulary, under CAP-03
+
+**Why.** CAP-03 now has a contract (`governance/workstream-b/CAP-03-EVIDENCE-INTEGRITY-AND-PROVENANCE-CANONICAL-CONTRACT-2026-10-02.md`). It provides the integrity re-check and lineage AGR's evaluations lacked, and the AGR provenance vocabulary, which every AGR capability adopts before implementation (CAP-03, decision 16). Approved by the Platform Owner in review on 2026-10-02. Nothing else in this contract changes.
+
+**1. Integrity re-check and lineage.** A `LEARNING_DOSSIER_EVALUATION` may request a CAP-03 verification run over its snapshot's members. The dossier rules become `cap-09-dossier-rules-2`: version 1, with this change. **Where a cited run covers every member, `INTEGRITY_RECHECK_NOT_PERFORMED` is replaced by the run's findings, by kind,** and `integrityRecheck` is `PERFORMED`; otherwise the disclosure stays. **A lineage evaluation** may be requested for any of its learning dossiers and promotions. **No finding is ever shown as "verified" in general,** and none says the evidence is true, sufficient or authentic in the world.
+
+**2. The vocabulary.** CAP-09 adopts `cap-03-vocabulary-1`: its citation roles `SUPPORTING`, `CONTRADICTING` and `CONTEXT` map to `SUPPORTS`, `CONTRADICTS` and `REFERS_TO` (CAP-03, "Mappings from existing terms"). **No record is renamed.** A term of CAP-09's own, added later, is registered here and mapped to the vocabulary, or refused (`VOCABULARY_TERM_UNMAPPED`).
+
+**3. How its outputs reference CAP-03.** Each of its learning dossiers and promotions may carry `integrity?: { verificationRunIds: string[]; lineageEvaluationId?: string }`, set by the system when a run or evaluation is cited, and shown with the findings by kind and whether they are current.
+
+**4. Failures stay visible.** CAP-03's findings are currency triggers for CAP-09's decisions (CAP-03, "Integrity findings and their consequences"). **`PROMOTE` is refused** while a cited record is `INTEGRITY_COMPROMISED` or `UNDETERMINED`. **An existing promotion** relying on one is shown as such, and is never removed; reliance on it is prohibited or waits as CAP-03's table says. **Historical decisions are never rewritten;** their current reliance changes, derived when read. **Missing or failed mandatory verification is always shown,** never hidden or treated as a pass.
+
+**5. Before implementation.** CAP-09's step 4 (code) uses the vocabulary and CAP-03's verification as adopted here.
+
+**6. What this amendment replaces.** The dependencies gain a row: **CAP-03 Evidence Integrity & Provenance: integrity re-check, lineage, the AGR vocabulary and integrity incidents; `designed`, launch release.**
 
 ## Why this contract, and what it adopts
 
