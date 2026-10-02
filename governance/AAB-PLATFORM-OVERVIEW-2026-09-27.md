@@ -7,6 +7,7 @@
 **Revised again:** 2026-09-30, to the governance records on `main` at `4d35509`, once every scientific capability contract in the AGR migration was on `main` (sections 4, 7.3 and 8), and cleared again for external use by the Platform Owner in review. Earlier versions should no longer be sent.
 **Revised a third time:** 2026-10-02, to the governance records on `main` at `a5784be`, with CAP-10's contract on `main` (sections 4, 7.3 and 8), and cleared again for external use by the Platform Owner in review. Earlier versions should no longer be sent.
 **Revised a fourth time:** 2026-10-02, to the governance records on `main` at `4035179`, with CAP-11's contract on `main` (sections 4, 7.3 and 8), and cleared again for external use by the Platform Owner in review. Earlier versions should no longer be sent.
+**Revised a fifth time:** 2026-10-02, to the governance records on `main` at `77b573e`, with CAP-12's contract on `main` (sections 4, 7.3 and 8), and cleared again for external use by the Platform Owner in review. Earlier versions should no longer be sent.
 **Authority:** DESCRIBES THE AAB PLATFORM AND ITS CURRENT STATE, AS THE GOVERNANCE RECORDS ESTABLISH IT ON 2026-10-02. It is not a contract, and it admits, commissions and promises nothing. Every state it reports comes from `governance/AAB-PLATFORM-ROADMAP-2026-09-27.md` and the records that roadmap cites. Where this overview and a governance record differ, the governance record is correct.
 
 ## How to read this overview
@@ -105,16 +106,17 @@ These are the eleven shared mechanisms every domain builds on, as the platformâ€
 ## 4. The Agricultural Science domain
 
 **What exists:**
-- **Nine canonical contracts are `designed`:** CAP-01 Country Intelligence & Discovery, CAP-04 Governed Scientific Memory, CAP-05 Governed Scientific Reasoning, CAP-06 Ingredient Intelligence, CAP-07 Formulation Intelligence, CAP-08 Controlled Trials & Outcomes, CAP-09 Governed Scientific Learning, CAP-10 Safety & Ecological Intelligence, and CAP-11 Regulatory Translation & Dossier Support. Each was written with the rehearsal application's code in view, and says what it does not carry across. Nothing is built for any of them.
+- **Ten canonical contracts are `designed`:** CAP-01 Country Intelligence & Discovery, CAP-04 Governed Scientific Memory, CAP-05 Governed Scientific Reasoning, CAP-06 Ingredient Intelligence, CAP-07 Formulation Intelligence, CAP-08 Controlled Trials & Outcomes, CAP-09 Governed Scientific Learning, CAP-10 Safety & Ecological Intelligence, CAP-11 Regulatory Translation & Dossier Support, and CAP-12 Controlled Manufacturing Transfer. Each was written with the rehearsal application's code in view, and says what it does not carry across. Nothing is built for any of them.
 - **Nothing is yet safety-assessed.** CAP-10 defines how the safety and ecological effect of a proposed use is assessed: by qualified, independent people, within declared limits, never as general safety certification or regulatory approval. Until an assessment it defines exists, every ingredient, formulation and trial says that safety and ecology are not assessed.
 - **Nothing is yet regulatory-assessed, and no field trial can yet be activated.** CAP-11 defines how regulatory evidence is organised and a governed dossier assembled against a country's verified record of a jurisdiction's requirements. It does not give legal advice, declare compliance, grant market access or stand in for a regulator. A field trial is activated only once a qualified person has determined, through CAP-11, whether it needs a permit, and where that cannot be established, the trial does not activate. Until CAP-11 is built, no trial is activated.
+- **Nothing is yet transferred for manufacture.** CAP-12 defines how a governed specification may be transferred to a named manufacturer, stage by stage, only when the exact specification, evidence, safety conditions, regulatory pathway, rights authority, recipient, site and purpose are established. AAB never authorises sale, releases a batch, certifies quality or grants intellectual-property rights. Until CAP-12 is built, nothing is transferred, and a commercial transfer also awaits CAP-11.
 - **A simulation environment (CAP-34) is `implemented`.** It represents several scientific capabilities with real logic over synthetic data. A simulation never counts as implementation of the capabilities it represents, and carries no credit toward commissioning.
 - **A rehearsal application** exercises trials, formulation, observation (including field photo capture) and learning functions. Its code is evidence, not governed code. The capabilities it serves are `designed` where a contract now exists, and otherwise `named only`. The rehearsal is not commissioned. Its sovereignty audit recorded that it would not meet production standards if reused, and set out what a production environment must prove.
 
 **What is `named only`:** every other AGR capability (section 7). They are named in the capability landscape, with no contract yet.
 
 **What comes next, as the governance records set it out:**
-- **The contracts for the capabilities the rehearsal application serves are complete.** CAP-02, CAP-03 and CAP-12 have no contract yet.
+- **The contracts for the capabilities the rehearsal application serves are complete.** CAP-02 and CAP-03 have no contract yet.
 - Before any AGR capability is built on the platform, an independent verification of the audit of the platform's dependencies, and the extraction of the platform primitives out of the SCS pilot. The audit is written; the platformâ€“domain separation decision requires its independent verification before any extraction.
 
 ## 5. The pilot pathway
@@ -216,7 +218,7 @@ This is every capability the governance records name, with its state today. It s
 | CAP-09 | Governed Scientific Learning | Lets an authorised scientist decide whether a conclusion may be treated as validated knowledge | `designed` |
 | CAP-10 | Safety & Ecological Intelligence | Has qualified, independent people assess whether a proposed use of a material is acceptable within declared limits, and governs reports of harm; never certifies anything as safe | `designed` |
 | CAP-11 | Regulatory Translation & Dossier Support | Organises regulatory evidence and assembles governed dossiers, records regulators' own decisions, and determines whether a field trial needs a permit; never legal advice, compliance or market access | `designed` (post-launch) |
-| CAP-12 | Controlled Manufacturing Transfer | Supports controlled transfer of proven results into manufacture, when authorised | `named only` (post-launch) |
+| CAP-12 | Controlled Manufacturing Transfer | Transfers a governed manufacturing specification to a named manufacturer, stage by stage, only when each stage's gates are met; never authorises sale, releases a batch or grants intellectual-property rights | `designed` (post-launch) |
 | CAP-32 | Domain-Specific Scientific Intelligence | No description is recorded beyond its name | `named only` |
 | CAP-33 | Cross-Domain Scientific Reasoning | No description is recorded beyond its name | `named only` (future platform) |
 
@@ -272,7 +274,7 @@ The domain register and cognitive architecture (`governance/AAB-PLATFORM-DOMAIN-
 |---|---|
 | Platform primitives | All eleven `implemented` in the SCS pilot; country isolation and backup `behaviourally proven` for their stated scope |
 | SCS domain | 8 of 12 capabilities `behaviourally proven` (minimum vertical slices); 4 `named only` |
-| AGR domain | 9 capabilities `designed` (CAP-01, and CAP-04 to CAP-11), none built; the rest `named only`; a simulation `implemented` |
+| AGR domain | 10 capabilities `designed` (CAP-01, and CAP-04 to CAP-12), none built; the rest `named only`; a simulation `implemented` |
 | Platform contracts | AAB-PLATFORM-01, 04 and 09 `behaviourally proven`; 02 and 03 `implemented`; 05 to 08 `designed` |
 | Other domains | Planned; none designed (section 7.5) |
 | Platform-wide landscape capabilities | 2 `designed` (CAP-20, CAP-21); CAP-34 `implemented`; the rest `named only` |
