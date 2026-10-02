@@ -239,6 +239,18 @@ Every citation CAP-08 makes, with its class, relation, expected record kind, whe
 
 **13. What this amendment replaces.** The interfaces, field rules, admission checks' consequences and failure contract are read as above wherever they differ; `RECORD_NOT_FOUND` joins the failure contract where it is named above and is not already there. The dependencies gain a row: **AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests: canonicalisation and digest types; `designed`.** Nothing else in this contract changes. **Nothing is implemented by this amendment.**
 
+## Note of 2026-10-02: clerical reconciliation
+
+Later amendments and contracts made some current-facing text in this contract stale. The stale text includes open gaps, dependency rows, interim positions, current rules-version statements, answer tables and interface comments. It was found by the retrospective decision cross-review (`governance/reviews/AAB-RETROSPECTIVE-DECISION-CROSS-REVIEW-2026-10-02.md`, finding RD-15) and by the review of the reconciliation plan.
+
+Each such passage keeps its original wording, followed by a current reading labelled "Current reading (Note of 2026-10-02; <STATUS>)". The status is CLOSED, PARTIALLY CLOSED or SUPERSEDED, and the reading names the amendment or contract that gives it.
+
+**This note changes no rule or meaning.** It is not an amendment, and no **Amended:** line changes. **Where a mark and the amendment or contract it names differ, the amendment or contract governs.** Nothing of this capability is built.
+
+**Dependency rows added by amendment (Note of 2026-10-02):** the Dependencies table does not show four rows that amendments add: CAP-11 Regulatory Translation & Dossier Support ("Amendment of 2026-10-02 (second): permits, governed by CAP-11", point 5); CAP-12 Controlled Manufacturing Transfer ("Amendment of 2026-10-02 (third): pilot batches as trial material, from CAP-12", point 4); CAP-03 Evidence Integrity & Provenance ("Amendment of 2026-10-02 (fourth): integrity, lineage and the AGR vocabulary, under CAP-03", point 6); AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests ("Amendment of 2026-10-02 (fifth): provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10", point 13). Each row reads exactly as its amendment states it, and **the amendment controls.** This note creates and changes no table row.
+
+**Dependency rows whose current reading has changed (Note of 2026-10-02):** the Dependencies table keeps its original wording, and three existing rows now read as follows. The CAP-07 and CAP-06 rows (CAP-07 Formulation Intelligence and CAP-06 Ingredient Intelligence): "required when the material is a formulation, or an ingredient; `designed`." ("Amendment of 2026-09-30: the test material, governed by CAP-07 and CAP-06", point 6). The CAP-10 row (CAP-10 Safety & Ecological Intelligence): "required at activation for every applied material, except a registered product used within its registration; receives safety signals; its holds and directions are read into the trial's state; `designed`." ("Amendment of 2026-10-02: safety and ecology, governed by CAP-10", point 9). Nothing of CAP-07, CAP-06 and CAP-10 is built. For each row, the governing amendment or contract named controls. This note creates and changes no table row.
+
 ## Why this contract, and what it adopts
 
 **Why.** CAP-08 is fourth in the workstream's order, and has the most rehearsal code of any capability: 21 gateway actions for trial workspaces, activation, observation capture, and observation and outcome review (roadmap, section 8.2). The evidence is the step 0 snapshots, **with the trial path in `agriculture` and all of `observation_core` read in full for this contract** ("What the rehearsal does").
@@ -279,8 +291,8 @@ AAB-PLATFORM-04 (actor–subject links) is **not adopted**: nothing in CAP-08 is
 4. **Exact farmer coordinates are proposed CAP-36's question.** Trial plot coordinates are governed by the trial's protocol, and visible to the trial's authorised participants.
 5. **Trial photographs are trial evidence,** owned by CAP-08 and stored under AAB-PLATFORM-01's AGR profile. They are not general field observations.
 6. **CAP-08 does not admit evidence.** It produces trial outcomes that a person submits to CAP-04, where admission follows CAP-04's rules and a `MEMORY_REVIEWER` decides every held record.
-7. **Admission is not learning.** CAP-08 produces outcomes; CAP-04 admits them as evidence; promotion to learning is a later human decision in a separate capability (CAP-09), not yet contracted. CAP-08 cites this chain and implements none of it.
-8. **No safety escalation path exists yet.** An observation or field event indicating contamination, a biosecurity risk or a health risk is quarantined at once. The escalation authority and process are open, for a future governance decision.
+7. **Admission is not learning.** CAP-08 produces outcomes; CAP-04 admits them as evidence; promotion to learning is a later human decision in a separate capability (CAP-09), not yet contracted. CAP-08 cites this chain and implements none of it. **Current reading (Note of 2026-10-02; SUPERSEDED):** CAP-09 now has a canonical contract (`governance/workstream-b/CAP-09-GOVERNED-SCIENTIFIC-LEARNING-CANONICAL-CONTRACT-2026-09-30.md`), which adopts this chain: a CAP-08 trial outcome reaches CAP-04 only on a person's submission, and is admitted under CAP-04's rules; promotion to learning is a separate human decision in CAP-09 (`LEARNING_REVIEW`, outcome `PROMOTE`), by a scientist independent of the claim and its cited records. CAP-08 still implements none of these downstream acts. Only the words "not yet contracted" are superseded; nothing of CAP-09 is built.
+8. **No safety escalation path exists yet.** An observation or field event indicating contamination, a biosecurity risk or a health risk is quarantined at once. **Current reading (Note of 2026-10-02; CLOSED):** interim position 8 is closed by the amendment of 2026-10-02 (safety and ecology, point 9): who is told, how fast, who may stop a trial, and how a stop is recorded are CAP-10's ("Safety signals" there). A held record still stays quarantined in CAP-08 until the CAP-10 signal is closed (point 5). Nothing of CAP-10 is built, and delivery of notifications remains an open gap in CAP-10. The escalation authority and process are open, for a future governance decision.
 
 **Prerequisites before any code:** CAP-04 built first; the dependency audit's independent verification and the extraction (roadmap, section 8.5).
 
@@ -302,8 +314,8 @@ CAP-08 runs the trial and keeps its record. It does not decide that anything wor
 | Is the trial's result admitted as evidence? | CAP-04, on a person's submission |
 | What does the admitted evidence, this trial's among it, say about a question? | CAP-05 |
 | Has a learning claim earned promotion to validated knowledge? | CAP-09 |
-| Is the material safe, and what is its ecological effect? | CAP-10, which has no contract yet |
-| What is the formulation being tested? | CAP-07, which has no contract yet |
+| Is the material safe, and what is its ecological effect? | CAP-10, which has no contract yet **Current reading (Note of 2026-10-02; CLOSED):** CAP-10 has a canonical contract of 2026-10-02, relied on at activation by this contract's amendment of that date; nothing of CAP-10 is built. |
+| What is the formulation being tested? | CAP-07, which has no contract yet **Current reading (Note of 2026-10-02; CLOSED):** CAP-07 has a canonical contract of 2026-09-30, relied on by this contract's amendment of 2026-09-30; nothing of CAP-07 is built. |
 | What did someone see in a field outside any trial? | Proposed CAP-36 |
 | Does it work? Should it be used? | Nothing in CAP-08. A trial's result is evidence, not a verdict |
 
@@ -368,7 +380,7 @@ interface Cap08TrialRegistration {
 
   testMaterial: {
     kind: "FORMULATION_VERSION" | "INGREDIENT" | "REGISTERED_PRODUCT" | "PRACTICE" | "OTHER";
-    reference?: string;                  // a CAP-07 or CAP-06 record, once those exist; otherwise declared
+    reference?: string;                  // a CAP-07 or CAP-06 record, once those exist; otherwise declared. Current reading (Note of 2026-10-02; SUPERSEDED): required for FORMULATION_VERSION and INGREDIENT, as { recordId, recordVersion }, not a string; declared for the other kinds (amendments of 2026-09-30, point 1, and 2026-10-02 (fifth), point 4)
     description: string;
   };
 
@@ -384,7 +396,7 @@ interface Cap08TrialRegistration {
 
   // Declared before activation, and addressed by the activating scientist
   preconditions: {
-    safetyBasis: string;                 // why the material may be applied, until CAP-10 exists
+    safetyBasis: string;                 // why the material may be applied, until CAP-10 exists. Current reading (Note of 2026-10-02; SUPERSEDED): declared narrative only; no longer sufficient for any applied material, which needs a CAP-10 outcome or, for a registered product, a declared on-label use; it remains the basis only for a practice (amendment of 2026-10-02, safety and ecology, points 1 and 9)
     safetyEvidence: string[];            // admitted CAP-04 memoryRecordIds
     permits: Array<{ kind: string; reference: string; heldBy: string }>;
     ethicsApproval?: { body: string; reference: string };
@@ -520,7 +532,7 @@ interface Cap08TrialObservation {
 - **Correction** is a new version, superseding the old, with its reason. The superseded version stays readable and is never counted in a later summary.
 - **Quarantine:** a `TRIAL_REVIEWER` may quarantine an admitted observation (`TRIAL_OBSERVATION_QUARANTINE`), with reasons, and release it. A quarantined observation is excluded from summaries by policy, and the exclusion is shown. The recorder never releases their own.
 - **Field events** are recorded the same way, by a `TRIAL_RECORDER`: a `PROTOCOL_DEVIATION` (what was not done as the protocol required), or an `ADVERSE_EVENT` (harm to crops, soil, water, animals or people). **Every field event appears in every later outcome summary,** and an adverse event is always disclosed.
-- **A safety signal is quarantined at once** (interim position 8). An observation, or an adverse event, declaring contamination, a biosecurity risk or a health risk is held on admission, fail closed, for a `TRIAL_REVIEWER`. The trial shows `SAFETY_SIGNAL_OPEN` on every read until every such record is resolved. **Who must be told, how fast, and who may stop a trial are not defined:** the escalation authority and process are an open gap, for a future governance decision.
+- **A safety signal is quarantined at once** (interim position 8). An observation, or an adverse event, declaring contamination, a biosecurity risk or a health risk is held on admission, fail closed, for a `TRIAL_REVIEWER`. The trial shows `SAFETY_SIGNAL_OPEN` on every read until every such record is resolved. **Who must be told, how fast, and who may stop a trial are not defined:** the escalation authority and process are an open gap, for a future governance decision. **Current reading (Note of 2026-10-02; CLOSED):** defined by CAP-10 ("Safety signals"), and the gap is closed by the amendment of 2026-10-02 (safety and ecology, point 9); what remains open, such as the delivery of notifications, is recorded in CAP-10's "Open gaps". Nothing of CAP-10 is built.
 - **Accepted into the trial record is not admitted as evidence.** CAP-08's admission, under AAB-PLATFORM-06, accepts an observation into the trial's own record. **Evidence admission is CAP-04's alone** (interim position 6). A controlled trial observation remains subject to scientific review and evidence-admission requirements (`governance/AAB-PLATFORM-OBSERVATION-AND-BRAIN-GOVERNANCE-2026-09-29.md`, section 2.2).
 
 ## The outcome summary
@@ -535,7 +547,7 @@ interface Cap08TrialObservation {
 | `manifest.selection.quarantined` | `EXCLUDE`, each shown as an exclusion |
 | `manifest.selection.policy` | `ALL_ADMITTED`, version `1` |
 | `pinnedInputs[]` | `PROTOCOL` (the activated version, by digest); `TEMPLATE_VERSIONS`; `METRIC_DEFINITIONS` |
-| `integrityRecheck` | `NOT_PERFORMED`, disclosed |
+| `integrityRecheck` | `NOT_PERFORMED`, disclosed **Current reading (Note of 2026-10-02; SUPERSEDED):** `PERFORMED` where a cited CAP-03 verification run covers every member; otherwise `NOT_PERFORMED`, disclosed (amendment of 2026-10-02 (fourth), point 1). |
 | `cutoffAt` | The platform's clock |
 
 ```typescript
@@ -544,7 +556,7 @@ interface Cap08OutcomeSummary {
   capabilityId: "CAP-08";
   resultType: "TRIAL_OUTCOME_SUMMARY";
   schemaVersion: "urn:aab:schema:agr:cap-08:outcome-summary:1";
-  binding: SnapshotBinding;              // rulesVersion "cap-08-summary-rules-1"
+  binding: SnapshotBinding;              // rulesVersion "cap-08-summary-rules-1". Current reading (Note of 2026-10-02; SUPERSEDED): rulesVersion "cap-08-summary-rules-6" (amendments of 2026-09-30 and 2026-10-02, versions 2 to 6; see the amendment of 2026-10-02 (fourth), point 1)
   trialRecordId: string;
   protocolVersion: number;
   requestedBy: ActorReference;
@@ -642,7 +654,7 @@ interface Cap08OutcomeSummary {
 - **CAP-04 decides admission,** by its own rules. CAP-08 never writes to CAP-04.
 - **A summary not accepted,** or accepted with findings, may still be submitted. **Negative and null results are submitted the same way.** What CAP-04 admits, CAP-05 and CAP-09 may use; CAP-08 does not decide what they conclude.
 - **Nothing is submitted automatically,** and no decision in CAP-08 triggers any other capability (decision 10).
-- **The chain, which CAP-08 cites and does not implement** (interim positions 6 and 7): CAP-08 produces a trial outcome; a person submits it to CAP-04; CAP-04 admits it as evidence, by its rules, with a `MEMORY_REVIEWER` deciding any held record; promotion to learning is a later human decision in CAP-09, not yet contracted.
+- **The chain, which CAP-08 cites and does not implement** (interim positions 6 and 7): CAP-08 produces a trial outcome; a person submits it to CAP-04; CAP-04 admits it as evidence, by its rules, with a `MEMORY_REVIEWER` deciding any held record; promotion to learning is a later human decision in CAP-09, not yet contracted. **Current reading (Note of 2026-10-02; SUPERSEDED):** CAP-09 now has a canonical contract of 2026-09-30, in which promotion is a scientist's `LEARNING_REVIEW` decision; the chain is unchanged, and CAP-08 still implements none of it. Nothing of CAP-09 is built.
 
 ## Observation and brain governance
 
@@ -678,7 +690,7 @@ interface Cap08OutcomeSummary {
 | Selection policies | `ALL_ADMITTED`, version `1`; `SCOPE_DERIVED`; quarantined `EXCLUDE`, shown |
 | Pinned inputs | `PROTOCOL`, `TEMPLATE_VERSIONS`, `METRIC_DEFINITIONS` |
 | Integrity re-check; empty snapshot | Not required, disclosed; an empty snapshot refuses |
-| Evaluator and rules versioning | `rulesVersion` `cap-08-summary-rules-1`; rules are code, so no `rulesDigest` |
+| Evaluator and rules versioning | `rulesVersion` `cap-08-summary-rules-1`; rules are code, so no `rulesDigest` **Current reading (Note of 2026-10-02; SUPERSEDED):** `rulesVersion` `cap-08-summary-rules-6` (amendment of 2026-10-02 (fourth), point 1). |
 | Non-reproducible fields | `evaluatedAt`. Identifiers derived from content |
 | Existing evaluations and decisions | **None.** The rehearsal's reviews, packets and eligibility verdicts are not mapped |
 | Decision kinds, roles, outcomes | "Human decisions" |
@@ -699,7 +711,7 @@ interface Cap08OutcomeSummary {
 | `TRIAL_READER` | Read |
 
 - **Each role is a scoped grant covering the country workspace,** resolved by the platform. A grant with no country is never read as covering every country.
-- **Every actor is `HUMAN`,** in their own name.
+- **Every actor is `HUMAN`,** in their own name. **Current reading (Note of 2026-10-02; SUPERSEDED):** every CAP-08 record is submitted by a `HUMAN`, except the safety-signal request, submitted by CAP-08's registered signal-request service (`SERVICE`), `initiatedBy` the recorder, in the recorder's own operation (amendment of 2026-10-02 (fifth), point 7).
 - **Reads are within one country workspace.** A trial code or identifier never reveals whether a trial exists in another.
 
 ## Receipts, operations and routes
@@ -817,19 +829,19 @@ interface Cap08Failure {
 
 ## Open gaps
 
-**Contract gap: CAP-10.** Safety and ecology have no contract. A trial applies material in the field on a declared safety basis that AAB does not assess. This is the most serious gap in CAP-08, and it is disclosed on every trial.
+**Contract gap: CAP-10.** Safety and ecology have no contract. A trial applies material in the field on a declared safety basis that AAB does not assess. **Current reading (Note of 2026-10-02; PARTIALLY CLOSED):** closed as a contract gap by the amendment of 2026-10-02 (safety and ecology, point 9): CAP-10 has a canonical contract, and activation requires a CAP-10 outcome for every applied material. A practice still rests on a declared safety basis, and a registered product used within its registration on a declared on-label use, each shown with `SAFETY_ECOLOGY_NOT_ASSESSED`. What remains open is in CAP-10's "Open gaps". Nothing of CAP-10 is built, so no applied material can yet be activated. This is the most serious gap in CAP-08, and it is disclosed on every trial.
 
-**Contract gap: safety escalation** (interim position 8). A safety signal is quarantined at once, but who must be told, how fast, who may stop a trial, and how a stop is recorded are not defined. They need a future governance decision.
+**Contract gap: safety escalation** (interim position 8). A safety signal is quarantined at once, but who must be told, how fast, who may stop a trial, and how a stop is recorded are not defined. **Current reading (Note of 2026-10-02; CLOSED):** closed as a contract gap by the amendment of 2026-10-02 (safety and ecology, point 9): CAP-10 defines who is told, how fast, who may stop a trial, and how a stop is recorded ("Safety signals" there). Delivery of notifications remains open in CAP-10's "Open gaps", and nothing of CAP-10 is built. They need a future governance decision.
 
 **Contract gap: automated reasoning over trial observations** (interim position 2). No brain is defined to receive them. When one is, it is bound by the platform's brain boundary, and CAP-08 is amended to say what it may read.
 
-**Contract gap: permits, ethics and consent.** What permits and approvals a field trial needs is each country's to say, with its institutions. CAP-08 records them as declared; it does not verify them or know which are required.
+**Contract gap: permits, ethics and consent.** What permits and approvals a field trial needs is each country's to say, with its institutions. CAP-08 records them as declared; it does not verify them or know which are required. **Current reading (Note of 2026-10-02; PARTIALLY CLOSED):** narrowed to ethics and consent (amendment of 2026-10-02 (second), point 5): permits are determined by CAP-11, as a hard gate at activation, from its verified requirement sets. Ethics approval and landholder consent are still declared and addressed, not verified. Until CAP-11 is built, no permit determination exists, and no trial can be activated.
 
 **Contract gap: statistical analysis.** The outcome summary is descriptive. How a scientist's formal analysis, following the declared analysis plan, is recorded, reviewed and bound to the summary is not defined.
 
 **Contract gap: multi-site and multi-season trials.** A trial here has one protocol and one period. Trials across sites or seasons, and their pooling, are not defined.
 
-**Contract gap: the test material.** Until CAP-06 and CAP-07 have contracts, the material under test is declared, not a governed reference.
+**Contract gap: the test material.** Until CAP-06 and CAP-07 have contracts, the material under test is declared, not a governed reference. **Current reading (Note of 2026-10-02; PARTIALLY CLOSED):** partially closed. A formulation or an ingredient under test is a governed CAP-07 or CAP-06 reference, relied on only while its acceptance is valid and current (amendment of 2026-09-30); a registered product's registration and on-label conformance are declared and addressed at activation, verified only where CAP-11 records a regulator decision (amendments of 2026-10-02 and (second)); a pilot batch is traced to its CAP-12 specification (amendment (third)); `OTHER` is not activatable. **It stays open for practices,** which have no governing capability (amendment of 2026-10-02, point 9). None of these pathways is built.
 
 **Contract gap: people in the field.** Farmers and landholders who host trials are not actors here, and a recorder's notes may name them. How they take part, consent, and see results is CAP-24's to define with the country.
 

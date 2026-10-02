@@ -160,6 +160,18 @@ Every citation CAP-07 makes, with its class, relation, expected record kind, whe
 
 **10. What this amendment replaces.** The interfaces, field rules, admission checks' consequences and failure contract are read as above wherever they differ; `RECORD_NOT_FOUND` joins the failure contract where it is named above and is not already there. The dependencies gain a row: **AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests: canonicalisation and digest types; `designed`.** Nothing else in this contract changes. **Nothing is implemented by this amendment.**
 
+## Note of 2026-10-02: clerical reconciliation
+
+Later amendments and contracts made some current-facing text in this contract stale. The stale text includes open gaps, dependency rows, interim positions, current rules-version statements, answer tables and interface comments. It was found by the retrospective decision cross-review (`governance/reviews/AAB-RETROSPECTIVE-DECISION-CROSS-REVIEW-2026-10-02.md`, finding RD-15) and by the review of the reconciliation plan.
+
+Each such passage keeps its original wording, followed by a current reading labelled "Current reading (Note of 2026-10-02; <STATUS>)". The status is CLOSED, PARTIALLY CLOSED or SUPERSEDED, and the reading names the amendment or contract that gives it.
+
+**This note changes no rule or meaning.** It is not an amendment, and no **Amended:** line changes. **Where a mark and the amendment or contract it names differ, the amendment or contract governs.** Nothing of this capability is built.
+
+**Dependency rows added by amendment (Note of 2026-10-02):** the Dependencies table does not show two rows that amendments add: CAP-03 Evidence Integrity & Provenance ("Amendment of 2026-10-02 (fourth): integrity, lineage and the AGR vocabulary, under CAP-03", point 6); AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests ("Amendment of 2026-10-02 (fifth): provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10", point 10). Each row reads exactly as its amendment states it, and **the amendment controls.** This note creates and changes no table row.
+
+**Dependency rows whose current reading has changed (Note of 2026-10-02):** the Dependencies table keeps its original wording, and three existing rows now read as follows. The CAP-10 row (CAP-10 Safety & Ecological Intelligence): "optional at acceptance; required by CAP-08 for field use; CAP-07 grants composition access for it; `designed`." ("Amendment of 2026-10-02: safety and ecology, governed by CAP-10", point 4). The CAP-11 row: "CAP-11 Regulatory Translation & Dossier Support: owns regulatory status; `designed`, post-launch." ("Amendment of 2026-10-02 (second): regulatory status, governed by CAP-11", point 3). The CAP-12 row: "CAP-12 Controlled Manufacturing Transfer: owns manufacturing transfer; CAP-07 grants composition access for it; `designed`, post-launch." ("Amendment of 2026-10-02 (third): composition for manufacturing transfer, governed by CAP-12", point 2). Nothing of CAP-10, CAP-11 and CAP-12 is built. For each row, the governing amendment or contract named controls. This note creates and changes no table row.
+
 ## Why this contract, and what it adopts
 
 **Why.** CAP-07 is sixth in the workstream's order. Its description (`governance/AAB-PLATFORM-OVERVIEW-2026-09-27.md`, section 7.3): CAP-07 "supports scientists to request, build, compare and version formulations for defined objectives". CAP-06's contract makes its acceptance for formulation research "the only thing that lets CAP-07 use an ingredient in a formulation", and leaves to CAP-07 what happens to a formulation built on an acceptance later invalidated. CAP-08 tests formulations as material under trial, and names CAP-07 as the source of "the formulation under test". The evidence is the step 0 snapshots, **with the rehearsal's whole formulation path read in full:** the workbench group in the gateway, every formulation table, view, function and trigger in `agriculture`, the transfer package in `manufacturing_core`, and every formulation reference in `country_core` and `cognitive_core`.
@@ -215,9 +227,9 @@ CAP-07 keeps the governed record of formulation objectives and research formulat
 | May this formulation be trialled? | **A scientist,** by a formulation review in CAP-07 |
 | May this ingredient be used in a formulation? | CAP-06, by an ingredient review |
 | Does the formulation work? | CAP-08 trials, reviewed; then CAP-04, CAP-05 and CAP-09 |
-| Is it safe? What is its ecological effect? | CAP-10, which has no contract yet |
-| Is it permitted for use or sale here? | CAP-11 and the country's regulators; CAP-11 has no contract yet |
-| May it be manufactured? | CAP-12, which has no contract yet |
+| Is it safe? What is its ecological effect? | CAP-10, which has no contract yet **Current reading (Note of 2026-10-02; CLOSED):** CAP-10 has a canonical contract of 2026-10-02, relied on by this contract's amendment of that date; nothing of CAP-10 is built. |
+| Is it permitted for use or sale here? | CAP-11 and the country's regulators; CAP-11 has no contract yet **Current reading (Note of 2026-10-02; CLOSED):** CAP-11 has a canonical contract of 2026-10-02, relied on by this contract's amendment of 2026-10-02 (second); nothing of CAP-11 is built. |
+| May it be manufactured? | CAP-12, which has no contract yet **Current reading (Note of 2026-10-02; CLOSED):** CAP-12 has a canonical contract of 2026-10-02, relied on by this contract's amendment of 2026-10-02 (third); nothing of CAP-12 is built. |
 
 ## What the rehearsal does, and how this contract accounts for it
 
@@ -329,7 +341,7 @@ interface Cap07Formulation {
     shelfLifeDeclared?: string;
   };
   application?: { modes: string[]; rates?: string };               // as declared
-  safetyBasis?: string;                  // why it may be handled and applied as prepared, until CAP-10 exists
+  safetyBasis?: string;                  // why it may be handled and applied as prepared, until CAP-10 exists. Current reading (Note of 2026-10-02; SUPERSEDED): relied on where no CAP-10 outcome exists, and never overriding a negative one (amendment of 2026-10-02, safety and ecology, point 4)
   knownRisks?: string;
 
   // Variants only
@@ -395,7 +407,7 @@ interface Cap07Formulation {
 | `manifest.scope.scopeRule` | `cap-07-dossier-scope`, version `1` |
 | `manifest.selection.mode` | `SCOPE_DERIVED`; quarantined `EXCLUDE`; policy `ALL_ADMITTED`, version `1` |
 | `pinnedInputs[]` | None |
-| `integrityRecheck` | `NOT_PERFORMED`, disclosed |
+| `integrityRecheck` | `NOT_PERFORMED`, disclosed **Current reading (Note of 2026-10-02; SUPERSEDED):** `PERFORMED` where a cited CAP-03 verification run covers every member; otherwise `NOT_PERFORMED`, disclosed (amendment of 2026-10-02 (fourth), point 1). |
 | `cutoffAt` | The platform's clock |
 
 ```typescript
@@ -404,7 +416,7 @@ interface Cap07FormulationDossier {
   capabilityId: "CAP-07";
   resultType: "FORMULATION_DOSSIER";
   schemaVersion: "urn:aab:schema:agr:cap-07:formulation-dossier:1";
-  binding: SnapshotBinding;              // rulesVersion "cap-07-dossier-rules-1"
+  binding: SnapshotBinding;              // rulesVersion "cap-07-dossier-rules-1". Current reading (Note of 2026-10-02; SUPERSEDED): rulesVersion "cap-07-dossier-rules-4" (amendments of 2026-10-02, -2, -3 and -4; see the amendment of 2026-10-02 (fourth), point 1)
   subject: { recordId: string; recordVersion: number };
   requestedBy: ActorReference;
   cutoffAt: string;
@@ -514,7 +526,7 @@ CAP-06 leaves to CAP-07 what happens to a formulation built on an acceptance lat
 |---|---|
 | Scope rules; selection policies | `cap-07-dossier-scope` v1; `ALL_ADMITTED` v1, `SCOPE_DERIVED`, quarantined `EXCLUDE` |
 | Pinned inputs; integrity re-check; empty snapshot | None; not required, disclosed; never empty, since the subject is always a member |
-| Evaluator and rules versioning; non-reproducible fields | `cap-07-dossier-rules-1`; `evaluatedAt` |
+| Evaluator and rules versioning; non-reproducible fields | `cap-07-dossier-rules-1`; `evaluatedAt` **Current reading (Note of 2026-10-02; SUPERSEDED):** `cap-07-dossier-rules-4` (amendment of 2026-10-02 (fourth), point 1). |
 | Existing evaluations and decisions | **None.** The rehearsal's workbench decisions are not mapped |
 | Decision kinds, roles | `FORMULATION_REVIEW`, `CAP07_HELD_RESOLUTION`, `CHALLENGE_RESOLUTION`, each by `FORMULATION_REVIEWER` |
 | Separation of duties beyond the platform's | Never the author of any version of the formulation |
@@ -534,7 +546,7 @@ CAP-06 leaves to CAP-07 what happens to a formulation built on an acceptance lat
 
 - **Each role is a scoped grant covering the country workspace,** resolved by the platform. A grant with no country is never read as covering every country.
 - **Every actor is `HUMAN`,** in their own name. **Every read is authenticated,** within one country workspace; people are named by their names, never by their email addresses.
-- **A formulation's composition is shown only to people holding a CAP-07 role** in its country workspace (decision 16). A CAP-08 role alone shows the formulation's name, version and acceptance for trial, not its composition. Anyone else sees it only by an explicit authorisation, which today is a `FORMULATION_READER` grant.
+- **A formulation's composition is shown only to people holding a CAP-07 role** in its country workspace (decision 16). A CAP-08 role alone shows the formulation's name, version and acceptance for trial, not its composition. Anyone else sees it only by an explicit authorisation, which today is a `FORMULATION_READER` grant. **Current reading (Note of 2026-10-02; SUPERSEDED):** or a `COMPOSITION_ACCESS_GRANT` to one named person, for the purpose `SAFETY_ASSESSMENT` or `MANUFACTURING_TRANSFER` (amendments of 2026-10-02, point 1, and (third), point 1). For every other purpose it is still only a `FORMULATION_READER` grant.
 
 ## Receipts, operations and routes
 
@@ -638,13 +650,13 @@ interface Cap07Failure {
 
 ## Open gaps
 
-**Contract gap: CAP-10.** Acceptance for trial rests on a declared safety and handling basis for the formulation as prepared, which AAB does not assess, disclosed on every dossier and acceptance. Interactions between components are not assessed by anyone until CAP-10 exists.
+**Contract gap: CAP-10.** Acceptance for trial rests on a declared safety and handling basis for the formulation as prepared, which AAB does not assess, disclosed on every dossier and acceptance. Interactions between components are not assessed by anyone until CAP-10 exists. **Current reading (Note of 2026-10-02; PARTIALLY CLOSED):** narrowed. Component interactions are assessed by CAP-10 for every formulation it assesses; a formulation with no CAP-10 outcome still has its interactions assessed by no one, and says so (amendment of 2026-10-02, safety and ecology, point 4). Nothing of CAP-10 is built, so in practice no formulation has one yet.
 
-**Contract gap: regulatory status.** Whether a formulation may be used or sold is each country's, and CAP-11's to govern when it has a contract. CAP-07 records none, and every dossier discloses it.
+**Contract gap: regulatory status.** Whether a formulation may be used or sold is each country's, and CAP-11's to govern when it has a contract. CAP-07 records none, and every dossier discloses it. **Current reading (Note of 2026-10-02; PARTIALLY CLOSED):** narrowed. CAP-11 has a canonical contract; where it records a verified regulator decision or a valid, current dossier assessment on the formulation version, that is shown for the jurisdiction (amendment of 2026-10-02 (second), point 1). It remains not assessed wherever CAP-11 has recorded nothing, which, until CAP-11 is built, is everywhere.
 
 **CAP-08's reliance: amended with this contract.** CAP-08's amendment of 2026-09-30 requires a valid, current `ACCEPT_FOR_TRIAL`, with every component current, at registration and at activation, and a current CAP-06 acceptance in the same way for a single-ingredient trial.
 
-**Contract gap: disclosing a composition.** A governed act disclosing one formulation's composition to a named person, for a stated need such as a trial protocol, is not defined. Until it is, the only authorisation is a `FORMULATION_READER` grant covering the country workspace (decision 16).
+**Contract gap: disclosing a composition.** A governed act disclosing one formulation's composition to a named person, for a stated need such as a trial protocol, is not defined. **Current reading (Note of 2026-10-02; PARTIALLY CLOSED):** closed for the purposes `SAFETY_ASSESSMENT` and `MANUFACTURING_TRANSFER`, by a `COMPOSITION_ACCESS_GRANT` (amendments of 2026-10-02, point 1, and (third), points 1 and 2); still open for every other purpose, such as a trial protocol, where the only authorisation remains a `FORMULATION_READER` grant. Nothing of CAP-07 is built. Until it is, the only authorisation is a `FORMULATION_READER` grant covering the country workspace (decision 16).
 
 **Contract gap: units.** Units are declared strings. A governed vocabulary of units and bases, and conversion between them, is not defined.
 

@@ -136,6 +136,18 @@ Every citation CAP-11 makes, with its class, relation, expected record kind, whe
 
 **12. What this amendment replaces.** The interfaces, field rules, admission checks' consequences and failure contract are read as above wherever they differ; `RECORD_NOT_FOUND` joins the failure contract where it is named above and is not already there. The dependencies gain a row: **AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests: canonicalisation and digest types; `designed`.** Nothing else in this contract changes. **Nothing is implemented by this amendment.**
 
+## Note of 2026-10-02: clerical reconciliation
+
+Later amendments and contracts made some current-facing text in this contract stale. The stale text includes open gaps, dependency rows, interim positions, current rules-version statements, answer tables and interface comments. It was found by the retrospective decision cross-review (`governance/reviews/AAB-RETROSPECTIVE-DECISION-CROSS-REVIEW-2026-10-02.md`, finding RD-15) and by the review of the reconciliation plan.
+
+Each such passage keeps its original wording, followed by a current reading labelled "Current reading (Note of 2026-10-02; <STATUS>)". The status is CLOSED, PARTIALLY CLOSED or SUPERSEDED, and the reading names the amendment or contract that gives it.
+
+**This note changes no rule or meaning.** It is not an amendment, and no **Amended:** line changes. **Where a mark and the amendment or contract it names differ, the amendment or contract governs.** Nothing of this capability is built.
+
+**Dependency rows added by amendment (Note of 2026-10-02):** the Dependencies table does not show two rows that amendments add: CAP-03 Evidence Integrity & Provenance ("Amendment of 2026-10-02 (second): integrity, lineage and the AGR vocabulary, under CAP-03", point 6); AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests ("Amendment of 2026-10-02 (third): provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10", point 12). Each row reads exactly as its amendment states it, and **the amendment controls.** This note creates and changes no table row.
+
+**Dependency rows whose current reading has changed (Note of 2026-10-02):** the Dependencies table keeps its original wording, and one existing row now reads as follows. The CAP-12 row: "CAP-12 Controlled Manufacturing Transfer: relies on the market-authorisation and activity permit determinations; `designed`, post-launch." ("Amendment of 2026-10-02: market authorisation and manufacturing-activity permits, for CAP-12", point 3). Nothing of CAP-12 is built. For each row, the governing amendment or contract named controls. This note creates and changes no table row.
+
 ## Why this contract, and what it adopts
 
 **Why.** Four committed contracts defer regulatory status to CAP-11:
@@ -453,7 +465,7 @@ interface Cap11RegulatoryDossier {
   capabilityId: "CAP-11";
   resultType: "REGULATORY_DOSSIER";
   schemaVersion: "urn:aab:schema:agr:cap-11:dossier:1";
-  binding: SnapshotBinding;              // rulesVersion "cap-11-dossier-rules-1"
+  binding: SnapshotBinding;              // rulesVersion "cap-11-dossier-rules-1"; current reading (Note of 2026-10-02; SUPERSEDED): rulesVersion "cap-11-dossier-rules-2", amendment of 2026-10-02 (second), point 1
   subject: Cap11EvidenceMapping["subject"];
   requirementSet: { recordId: string; recordVersion: number; verificationDecisionIds: string[] };
   jurisdiction: Cap11RegulatorySource["issuingJurisdiction"];
@@ -576,7 +588,7 @@ interface Cap11RegulatorDecisionRecord {
   conditions: string[];
   issuedAt: string;
   expiresAt?: string;
-  supersedes?: { recordId: string; recordVersion: number };      // an amendment, suspension or revocation names the decision it changes
+  supersedes?: { recordId: string; recordVersion: number };      // an amendment, suspension or revocation names the decision it changes; current reading (Note of 2026-10-02; SUPERSEDED): this field is renamed changesRegulatorDecision; the platform's supersedes, reason CORRECTION, corrects a decision recorded wrongly (amendment of 2026-10-02, third, point 3)
 
   authenticityEvidence: Array<{
     kind: "OFFICIAL_PORTAL_OR_REGISTRY" | "REGULATOR_CORRESPONDENCE" | "VERIFIABLE_DIGITAL_SIGNATURE" | "OFFICIAL_REFERENCE_NUMBER" | "DIRECT_PROVIDER_EVIDENCE";
@@ -680,8 +692,8 @@ interface Cap11EgressRecord {
 | Required by the platform | CAP-11 |
 |---|---|
 | Scope rules; selection policies | `cap-11-dossier-scope` v1; `REQUESTER_LISTED` (the mappings and what they cite); policy `ALL_ADMITTED` v1, quarantined `EXCLUDE`, disclosed |
-| Pinned inputs; integrity re-check; empty snapshot | The subject, the set and its requirements and sources, the regulator decisions, the policy; not required, disclosed; **an empty mapping is allowed,** and gives every requirement `NOT_MAPPED` |
-| Evaluator and rules versioning; non-reproducible fields | `cap-11-dossier-rules-1`; `evaluatedAt` |
+| Pinned inputs; integrity re-check; empty snapshot | The subject, the set and its requirements and sources, the regulator decisions, the policy; not required, disclosed; **an empty mapping is allowed,** and gives every requirement `NOT_MAPPED` **Current reading (Note of 2026-10-02; SUPERSEDED):** integrity re-check: a CAP-03 verification run may be requested; `PERFORMED` where a cited run covers every member, otherwise not performed, disclosed (amendment of 2026-10-02, second, point 1). |
+| Evaluator and rules versioning; non-reproducible fields | `cap-11-dossier-rules-1`; `evaluatedAt` **Current reading (Note of 2026-10-02; SUPERSEDED):** `cap-11-dossier-rules-2` (amendment of 2026-10-02, second, point 1). |
 | Existing evaluations and decisions | **None.** The rehearsal's translation runs and assessments are not mapped |
 | Decision kinds | `REQUIREMENT_SET_VERIFICATION`, `DOSSIER_ASSESSMENT`, `REGULATOR_DECISION_VERIFICATION`, `PERMIT_DETERMINATION`, `COUNTRY_GOVERNANCE_EXEMPTION_APPROVAL`, `EGRESS_AUTHORISATION`, `ASSESSOR_QUALIFICATION_REVIEW`, `COUNTRY_REGULATORY_POLICY_APPROVAL`, `CAP11_HELD_RESOLUTION`, `CHALLENGE_RESOLUTION` |
 | Separation of duties beyond the platform's | "The deciders" |
@@ -834,7 +846,7 @@ interface Cap11Failure {
 
 **Contract gap: the cross-domain pathway to SCS** (decision 18). Not defined.
 
-**Contract gap: CAP-12.** Commercial manufacture's reliance on CAP-11 is recorded, not defined.
+**Contract gap: CAP-12.** Commercial manufacture's reliance on CAP-11 is recorded, not defined. **Current reading (Note of 2026-10-02; CLOSED):** closed as a contract gap: the reliance is defined by the amendment of 2026-10-02 (for CAP-12) and CAP-12's contract (decision 10). Neither CAP-11 nor CAP-12 is built.
 
 **Contract gap: vocabularies.** Jurisdiction codes, product categories, activities and sites are declared strings, matched exactly until a governed vocabulary exists.
 

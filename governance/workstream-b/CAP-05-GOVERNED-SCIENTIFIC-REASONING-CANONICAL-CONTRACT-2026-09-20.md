@@ -135,6 +135,16 @@ Every citation CAP-05 makes, with its class, relation, expected record kind, whe
 
 **11. What this amendment replaces.** The interfaces, field rules, admission checks' consequences and failure contract are read as above wherever they differ; `RECORD_NOT_FOUND` joins the failure contract where it is named above and is not already there. The dependencies gain a row: **AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests: canonicalisation and digest types; `designed`.** Nothing else in this contract changes. **Nothing is implemented by this amendment.**
 
+## Note of 2026-10-02: clerical reconciliation
+
+Later amendments and contracts made some current-facing text in this contract stale. The stale text includes open gaps, dependency rows, interim positions, current rules-version statements, answer tables and interface comments. It was found by the retrospective decision cross-review (`governance/reviews/AAB-RETROSPECTIVE-DECISION-CROSS-REVIEW-2026-10-02.md`, finding RD-15) and by the review of the reconciliation plan.
+
+Each such passage keeps its original wording, followed by a current reading labelled "Current reading (Note of 2026-10-02; <STATUS>)". The status is CLOSED, PARTIALLY CLOSED or SUPERSEDED, and the reading names the amendment or contract that gives it.
+
+**This note changes no rule or meaning.** It is not an amendment, and no **Amended:** line changes. **Where a mark and the amendment or contract it names differ, the amendment or contract governs.** Nothing of this capability is built.
+
+**Dependency rows added by amendment (Note of 2026-10-02):** this contract has no Dependencies section. Its amendments add two rows: CAP-03 Evidence Integrity & Provenance ("Amendment of 2026-10-02: integrity, lineage and the AGR vocabulary, under CAP-03", point 6); AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests ("Amendment of 2026-10-02 (second): provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10", point 11). Each row reads exactly as its amendment states it, and **the amendment controls.** This note creates no section and no row.
+
 ## The boundary, in plain English
 
 > **The scientist deliberately asks, "Show me what the admitted evidence says about this question right now." AAB returns a time-bounded, evidence-linked landscape and stops.**
@@ -243,7 +253,7 @@ CAP-05 adopts AAB-PLATFORM-07 by this amendment. Each evaluation takes one snaps
 | `members[]` | From CAP-04's read of each listed record: identifier, version, the admission decision's `recordDigest`, `admissionDecisionId`, outcome, limitation codes and provenance gaps |
 | `exclusions[]` | The nine reasons, in AAB-PLATFORM-07's order, one per listed record not used |
 | `pinnedInputs[]` | `STANCE_ASSIGNMENTS` and `REQUIRED_EVIDENCE_CATEGORIES`: each with its identifier, version `1` and digest, and written once with the evaluation |
-| `integrityRecheck` | `NOT_PERFORMED`, disclosed (decision 8) |
+| `integrityRecheck` | `NOT_PERFORMED`, disclosed (decision 8) **Current reading (Note of 2026-10-02; SUPERSEDED):** `PERFORMED` where a cited CAP-03 verification run covers every member; otherwise `NOT_PERFORMED`, disclosed (amendment of 2026-10-02, under CAP-03, point 1). |
 | `cutoffAt` | The platform's clock. Never chosen by the requester (decision 3) |
 
 **How listed records become members or exclusions:**
@@ -267,7 +277,7 @@ interface Cap05EvidenceLandscape {
   schemaVersion: "urn:aab:schema:agr:cap-05:evidence-landscape:1";
 
   binding: SnapshotBinding;             // AAB-PLATFORM-07: snapshot, manifest and result digests,
-                                        // evaluatorVersion, rulesVersion "cap-05-landscape-rules-1"
+                                        // evaluatorVersion, rulesVersion "cap-05-landscape-rules-1". Current reading (Note of 2026-10-02; SUPERSEDED): rulesVersion "cap-05-landscape-rules-2" (amendment of 2026-10-02, under CAP-03, point 1)
   question: { questionText: string; domainCodes: string[]; subjectScope?: string[] };
   cutoffAt: string;
   requestedBy: ActorReference;
@@ -396,8 +406,8 @@ interface Cap05EvidenceLandscape {
   - **One open challenge per review.** A second is refused while one is open.
   - **A challenge resolution is final in CAP-05.** It is not itself challenged. A later challenge of the same review, with new grounds, is allowed. This is the pilot position. Whether resolutions should be challengeable under AAB-PLATFORM-08 remains an open platform question.
   - **An open challenge prevents reliance.** Unlike a CAP-04 decision, a review is relied on only while it is `VALID` and `CURRENT` (AAB-PLATFORM-08, section 9). That is the platform's rule, and CAP-05 does not relax it.
-  - **An upheld challenge invalidates the review.** It stays on the record with its outcome, and is never relied on again. A new review of the landscape supersedes it. What happens to anything that relied on it is CAP-09's to decide (below).
-- **What relies on a review** is for CAP-09's contract to decide, including what happens to what relied on a review later invalidated. CAP-05 does not decide what a review permits.
+  - **An upheld challenge invalidates the review.** It stays on the record with its outcome, and is never relied on again. A new review of the landscape supersedes it. What happens to anything that relied on it is CAP-09's to decide (below). **Current reading (Note of 2026-10-02; CLOSED):** decided in CAP-09's canonical contract of 2026-09-30: a promotion resting on a landscape review later invalidated is potentially stale until reviewed again (CAP-09, "When evidence changes"). Nothing of CAP-09 is built.
+- **What relies on a review** is for CAP-09's contract to decide, including what happens to what relied on a review later invalidated. **Current reading (Note of 2026-10-02; CLOSED):** CAP-09's canonical contract decides it (decision 13): citing a landscape is optional; if one is cited, its `FIT_AS_EVIDENCE_BASIS` review must be valid and current at promotion, and its later invalidation makes the promotion potentially stale. Nothing of CAP-09 is built. CAP-05 does not decide what a review permits.
 
 ## Adopting AAB-PLATFORM-07 and AAB-PLATFORM-08
 
@@ -407,7 +417,7 @@ interface Cap05EvidenceLandscape {
 | Selection policies | `ALL_ADMITTED`, `REVIEWED_EVIDENCE_ONLY`, `VERIFIED_ORIGINALS_ONLY`, version `1`; mode `REQUESTER_LISTED`; quarantined records always `EXCLUDE`, and never included anywhere |
 | Pinned inputs | `STANCE_ASSIGNMENTS`, `REQUIRED_EVIDENCE_CATEGORIES` |
 | Integrity re-check; empty snapshot | Not required, disclosed; an empty snapshot refuses the evaluation |
-| Evaluator and rules versioning | `evaluatorVersion` names the evaluating code; `rulesVersion` is `cap-05-landscape-rules-1`, a new version for any change to "The rules". The rules are code, so no `rulesDigest` |
+| Evaluator and rules versioning | `evaluatorVersion` names the evaluating code; `rulesVersion` is `cap-05-landscape-rules-1`, a new version for any change to "The rules". The rules are code, so no `rulesDigest` **Current reading (Note of 2026-10-02; SUPERSEDED):** `rulesVersion` is `cap-05-landscape-rules-2` (amendment of 2026-10-02, under CAP-03, point 1). |
 | Non-reproducible fields | `evaluatedAt`. `evaluationId` is derived from the snapshot's digest, the evaluator version and the rules version; finding identifiers from their content |
 | Refusal codes | "Failure contract" |
 | Existing evaluations and decisions (07, section 10; 08, section 13) | **None.** The rehearsal has no CAP-05 evaluation or review. The cognitive loop's node states are not CAP-05 evaluations and are not mapped ("What the rehearsal does") |
@@ -418,7 +428,7 @@ interface Cap05EvidenceLandscape {
 | More than one decider | Not required |
 | Challenging role | `LANDSCAPE_REVIEWER`, other than the decider |
 | Triggers and lapse | "Review of a landscape": all ten platform change kinds declared; 12 months |
-| What relies on reviews | CAP-09's to decide (open gap) |
+| What relies on reviews | CAP-09's to decide (open gap) **Current reading (Note of 2026-10-02; CLOSED):** decided by CAP-09 (decision 13): a cited landscape's `FIT_AS_EVIDENCE_BASIS` review must be valid and current at promotion. Nothing of CAP-09 is built. |
 
 ## Authority
 
@@ -508,7 +518,7 @@ interface Cap05Failure {
 
 ## Open gaps
 
-**Contract gap: what relies on a review.** Whether a CAP-09 learning proposal requires a current `FIT_AS_EVIDENCE_BASIS` review of the landscape it cites is CAP-09's to decide.
+**Contract gap: what relies on a review.** Whether a CAP-09 learning proposal requires a current `FIT_AS_EVIDENCE_BASIS` review of the landscape it cites is CAP-09's to decide. **Current reading (Note of 2026-10-02; CLOSED):** closed as a contract gap by CAP-09's canonical contract (decision 13): yes, where a claim cites a landscape, its `FIT_AS_EVIDENCE_BASIS` review must be valid and current at promotion; citing one is optional. Nothing of CAP-09 is built.
 
 **Contract gap: scope-derived selection.** Selecting evidence by subject or domain, rather than by list, needs stances for records the requester has not seen. It waits on a governed way to assign them.
 

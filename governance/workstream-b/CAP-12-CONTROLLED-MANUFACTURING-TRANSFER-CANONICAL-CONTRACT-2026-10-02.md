@@ -109,6 +109,16 @@ Every citation CAP-12 makes, with its class, relation, expected record kind, whe
 
 **11. What this amendment replaces.** The interfaces, field rules, admission checks' consequences and failure contract are read as above wherever they differ; `RECORD_NOT_FOUND` joins the failure contract where it is named above and is not already there. The dependencies gain a row: **AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests: canonicalisation and digest types; `designed`.** Nothing else in this contract changes. **Nothing is implemented by this amendment.**
 
+## Note of 2026-10-02: clerical reconciliation
+
+Later amendments and contracts made some current-facing text in this contract stale. The stale text includes open gaps, dependency rows, interim positions, current rules-version statements, answer tables and interface comments. It was found by the retrospective decision cross-review (`governance/reviews/AAB-RETROSPECTIVE-DECISION-CROSS-REVIEW-2026-10-02.md`, finding RD-15) and by the review of the reconciliation plan.
+
+Each such passage keeps its original wording, followed by a current reading labelled "Current reading (Note of 2026-10-02; <STATUS>)". The status is CLOSED, PARTIALLY CLOSED or SUPERSEDED, and the reading names the amendment or contract that gives it.
+
+**This note changes no rule or meaning.** It is not an amendment, and no **Amended:** line changes. **Where a mark and the amendment or contract it names differ, the amendment or contract governs.** Nothing of this capability is built.
+
+**Dependency rows added by amendment (Note of 2026-10-02):** the Dependencies table does not show two rows that amendments add: CAP-03 Evidence Integrity & Provenance ("Amendment of 2026-10-02: integrity, lineage and the AGR vocabulary, under CAP-03", point 6); AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests ("Amendment of 2026-10-02 (second): provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10", point 11). Each row reads exactly as its amendment states it, and **the amendment controls.** This note creates and changes no table row.
+
 ## Why this contract, and what it adopts
 
 **Why.** Three committed contracts defer manufacture to CAP-12:
@@ -379,7 +389,7 @@ interface Cap12BatchAttestation {
 ## Manufacturing reports and safety
 
 - **A `MANUFACTURING_REPORT`** by a `MANUFACTURER_RECIPIENT` records a deviation, quality failure, handling incident or observation, with its declared safety implication: `NONE_DECLARED`, `POSSIBLE`, or `HARM_OCCURRED`.
-- **A report with `POSSIBLE` or `HARM_OCCURRED`** writes a CAP-10 safety signal in the same transaction (channel `MANUFACTURING_REPORT`, CAP-10's amendment), concerning the transfer. **It is an unverified manufacturing report until CAP-10's process says otherwise;** CAP-10's lifecycle governs whether it becomes a precautionary hold, and only a CAP-10 determination makes it a substantiated finding.
+- **A report with `POSSIBLE` or `HARM_OCCURRED`** writes a CAP-10 safety signal in the same transaction (channel `MANUFACTURING_REPORT`, CAP-10's amendment), concerning the transfer. **Current reading (Note of 2026-10-02; SUPERSEDED):** CAP-12 never writes a CAP-10 record: CAP-12's registered signal-request service writes a CAP-12 safety-signal request, `initiatedBy` the reporter, and CAP-10's intake service creates the signal from it, citing it (amendment of 2026-10-02, second, point 7). **It is an unverified manufacturing report until CAP-10's process says otherwise;** CAP-10's lifecycle governs whether it becomes a precautionary hold, and only a CAP-10 determination makes it a substantiated finding.
 - **A CAP-10 hold on the transfer** is a CAP-12 hold (below).
 
 ## Holds
@@ -434,7 +444,7 @@ interface Cap12BatchAttestation {
 | Required by the platform | CAP-12 |
 |---|---|
 | Scope rules; selection policies | `cap-12-evidence-basis-scope` v1; **`SCOPE_DERIVED`**: every trial of the version and its declared equivalents, by rule; policy `ALL_ADMITTED` v1, quarantined `EXCLUDE`, disclosed |
-| Evaluator and rules versioning | `cap-12-evidence-basis-rules-1`; `evaluatedAt` not reproducible |
+| Evaluator and rules versioning | `cap-12-evidence-basis-rules-1`; `evaluatedAt` not reproducible **Current reading (Note of 2026-10-02; SUPERSEDED):** `cap-12-evidence-basis-rules-2` (amendment of 2026-10-02, integrity, point 1). |
 | Existing evaluations and decisions | **None.** The rehearsal's packages are not mapped |
 | Decision kinds | `RIGHTS_AUTHORITY_APPROVAL`, `EVIDENCE_BASIS_REVIEW`, `TRANSFER_AUTHORISATION`, `CHANGE_REQUEST_APPROVAL`, `TRANSFER_EGRESS_AUTHORISATION`, `HOLD_RELEASE`, `ASSESSOR_QUALIFICATION_REVIEW`, `COUNTRY_TRANSFER_POLICY_APPROVAL`, `CAP12_HELD_RESOLUTION`, `CHALLENGE_RESOLUTION` |
 | More than one decider | **A commercial authorisation: two,** most restrictive prevails; a country's policy may require two elsewhere |

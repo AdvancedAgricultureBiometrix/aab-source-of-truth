@@ -97,6 +97,18 @@ Every citation CAP-09 makes, with its class, relation, expected record kind, whe
 
 **10. What this amendment replaces.** The interfaces, field rules, admission checks' consequences and failure contract are read as above wherever they differ; `RECORD_NOT_FOUND` joins the failure contract where it is named above and is not already there. The dependencies gain a row: **AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests: canonicalisation and digest types; `designed`.** Nothing else in this contract changes. **Nothing is implemented by this amendment.**
 
+## Note of 2026-10-02: clerical reconciliation
+
+Later amendments and contracts made some current-facing text in this contract stale. The stale text includes open gaps, dependency rows, interim positions, current rules-version statements, answer tables and interface comments. It was found by the retrospective decision cross-review (`governance/reviews/AAB-RETROSPECTIVE-DECISION-CROSS-REVIEW-2026-10-02.md`, finding RD-15) and by the review of the reconciliation plan.
+
+Each such passage keeps its original wording, followed by a current reading labelled "Current reading (Note of 2026-10-02; <STATUS>)". The status is CLOSED, PARTIALLY CLOSED or SUPERSEDED, and the reading names the amendment or contract that gives it.
+
+**This note changes no rule or meaning.** It is not an amendment, and no **Amended:** line changes. **Where a mark and the amendment or contract it names differ, the amendment or contract governs.** Nothing of this capability is built.
+
+**Dependency rows added by amendment (Note of 2026-10-02):** the Dependencies table does not show two rows that amendments add: CAP-03 Evidence Integrity & Provenance ("Amendment of 2026-10-02 (second): integrity, lineage and the AGR vocabulary, under CAP-03", point 6); AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests ("Amendment of 2026-10-02 (third): provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10", point 10). Each row reads exactly as its amendment states it, and **the amendment controls.** This note creates and changes no table row.
+
+**Dependency rows whose current reading has changed (Note of 2026-10-02):** the Dependencies table keeps its original wording, and one existing row now reads as follows. The CAP-10 row (CAP-10 Safety & Ecological Intelligence): "owns safety; CAP-09 never promotes a claim of safety; a promoted adverse effect is a currency trigger in CAP-10; `designed`." ("Amendment of 2026-10-02: the safety label, and adverse effects, under CAP-10", point 3). Nothing of CAP-10 is built. For each row, the governing amendment or contract named controls. This note creates and changes no table row.
+
 ## Why this contract, and what it adopts
 
 **Why.** CAP-09 is seventh and last in the workstream's order. Its description (`governance/AAB-PLATFORM-OVERVIEW-2026-09-27.md`, section 7.3): CAP-09 "lets an authorised scientist decide whether a conclusion may be treated as validated knowledge". Four records already set its boundary:
@@ -156,7 +168,7 @@ CAP-09 keeps the governed record of learning claims and the scientific decision 
 | What conclusion does a scientist draw, where does it hold, and what does it rest on? | **CAP-09**, a learning claim |
 | How strong is the basis for it, now? | **CAP-09**, a learning dossier, which shows it and does not score it |
 | May this conclusion be treated as knowledge, within its boundary? | **A scientist,** by a learning review in CAP-09 |
-| Is it safe? | CAP-10, which has no contract yet |
+| Is it safe? | CAP-10, which has no contract yet **Current reading (Note of 2026-10-02; CLOSED):** CAP-10 now has a contract (amendment of 2026-10-02, the safety label); nothing of it is built. CAP-10 assesses whether a declared use is acceptable within a boundary, and answers "Is it safe, in general?" with "Nobody in AAB" (CAP-10, "What CAP-10 answers, and what it does not"). |
 | Should anyone act on it? | Not AAB. People, under their own authority |
 
 ## What the rehearsal does, and how this contract accounts for it
@@ -284,7 +296,7 @@ interface Cap09LearningClaim {
 | `manifest.scope.scopeRule` | `cap-09-dossier-scope`, version `1` |
 | `manifest.selection.mode` | `REQUESTER_LISTED`: the claim's citations; quarantined `EXCLUDE`, disclosed; policy `ALL_ADMITTED`, version `1` |
 | `pinnedInputs[]` | The cited landscapes and their reviews |
-| `integrityRecheck` | `NOT_PERFORMED`, disclosed |
+| `integrityRecheck` | `NOT_PERFORMED`, disclosed **Current reading (Note of 2026-10-02; SUPERSEDED):** a CAP-03 verification run may be requested; where a cited run covers every member, `integrityRecheck` is `PERFORMED`, otherwise `NOT_PERFORMED`, disclosed (amendment of 2026-10-02, second, point 1). |
 | `cutoffAt` | The platform's clock |
 
 ```typescript
@@ -293,7 +305,7 @@ interface Cap09LearningDossier {
   capabilityId: "CAP-09";
   resultType: "LEARNING_DOSSIER";
   schemaVersion: "urn:aab:schema:agr:cap-09:learning-dossier:1";
-  binding: SnapshotBinding;              // rulesVersion "cap-09-dossier-rules-1"
+  binding: SnapshotBinding;              // rulesVersion "cap-09-dossier-rules-1"; current reading (Note of 2026-10-02; SUPERSEDED): rulesVersion "cap-09-dossier-rules-2", amendment of 2026-10-02 (second), point 1
   subject: { recordId: string; recordVersion: number };
   requestedBy: ActorReference;
   cutoffAt: string;
@@ -379,7 +391,7 @@ interface Cap09LearningDossier {
 
 - **`NO_EFFECT` and `ADVERSE_EFFECT` are learning, reviewed and promoted like any other.** A null or failed result, promoted, is as much knowledge as a positive one, and is kept.
 - **Nothing is suppressed, blocked or rejected because of them.** A promoted negative claim about an ingredient or formulation is shown to CAP-06 and CAP-07 readers as knowledge, beside the record it concerns. Whether to act on it is a person's decision in that capability.
-- **An adverse effect is not a safety assessment.** It records that harm was observed, within its boundary. What follows for safety is CAP-10's, and until CAP-10 exists, a person's.
+- **An adverse effect is not a safety assessment.** It records that harm was observed, within its boundary. What follows for safety is CAP-10's, and until CAP-10 exists, a person's. **Current reading (Note of 2026-10-02; PARTIALLY CLOSED):** CAP-10 now has a contract, but nothing of it is built. Under the contract, a promoted adverse effect makes CAP-10's assessments of the material potentially stale, and whether it is also reported as a safety signal is a person's decision, in CAP-10 (amendment of 2026-10-02, the safety label, point 2). Until CAP-10 is built, what follows for safety remains a person's.
 
 ## When evidence changes
 
@@ -402,8 +414,8 @@ interface Cap09LearningDossier {
 | Required by the platform | CAP-09 |
 |---|---|
 | Scope rules; selection policies | `cap-09-dossier-scope` v1; `ALL_ADMITTED` v1, `REQUESTER_LISTED`, quarantined `EXCLUDE`, disclosed |
-| Pinned inputs; integrity re-check; empty snapshot | The cited landscapes and reviews; not required, disclosed; never empty, since a claim has at least one supporting record |
-| Evaluator and rules versioning; non-reproducible fields | `cap-09-dossier-rules-1`; `evaluatedAt` |
+| Pinned inputs; integrity re-check; empty snapshot | The cited landscapes and reviews; not required, disclosed; never empty, since a claim has at least one supporting record **Current reading (Note of 2026-10-02; SUPERSEDED):** integrity re-check: a CAP-03 verification run may be requested; `PERFORMED` where a cited run covers every member, otherwise not performed, disclosed (amendment of 2026-10-02, second, point 1). |
+| Evaluator and rules versioning; non-reproducible fields | `cap-09-dossier-rules-1`; `evaluatedAt` **Current reading (Note of 2026-10-02; SUPERSEDED):** `cap-09-dossier-rules-2` (amendment of 2026-10-02, second, point 1). |
 | Existing evaluations and decisions | **None.** The rehearsal's learning approvals are not mapped |
 | Decision kinds, roles | `LEARNING_REVIEW`, `CAP09_HELD_RESOLUTION`, `CHALLENGE_RESOLUTION`, each by `LEARNING_REVIEWER` |
 | Separation of duties beyond the platform's | Never the proposer of any version of the claim |
@@ -531,7 +543,7 @@ interface Cap09Failure {
 
 **Contract gap: boundary vocabulary.** Crops, locations, periods and conditions are declared strings. A governed vocabulary, and matching a boundary against evidence automatically, are not defined.
 
-**Contract gap: CAP-10.** Adverse effects are recorded as observations of harm, never assessed for safety, until CAP-10 exists.
+**Contract gap: CAP-10.** Adverse effects are recorded as observations of harm, never assessed for safety, until CAP-10 exists. **Current reading (Note of 2026-10-02; SUPERSEDED):** adverse effects are recorded as observations of harm and are never safety assessments; a promoted one makes CAP-10's assessments of the material potentially stale (amendment of 2026-10-02, the safety label, point 3). CAP-10 has a contract and is not built.
 
 **Contract gap: automated proposals.** No brain proposes learning claims in this version. When one does, its outputs are held for a person.
 

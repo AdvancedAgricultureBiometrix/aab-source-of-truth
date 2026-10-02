@@ -126,6 +126,18 @@ Every citation CAP-06 makes, with its class, relation, expected record kind, whe
 
 **10. What this amendment replaces.** The interfaces, field rules, admission checks' consequences and failure contract are read as above wherever they differ; `RECORD_NOT_FOUND` joins the failure contract where it is named above and is not already there. The dependencies gain a row: **AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests: canonicalisation and digest types; `designed`.** Nothing else in this contract changes. **Nothing is implemented by this amendment.**
 
+## Note of 2026-10-02: clerical reconciliation
+
+Later amendments and contracts made some current-facing text in this contract stale. The stale text includes open gaps, dependency rows, interim positions, current rules-version statements, answer tables and interface comments. It was found by the retrospective decision cross-review (`governance/reviews/AAB-RETROSPECTIVE-DECISION-CROSS-REVIEW-2026-10-02.md`, finding RD-15) and by the review of the reconciliation plan.
+
+Each such passage keeps its original wording, followed by a current reading labelled "Current reading (Note of 2026-10-02; <STATUS>)". The status is CLOSED, PARTIALLY CLOSED or SUPERSEDED, and the reading names the amendment or contract that gives it.
+
+**This note changes no rule or meaning.** It is not an amendment, and no **Amended:** line changes. **Where a mark and the amendment or contract it names differ, the amendment or contract governs.** Nothing of this capability is built.
+
+**Dependency rows added by amendment (Note of 2026-10-02):** the Dependencies table does not show two rows that amendments add: CAP-03 Evidence Integrity & Provenance ("Amendment of 2026-10-02 (third): integrity, lineage and the AGR vocabulary, under CAP-03", point 6); AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests ("Amendment of 2026-10-02 (fourth): provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10", point 10). Each row reads exactly as its amendment states it, and **the amendment controls.** This note creates and changes no table row.
+
+**Dependency rows whose current reading has changed (Note of 2026-10-02):** the Dependencies table keeps its original wording, and three existing rows now read as follows. The CAP-07 row (CAP-07 Formulation Intelligence): relies on acceptances: every component of a formulation is a CAP-06 ingredient holding a valid, current acceptance for formulation research; `designed` (CAP-07's canonical contract, "Why this contract, and what it adopts", line 174; its contract governs this row). The CAP-10 row (CAP-10 Safety & Ecological Intelligence): "optional at acceptance; required by CAP-08 for field use; `designed`." ("Amendment of 2026-10-02: safety and ecology, governed by CAP-10", point 4). The CAP-11 row: "CAP-11 Regulatory Translation & Dossier Support: owns regulatory status; supersedes the declared status where it records a verified regulator decision; `designed`, post-launch." ("Amendment of 2026-10-02 (second): regulatory status, governed by CAP-11", point 3). Nothing of CAP-07, CAP-10 and CAP-11 is built. For each row, the governing amendment or contract named controls. This note creates and changes no table row.
+
 ## Why this contract, and what it adopts
 
 **Why.** CAP-06 is fifth in the workstream's order. Its description (`governance/AAB-PLATFORM-OVERVIEW-2026-09-27.md`, line 200): CAP-06 "investigates existing ingredients, and candidate new ones from evidence and country resources". CAP-01's contract hands it referrals, and leaves to CAP-06 how a referral is received and closed. CAP-08 tests ingredients as material under trial, and CAP-07 builds formulations from them. The evidence is the step 0 snapshots, **with every ingredient path in `agriculture`, the ingredient candidates in `cognitive_core`, the starter library in `country_core`, and the dormant discovery-to-ingredient path read in full for this contract** ("What the rehearsal does").
@@ -175,8 +187,8 @@ CAP-06 keeps the governed record of ingredients and candidates, and the scientif
 | What is known and missing about this ingredient, now? | **CAP-06**, an ingredient dossier |
 | May this ingredient be used in formulation research? | **A scientist,** by an ingredient review in CAP-06 |
 | What becomes of a referral from CAP-01? | **CAP-06**, by a referral receipt |
-| Is it safe? What is its ecological effect? | CAP-10, which has no contract yet |
-| Is it permitted for use or sale here? | CAP-11 and the country's regulators; CAP-11 has no contract yet |
+| Is it safe? What is its ecological effect? | CAP-10, which has no contract yet **Current reading (Note of 2026-10-02; CLOSED):** CAP-10 has a canonical contract of 2026-10-02, relied on by this contract's amendment of that date; nothing of CAP-10 is built. |
+| Is it permitted for use or sale here? | CAP-11 and the country's regulators; CAP-11 has no contract yet **Current reading (Note of 2026-10-02; CLOSED):** CAP-11 has a canonical contract of 2026-10-02, relied on by this contract's amendment of 2026-10-02 (second); nothing of CAP-11 is built. |
 | Does a formulation with it work? | CAP-08 trials, reviewed; then CAP-04, CAP-05 and CAP-09 |
 | What is in a formulation? | CAP-07 |
 
@@ -263,7 +275,7 @@ interface Cap06Record {
     applicationModes: string[];          // as declared, e.g. "soil incorporation", "foliar"
     handlingAndStorage?: string;
     knownRisks?: string;
-    safetyBasis?: string;                // why it may be handled and applied, until CAP-10 exists
+    safetyBasis?: string;                // why it may be handled and applied, until CAP-10 exists. Current reading (Note of 2026-10-02; SUPERSEDED): relied on where no CAP-10 outcome exists, and never overriding a negative one (amendment of 2026-10-02, safety and ecology, point 4)
     regulatoryStatus?: string;           // as declared; never verified by CAP-06
   };
 
@@ -343,7 +355,7 @@ interface Cap06Record {
 | `manifest.scope.scopeRule` | `cap-06-dossier-scope`, version `1` |
 | `manifest.selection.mode` | `SCOPE_DERIVED`; quarantined `EXCLUDE`; policy `ALL_ADMITTED`, version `1` |
 | `pinnedInputs[]` | None |
-| `integrityRecheck` | `NOT_PERFORMED`, disclosed |
+| `integrityRecheck` | `NOT_PERFORMED`, disclosed **Current reading (Note of 2026-10-02; SUPERSEDED):** `PERFORMED` where a cited CAP-03 verification run covers every member; otherwise `NOT_PERFORMED`, disclosed (amendment of 2026-10-02 (third), point 1). |
 | `cutoffAt` | The platform's clock |
 
 ```typescript
@@ -352,7 +364,7 @@ interface Cap06IngredientDossier {
   capabilityId: "CAP-06";
   resultType: "INGREDIENT_DOSSIER";
   schemaVersion: "urn:aab:schema:agr:cap-06:ingredient-dossier:1";
-  binding: SnapshotBinding;              // rulesVersion "cap-06-dossier-rules-1"
+  binding: SnapshotBinding;              // rulesVersion "cap-06-dossier-rules-1". Current reading (Note of 2026-10-02; SUPERSEDED): rulesVersion "cap-06-dossier-rules-4" (amendments of 2026-10-02, -2, -3 and -4; see the amendment of 2026-10-02 (third), point 1)
   subject: { recordId: string; recordKind: "INGREDIENT" | "INGREDIENT_CANDIDATE"; recordVersion: number };
   requestedBy: ActorReference;
   cutoffAt: string;
@@ -447,7 +459,7 @@ CAP-01's contract leaves to CAP-06 how a referral is received and closed. **An `
 |---|---|
 | Scope rules; selection policies | `cap-06-dossier-scope` v1; `ALL_ADMITTED` v1, `SCOPE_DERIVED`, quarantined `EXCLUDE` |
 | Pinned inputs; integrity re-check; empty snapshot | None; not required, disclosed; never empty, since the subject is always a member |
-| Evaluator and rules versioning; non-reproducible fields | `cap-06-dossier-rules-1`; `evaluatedAt` |
+| Evaluator and rules versioning; non-reproducible fields | `cap-06-dossier-rules-1`; `evaluatedAt` **Current reading (Note of 2026-10-02; SUPERSEDED):** `cap-06-dossier-rules-4` (amendment of 2026-10-02 (third), point 1). |
 | Existing evaluations and decisions | **None.** The rehearsal's reviews and approvals are not mapped |
 | Decision kinds, roles | `INGREDIENT_REVIEW`, `REFERRAL_RECEIPT`, `CAP06_HELD_RESOLUTION`, `CHALLENGE_RESOLUTION`, each by `INGREDIENT_REVIEWER` |
 | Separation of duties beyond the platform's | Never the curator who registered the ingredient or proposed the candidate |
@@ -565,9 +577,9 @@ interface Cap06Failure {
 
 ## Open gaps
 
-**Contract gap: CAP-10.** Acceptance for formulation research rests on a declared safety and handling basis that AAB does not assess, disclosed on every dossier and acceptance.
+**Contract gap: CAP-10.** Acceptance for formulation research rests on a declared safety and handling basis that AAB does not assess, disclosed on every dossier and acceptance. **Current reading (Note of 2026-10-02; SUPERSEDED):** an ingredient with no CAP-10 outcome rests on a declared basis that AAB does not assess, disclosed on every dossier and acceptance; until CAP-10 is built, that is every ingredient (amendment of 2026-10-02, safety and ecology, point 4). The gap stays open in practice.
 
-**Contract gap: regulatory status.** Whether an ingredient may be used or sold is each country's, and CAP-11's to govern when it has a contract. CAP-06 records it as declared.
+**Contract gap: regulatory status.** Whether an ingredient may be used or sold is each country's, and CAP-11's to govern when it has a contract. CAP-06 records it as declared. **Current reading (Note of 2026-10-02; PARTIALLY CLOSED):** narrowed. CAP-11 has a canonical contract; a verified, valid and current regulator decision it records supersedes the declared status for that version and jurisdiction, and a CAP-11 dossier assessment replaces the label (amendment of 2026-10-02 (second), point 1). The status remains declared wherever CAP-11 has recorded nothing, which, until CAP-11 is built, is everywhere.
 
 **Contract gap: a shared reference set.** Many ingredients are known everywhere. A reference set shared across countries would save each country registering them again, but needs explicit authorisation under the canonical template rule, and a governed source. Not defined.
 
