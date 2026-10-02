@@ -5,7 +5,7 @@
 **Capability:** CAP-08 Controlled Trials & Outcomes. It is not SCS-CAP-08 (Due Diligence Package Compilation), a different capability in another domain.
 **Authority:** DEFINES THE CONTRACT FOR CAP-08: HOW A CONTROLLED TRIAL IS DESIGNED, AUTHORISED, OBSERVED UNDER ITS PROTOCOL, SUMMARISED, REVIEWED AND CLOSED, HOW ITS RESULTS ARE OFFERED TO CAP-04, AND ITS BOUNDARIES WITH CAP-04, CAP-07, CAP-09, CAP-10 AND PROPOSED CAP-36. Establishes no commissioning, production, Gate D, WP05, scientific-validity, efficacy or regulatory authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
 **Written:** 2026-09-29, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3). CAP-08 had no design contract before this one.
-**Amended:** 2026-09-30 (the test material, governed by CAP-07 and CAP-06), with CAP-07's canonical contract; and 2026-10-02 (safety and ecology, governed by CAP-10), with CAP-10's canonical contract; and 2026-10-02, second (permits, governed by CAP-11), with CAP-11's canonical contract; and 2026-10-02, third (pilot batches as trial material, from CAP-12), with CAP-12's canonical contract; and 2026-10-02, fourth (integrity, lineage and the AGR vocabulary, under CAP-03), with CAP-03's canonical contract.
+**Amended:** 2026-09-30 (the test material, governed by CAP-07 and CAP-06), with CAP-07's canonical contract; and 2026-10-02 (safety and ecology, governed by CAP-10), with CAP-10's canonical contract; and 2026-10-02, second (permits, governed by CAP-11), with CAP-11's canonical contract; and 2026-10-02, third (pilot batches as trial material, from CAP-12), with CAP-12's canonical contract; and 2026-10-02, fourth (integrity, lineage and the AGR vocabulary, under CAP-03), with CAP-03's canonical contract; and 2026-10-02, fifth (provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10), with AAB-PLATFORM-10's canonical contract.
 
 ## Amendment of 2026-09-30: the test material, governed by CAP-07 and CAP-06
 
@@ -149,6 +149,95 @@ The activation records each attestation it relied on. **The CAP-10 outcome and C
 **5. Before implementation.** CAP-08's step 4 (code) uses the vocabulary and CAP-03's verification as adopted here.
 
 **6. What this amendment replaces.** The dependencies gain a row: **CAP-03 Evidence Integrity & Provenance: integrity re-check, lineage, the AGR vocabulary and integrity incidents; `designed`, launch release.**
+
+## Amendment of 2026-10-02 (fifth): provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10
+
+**Why.** AAB-PLATFORM-05 Governed Provenance is amended, and AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests is new (`governance/AAB-PLATFORM-10-CANONICAL-SERIALISATION-AND-CRYPTOGRAPHIC-DIGESTS-CANONICAL-CONTRACT-2026-10-02.md`; PR #118). **An adoption without its matrix is incomplete** (AAB-PLATFORM-05, amendment of 2026-10-02, section G). This amendment applies their confirmed decisions to CAP-08, record kind by record kind. Approved by the Platform Owner in review on 2026-10-02. **Nothing of CAP-08 is built, so nothing stored is renamed or rewritten.** Its three tables are reproduced exactly in `governance/workstream-b/AGR-PROVENANCE-ADOPTION-MATRIX-2026-10-02.md`, which `governance/tools/provenance-matrix/check_matrix.py` checks against this contract.
+
+**1. Record kinds.** Every record kind CAP-08 writes, and how each adopts AAB-PLATFORM-05 and AAB-PLATFORM-10:
+
+| Record kind | What it is | `source.sourceType` | Generation method (automation constraint) | Submitter | Supersession | Digest | Resolver kind |
+|---|---|---|---|---|---|---|---|
+| `Cap08TrialRegistration` | Admitted record | `SUBMITTER_AUTHORED` | `HUMAN_DECLARATION` (`REQUIRED_FALSE`) | `HUMAN` | `CORRECTION`, `NEW_VERSION`, `WITHDRAWAL` | `recordDigest` (`DigestReference`, `aab-canonical-json-1`, `sha-256`) | `CAP-08:TRIAL_REGISTRATION` |
+| `Cap08Protocol` | Admitted record, versioned | `SUBMITTER_AUTHORED` | `HUMAN_DECLARATION` (`REQUIRED_FALSE`) | `HUMAN` | `NEW_VERSION`, `CORRECTION` | `recordDigest` (`DigestReference`, `aab-canonical-json-1`, `sha-256`) | `CAP-08:PROTOCOL` |
+| Protocol lock | Status record, written once (no interface yet) | — | `HUMAN_DECLARATION` (`REQUIRED_FALSE`) | `HUMAN`, with the activation request | Never superseded | `recordDigest` (`DigestReference`, `aab-canonical-json-1`, `sha-256`) | `CAP-08:PROTOCOL_LOCK` |
+| `Cap08TrialObservation`; field events (`PROTOCOL_DEVIATION`, `ADVERSE_EVENT`) | Admitted record (field events have no interface yet) | `FIELD_TRIAL` | `HUMAN_DECLARATION` (`REQUIRED_FALSE`) or `INSTRUMENT_CAPTURE` (`REQUIRED_TRUE`), as declared | `HUMAN` (`TRIAL_RECORDER`) | `CORRECTION`, `WITHDRAWAL` | `recordDigest` (`DigestReference`, `aab-canonical-json-1`, `sha-256`) | `CAP-08:TRIAL_OBSERVATION` |
+| Safety-signal request | Admitted record, written once (no interface yet) | `CAPABILITY_OUTPUT` | `DETERMINISTIC_EVALUATION` (`REQUIRED_TRUE`) | `SERVICE` (CAP-08's registered signal-request service), `initiatedBy` the recorder, in the recorder's own operation | Never superseded | `recordDigest` (`DigestReference`, `aab-canonical-json-1`, `sha-256`) | `CAP-08:SAFETY_SIGNAL_REQUEST` |
+| Observation templates, metric definitions | Admitted records, versioned (no interface yet) | `SUBMITTER_AUTHORED` | `HUMAN_DECLARATION` (`REQUIRED_FALSE`) | `HUMAN` | `NEW_VERSION`, `CORRECTION` | `recordDigest` (`DigestReference`, `aab-canonical-json-1`, `sha-256`) | `CAP-08:TEMPLATE` |
+| `Cap08OutcomeSummary` | Evaluation (AAB-PLATFORM-07) | — | `DETERMINISTIC_EVALUATION` (`REQUIRED_TRUE`) | Requested by a `HUMAN` | Never superseded | AAB-PLATFORM-07's digests | `CAP-08:OUTCOME_SUMMARY` |
+| `TEMPLATE_APPROVAL`, `TRIAL_ACTIVATION`, `TRIAL_OUTCOME_REVIEW`, `TRIAL_CLOSURE`, `CAP08_HELD_RESOLUTION`, quarantine and release, `CHALLENGE_RESOLUTION` | Human decisions (AAB-PLATFORM-08) | — | `HUMAN_DECISION` (`REQUIRED_FALSE`) | `HUMAN` | AAB-PLATFORM-08's rules | AAB-PLATFORM-08's `recordDigest` | `AAB-PLATFORM-08:HUMAN_DECISION` |
+
+- **Every admitted record kind** carries `provenance: Provenance` (`provenanceVersion` `"2"`) and a **`recordDigest`: a `DigestReference`** (`recordDigest`, `aab-canonical-json-1`, `sha-256`), calculated in AAB-PLATFORM-05's nine steps over its envelope: every field of the record except `recordDigest`, derived status, later verification results, access logs and presentation-only fields. **Each schema declares its envelope, machine-readably,** before step 4. A `"sha256:"` comment on a `recordDigest` in this contract now reads so.
+- **A record kind named here without an interface** is a written-once admitted record under these same rules; its schema, with its envelope, is written before step 4.
+- **Evaluations** keep AAB-PLATFORM-07's digests; **human decisions** keep AAB-PLATFORM-08's, typed as `recordDigest`s of written-once records.
+- **Every digest of a cited or superseded record is resolved by the system,** never declared in a request.
+- **Each resolver kind is registered** (AAB-PLATFORM-05, section E): by identifier, and version where the kind is versioned, in the country workspace, disclosing only what the reader may see under this contract's read rules; what may not be disclosed is unresolved, never revealed.
+
+**2. Written once.** The `integrity?` reference of the amendment of 2026-10-02 (fourth) is **derived when read.** **`lockedAt` is no longer a protocol field:** when activation is requested, a **protocol lock status record** is written, resolving the protocol's identifier, version and digest; `lockedAt` is derived when read. **A protocol version is written once;** a change before the lock is a new version, and `PROTOCOL_LOCKED` refuses a new version of a locked protocol without a new activation, as before.
+
+**3. Supersession.** `supersedes` takes the platform's declared and resolved shape on registrations, protocols and observations; the registration's `UPDATE` maps to `NEW_VERSION`.
+
+**4. Citations.** Every reference CAP-08 relies on follows the same cite-then-resolve behaviour (AAB-PLATFORM-05, decision 10), through the registered resolver of the expected record kind. A declared version that differs from the version found is unresolved. **The consequence of an unresolved citation follows its class:**
+
+| Citation class | Unresolved consequence |
+|---|---|
+| Subject: the record being evaluated, or that the record is about | Refusal |
+| Authority or membership: the basis for the act, or what the record belongs to | Refusal |
+| Superseded record | Refusal |
+| Mandatory evidence: evidence an outcome relies on | Refusal, or `EVIDENCE_REQUIRED` |
+| Optional evidence: supporting or context evidence | Limitation |
+| Related: material not relied on | Limitation, or omitted with a disclosure |
+
+Every citation CAP-08 makes, with its class, relation, expected record kind, whether it is mandatory, and its outcome and failure code. The field names stay:
+
+| Field | Citation class | Relation | Expected record kind | Mandatory | When unresolved |
+|---|---|---|---|---|---|
+| `testMaterial` and `arms[].material` | Subject | `APPLIED_IN`; **`testMaterial.reference` is the `{ recordId, recordVersion }` of the amendment of 2026-09-30,** not a string | `CAP-07:RECORD` or `CAP-06:RECORD` | Yes | Refusal `TEST_MATERIAL_NOT_ACCEPTED` |
+| `batches[].attestationId` | Authority or membership | `APPLIED_IN`; **now with its version** | `CAP-12:BATCH_ATTESTATION` | Yes, for a pilot batch | Refusal `BATCH_NOT_TRACEABLE` (at activation) |
+| `context.problemReportIds` | Related | `REFERS_TO`; **now with declared versions** | `CAP-01:RECORD` | No | Limitation `CITATION_UNRESOLVED` |
+| `preconditions.safetyEvidence` | Optional evidence | `SUPPORTS`; **now with declared versions** | `CAP-04:MEMORY_RECORD` | No: activation's safety gate is CAP-10's outcome | Limitation `CITATION_UNRESOLVED`; still disclosed `PRECONDITIONS_DECLARED_NOT_VERIFIED` |
+| Protocol `trialRecordId` | Authority or membership | `PART_OF` | `CAP-08:TRIAL_REGISTRATION` | Yes | Refusal `RECORD_NOT_FOUND` |
+| Protocol `templates[].templateVersionId` | Authority or membership | `REFERS_TO` | `CAP-08:TEMPLATE` | Yes | Refusal `TEMPLATE_NOT_APPROVED` |
+| Protocol lock: the protocol | Subject | `DECIDED_ON`: the protocol's identifier, version and digest, resolved | `CAP-08:PROTOCOL` | Yes | Refusal `RECORD_NOT_FOUND` |
+| Observation `trialRecordId`, `protocolRecordId`, `protocolVersion`, `templateVersionId` | Authority or membership | `OBSERVED_IN` | `CAP-08:TRIAL_REGISTRATION`, `CAP-08:PROTOCOL`, `CAP-08:TEMPLATE` | Yes | Refusal `TRIAL_NOT_ACTIVE` / Refusal `NOT_UNDER_PROTOCOL` |
+| Observation `photos[]` | Mandatory evidence | Not `lineage`: each an `objectDigest` | AGR-profile objects | Yes, where the template requires them | Refusal `PHOTO_REQUIRED` / Refusal `PHOTO_NOT_FOUND` (check 6) |
+| Safety-signal request: the observation or field event | Subject | `DERIVED_FROM`, set by the system | `CAP-08:TRIAL_OBSERVATION` | Yes | Cannot be unresolved: set by the system |
+| `supersedes` | Superseded record | The platform's `supersedes` field, never a `lineage` entry | The same record kind | Yes, when declared | Refusal `SUPERSESSION_NOT_PERMITTED` |
+
+**5. The six-gap matrix.**
+
+| Record kind | `SOURCE_UNIDENTIFIED` | `ORIGINAL_NOT_STORED` | `INTEGRITY_UNVERIFIED` | `CITATION_UNRESOLVED` | `CUSTODY_DECLARED_INCOMPLETE` | `CUSTODY_NOT_DECLARED` |
+|---|---|---|---|---|---|---|
+| Trial registration, protocol, template, metric definition | N/A: `SUBMITTER_AUTHORED` | N/A: no original | N/A: no original | By citation class (section 4) | N/A: no original | N/A: no original |
+| Protocol lock | N/A: status record | N/A: status record | N/A: status record | N/A: status record | N/A: status record | N/A: status record |
+| Trial observation, field event | Limitation `SOURCE_UNIDENTIFIED` for a field event reported from outside the trial team; N/A for an observation, recorded at the plot by its recorder | N/A: every attachment is a stored AGR object, or the observation is refused (check 6) | N/A: as for `ORIGINAL_NOT_STORED` | By citation class (section 4) | N/A: born digital, recorded by its recorder | N/A: as for `CUSTODY_DECLARED_INCOMPLETE` |
+| Safety-signal request | N/A: `CAPABILITY_OUTPUT` | N/A: no original | N/A: no original | By citation class (section 4) | N/A: no original | N/A: no original |
+| Outcome summary | N/A: evaluation | N/A: evaluation | N/A: evaluation | N/A: evaluation | N/A: evaluation | N/A: evaluation |
+| Human decisions | N/A: human decision | N/A: human decision | N/A: human decision | N/A: human decision | N/A: human decision | N/A: human decision |
+
+*The matrix's reasons:* **no original:** the record holds no original of its own; what it cites are CAP-04 records, whose gaps are carried by reference. **`SUBMITTER_AUTHORED`:** its content was created by the identified human or authorised service submitting it, so its source is the submission itself. **Evaluation:** an AAB-PLATFORM-07 evaluation, whose members' gaps are carried by reference. **Human decision:** an AAB-PLATFORM-08 decision, bound by digest to what it decides. **Status record:** a written-once record of a state change, bound by digest to the record it concerns. **By citation class:** each citation's consequence is its row in section 4.
+
+**6. Vocabulary.** CAP-08 adopts **`cap-03-vocabulary-2`** (CAP-03's amendment of 2026-10-02), in place of version 1: `OTHER` and `SUBMITTER_AUTHORED` among the source types, and **every generation method with an automation constraint** (`REQUIRED_TRUE`, `REQUIRED_FALSE` or `DECLARED_PER_RECORD`), never inferred from its name. A record whose `automated` contradicts its method's constraint is refused.
+
+**7. Submitters.** **Every CAP-08 record is submitted by a `HUMAN`,** except the safety-signal request. **CAP-08 never writes a CAP-10 record.** Where the amendment of 2026-10-02 said "CAP-08 writes a CAP-10 safety signal", it now reads:
+  1. **CAP-08 records the observation or field event** in its own operation;
+  2. **in the same transaction, CAP-08's registered signal-request service writes a CAP-08 safety-signal request,** service-submitted under AAB-PLATFORM-05, section C, `initiatedBy` the recorder, citing the observation or field event, with the channel (`CAP08_OBSERVATION` or `CAP08_ADVERSE_EVENT`) and what the signal concerns;
+  3. **CAP-10's registered intake service creates the CAP-10 signal,** service-submitted under AAB-PLATFORM-05, section C, `initiatedBy` the recorder, `triggerKind` `RECORD` naming the request;
+  4. **the signal cites the request** by a resolved reference; that the request was received is derived when the request is read. A request not yet received is shown as such, never dropped.
+
+  **Every `ADVERSE_EVENT` still produces a signal request.** CAP-10's holds and directions still reach CAP-08 as before.
+
+**8. People in content.** `requestedBy` stays an `ActorReference`. Hosts, permit holders, ethics bodies, farmers and landholders stay declared data.
+
+**9.** **Provenance and the country are added to `Cap08Protocol`,** with the platform's `supersedes`; every CAP-08 record gains `recordKind` (`TRIAL_REGISTRATION`, `PROTOCOL`, `PROTOCOL_LOCK`, `TRIAL_OBSERVATION`, `FIELD_EVENT`, `SAFETY_SIGNAL_REQUEST`, `TEMPLATE`, `METRIC_DEFINITION`).
+
+**10.** **Offline capture moves into the platform's `capture` block:** `deviceCapturedAt` becomes `capture.deviceRecordedAt`, and `clientCaptureId` becomes `capture.deviceCaptureId` (AAB-PLATFORM-05, decision 12). Checks 5 and 8, and offline replay, are unchanged in meaning.
+
+**11.** **An observation by instrument** uses `INSTRUMENT_CAPTURE`, under `cap-03-vocabulary-2`'s requirements: the instrument's identity and configuration recorded, its calibration evidence cited where it exists, any human intervention disclosed, and no implication of scientific validation.
+
+**12.** **Schema versions follow the envelope:** the fields added by the amendments of 2026-09-30 and 2026-10-02 (`arms[].material`, `arms[].application`, `batches`) belong to the next schema version of the record, never to version 1, so each version's envelope is exact.
+
+**13. What this amendment replaces.** The interfaces, field rules, admission checks' consequences and failure contract are read as above wherever they differ; `RECORD_NOT_FOUND` joins the failure contract where it is named above and is not already there. The dependencies gain a row: **AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests: canonicalisation and digest types; `designed`.** Nothing else in this contract changes. **Nothing is implemented by this amendment.**
 
 ## Why this contract, and what it adopts
 

@@ -5,12 +5,109 @@
 **Capability:** CAP-03 Evidence Integrity & Provenance. It is not SCS-CAP-03 (Plot and Land Unit Registration), a different capability in another domain.
 **Authority:** DEFINES THE CONTRACT FOR CAP-03: HOW AGR APPLIES THE PLATFORM'S INTEGRITY AND PROVENANCE MECHANISMS TO ITS OWN EVIDENCE RELATIONSHIPS; THE AGR PROVENANCE VOCABULARY AND ITS MAPPINGS; VERIFICATION PROFILES AND VERIFICATION RUNS OVER AGR RECORDS AND OUTPUTS; LINEAGE EVALUATION ACROSS AGR CAPABILITIES; HOW INTEGRITY FINDINGS PROPAGATE THROUGH AGR'S DEPENDENCY CHAINS; INTEGRITY INCIDENTS; AND EVIDENCE RETRIEVAL WHEN AN AGR OUTPUT IS CHALLENGED. Establishes no commissioning, production, Gate D, WP05, scientific-validity, authenticity-in-the-world, regulatory or audit-ledger authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
 **Written:** 2026-10-02, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3). CAP-03 had no design contract before this one. Its horizon stays **launch release** in the CAP-34 fidelity manifest.
+**Amended:** 2026-10-02 (provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10), with AAB-PLATFORM-10's canonical contract.
 
 ## The boundary, and the governing principle
 
 > **The platform proves the integrity and provenance mechanics. CAP-03 applies those mechanics to AGR's evidence relationships, traces what an AGR output relied upon, retrieves that evidence when challenged, and fails closed when integrity or lineage cannot be established.**
 >
 > **Integrity proves that the evidence and its history remain what AAB recorded. It does not prove that the evidence is scientifically true, sufficient, or authentic in the world.**
+
+## Amendment of 2026-10-02: provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10
+
+**Why.** AAB-PLATFORM-05 Governed Provenance is amended, and AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests is new (`governance/AAB-PLATFORM-10-CANONICAL-SERIALISATION-AND-CRYPTOGRAPHIC-DIGESTS-CANONICAL-CONTRACT-2026-10-02.md`; PR #118). **An adoption without its matrix is incomplete** (AAB-PLATFORM-05, amendment of 2026-10-02, section G). This amendment applies their confirmed decisions to CAP-03, record kind by record kind. Approved by the Platform Owner in review on 2026-10-02. **Nothing of CAP-03 is built, so nothing stored is renamed or rewritten.** Its three tables are reproduced exactly in `governance/workstream-b/AGR-PROVENANCE-ADOPTION-MATRIX-2026-10-02.md`, which `governance/tools/provenance-matrix/check_matrix.py` checks against this contract.
+
+**1. Record kinds.** Every record kind CAP-03 writes, and how each adopts AAB-PLATFORM-05 and AAB-PLATFORM-10:
+
+| Record kind | What it is | `source.sourceType` | Generation method (automation constraint) | Submitter | Supersession | Digest | Resolver kind |
+|---|---|---|---|---|---|---|---|
+| Verification run | Admitted record, written once (no interface yet) | `CAPABILITY_OUTPUT` | `DETERMINISTIC_EVALUATION` (`REQUIRED_TRUE`) | `SERVICE`, `initiatedBy` the requester where a person requested it | Never superseded; a later run is a new record | `recordDigest` (`DigestReference`, `aab-canonical-json-1`, `sha-256`) | `CAP-03:VERIFICATION_RUN` |
+| Integrity incident | Admitted record, written once (no interface yet) | `CAPABILITY_OUTPUT` | `DETERMINISTIC_EVALUATION` (`REQUIRED_TRUE`) | `SERVICE`, triggered by its run | Never superseded; closed by decision | `recordDigest` (`DigestReference`, `aab-canonical-json-1`, `sha-256`) | `CAP-03:INTEGRITY_INCIDENT` |
+| Lineage evaluation | Evaluation (AAB-PLATFORM-07) | — | `DETERMINISTIC_EVALUATION` (`REQUIRED_TRUE`) | Requested by a `HUMAN` or a capability's evaluation | Never superseded | AAB-PLATFORM-07's digests | `CAP-03:LINEAGE_EVALUATION` |
+| Retrieval package | Package (primitive 8) | — | `DETERMINISTIC_EVALUATION` (`REQUIRED_TRUE`) | Compiled on a `HUMAN`'s request | Never superseded | `packageDigest` | None |
+| `INCIDENT_CLOSURE`, `INCIDENT_SCOPE_CONFIRMATION`, `ASSESSOR_QUALIFICATION_REVIEW`, `COUNTRY_INTEGRITY_POLICY_APPROVAL`, `CHALLENGE_RESOLUTION` | Human decisions (AAB-PLATFORM-08) | — | `HUMAN_DECISION` (`REQUIRED_FALSE`) | `HUMAN` | AAB-PLATFORM-08's rules | AAB-PLATFORM-08's `recordDigest` | `AAB-PLATFORM-08:HUMAN_DECISION` |
+
+- **Every admitted record kind** carries `provenance: Provenance` (`provenanceVersion` `"2"`) and a **`recordDigest`: a `DigestReference`** (`recordDigest`, `aab-canonical-json-1`, `sha-256`), calculated in AAB-PLATFORM-05's nine steps over its envelope: every field of the record except `recordDigest`, derived status, later verification results, access logs and presentation-only fields. **Each schema declares its envelope, machine-readably,** before step 4. A `"sha256:"` comment on a `recordDigest` in this contract now reads so.
+- **A record kind named here without an interface** is a written-once admitted record under these same rules; its schema, with its envelope, is written before step 4.
+- **Evaluations** keep AAB-PLATFORM-07's digests; **human decisions** keep AAB-PLATFORM-08's, typed as `recordDigest`s of written-once records.
+- **Every digest of a cited or superseded record is resolved by the system,** never declared in a request.
+- **Each resolver kind is registered** (AAB-PLATFORM-05, section E): by identifier, and version where the kind is versioned, in the country workspace, disclosing only what the reader may see under this contract's read rules; what may not be disclosed is unresolved, never revealed.
+
+**2. Written once.** **CAP-03 writes nothing into another capability's record.** The `integrity?` references the CAP-03 adoption amendments placed on other capabilities' outputs are derived when read: a run or lineage evaluation cites the output, and the output's read shows it.
+
+**3. Supersession.** CAP-03's records are never superseded. **The lineage relation `SUPERSEDES` maps to the platform's `supersedes` field,** and is never recorded as a second, separate `lineage` entry (AAB-PLATFORM-05, section D).
+
+**4. Citations.** Every reference CAP-03 relies on follows the same cite-then-resolve behaviour (AAB-PLATFORM-05, decision 10), through the registered resolver of the expected record kind. A declared version that differs from the version found is unresolved. **The consequence of an unresolved citation follows its class:**
+
+| Citation class | Unresolved consequence |
+|---|---|
+| Subject: the record being evaluated, or that the record is about | Refusal |
+| Authority or membership: the basis for the act, or what the record belongs to | Refusal |
+| Superseded record | Refusal |
+| Mandatory evidence: evidence an outcome relies on | Refusal, or `EVIDENCE_REQUIRED` |
+| Optional evidence: supporting or context evidence | Limitation |
+| Related: material not relied on | Limitation, or omitted with a disclosure |
+
+Every citation CAP-03 makes, with its class, relation, expected record kind, whether it is mandatory, and its outcome and failure code. The field names stay:
+
+| Field | Citation class | Relation | Expected record kind | Mandatory | When unresolved |
+|---|---|---|---|---|---|
+| Run subject | Subject | `EVALUATED_IN`, with the subject's `recordDigest` | Any registered written-once record kind | Yes | Refusal `RECORD_NOT_FOUND`. **A subject's own unresolved citations are findings** (`CITATION_UNRESOLVED`), never a refusal of the run |
+| Incident trigger | Authority or membership | `PRODUCED_BY`, set by the system | `CAP-03:VERIFICATION_RUN` | Yes | Cannot be unresolved: set by the system |
+| Boundary packet | Authority or membership | `CROSSED_BOUNDARY_AS` | A governed packet, when defined | Yes | Refusal `BOUNDARY_NOT_TRAVERSABLE` |
+
+**5. The six-gap matrix.**
+
+| Record kind | `SOURCE_UNIDENTIFIED` | `ORIGINAL_NOT_STORED` | `INTEGRITY_UNVERIFIED` | `CITATION_UNRESOLVED` | `CUSTODY_DECLARED_INCOMPLETE` | `CUSTODY_NOT_DECLARED` |
+|---|---|---|---|---|---|---|
+| Verification run | N/A: `CAPABILITY_OUTPUT` of CAP-03's registered service | N/A: no original | N/A: no original | By citation class (section 4) | N/A: no original | N/A: no original |
+| Integrity incident | N/A: `CAPABILITY_OUTPUT` of CAP-03's registered service | N/A: no original | N/A: no original | By citation class (section 4) | N/A: no original | N/A: no original |
+| Lineage evaluation | N/A: evaluation | N/A: evaluation | N/A: evaluation | N/A: evaluation | N/A: evaluation | N/A: evaluation |
+| Human decisions | N/A: human decision | N/A: human decision | N/A: human decision | N/A: human decision | N/A: human decision | N/A: human decision |
+
+*The matrix's reasons:* **no original:** the record holds no original of its own; what it cites are CAP-04 records, whose gaps are carried by reference. **`SUBMITTER_AUTHORED`:** its content was created by the identified human or authorised service submitting it, so its source is the submission itself. **Evaluation:** an AAB-PLATFORM-07 evaluation, whose members' gaps are carried by reference. **Human decision:** an AAB-PLATFORM-08 decision, bound by digest to what it decides. **Status record:** a written-once record of a state change, bound by digest to the record it concerns. **By citation class:** each citation's consequence is its row in section 4.
+
+**6. Vocabulary.** CAP-03 adopts **`cap-03-vocabulary-2`** (CAP-03's amendment of 2026-10-02), in place of version 1: `OTHER` and `SUBMITTER_AUTHORED` among the source types, and **every generation method with an automation constraint** (`REQUIRED_TRUE`, `REQUIRED_FALSE` or `DECLARED_PER_RECORD`), never inferred from its name. A record whose `automated` contradicts its method's constraint is refused.
+
+**7. Submitters.** **Runs and incidents are service-submitted,** under AAB-PLATFORM-05, section C: `submittedBy` CAP-03's registered verification service; `initiatedBy` the person who requested the run, where one did; `triggerKind` `RECORD` or `SCHEDULED_JOB`; `generation.method` `DETERMINISTIC_EVALUATION`. **A service never closes an incident, confirms its scope, or decides anything** (decision 19 stands).
+
+**8. People in content.** None in content.
+
+**9.** **Canonicalisation (decisions 6 and 7, prerequisites, open gaps).** The platform's canonicalisation is AAB-PLATFORM-10's `aab-canonical-json-1`. **Decision 7's list is answered** by AAB-PLATFORM-10, sections 3 to 6, and AAB-PLATFORM-05's envelope (its amendment of 2026-10-02, section A). **The prerequisite "the platform's canonicalisation completed" is met in the contracts;** `RECORD_DIGEST_VERIFIED` is built only for record schemas whose envelope is declared, and `CANONICALISATION_UNDEFINED` remains for one whose envelope is not. Decision 6's citation of "AAB-PLATFORM-07, section 3" now reads "AAB-PLATFORM-10".
+
+**10.** **The vocabulary becomes `cap-03-vocabulary-2`:** version 1, with these changes. No term of version 1 is renamed or removed; one is deprecated, with its replacements named.
+  - **`OTHER` is added to the source types,** correcting "CAP-04's ten" to **CAP-04's eleven.** CAP-04 always had it; version 1 omitted it, so the mapping "Identical" was not true for source types.
+  - **A source type is added: `SUBMITTER_AUTHORED`:** content created by the identified human, or authorised service, submitting the record, rather than extracted from another source (a registration, a protocol, a formulation, a mapping). For it, `SOURCE_UNIDENTIFIED` is not applicable: its source is the submission itself. **Content a machine generated is never `SUBMITTER_AUTHORED`:** it states its generation method, and a registered `SERVICE` submits it.
+  - **Every generation method has an automation constraint** (AAB-PLATFORM-05, decision 11): `REQUIRED_TRUE` (the record must state `automated: true`), `REQUIRED_FALSE` (it must state `false`), or `DECLARED_PER_RECORD` (each record states it, and is refused if it does not). A record whose `automated` contradicts its method's constraint is refused (`REQUEST_VALIDATION_FAILED`).
+
+    | Method | Constraint | Method | Constraint |
+    |---|---|---|---|
+    | `HUMAN_TRANSCRIPTION` | `REQUIRED_FALSE` | `SOURCE_AS_RECEIVED` | `REQUIRED_FALSE` |
+    | `HUMAN_EXTRACTION` | `REQUIRED_FALSE` | `INSTRUMENT_CAPTURE` | `REQUIRED_TRUE` |
+    | `AUTOMATED_EXTRACTION` | `REQUIRED_TRUE` | `DETERMINISTIC_EVALUATION` | `REQUIRED_TRUE` |
+    | `AUTOMATED_EXTRACTION_HUMAN_CHECKED` | `REQUIRED_TRUE` | `HUMAN_DECISION` | `REQUIRED_FALSE` |
+    | `HUMAN_ANALYSIS` (added) | `REQUIRED_FALSE` | `HUMAN_DECLARATION` | `REQUIRED_FALSE` |
+    | `MACHINE_ANALYSIS` (added) | `REQUIRED_TRUE` | `TRANSLATION_HUMAN` | `REQUIRED_FALSE` |
+    | `ANALYSIS` (deprecated: use `HUMAN_ANALYSIS` or `MACHINE_ANALYSIS`) | `DECLARED_PER_RECORD` | `TRANSLATION_MACHINE` | `REQUIRED_TRUE` |
+    | `DIGITISATION` | `DECLARED_PER_RECORD` | `AUTOMATED_MAPPING` (CAP-02) | `REQUIRED_TRUE` |
+    | `OTHER` | `DECLARED_PER_RECORD` | | |
+
+    The name rule (`AUTOMATED` or `MACHINE` in a method's name means `automated: true`) stays as a minimum check, never as the definition.
+  - **`INSTRUMENT_CAPTURE` requires:** the instrument's identity recorded (`generation.generatedBy`, and `generation.methodVersion` for its configuration); its configuration or calibration evidence cited, where it exists, as `REFERS_TO`; any human intervention in the capture disclosed in the record; and **capture never implies scientific validation.** CAP-04 still holds automated and instrument-derived material for review under its own admission rules.
+  - **Mappings added:** CAP-01's link relations → `REFERS_TO`, kept as qualifiers; CAP-07's `derivedFrom` → `DERIVED_FROM` (its `variantKind` a qualifier) and `objective` → `REFERS_TO`; CAP-10's signal `source` → `REFERS_TO`, and its `channel` a source qualifier; CAP-11's requirement `sources[]` → `EXTRACTED_FROM`; CAP-12's specification `formulation` → `DERIVED_FROM`, `conditionsCarriedOver` → `RELIED_ON`, `equivalence` → `REFERS_TO`; CAP-12's batch `trials` → `APPLIED_IN`.
+  - **`SUPERSEDES`** maps to the platform's `supersedes` field (above).
+
+  Every capability's adoption of version 1 is read as an adoption of version 2.
+
+**11.** **Corrections to "What the rehearsal does", recorded here, dated, not rewritten in place.** A later read of the step 0 snapshots, for AAB-PLATFORM-05's amendment, found five statements too broad or wrong:
+  1. **"23 canonical tables write an event":** there are **22** `mutation_audit` triggers (`agriculture/triggers.sql`).
+  2. **"append-only triggers protect … versions":** only partly. `entity_version` is protected against deletion only (a `BEFORE DELETE` trigger); `ingredient_version` and `evidence_packet_item` have no protecting trigger.
+  3. **"Hashes are claimed, not computed":** too broad. **The photo SHA-256 is computed by the gateway from the uploaded bytes** (`api.php`, line 1775), though never re-verified. Every other hash is as stated.
+  4. **"No integrity check has ever run" and "provenance cannot be asserted":** a schema-only snapshot cannot show what never ran. It shows that **no function or gateway action writes** `integrity_check_run` or `source_object`; migrations or direct SQL could have written rows.
+  5. **"the continuity checkpoint's hash covers the schema and row counts":** it covers **object counts per schema** and row counts, **not the schema's definitions.**
+  The conclusions drawn from them stand: nothing of the rehearsal's hash chain, assertions or caller-supplied hashes is carried across.
+
+**12. What this amendment replaces.** The interfaces, field rules, admission checks' consequences and failure contract are read as above wherever they differ; `RECORD_NOT_FOUND` joins the failure contract where it is named above and is not already there. The dependencies gain a row: **AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests: canonicalisation and digest types; `designed`.** Nothing else in this contract changes. **Nothing is implemented by this amendment.**
 
 ## Why this contract, and what it adopts
 

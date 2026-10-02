@@ -5,12 +5,96 @@
 **Capability:** CAP-02 Governed Scientific Data Acquisition & Interoperability. It is not SCS-CAP-02 (Operator and Supplier Identity Registration), a different capability in another domain.
 **Authority:** DEFINES THE CONTRACT FOR CAP-02: HOW AN EXTERNAL SOURCE OF SCIENTIFIC DATA IS REGISTERED, AND APPROVED FOR ACQUISITION ON A RECORDED PERMITTED-USE BASIS; HOW A PERSON STARTS AN ACQUISITION RUN, FROM FILES THEY SUPPLY OR FROM AN ALLOWLISTED PUBLIC SOURCE; HOW WHAT IS ACQUIRED IS STAGED, WITH A DIGEST THE PLATFORM COMPUTES; HOW A SOURCE'S FIELDS, TERMS AND UNITS ARE MAPPED BY APPROVED, VERSIONED MAPPINGS; HOW ACQUIRED MATERIAL IS HANDED TO CAP-04 BY A PERSON, AS A SUBMISSION LIKE ANY OTHER; HOW A RUN IS WITHDRAWN; AND ITS BOUNDARIES WITH CAP-01, CAP-03, CAP-04, PROPOSED CAP-36, THE PLANNED DOMAINS AND THE SOVEREIGN DATA BOUNDARY. Establishes no commissioning, production, Gate D, WP05, scientific-validity, source-authority or regulatory authority, authorises no outbound connection, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
 **Written:** 2026-10-02, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3). CAP-02 had no design contract before this one. Its horizon stays **launch release** in the CAP-34 fidelity manifest; what launches is limited by decision 21.
+**Amended:** 2026-10-02 (provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10), with AAB-PLATFORM-10's canonical contract.
 
 ## The governing principle
 
 > **CAP-02 brings external material to CAP-04's door, with its source, its terms of use, its retrieval and any mapping applied to it recorded. It never makes anything evidence, true or authoritative.**
 >
 > **Everything CAP-02 acquires reaches every other capability only as admitted CAP-04 records, submitted by a named person. Where the basis for acquiring or using material cannot be established, CAP-02 does not acquire it.**
+
+## Amendment of 2026-10-02: provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10
+
+**Why.** AAB-PLATFORM-05 Governed Provenance is amended, and AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests is new (`governance/AAB-PLATFORM-10-CANONICAL-SERIALISATION-AND-CRYPTOGRAPHIC-DIGESTS-CANONICAL-CONTRACT-2026-10-02.md`; PR #118). **An adoption without its matrix is incomplete** (AAB-PLATFORM-05, amendment of 2026-10-02, section G). This amendment applies their confirmed decisions to CAP-02, record kind by record kind. Approved by the Platform Owner in review on 2026-10-02. **Nothing of CAP-02 is built, so nothing stored is renamed or rewritten.** Its three tables are reproduced exactly in `governance/workstream-b/AGR-PROVENANCE-ADOPTION-MATRIX-2026-10-02.md`, which `governance/tools/provenance-matrix/check_matrix.py` checks against this contract.
+
+**1. Record kinds.** Every record kind CAP-02 writes, and how each adopts AAB-PLATFORM-05 and AAB-PLATFORM-10:
+
+| Record kind | What it is | `source.sourceType` | Generation method (automation constraint) | Submitter | Supersession | Digest | Resolver kind |
+|---|---|---|---|---|---|---|---|
+| `Cap02SourceRegistration` | Admitted record, versioned | `SUBMITTER_AUTHORED` | `HUMAN_DECLARATION` (`REQUIRED_FALSE`) | `HUMAN` | `NEW_VERSION`, `CORRECTION`, `WITHDRAWAL` | `recordDigest` (`DigestReference`, `aab-canonical-json-1`, `sha-256`) | `CAP-02:SOURCE_REGISTRATION` |
+| `Cap02Mapping` | Admitted record, versioned | `SUBMITTER_AUTHORED` | `HUMAN_DECLARATION` (`REQUIRED_FALSE`) | `HUMAN` | `NEW_VERSION`, `CORRECTION`, `WITHDRAWAL` | `recordDigest` (`DigestReference`, `aab-canonical-json-1`, `sha-256`) | `CAP-02:MAPPING` |
+| Outbound destination | Admitted record (no interface yet) | `SUBMITTER_AUTHORED` | `HUMAN_DECLARATION` (`REQUIRED_FALSE`) | `HUMAN` | `CORRECTION`, `WITHDRAWAL` | `recordDigest` (`DigestReference`, `aab-canonical-json-1`, `sha-256`) | `CAP-02:OUTBOUND_DESTINATION` |
+| `Cap02AcquisitionRun` | Admitted record, written once | `SUBMITTER_AUTHORED` | `HUMAN_DECLARATION` (`REQUIRED_FALSE`) | `HUMAN` (`ACQUISITION_STEWARD`) | Never superseded; withdrawn by `RUN_WITHDRAWAL` | `recordDigest` (`DigestReference`, `aab-canonical-json-1`, `sha-256`) | `CAP-02:ACQUISITION_RUN` |
+| `Cap02StagedItem` | Admitted record, written once, quarantined until a governed CAP-04 admission | A term from the registration's `sourceTypes` | `SOURCE_AS_RECEIVED` (`REQUIRED_FALSE`) | `HUMAN` for a supplied file; `SERVICE` for a retrieval, `initiatedBy` the steward | Never superseded; expires or is purged | `recordDigest` (`DigestReference`, `aab-canonical-json-1`, `sha-256`) | `CAP-02:STAGED_ITEM` |
+| `SOURCE_APPROVAL`, `MAPPING_APPROVAL`, `OUTBOUND_DESTINATION_APPROVAL`, `ACQUISITION_POLICY_APPROVAL`, `RUN_WITHDRAWAL`, `STAGED_ITEM_PURGE`, `CHALLENGE_RESOLUTION` | Human decisions (AAB-PLATFORM-08) | — | `HUMAN_DECISION` (`REQUIRED_FALSE`) | `HUMAN` | AAB-PLATFORM-08's rules | AAB-PLATFORM-08's `recordDigest` | `AAB-PLATFORM-08:HUMAN_DECISION` |
+
+- **Every admitted record kind** carries `provenance: Provenance` (`provenanceVersion` `"2"`) and a **`recordDigest`: a `DigestReference`** (`recordDigest`, `aab-canonical-json-1`, `sha-256`), calculated in AAB-PLATFORM-05's nine steps over its envelope: every field of the record except `recordDigest`, derived status, later verification results, access logs and presentation-only fields. **Each schema declares its envelope, machine-readably,** before step 4. A `"sha256:"` comment on a `recordDigest` in this contract now reads so.
+- **A record kind named here without an interface** is a written-once admitted record under these same rules; its schema, with its envelope, is written before step 4.
+- **Evaluations** keep AAB-PLATFORM-07's digests; **human decisions** keep AAB-PLATFORM-08's, typed as `recordDigest`s of written-once records.
+- **Every digest of a cited or superseded record is resolved by the system,** never declared in a request.
+- **Each resolver kind is registered** (AAB-PLATFORM-05, section E): by identifier, and version where the kind is versioned, in the country workspace, disclosing only what the reader may see under this contract's read rules; what may not be disclosed is unresolved, never revealed.
+
+**2. Written once.** **A staged item is written once.** Its duplicate flags, mapping preview and intake checks are machine output written **with** the item, in the same transaction, never added later; a later check is a record of its own, citing the item's digest. Its purge or expiry is a receipt (`ITEM_PURGED`, `ITEM_EXPIRED`), never a change to the item.
+
+**3. Supersession.** A new registration or mapping version supersedes the previous one with the platform's declared and resolved `supersedes`, reason `NEW_VERSION`, or `CORRECTION` or `WITHDRAWAL`. **Runs and staged items are never superseded.**
+
+**4. Citations.** Every reference CAP-02 relies on follows the same cite-then-resolve behaviour (AAB-PLATFORM-05, decision 10), through the registered resolver of the expected record kind. A declared version that differs from the version found is unresolved. **The consequence of an unresolved citation follows its class:**
+
+| Citation class | Unresolved consequence |
+|---|---|
+| Subject: the record being evaluated, or that the record is about | Refusal |
+| Authority or membership: the basis for the act, or what the record belongs to | Refusal |
+| Superseded record | Refusal |
+| Mandatory evidence: evidence an outcome relies on | Refusal, or `EVIDENCE_REQUIRED` |
+| Optional evidence: supporting or context evidence | Limitation |
+| Related: material not relied on | Limitation, or omitted with a disclosure |
+
+Every citation CAP-02 makes, with its class, relation, expected record kind, whether it is mandatory, and its outcome and failure code. The field names stay:
+
+| Field | Citation class | Relation | Expected record kind | Mandatory | When unresolved |
+|---|---|---|---|---|---|
+| Basis `evidence[]` | Mandatory evidence | `SUPPORTS`; **now with the applicable version** | `CAP-04:MEMORY_RECORD` | Yes | Refusal `PERMITTED_USE_NOT_ESTABLISHED`, at approval and at run start |
+| Mapping `sourceRegistrationId` | Subject | `REFERS_TO`; **now with the registration version** | `CAP-02:SOURCE_REGISTRATION` | Yes | Refusal `RECORD_NOT_FOUND` |
+| Run `sourceRegistrationId` and `registrationVersion`, `sourceApprovalDecisionId` | Authority or membership | `RELIED_ON` | `CAP-02:SOURCE_REGISTRATION`; `AAB-PLATFORM-08:HUMAN_DECISION` | Yes | Refusal `SOURCE_NOT_APPROVED` |
+| Run `mappingId` and `mappingVersion` | Authority or membership | `RELIED_ON` | `CAP-02:MAPPING` | Yes, when declared | Refusal `MAPPING_NOT_APPROVED` |
+| Staged item `runId` | Authority or membership | `PART_OF`, set by the system | `CAP-02:ACQUISITION_RUN` | Yes | Cannot be unresolved: set by the system |
+| Staged item `duplicateFlags[].candidate`, `mappingPreview` | Related | None: machine output, never in `lineage`, never relied on | Staged items; `CAP-04:MEMORY_RECORD`; `CAP-02:MAPPING` | No | Omitted, with the flag's disclosure |
+| `supersedes` | Superseded record | The platform's `supersedes` field, never a `lineage` entry | The same record kind | Yes, when declared | Refusal `SUPERSESSION_NOT_PERMITTED` |
+
+**5. The six-gap matrix.**
+
+| Record kind | `SOURCE_UNIDENTIFIED` | `ORIGINAL_NOT_STORED` | `INTEGRITY_UNVERIFIED` | `CITATION_UNRESOLVED` | `CUSTODY_DECLARED_INCOMPLETE` | `CUSTODY_NOT_DECLARED` |
+|---|---|---|---|---|---|---|
+| Source registration, mapping, outbound destination | N/A: `SUBMITTER_AUTHORED` | N/A: no original | N/A: no original | By citation class (section 4) | N/A: no original | N/A: no original |
+| Acquisition run | N/A: `SUBMITTER_AUTHORED` | N/A: no original | N/A: no original | By citation class (section 4) | N/A: no original | N/A: no original |
+| Staged item | Limitation `SOURCE_UNIDENTIFIED` where the source gives no identifier for the item | N/A while staged: the bytes are held under a platform-computed digest. After expiry or purge, ORIGINAL_NOT_STORED applies: only the digest and metadata remain. | N/A: the digest is computed on receipt | By citation class (section 4) | N/A for a retrieval: custody is the run; for a supplied file, Limitation `CUSTODY_DECLARED_INCOMPLETE` | N/A for a retrieval; for a supplied file, Limitation `CUSTODY_NOT_DECLARED` |
+| Human decisions | N/A: human decision | N/A: human decision | N/A: human decision | N/A: human decision | N/A: human decision | N/A: human decision |
+
+*The matrix's reasons:* **no original:** the record holds no original of its own; what it cites are CAP-04 records, whose gaps are carried by reference. **`SUBMITTER_AUTHORED`:** its content was created by the identified human or authorised service submitting it, so its source is the submission itself. **Evaluation:** an AAB-PLATFORM-07 evaluation, whose members' gaps are carried by reference. **Human decision:** an AAB-PLATFORM-08 decision, bound by digest to what it decides. **Status record:** a written-once record of a state change, bound by digest to the record it concerns. **By citation class:** each citation's consequence is its row in section 4.
+
+**6. Vocabulary.** CAP-02 adopts **`cap-03-vocabulary-2`** (CAP-03's amendment of 2026-10-02), in place of version 1: `OTHER` and `SUBMITTER_AUTHORED` among the source types, and **every generation method with an automation constraint** (`REQUIRED_TRUE`, `REQUIRED_FALSE` or `DECLARED_PER_RECORD`), never inferred from its name. A record whose `automated` contradicts its method's constraint is refused.
+
+**7. Submitters.** **Registrations, mappings, outbound destinations, runs and supplied files are submitted by a `HUMAN`, in their own name.** **A staged item from a retrieval is written by the platform's acquisition service,** under AAB-PLATFORM-05, section C, and only when:
+  - the service is a **registered, scoped `SERVICE`** actor, for this country and CAP-02's staged items only;
+  - **`initiatedBy` is the steward** who started the run;
+  - **the source adapter and the software release are recorded** (`service.method`, `service.methodVersion`, `service.softwareRelease`);
+  - **the run is cited** (`triggerKind` `RECORD`, naming the run);
+  - **the service creates no admission decision, and cannot submit to CAP-04;**
+  - **the staged item stays quarantined until a governed CAP-04 admission.**
+
+  **Decision 5 now reads:** no service account submits to CAP-04, and no service decides; a retrieval's staged items are recorded as the acquisition service's, initiated by the steward, under these conditions.
+
+**8. People in content.** `Cap02AcquisitionRun.startedBy` is the run's `provenance.submission.submittedBy`, kept as a read alias and never set separately.
+
+**9.** **Provenance is added** to `Cap02AcquisitionRun` and `Cap02StagedItem`, as line 29 already said of every CAP-02 record: each now has `provenance: Provenance` and `recordDigest: DigestReference`.
+
+**10.** **The staged item's digests are typed** (AAB-PLATFORM-10, section 5): `digest` is an `objectDigest`, `raw-bytes`, `sha-256`, held as a `DigestReference`; `stagingReference` keeps its form as a storage reference.
+
+**11.** **`AUTOMATED_MAPPING` has the automation constraint `REQUIRED_TRUE`** in CAP-03's vocabulary (its amendment of 2026-10-02). Decision 23's sentence "It contains `AUTOMATED`, so it always has `automated: true`" is replaced by that declaration.
+
+**12.** **The open gap "canonicalisation" is closed** by AAB-PLATFORM-10. The sovereign data boundary stays open.
+
+**13. What this amendment replaces.** The interfaces, field rules, admission checks' consequences and failure contract are read as above wherever they differ; `RECORD_NOT_FOUND` joins the failure contract where it is named above and is not already there. The dependencies gain a row: **AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests: canonicalisation and digest types; `designed`.** Nothing else in this contract changes. **Nothing is implemented by this amendment.**
 
 ## Why this contract, and what it adopts
 

@@ -4,7 +4,7 @@
 **Domain:** Agricultural Science (AGR)
 **Capability:** CAP-04 Governed Scientific Memory. It is not SCS-CAP-04 (Deforestation Evidence Admission), a different capability in another domain.
 **Authority:** DEFINES THE CONTRACT FOR CAP-04: WHAT MAY ENTER GOVERNED SCIENTIFIC MEMORY, HOW IT IS ADMITTED, HELD, QUARANTINED AND SUPERSEDED, HOW ADMITTED MEMORY IS READ, AND THE BOUNDARY WITH CAP-05 AND CAP-09. Establishes no commissioning, production, Gate D, WP05, scientific-validity or regulatory authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
-**Amended:** 2026-09-29, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3): aligned with the platform contracts, and the rehearsal accounted for (see "Amendment of 2026-09-29: canonical alignment, and the rehearsal accounted for"). Amended again on 2026-09-29, with two corrections following CAP-05's canonical amendment (see "Amendment of 2026-09-29: two corrections following CAP-05 canonical amendment"), for challenges to its human decisions (see "Amendment of 2026-09-29: challenges to CAP-04's human decisions"), and for originals stored under the AGR storage profile (see "Amendment of 2026-09-29: originals stored under the AGR storage profile"); and 2026-10-02 (integrity, lineage and the AGR vocabulary, under CAP-03), with CAP-03's canonical contract; and 2026-10-02, second (acquired material, under CAP-02), with CAP-02's canonical contract.
+**Amended:** 2026-09-29, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3): aligned with the platform contracts, and the rehearsal accounted for (see "Amendment of 2026-09-29: canonical alignment, and the rehearsal accounted for"). Amended again on 2026-09-29, with two corrections following CAP-05's canonical amendment (see "Amendment of 2026-09-29: two corrections following CAP-05 canonical amendment"), for challenges to its human decisions (see "Amendment of 2026-09-29: challenges to CAP-04's human decisions"), and for originals stored under the AGR storage profile (see "Amendment of 2026-09-29: originals stored under the AGR storage profile"); and 2026-10-02 (integrity, lineage and the AGR vocabulary, under CAP-03), with CAP-03's canonical contract; and 2026-10-02, second (acquired material, under CAP-02), with CAP-02's canonical contract; and 2026-10-02, third (provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10), with AAB-PLATFORM-10's canonical contract.
 **History:** first written on 2026-09-20 as a governance design contract, resolving the "design decision required before wiring" finding for CAP-04 in `governance/AAB-CAPABILITY-GATEWAY-RECONCILIATION-2026-09-20.md`. It was not part of PR #16. The 2026-09-20 text is in the repository's history.
 
 ## Amendment of 2026-09-29: canonical alignment, and the rehearsal accounted for
@@ -169,6 +169,74 @@ It is part of the record, and of `recordDigest`. A request that supplies the obj
 - **The dependencies** gain a row: **CAP-02 Governed Scientific Data Acquisition & Interoperability: acquired items, their source approvals and mappings; `designed`, launch release.**
 
 **Nothing is implemented by this amendment.**
+
+## Amendment of 2026-10-02 (third): provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10
+
+**Why.** AAB-PLATFORM-05 Governed Provenance is amended, and AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests is new (`governance/AAB-PLATFORM-10-CANONICAL-SERIALISATION-AND-CRYPTOGRAPHIC-DIGESTS-CANONICAL-CONTRACT-2026-10-02.md`; PR #118). **An adoption without its matrix is incomplete** (AAB-PLATFORM-05, amendment of 2026-10-02, section G). This amendment applies their confirmed decisions to CAP-04, record kind by record kind. Approved by the Platform Owner in review on 2026-10-02. **Nothing of CAP-04 is built, so nothing stored is renamed or rewritten.** Its three tables are reproduced exactly in `governance/workstream-b/AGR-PROVENANCE-ADOPTION-MATRIX-2026-10-02.md`, which `governance/tools/provenance-matrix/check_matrix.py` checks against this contract.
+
+**1. Record kinds.** Every record kind CAP-04 writes, and how each adopts AAB-PLATFORM-05 and AAB-PLATFORM-10:
+
+| Record kind | What it is | `source.sourceType` | Generation method (automation constraint) | Submitter | Supersession | Digest | Resolver kind |
+|---|---|---|---|---|---|---|---|
+| `Cap04ScientificMemoryRecord` | Admitted record | Its declared `source.sourceType` | Its declared method, within that method's constraint | `HUMAN` (`MEMORY_SUBMITTER`) | `CORRECTION`, `WITHDRAWAL` | `recordDigest` (`DigestReference`, `aab-canonical-json-1`, `sha-256`) | `CAP-04:MEMORY_RECORD` |
+| Quarantine status record | Status record, written once | — | `HUMAN_DECISION` (`REQUIRED_FALSE`) | `HUMAN` (`MEMORY_QUARANTINE_OFFICER`) | Never superseded; released by decision | AAB-PLATFORM-08's `recordDigest` | None |
+| `MEMORY_HELD_RESOLUTION`, `MEMORY_QUARANTINE`, `MEMORY_QUARANTINE_RELEASE`, `CHALLENGE_RESOLUTION` | Human decisions (AAB-PLATFORM-08) | — | `HUMAN_DECISION` (`REQUIRED_FALSE`) | `HUMAN` | AAB-PLATFORM-08's rules | AAB-PLATFORM-08's `recordDigest` | `AAB-PLATFORM-08:HUMAN_DECISION` |
+
+- **Every admitted record kind** carries `provenance: Provenance` (`provenanceVersion` `"2"`) and a **`recordDigest`: a `DigestReference`** (`recordDigest`, `aab-canonical-json-1`, `sha-256`), calculated in AAB-PLATFORM-05's nine steps over its envelope: every field of the record except `recordDigest`, derived status, later verification results, access logs and presentation-only fields. **Each schema declares its envelope, machine-readably,** before step 4. A `"sha256:"` comment on a `recordDigest` in this contract now reads so.
+- **A record kind named here without an interface** is a written-once admitted record under these same rules; its schema, with its envelope, is written before step 4.
+- **Evaluations** keep AAB-PLATFORM-07's digests; **human decisions** keep AAB-PLATFORM-08's, typed as `recordDigest`s of written-once records.
+- **Every digest of a cited or superseded record is resolved by the system,** never declared in a request.
+- **Each resolver kind is registered** (AAB-PLATFORM-05, section E): by identifier, and version where the kind is versioned, in the country workspace, disclosing only what the reader may see under this contract's read rules; what may not be disclosed is unresolved, never revealed.
+
+**2. Written once.** The `integrity?` reference of the amendment of 2026-10-02 is **derived when read,** never written into the record. **`acquisition` is not affected:** it is set at admission, inside the nine steps, and is part of the envelope.
+
+**3. Supersession.** `supersedes` takes the platform's declared and resolved shape: the submitter declares `memoryRecordId`, the reason and the explanation; the system resolves the identifier, version and digest. Reasons: `CORRECTION` and `WITHDRAWAL`, unchanged; **`NEW_VERSION` is not used by CAP-04,** whose records are corrected or withdrawn, never revised.
+
+**4. Citations.** Every reference CAP-04 relies on follows the same cite-then-resolve behaviour (AAB-PLATFORM-05, decision 10), through the registered resolver of the expected record kind. A declared version that differs from the version found is unresolved. **The consequence of an unresolved citation follows its class:**
+
+| Citation class | Unresolved consequence |
+|---|---|
+| Subject: the record being evaluated, or that the record is about | Refusal |
+| Authority or membership: the basis for the act, or what the record belongs to | Refusal |
+| Superseded record | Refusal |
+| Mandatory evidence: evidence an outcome relies on | Refusal, or `EVIDENCE_REQUIRED` |
+| Optional evidence: supporting or context evidence | Limitation |
+| Related: material not relied on | Limitation, or omitted with a disclosure |
+
+Every citation CAP-04 makes, with its class, relation, expected record kind, whether it is mandatory, and its outcome and failure code. The field names stay:
+
+| Field | Citation class | Relation | Expected record kind | Mandatory | When unresolved |
+|---|---|---|---|---|---|
+| `provenance.lineage` | Optional evidence | As declared, from `cap-03-vocabulary-2` | Any registered written-once record kind | No | Limitation `CITATION_UNRESOLVED` (check 8) |
+| `acquisitionItemId` | Authority or membership | `EXTRACTED_FROM`, set by the system into `acquisition` | `CAP-02:STAGED_ITEM` | Yes, when declared | Refusal `ACQUISITION_BASIS_INVALID` (check 13) |
+| The original | Mandatory evidence | Not a `lineage` entry: `original.objectId`, an `objectDigest` | An AGR-profile object | Yes, when cited | Refusal `ORIGINAL_NOT_FOUND` / Refusal `ORIGINAL_INTEGRITY_MISMATCH` (check 4) |
+| `supersedes` | Superseded record | The platform's `supersedes` field, never a `lineage` entry | The same record kind | Yes, when declared | Refusal `SUPERSESSION_NOT_PERMITTED` |
+
+**5. The six-gap matrix.**
+
+| Record kind | `SOURCE_UNIDENTIFIED` | `ORIGINAL_NOT_STORED` | `INTEGRITY_UNVERIFIED` | `CITATION_UNRESOLVED` | `CUSTODY_DECLARED_INCOMPLETE` | `CUSTODY_NOT_DECLARED` |
+|---|---|---|---|---|---|---|
+| Memory record | Limitation `SOURCE_UNIDENTIFIED` (check 6) | Limitation `ORIGINAL_NOT_STORED` (check 4, held elsewhere) | Limitation `INTEGRITY_UNVERIFIED` (check 4) | By citation class (section 4) | Limitation `CUSTODY_INCOMPLETE` (check 7) | Limitation `CUSTODY_NOT_DECLARED` (check 7) |
+| Quarantine status record | N/A: status record | N/A: status record | N/A: status record | N/A: status record | N/A: status record | N/A: status record |
+| Human decisions | N/A: human decision | N/A: human decision | N/A: human decision | N/A: human decision | N/A: human decision | N/A: human decision |
+
+*The matrix's reasons:* **no original:** the record holds no original of its own; what it cites are CAP-04 records, whose gaps are carried by reference. **`SUBMITTER_AUTHORED`:** its content was created by the identified human or authorised service submitting it, so its source is the submission itself. **Evaluation:** an AAB-PLATFORM-07 evaluation, whose members' gaps are carried by reference. **Human decision:** an AAB-PLATFORM-08 decision, bound by digest to what it decides. **Status record:** a written-once record of a state change, bound by digest to the record it concerns. **By citation class:** each citation's consequence is its row in section 4.
+
+**6. Vocabulary.** CAP-04 adopts **`cap-03-vocabulary-2`** (CAP-03's amendment of 2026-10-02), in place of version 1: `OTHER` and `SUBMITTER_AUTHORED` among the source types, and **every generation method with an automation constraint** (`REQUIRED_TRUE`, `REQUIRED_FALSE` or `DECLARED_PER_RECORD`), never inferred from its name. A record whose `automated` contradicts its method's constraint is refused.
+
+**7. Submitters.** **Every CAP-04 record is submitted by a `HUMAN` holding `MEMORY_SUBMITTER`, in their own name.** No CAP-04 record is service-submitted.
+
+**8. People in content.** `extraction.extractorName` and `sourceReviewerName` stay declared data. No `ActorReference` in content.
+
+**9.** **The record's digest is typed and its envelope declared:** `recordDigest` is a `DigestReference` (`recordDigest`, `aab-canonical-json-1`, `sha-256`); the envelope is every field of `Cap04ScientificMemoryRecord`, `acquisition` included, except `recordDigest` (AAB-PLATFORM-05, section A).
+
+**10.** **The interface gains the field its amendment added:** `acquisition?` (amendment of 2026-10-02, second). `integrity?` is not a field: it is derived.
+
+**11.** **The rules version is `cap-04-admission-3`** wherever `cap-04-admission-2` still appears ("Admission rules" and `Cap04MemoryAdmissionDecision`): it follows from check 13, which this contract's amendment of 2026-10-02 (second) added; version 2 was never in force.
+
+**12.** **A record's `automated` must match its method's constraint** (`cap-03-vocabulary-2`), or it is refused (`REQUEST_VALIDATION_FAILED`); check 9 then holds every record whose `automated` is `true`, as before.
+
+**13. What this amendment replaces.** The interfaces, field rules, admission checks' consequences and failure contract are read as above wherever they differ; `RECORD_NOT_FOUND` joins the failure contract where it is named above and is not already there. The dependencies gain a row: **AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests: canonicalisation and digest types; `designed`.** Nothing else in this contract changes. **Nothing is implemented by this amendment.**
 
 ## The boundary, in plain English
 
