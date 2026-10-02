@@ -5,10 +5,37 @@
 **Capability:** CAP-11 Regulatory Translation & Dossier Support. It is not SCS-CAP-11 (Regulatory Framework Update Management), a different capability in another domain.
 **Authority:** DEFINES THE CONTRACT FOR CAP-11: HOW A JURISDICTION'S REGULATORY REQUIREMENTS ARE RECORDED FROM THEIR AUTHORITATIVE SOURCES, VERIFIED BY TWO QUALIFIED PEOPLE AND KEPT CURRENT; HOW ADMITTED EVIDENCE IS MAPPED TO THEM BY PEOPLE AND ASSEMBLED INTO A GOVERNED REGULATORY DOSSIER; HOW A REGULATOR'S OWN DECISION IS RECORDED; HOW WHETHER A FIELD TRIAL NEEDS A PERMIT IS DETERMINED; HOW A DOSSIER LEAVES THE COUNTRY, AND WHEN; AND ITS BOUNDARIES WITH CAP-04, CAP-06, CAP-07, CAP-08, CAP-10, CAP-12, THE SCS DOMAIN AND THE PLANNED REGULATORY DOMAIN. Establishes no commissioning, production, Gate D, WP05, scientific-validity, legal, compliance, regulatory-approval or market-access authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
 **Written:** 2026-10-02, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3). CAP-11 had no design contract before this one. Its horizon stays **post-launch** in the CAP-34 fidelity manifest.
+**Amended:** 2026-10-02 (market authorisation and manufacturing-activity permits, for CAP-12), with CAP-12's canonical contract.
 
 ## The governing principle
 
 > **AAB may organise regulatory evidence, expose gaps and assemble a governed dossier. It does not practise law, declare compliance, grant market access or substitute its decision for that of a regulator. Where permit applicability or authority cannot be established, AAB returns EVIDENCE REQUIRED and the trial does not activate.**
+
+## Amendment of 2026-10-02: market authorisation and manufacturing-activity permits, for CAP-12
+
+**Why.** This contract recorded that CAP-12 "would rely on" CAP-11 before commercial manufacture, "recorded, not defined". CAP-12 now has a contract (`governance/workstream-b/CAP-12-CONTROLLED-MANUFACTURING-TRANSFER-CANONICAL-CONTRACT-2026-10-02.md`). **This amendment gives CAP-11 the two determinations CAP-12 relies on,** approved by the Platform Owner in review on 2026-10-02. The governing principle is unchanged, and nothing else in this contract changes.
+
+**1. A market-authorisation determination.** A `MARKET_AUTHORISATION_DETERMINATION` is a human decision by a qualified `REGULATORY_ASSESSOR`, bound to a verified, current requirement set for the purpose `PRODUCT_REGISTRATION` in the named jurisdiction, and to the subject: **a CAP-07 formulation version, as a product,** with its declared product classification, intended use and distribution pathway.
+
+| Outcome | Class | Means |
+|---|---|---|
+| `REGULATOR_AUTHORISATION_RECORDED` | `AFFIRMATIVE` | A verified regulator decision (a registration or approval) covers the exact product, version, intended use and jurisdiction, current, with its conditions |
+| `MARKET_AUTHORISATION_NOT_REQUIRED_WITHIN_BOUNDARY` | `AFFIRMATIVE` | The verified set's requirements, read against the product, require no prior authorisation for this use and pathway. **It must name:** the jurisdiction; the exact product and version; the intended use; the product classification; the distribution pathway; the verified requirement set relied on; the qualified assessors; and the evidence cut-off and currency |
+| `REGULATOR_CONFIRMATION_REQUIRED` | `DEFERRED` | Only the regulator can say. **Blocks** |
+| `EVIDENCE_REQUIRED` | `NEGATIVE` | Applicability or authority cannot be established. **Blocks** |
+
+- **`MARKET_AUTHORISATION_NOT_REQUIRED_WITHIN_BOUNDARY` is never a general statement that a product "requires no regulation".** It is shown only with every element above, and with the display block's statement. **Uncertainty produces `EVIDENCE_REQUIRED`, never an inferred exemption.**
+- **It needs two qualified assessors,** independent of each other and of the requester; `REGULATOR_AUTHORISATION_RECORDED` needs one, since the regulator decided.
+- **Currency:** the set's and the regulator decision's triggers; a new product version; a change of intended use, classification or pathway. **A regulator's suspension, revocation or expiry holds a CAP-12 commercial transfer at once.**
+- **Neither affirmative outcome is approval for sale by AAB.** The regulator decides; AAB records.
+
+**2. Permit determinations for manufacturing activities.** The `PERMIT_DETERMINATION` (this contract, "Permit determinations for field trials") also takes, as its subject, **a CAP-12 transfer request for `MANUFACTURING_EVALUATION` or `PILOT_MANUFACTURE`,** bound to its site, its activity, its material and its period, against a verified set for the purpose `MANUFACTURE`. Its outcomes and blocking states are as for trials; a permit's expiry, suspension or revocation holds the transfer at once.
+
+**3. What this amendment replaces.**
+- **Decision 23**'s sentence on CAP-12 now reads: CAP-12 relies on CAP-11's market-authorisation determination before a commercial transfer, and on its permit determinations before manufacturing evaluation and pilot manufacture.
+- **The contract gap "CAP-12"** is closed.
+- **The dependencies row for CAP-12** now reads: **CAP-12 Controlled Manufacturing Transfer: relies on the market-authorisation and activity permit determinations; `designed`, post-launch.**
+- **The decision kinds** gain `MARKET_AUTHORISATION_DETERMINATION`, with its receipt.
 
 ## Why this contract, and what it adopts
 

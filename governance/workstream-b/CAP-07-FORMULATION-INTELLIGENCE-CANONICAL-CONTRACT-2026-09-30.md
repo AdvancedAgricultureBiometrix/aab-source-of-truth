@@ -5,7 +5,7 @@
 **Capability:** CAP-07 Formulation Intelligence.
 **Authority:** DEFINES THE CONTRACT FOR CAP-07: HOW A FORMULATION OBJECTIVE IS DECLARED, HOW RESEARCH FORMULATIONS ARE COMPOSED FROM ACCEPTED INGREDIENTS, VERSIONED, DERIVED AND COMPARED, ASSEMBLED INTO A FORMULATION DOSSIER, REVIEWED BY A SCIENTIST AND ACCEPTED FOR TRIAL, AND ITS BOUNDARIES WITH CAP-01, CAP-04, CAP-06, CAP-08, CAP-10, CAP-11 AND CAP-12. Establishes no commissioning, production, Gate D, WP05, scientific-validity, safety, regulatory or manufacturing authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
 **Written:** 2026-09-30, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3). CAP-07 had no design contract before this one.
-**Amended:** 2026-10-02 (safety and ecology, governed by CAP-10), with CAP-10's canonical contract; and 2026-10-02, second (regulatory status, governed by CAP-11), with CAP-11's canonical contract.
+**Amended:** 2026-10-02 (safety and ecology, governed by CAP-10), with CAP-10's canonical contract; and 2026-10-02, second (regulatory status, governed by CAP-11), with CAP-11's canonical contract; and 2026-10-02, third (composition for manufacturing transfer, governed by CAP-12), with CAP-12's canonical contract.
 
 ## Amendment of 2026-10-02: safety and ecology, governed by CAP-10
 
@@ -56,6 +56,26 @@
 **3. What this amendment replaces.**
 - **The contract gap "regulatory status"** is narrowed: it remains not assessed wherever CAP-11 has recorded nothing.
 - **The dependencies row for CAP-11** now reads: **CAP-11 Regulatory Translation & Dossier Support: owns regulatory status; `designed`, post-launch.**
+
+## Amendment of 2026-10-02 (third): composition for manufacturing transfer, governed by CAP-12
+
+**Why.** Decision 9 left manufacturing transfer to "CAP-12's, on gates CAP-12 defines", and decision 16 discloses composition only to CAP-07 roles or, since the amendment of 2026-10-02, by a grant for a safety assessment. CAP-12 now has a contract (`governance/workstream-b/CAP-12-CONTROLLED-MANUFACTURING-TRANSFER-CANONICAL-CONTRACT-2026-10-02.md`), and its manufacturer needs the composition. Approved by the Platform Owner in review on 2026-10-02. Nothing else in this contract changes.
+
+**1. A composition access grant for the purpose `MANUFACTURING_TRANSFER`.** The `COMPOSITION_ACCESS_GRANT` of the amendment of 2026-10-02 gains a second purpose, with these differences:
+- **Made only when a CAP-12 `TRANSFER_AUTHORISATION` is valid and current** and names the person as a recipient, for this formulation version, at a stage that discloses the formula. The grant names the authorisation. **It is refused** otherwise, and while a CAP-12 hold is in force.
+- **One grant per named person;** the person must have signed their CAP-12 recipient undertaking.
+- **Discloses only the sections the CAP-12 stage discloses** (staged, minimum necessary disclosure), never the withheld internal research.
+- **Time-limited:** it expires with the transfer authorisation, or at a stated date, **at most 180 days after it is made** (pilot position); renewal is a new grant.
+- **Revocable,** by its maker, any `FORMULATION_REVIEWER`, the CAP-12 rights controller or a `TRANSFER_GOVERNOR`, and **revoked at once** by a CAP-12 hold or a withdrawal of rights authority.
+- **Controlled viewing:** every view logged; never searchable; **no download unless the CAP-12 authorisation permits it by name;** every disclosed page marked with the recipient.
+- **No right of onward disclosure.**
+- **The honesty qualification,** shown with every grant and in every package: **"Revocation prevents further access through AAB but cannot technically retrieve information already disclosed."**
+
+**2. What this amendment replaces.**
+- **Decision 9** now reads: no CAP-07 decision makes a formulation eligible for manufacturing transfer; CAP-12's gates govern it, and its composition reaches a manufacturer only by the grant in point 1.
+- **Decision 16** is unchanged in substance: composition is disclosed only to CAP-07 roles, or by a grant for a safety assessment or a manufacturing transfer.
+- **The contract gap "disclosing a composition"** is closed for the purposes `SAFETY_ASSESSMENT` and `MANUFACTURING_TRANSFER`; it stays open for every other purpose.
+- **The dependencies row for CAP-12** now reads: **CAP-12 Controlled Manufacturing Transfer: owns manufacturing transfer; CAP-07 grants composition access for it; `designed`, post-launch.**
 
 ## Why this contract, and what it adopts
 

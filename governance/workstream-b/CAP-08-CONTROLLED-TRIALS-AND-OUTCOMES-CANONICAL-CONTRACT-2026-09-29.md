@@ -5,7 +5,7 @@
 **Capability:** CAP-08 Controlled Trials & Outcomes. It is not SCS-CAP-08 (Due Diligence Package Compilation), a different capability in another domain.
 **Authority:** DEFINES THE CONTRACT FOR CAP-08: HOW A CONTROLLED TRIAL IS DESIGNED, AUTHORISED, OBSERVED UNDER ITS PROTOCOL, SUMMARISED, REVIEWED AND CLOSED, HOW ITS RESULTS ARE OFFERED TO CAP-04, AND ITS BOUNDARIES WITH CAP-04, CAP-07, CAP-09, CAP-10 AND PROPOSED CAP-36. Establishes no commissioning, production, Gate D, WP05, scientific-validity, efficacy or regulatory authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
 **Written:** 2026-09-29, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3). CAP-08 had no design contract before this one.
-**Amended:** 2026-09-30 (the test material, governed by CAP-07 and CAP-06), with CAP-07's canonical contract; and 2026-10-02 (safety and ecology, governed by CAP-10), with CAP-10's canonical contract; and 2026-10-02, second (permits, governed by CAP-11), with CAP-11's canonical contract.
+**Amended:** 2026-09-30 (the test material, governed by CAP-07 and CAP-06), with CAP-07's canonical contract; and 2026-10-02 (safety and ecology, governed by CAP-10), with CAP-10's canonical contract; and 2026-10-02, second (permits, governed by CAP-11), with CAP-11's canonical contract; and 2026-10-02, third (pilot batches as trial material, from CAP-12), with CAP-12's canonical contract.
 
 ## Amendment of 2026-09-30: the test material, governed by CAP-07 and CAP-06
 
@@ -113,6 +113,26 @@
 - **The contract gap "permits, ethics and consent"** is narrowed to ethics and consent. Which permits a country requires is now recorded in CAP-11's verified requirement sets.
 - **The dependencies** gain a row: **CAP-11 Regulatory Translation & Dossier Support: required at activation (permit determination); its holds are read into the trial's state; `designed`, post-launch.**
 - **The failure contract gains:** `PERMIT_DETERMINATION_REQUIRED` (422) and `REGULATORY_HOLD_IN_FORCE` (409).
+
+## Amendment of 2026-10-02 (third): pilot batches as trial material, from CAP-12
+
+**Why.** A trial applying a formulation applies a physical batch of it. CAP-12 now governs the pilot manufacture of trial material (`governance/workstream-b/CAP-12-CONTROLLED-MANUFACTURING-TRANSFER-CANONICAL-CONTRACT-2026-10-02.md`). **This amendment makes a pilot batch traceable from the trial to its specification,** approved by the Platform Owner in review on 2026-10-02. Nothing else in this contract changes.
+
+**1. Naming the batch.** A protocol arm applying a CAP-07 formulation, and `testMaterial` of the kind `FORMULATION_VERSION`, may name the batches applied: `batches?: Array<{ attestationId: string }>`, each a CAP-12 batch attestation. **Where the material was made under a CAP-12 pilot manufacture, the batches are required.** The protocol's schema stays at version `1`, as before.
+
+**2. What activation checks.** For each named batch, a `TRIAL_ACTIVATION` of `AUTHORISE` is refused (`BATCH_NOT_TRACEABLE`, 422) unless:
+- **the attestation's specification is for the exact formulation version** the trial applies, and its CAP-12 pilot authorisation was valid and current when the batch was made;
+- **the attestation lists this trial;**
+- **the manufacturer's qualified QC decision is `RELEASED`;**
+- **no CAP-12 hold, and no CAP-10 hold, is in force** on the transfer.
+
+The activation records each attestation it relied on. **The CAP-10 outcome and CAP-11 permit determination the amendments of 2026-10-02 require are still required:** a batch's traceability is not a safety or regulatory basis.
+
+**3. During and after the trial.** A CAP-12 hold placed on the transfer after activation is shown on the trial (`BATCH_SOURCE_HOLD`), disclosed in every outcome summary and addressed in the outcome review. **A safety-driven hold also holds further application,** through CAP-10. Every outcome summary names the batches applied, with their specification versions, so that **equivalence between trialled and manufactured material is traceable** in CAP-12's evidence basis. The summary rules become `cap-08-summary-rules-5`: the rules of version 4, with the batches and `BATCH_SOURCE_HOLD`.
+
+**4. What this amendment replaces.**
+- **The dependencies** gain a row: **CAP-12 Controlled Manufacturing Transfer: the source of pilot batches, traceable to their specification; its holds are shown on the trial; `designed`, post-launch.**
+- **The failure contract gains** `BATCH_NOT_TRACEABLE` (422).
 
 ## Why this contract, and what it adopts
 
