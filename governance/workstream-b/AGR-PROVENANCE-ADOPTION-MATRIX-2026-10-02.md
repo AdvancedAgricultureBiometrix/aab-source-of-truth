@@ -87,7 +87,7 @@
 |---|---|---|---|---|---|---|
 | Source registration, mapping, outbound destination | N/A: `SUBMITTER_AUTHORED` | N/A: no original | N/A: no original | By citation class (section 4) | N/A: no original | N/A: no original |
 | Acquisition run | N/A: `SUBMITTER_AUTHORED` | N/A: no original | N/A: no original | By citation class (section 4) | N/A: no original | N/A: no original |
-| Staged item | Limitation `SOURCE_UNIDENTIFIED` where the source gives no identifier for the item | N/A: held in the staging area under a platform-computed digest | N/A: the digest is computed on receipt | By citation class (section 4) | N/A for a retrieval: custody is the run; for a supplied file, Limitation `CUSTODY_DECLARED_INCOMPLETE` | N/A for a retrieval; for a supplied file, Limitation `CUSTODY_NOT_DECLARED` |
+| Staged item | Limitation `SOURCE_UNIDENTIFIED` where the source gives no identifier for the item | N/A while staged: the bytes are held under a platform-computed digest. After expiry or purge, ORIGINAL_NOT_STORED applies: only the digest and metadata remain. | N/A: the digest is computed on receipt | By citation class (section 4) | N/A for a retrieval: custody is the run; for a supplied file, Limitation `CUSTODY_DECLARED_INCOMPLETE` | N/A for a retrieval; for a supplied file, Limitation `CUSTODY_NOT_DECLARED` |
 | Human decisions | N/A: human decision | N/A: human decision | N/A: human decision | N/A: human decision | N/A: human decision | N/A: human decision |
 
 ## CAP-03

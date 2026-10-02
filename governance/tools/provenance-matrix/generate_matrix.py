@@ -116,7 +116,7 @@ C["CAP-02"] = dict(
     matrix=[
         ("Source registration, mapping, outbound destination", native()),
         ("Acquisition run", native()),
-        ("Staged item", [lim("SOURCE_UNIDENTIFIED") + " where the source gives no identifier for the item", "N/A: held in the staging area under a platform-computed digest", "N/A: the digest is computed on receipt", BYCLASS, "N/A for a retrieval: custody is the run; for a supplied file, " + lim("CUSTODY_DECLARED_INCOMPLETE"), "N/A for a retrieval; for a supplied file, " + lim("CUSTODY_NOT_DECLARED")]),
+        ("Staged item", [lim("SOURCE_UNIDENTIFIED") + " where the source gives no identifier for the item", "N/A while staged: the bytes are held under a platform-computed digest. After expiry or purge, ORIGINAL_NOT_STORED applies: only the digest and metadata remain.", "N/A: the digest is computed on receipt", BYCLASS, "N/A for a retrieval: custody is the run; for a supplied file, " + lim("CUSTODY_DECLARED_INCOMPLETE"), "N/A for a retrieval; for a supplied file, " + lim("CUSTODY_NOT_DECLARED")]),
         ("Human decisions", DEROW),
     ],
     integrity="**A staged item is written once.** Its duplicate flags, mapping preview and intake checks are machine output written **with** the item, in the same transaction, never added later; a later check is a record of its own, citing the item's digest. Its purge or expiry is a receipt (`ITEM_PURGED`, `ITEM_EXPIRED`), never a change to the item.",
