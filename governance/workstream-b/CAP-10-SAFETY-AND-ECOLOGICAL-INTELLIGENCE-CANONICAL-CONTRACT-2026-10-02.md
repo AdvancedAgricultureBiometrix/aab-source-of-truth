@@ -5,6 +5,21 @@
 **Capability:** CAP-10 Safety & Ecological Intelligence. It is not SCS-CAP-10 (Challenge Response and Evidence Retrieval), a different capability in another domain.
 **Authority:** DEFINES THE CONTRACT FOR CAP-10: HOW THE SAFETY AND ECOLOGICAL EFFECT OF AN INGREDIENT, A FORMULATION, A REGISTERED PRODUCT USED OUTSIDE ITS REGISTRATION, OR A RAW MATERIAL HANDLED DURING DISCOVERY IS ASSESSED BY QUALIFIED PEOPLE WITHIN A DECLARED USE BOUNDARY; HOW A SAFETY SIGNAL IS REPORTED, HELD, TRIAGED, DETERMINED AND CLOSED; WHEN FURTHER APPLICATION OR HANDLING IS HELD AUTOMATICALLY; AND ITS BOUNDARIES WITH CAP-01, CAP-04, CAP-05, CAP-06, CAP-07, CAP-08, CAP-09, CAP-11 AND THE PLANNED ECOSYSTEM DOMAIN. Establishes no commissioning, production, Gate D, WP05, scientific-validity, general safety certification or regulatory authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
 **Written:** 2026-10-02, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3). CAP-10 had no design contract, and no description beyond its name, before this one.
+**Amended:** 2026-10-02 (regulatory status, and a clerical correction), with CAP-11's canonical contract.
+
+## Amendment of 2026-10-02: regulatory status, and a clerical correction
+
+**Why.** This contract carries `REGULATORY_STATUS_NOT_ASSESSED` on every outcome until CAP-11 exists, and treats a registration as declared, never verified. CAP-11 now has a contract (`governance/workstream-b/CAP-11-REGULATORY-TRANSLATION-AND-DOSSIER-SUPPORT-CANONICAL-CONTRACT-2026-10-02.md`). Approved by the Platform Owner in review on 2026-10-02. **CAP-10 still never assesses regulatory status.** Nothing else in this contract changes.
+
+**1. A clerical correction.** The dependencies row named the capability "CAP-11 Regulatory Intelligence". **Its canonical name is "CAP-11 Regulatory Translation & Dossier Support",** as in the CAP-34 fidelity manifest, the roadmap, the overview, CAP-06 and CAP-07. The row is read with the canonical name. **No meaning changes.**
+
+**2. Regulatory status beside a safety outcome.** The dossier rules become `cap-10-dossier-rules-2`: the rules of version 1, with this change. **Where the subject's version has a verified CAP-11 regulator decision, or a valid, current CAP-11 dossier assessment, for the country workspace's own jurisdiction,** it is shown beside CAP-10's outcome, with CAP-11's display block, in place of `REGULATORY_STATUS_NOT_ASSESSED`. **Otherwise the disclosure stays.** A CAP-10 outcome never states, implies or depends on a regulatory status, and a regulatory status never states anything about safety.
+
+**3. A registered product use, verified.** Where a `REGISTERED_PRODUCT_USE` cites a CAP-11 regulator decision of the kind `REGISTRATION`, verified, valid and current, `REGISTRATION_DECLARED_NOT_VERIFIED` is replaced by `REGULATOR_DECISION_RECORDED`. **The departures from the registration are still what CAP-10 assesses.**
+
+**4. What this amendment replaces.**
+- **The contract gap "CAP-11"** now reads: regulatory status is CAP-11's; until a CAP-11 outcome or verified regulator decision exists for the subject, version and jurisdiction, `REGULATORY_STATUS_NOT_ASSESSED` stays.
+- **The dependencies row for CAP-11** now reads: **CAP-11 Regulatory Translation & Dossier Support: owns regulatory status; CAP-10 never assesses it; its status is shown beside CAP-10's outcome where one exists; `designed`, post-launch.**
 
 ## Why this contract, and what it adopts
 

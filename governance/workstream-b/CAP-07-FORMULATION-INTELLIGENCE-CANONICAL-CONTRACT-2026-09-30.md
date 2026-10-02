@@ -5,7 +5,7 @@
 **Capability:** CAP-07 Formulation Intelligence.
 **Authority:** DEFINES THE CONTRACT FOR CAP-07: HOW A FORMULATION OBJECTIVE IS DECLARED, HOW RESEARCH FORMULATIONS ARE COMPOSED FROM ACCEPTED INGREDIENTS, VERSIONED, DERIVED AND COMPARED, ASSEMBLED INTO A FORMULATION DOSSIER, REVIEWED BY A SCIENTIST AND ACCEPTED FOR TRIAL, AND ITS BOUNDARIES WITH CAP-01, CAP-04, CAP-06, CAP-08, CAP-10, CAP-11 AND CAP-12. Establishes no commissioning, production, Gate D, WP05, scientific-validity, safety, regulatory or manufacturing authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
 **Written:** 2026-09-30, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3). CAP-07 had no design contract before this one.
-**Amended:** 2026-10-02 (safety and ecology, governed by CAP-10), with CAP-10's canonical contract.
+**Amended:** 2026-10-02 (safety and ecology, governed by CAP-10), with CAP-10's canonical contract; and 2026-10-02, second (regulatory status, governed by CAP-11), with CAP-11's canonical contract.
 
 ## Amendment of 2026-10-02: safety and ecology, governed by CAP-10
 
@@ -39,6 +39,23 @@
 - **The contract gap "disclosing a composition"** is closed for the purpose `SAFETY_ASSESSMENT` by point 1. It stays open for every other purpose, such as a trial protocol.
 - **The dependencies row for CAP-10** now reads: **optional at acceptance; required by CAP-08 for field use; CAP-07 grants composition access for it; `designed`.**
 - **Decision 16 is unchanged:** a composition is still disclosed only to people holding a CAP-07 role, or now by a grant under point 1.
+
+## Amendment of 2026-10-02 (second): regulatory status, governed by CAP-11
+
+**Why.** This contract carries `REGULATORY_STATUS_NOT_ASSESSED` on every dossier "until CAP-10 and CAP-11 have contracts and assessments they define can be cited". CAP-11 now has a contract (`governance/workstream-b/CAP-11-REGULATORY-TRANSLATION-AND-DOSSIER-SUPPORT-CANONICAL-CONTRACT-2026-10-02.md`). Approved by the Platform Owner in review on 2026-10-02. Nothing else in this contract changes.
+
+**1. What replaces the label.** The dossier rules become `cap-07-dossier-rules-3`: the rules of version 2, with this change. For each jurisdiction:
+- **where CAP-11 holds a verified, valid and current regulator decision** on this formulation version, it is shown as **`REGULATOR_DECISION_RECORDED`,** with its kind, scope, conditions, expiry and authenticity basis;
+- **otherwise, where CAP-11 holds a valid, current dossier assessment** on this version, `REGULATORY_STATUS_NOT_ASSESSED` is replaced by the assessment's outcome, with CAP-11's display block;
+- **otherwise, `REGULATORY_STATUS_NOT_ASSESSED` stays,** as before. The components' declared statuses are still shown as declared.
+
+**A regulator decision on a component is never a decision on the formulation,** and one jurisdiction's says nothing about another's.
+
+**2. Nothing else follows.** `ACCEPT_FOR_TRIAL` is unchanged, and never depends on or implies a regulatory status. **A CAP-11 outcome or regulator decision never makes a formulation eligible for manufacture:** that remains CAP-12's to define, and CAP-12 has no contract.
+
+**3. What this amendment replaces.**
+- **The contract gap "regulatory status"** is narrowed: it remains not assessed wherever CAP-11 has recorded nothing.
+- **The dependencies row for CAP-11** now reads: **CAP-11 Regulatory Translation & Dossier Support: owns regulatory status; `designed`, post-launch.**
 
 ## Why this contract, and what it adopts
 

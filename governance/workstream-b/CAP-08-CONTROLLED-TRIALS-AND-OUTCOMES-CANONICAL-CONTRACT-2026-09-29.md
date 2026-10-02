@@ -5,7 +5,7 @@
 **Capability:** CAP-08 Controlled Trials & Outcomes. It is not SCS-CAP-08 (Due Diligence Package Compilation), a different capability in another domain.
 **Authority:** DEFINES THE CONTRACT FOR CAP-08: HOW A CONTROLLED TRIAL IS DESIGNED, AUTHORISED, OBSERVED UNDER ITS PROTOCOL, SUMMARISED, REVIEWED AND CLOSED, HOW ITS RESULTS ARE OFFERED TO CAP-04, AND ITS BOUNDARIES WITH CAP-04, CAP-07, CAP-09, CAP-10 AND PROPOSED CAP-36. Establishes no commissioning, production, Gate D, WP05, scientific-validity, efficacy or regulatory authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
 **Written:** 2026-09-29, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3). CAP-08 had no design contract before this one.
-**Amended:** 2026-09-30 (the test material, governed by CAP-07 and CAP-06), with CAP-07's canonical contract; and 2026-10-02 (safety and ecology, governed by CAP-10), with CAP-10's canonical contract.
+**Amended:** 2026-09-30 (the test material, governed by CAP-07 and CAP-06), with CAP-07's canonical contract; and 2026-10-02 (safety and ecology, governed by CAP-10), with CAP-10's canonical contract; and 2026-10-02, second (permits, governed by CAP-11), with CAP-11's canonical contract.
 
 ## Amendment of 2026-09-30: the test material, governed by CAP-07 and CAP-06
 
@@ -91,6 +91,28 @@
 - **`preconditions.safetyBasis`** stays in the registration, as declared narrative. It is no longer sufficient for any applied material.
 - **The activation's preconditions** address CAP-10's outcomes, conditions and stop conditions by name, and `SAFETY_ECOLOGY_NOT_ASSESSED` only for arms that still carry it.
 - **The failure contract gains:** `SAFETY_ASSESSMENT_REQUIRED` (422: an applied material has no valid, current outcome), `SAFETY_ASSESSMENT_NOT_APPLICABLE_TO_USE` (422), `STOP_CONDITION_NOT_OBSERVABLE` (422), `MATERIAL_NOT_GOVERNED` (422) and `SAFETY_HOLD_IN_FORCE` (409).
+
+## Amendment of 2026-10-02 (second): permits, governed by CAP-11
+
+**Why.** This contract records permits as declared and addressed, not verified (decision 5), and leaves which permits a country requires as an open gap. CAP-11 now has a contract (`governance/workstream-b/CAP-11-REGULATORY-TRANSLATION-AND-DOSSIER-SUPPORT-CANONICAL-CONTRACT-2026-10-02.md`). **This amendment makes activation rely on CAP-11's permit determination, as a hard, fail-closed gate,** approved by the Platform Owner in review on 2026-10-02. Nothing else in this contract changes.
+
+**1. The permit gate at activation.** A `TRIAL_ACTIVATION` of `AUTHORISE` is refused (`PERMIT_DETERMINATION_REQUIRED`, 422) unless a CAP-11 `PERMIT_DETERMINATION` of `PERMIT_NOT_REQUIRED`, `VALID_PERMIT_RECORDED` or `COUNTRY_GOVERNANCE_EXEMPTION_RECORDED` is valid and current **at the moment of the decision,** bound to this trial's registration and **this locked protocol version,** in the trial's country workspace. **A determination of `EVIDENCE_REQUIRED`, or none, blocks activation:** permit applicability unknown, the requirement set unverified, a required permit missing or expired, a permit's scope not covering the trial, its authenticity unresolved, or its conditions conflicting with the protocol. **Where permit applicability or authority cannot be established, the trial does not activate.**
+- **The activation records the determination it relied on,** and its reasoning addresses **every permit condition by name**, alongside the CAP-10 outcomes and conditions the amendment of 2026-10-02 requires.
+- **Registration** is not refused for want of a determination. The trial shows `PERMIT_DETERMINATION_REQUIRED_BEFORE_ACTIVATION` until activation.
+- **`preconditions.permits`** stays in the registration, as declared narrative for the determiner to read. It is no longer sufficient.
+
+**2. When a permit stops being current during a trial.** **A permit relied on reaching its expiry, or recorded in CAP-11 as suspended or revoked,** places a **regulatory hold** on further application at once: the trial's derived state shows `PERMIT_NOT_CURRENT`. As with a safety hold, **observations and field events are still admitted;** a new activation or protocol version is refused (`REGULATORY_HOLD_IN_FORCE`, 409); every outcome summary discloses it; an outcome review addresses it by name; an application in breach is a `PROTOCOL_DEVIATION`, disclosed. **The hold is released only by a new valid, current determination** for the trial. **A change in the requirement set's interpretation alone** places no hold: the trial shows `PERMIT_DETERMINATION_NOT_CURRENT`, disclosed, and a new determination is needed before any new activation.
+
+**3. A registered product, verified.** Where a `REGISTERED_PRODUCT`'s registration (the amendment of 2026-10-02, point 3) cites a CAP-11 regulator decision of the kind `REGISTRATION`, verified, valid and current, it is shown as `REGULATOR_DECISION_RECORDED` in place of `REGISTRATION_DECLARED_NOT_VERIFIED`. **Conformance of the trial's use to the registration** is still declared condition by condition and addressed in the activation; a verified registration does not make an off-label use on-label.
+
+**4. The release-order consequence.** **Until CAP-11 is built, no permit determination exists, and no trial can be activated.** CAP-08 is research and design only until then, or a launch including CAP-08 explicitly excludes trial activation requiring regulatory permission. Bringing permit determination forward is a release decision for the Platform Owner (CAP-11, decision 13).
+
+**5. What this amendment replaces.**
+- **Decision 5** now reads: **permits are determined by CAP-11, as a hard gate at activation;** ethics approval and landholder consent are declared and addressed, not verified, as before.
+- **The summary rules become `cap-08-summary-rules-4`:** the rules of version 3, with `PERMIT_NOT_CURRENT` and `PERMIT_DETERMINATION_NOT_CURRENT` disclosed where they apply, and the trial's permit determination shown.
+- **The contract gap "permits, ethics and consent"** is narrowed to ethics and consent. Which permits a country requires is now recorded in CAP-11's verified requirement sets.
+- **The dependencies** gain a row: **CAP-11 Regulatory Translation & Dossier Support: required at activation (permit determination); its holds are read into the trial's state; `designed`, post-launch.**
+- **The failure contract gains:** `PERMIT_DETERMINATION_REQUIRED` (422) and `REGULATORY_HOLD_IN_FORCE` (409).
 
 ## Why this contract, and what it adopts
 

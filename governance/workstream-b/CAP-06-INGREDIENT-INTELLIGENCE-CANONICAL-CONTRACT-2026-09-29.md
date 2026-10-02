@@ -5,7 +5,7 @@
 **Capability:** CAP-06 Ingredient Intelligence. It is not SCS-CAP-06 (Due Diligence Sufficiency Evaluation), a different capability in another domain.
 **Authority:** DEFINES THE CONTRACT FOR CAP-06: HOW A COUNTRY'S KNOWN INGREDIENTS AND CANDIDATE NEW ONES ARE REGISTERED, EVIDENCED, ASSEMBLED INTO AN INGREDIENT DOSSIER, REVIEWED BY A SCIENTIST AND ACCEPTED FOR FORMULATION RESEARCH, HOW CAP-01'S REFERRALS ARE RECEIVED AND CLOSED, AND ITS BOUNDARIES WITH CAP-01, CAP-04, CAP-07, CAP-08, CAP-10 AND CAP-11. Establishes no commissioning, production, Gate D, WP05, scientific-validity, safety or regulatory authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
 **Written:** 2026-09-29, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3). CAP-06 had no design contract before this one.
-**Amended:** 2026-10-02 (safety and ecology, governed by CAP-10), with CAP-10's canonical contract.
+**Amended:** 2026-10-02 (safety and ecology, governed by CAP-10), with CAP-10's canonical contract; and 2026-10-02, second (regulatory status, governed by CAP-11), with CAP-11's canonical contract.
 
 ## Amendment of 2026-10-02: safety and ecology, governed by CAP-10
 
@@ -29,6 +29,24 @@
 - **The contract gap "CAP-10"** now reads: an ingredient with no CAP-10 outcome rests on a declared basis that AAB does not assess, disclosed on every dossier and acceptance. **Until CAP-10 is built, that is every ingredient.**
 - **The dependencies row for CAP-10** now reads: **optional at acceptance; required by CAP-08 for field use; `designed`.**
 - **The material classes `PROHIBITED_OR_RESTRICTED_MATERIAL` and `UNSAFE_OR_UNIDENTIFIED_MATERIAL`** are still refused any acceptance, as declared classes. A CAP-10 outcome never makes them acceptable; a material reclassified is a new version.
+
+## Amendment of 2026-10-02 (second): regulatory status, governed by CAP-11
+
+**Why.** This contract records an ingredient's regulatory status as declared, not verified, "CAP-11's to govern when it has a contract" (decision 8). CAP-11 now has a contract (`governance/workstream-b/CAP-11-REGULATORY-TRANSLATION-AND-DOSSIER-SUPPORT-CANONICAL-CONTRACT-2026-10-02.md`). Approved by the Platform Owner in review on 2026-10-02. Nothing else in this contract changes.
+
+**1. What replaces the declared status.** The dossier rules become `cap-06-dossier-rules-3`: the rules of version 2, with this change. For each jurisdiction:
+- **where CAP-11 holds a verified, valid and current regulator decision** on this version (a registration, approval, refusal, suspension or revocation), it is shown as **`REGULATOR_DECISION_RECORDED`,** with its kind, scope, conditions, expiry and authenticity basis, and **it supersedes the declared status for that jurisdiction.** The declaration stays readable, labelled as declared;
+- **otherwise, where CAP-11 holds a valid, current dossier assessment** on this version, `REGULATORY_STATUS_DECLARED_NOT_VERIFIED` is replaced by the assessment's outcome, with CAP-11's display block;
+- **otherwise, `REGULATORY_STATUS_DECLARED_NOT_VERIFIED` stays,** as before.
+
+**Nothing is replaced for a jurisdiction CAP-11 has not addressed.** A regulator decision in one jurisdiction says nothing about another.
+
+**2. Acceptance is unchanged.** Acceptance for formulation research is a scientific decision. It never depends on, and never implies, a regulatory status. A recorded refusal, suspension or revocation is a finding the reviewer addresses by name.
+
+**3. What this amendment replaces.**
+- **Decision 8** now reads: regulatory status is declared, and superseded only by a verified regulator decision recorded in CAP-11, or reported by a CAP-11 assessment, for the exact version and jurisdiction.
+- **The contract gap "regulatory status"** is narrowed: it remains declared wherever CAP-11 has recorded nothing.
+- **The dependencies row for CAP-11** now reads: **CAP-11 Regulatory Translation & Dossier Support: owns regulatory status; supersedes the declared status where it records a verified regulator decision; `designed`, post-launch.**
 
 ## Why this contract, and what it adopts
 
