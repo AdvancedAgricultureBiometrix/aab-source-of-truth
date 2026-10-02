@@ -5,7 +5,7 @@
 **Capability:** CAP-11 Regulatory Translation & Dossier Support. It is not SCS-CAP-11 (Regulatory Framework Update Management), a different capability in another domain.
 **Authority:** DEFINES THE CONTRACT FOR CAP-11: HOW A JURISDICTION'S REGULATORY REQUIREMENTS ARE RECORDED FROM THEIR AUTHORITATIVE SOURCES, VERIFIED BY TWO QUALIFIED PEOPLE AND KEPT CURRENT; HOW ADMITTED EVIDENCE IS MAPPED TO THEM BY PEOPLE AND ASSEMBLED INTO A GOVERNED REGULATORY DOSSIER; HOW A REGULATOR'S OWN DECISION IS RECORDED; HOW WHETHER A FIELD TRIAL NEEDS A PERMIT IS DETERMINED; HOW A DOSSIER LEAVES THE COUNTRY, AND WHEN; AND ITS BOUNDARIES WITH CAP-04, CAP-06, CAP-07, CAP-08, CAP-10, CAP-12, THE SCS DOMAIN AND THE PLANNED REGULATORY DOMAIN. Establishes no commissioning, production, Gate D, WP05, scientific-validity, legal, compliance, regulatory-approval or market-access authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
 **Written:** 2026-10-02, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3). CAP-11 had no design contract before this one. Its horizon stays **post-launch** in the CAP-34 fidelity manifest.
-**Amended:** 2026-10-02 (market authorisation and manufacturing-activity permits, for CAP-12), with CAP-12's canonical contract.
+**Amended:** 2026-10-02 (market authorisation and manufacturing-activity permits, for CAP-12), with CAP-12's canonical contract; and 2026-10-02, second (integrity, lineage and the AGR vocabulary, under CAP-03), with CAP-03's canonical contract.
 
 ## The governing principle
 
@@ -36,6 +36,22 @@
 - **The contract gap "CAP-12"** is closed.
 - **The dependencies row for CAP-12** now reads: **CAP-12 Controlled Manufacturing Transfer: relies on the market-authorisation and activity permit determinations; `designed`, post-launch.**
 - **The decision kinds** gain `MARKET_AUTHORISATION_DETERMINATION`, with its receipt.
+
+## Amendment of 2026-10-02 (second): integrity, lineage and the AGR vocabulary, under CAP-03
+
+**Why.** CAP-03 now has a contract (`governance/workstream-b/CAP-03-EVIDENCE-INTEGRITY-AND-PROVENANCE-CANONICAL-CONTRACT-2026-10-02.md`). It provides the integrity re-check and lineage AGR's evaluations lacked, and the AGR provenance vocabulary, which every AGR capability adopts before implementation (CAP-03, decision 16). Approved by the Platform Owner in review on 2026-10-02. Nothing else in this contract changes.
+
+**1. Integrity re-check and lineage.** A `REGULATORY_DOSSIER_EVALUATION` may request a CAP-03 verification run over its snapshot's members; a permit or market-authorisation determination may request one over its basis. The dossier rules become `cap-11-dossier-rules-2`: version 1, with this change. **Where a cited run covers every member, `INTEGRITY_RECHECK_NOT_PERFORMED` is replaced by the run's findings, by kind,** and `integrityRecheck` is `PERFORMED`; otherwise the disclosure stays. **A lineage evaluation** may be requested for any of its requirement-set verifications, dossiers, assessments, regulator decision verifications and determinations. **No finding is ever shown as "verified" in general,** and none says the evidence is true, sufficient or authentic in the world.
+
+**2. The vocabulary.** CAP-11 adopts `cap-03-vocabulary-1`: its `authorityKind` maps to a source qualifier, its documents to `REGULATORY_SOURCE_TEXT` or `REGULATOR_CORRESPONDENCE`, and its translations and extractions to `TRANSLATION_OF` (CAP-03, "Mappings from existing terms"). **No record is renamed.** A term of CAP-11's own, added later, is registered here and mapped to the vocabulary, or refused (`VOCABULARY_TERM_UNMAPPED`).
+
+**3. How its outputs reference CAP-03.** Each of its requirement-set verifications, dossiers, assessments, regulator decision verifications and determinations may carry `integrity?: { verificationRunIds: string[]; lineageEvaluationId?: string }`, set by the system when a run or evaluation is cited, and shown with the findings by kind and whether they are current.
+
+**4. Failures stay visible.** CAP-03's findings are currency triggers for CAP-11's decisions (CAP-03, "Integrity findings and their consequences"). **A requirement set, regulator decision or determination resting on a document `INTEGRITY_COMPROMISED`** may not be relied on; **a permit or market-authorisation determination relied on by CAP-08 or CAP-12 then holds them,** as a regulator's revocation would. **CAP-03 verifies a document's bytes; whether it is authentic in the world remains CAP-11's verification, by a person.** CAP-11's own egress is unchanged; CAP-03 does not depend on it. **Historical decisions are never rewritten;** their current reliance changes, derived when read. **Missing or failed mandatory verification is always shown,** never hidden or treated as a pass.
+
+**5. Before implementation.** CAP-11's step 4 (code) uses the vocabulary and CAP-03's verification as adopted here.
+
+**6. What this amendment replaces.** The dependencies gain a row: **CAP-03 Evidence Integrity & Provenance: integrity re-check, lineage, the AGR vocabulary and integrity incidents; `designed`, launch release.**
 
 ## Why this contract, and what it adopts
 

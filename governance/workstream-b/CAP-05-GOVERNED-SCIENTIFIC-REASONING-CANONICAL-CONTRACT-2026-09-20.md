@@ -4,7 +4,7 @@
 **Domain:** Agricultural Science (AGR)
 **Capability:** CAP-05 Governed Scientific Reasoning. It is not SCS-CAP-05 (Supply Chain Custody Evidence Admission), a different capability in another domain.
 **Authority:** DEFINES THE CONTRACT FOR CAP-05: HOW A SCIENTIST'S QUESTION IS EVALUATED OVER A FROZEN SET OF CAP-04 ADMITTED EVIDENCE, WHAT THE RESULTING EVIDENCE LANDSCAPE CONTAINS AND DOES NOT, HOW IT IS RECORDED, REVIEWED AND COMPARED WITH LATER EVIDENCE, AND ITS BOUNDARY WITH THE REHEARSAL'S COGNITIVE LOOP, EVIDENCE WATCH AND CAP-09. Establishes no commissioning, production, Gate D, WP05, scientific-validity or regulatory authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
-**Amended:** 2026-09-29, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3): aligned with the platform contracts and with CAP-04 as amended, and the rehearsal accounted for (see "Amendment of 2026-09-29: canonical alignment, and the rehearsal accounted for"). Amended again on 2026-09-29, for challenges to landscape reviews (see "Amendment of 2026-09-29: challenges to landscape reviews").
+**Amended:** 2026-09-29, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3): aligned with the platform contracts and with CAP-04 as amended, and the rehearsal accounted for (see "Amendment of 2026-09-29: canonical alignment, and the rehearsal accounted for"). Amended again on 2026-09-29, for challenges to landscape reviews (see "Amendment of 2026-09-29: challenges to landscape reviews"); and 2026-10-02 (integrity, lineage and the AGR vocabulary, under CAP-03), with CAP-03's canonical contract.
 **History:** first written on 2026-09-20 as a governance design contract, resolving the "design decision required before wiring" finding for CAP-05 in `governance/AAB-CAPABILITY-GATEWAY-RECONCILIATION-2026-09-20.md`. It was not part of PR #16. The 2026-09-20 text is in the repository's history.
 
 ## Amendment of 2026-09-29: canonical alignment, and the rehearsal accounted for
@@ -58,6 +58,22 @@
 - **The platform gap on invalidated admissions,** recorded in "Open gaps", as it bears on review currency.
 
 **Nothing is implemented by this amendment.**
+
+## Amendment of 2026-10-02: integrity, lineage and the AGR vocabulary, under CAP-03
+
+**Why.** CAP-03 now has a contract (`governance/workstream-b/CAP-03-EVIDENCE-INTEGRITY-AND-PROVENANCE-CANONICAL-CONTRACT-2026-10-02.md`). It provides the integrity re-check and lineage AGR's evaluations lacked, and the AGR provenance vocabulary, which every AGR capability adopts before implementation (CAP-03, decision 16). Approved by the Platform Owner in review on 2026-10-02. Nothing else in this contract changes.
+
+**1. Integrity re-check and lineage.** A landscape evaluation may request a CAP-03 verification run over its snapshot's members. The landscape rules become `cap-05-landscape-rules-2`: version 1, with this change. **Where a cited run covers every member, `INTEGRITY_RECHECK_NOT_PERFORMED` is replaced by the run's findings, by kind,** and `integrityRecheck` is `PERFORMED`; otherwise the disclosure stays. **A lineage evaluation** may be requested for any of its evidence landscapes and their reviews. **No finding is ever shown as "verified" in general,** and none says the evidence is true, sufficient or authentic in the world.
+
+**2. The vocabulary.** CAP-05 adopts `cap-03-vocabulary-1`: its members map to `EVALUATED_IN`, and its reviews to `DECIDED_ON` (CAP-03, "Mappings from existing terms"). **No record is renamed.** A term of CAP-05's own, added later, is registered here and mapped to the vocabulary, or refused (`VOCABULARY_TERM_UNMAPPED`).
+
+**3. How its outputs reference CAP-03.** Each of its evidence landscapes and their reviews may carry `integrity?: { verificationRunIds: string[]; lineageEvaluationId?: string }`, set by the system when a run or evaluation is cited, and shown with the findings by kind and whether they are current.
+
+**4. Failures stay visible.** CAP-03's findings are currency triggers for CAP-05's decisions (CAP-03, "Integrity findings and their consequences"). **A landscape review whose snapshot holds a record `INTEGRITY_COMPROMISED`** may not be relied on, including by CAP-09 (its `FIT_AS_EVIDENCE_BASIS` review), until a new landscape is reviewed. **Historical decisions are never rewritten;** their current reliance changes, derived when read. **Missing or failed mandatory verification is always shown,** never hidden or treated as a pass.
+
+**5. Before implementation.** CAP-05's step 4 (code) uses the vocabulary and CAP-03's verification as adopted here.
+
+**6. What this amendment replaces.** The dependencies gain a row: **CAP-03 Evidence Integrity & Provenance: integrity re-check, lineage, the AGR vocabulary and integrity incidents; `designed`, launch release.**
 
 ## The boundary, in plain English
 

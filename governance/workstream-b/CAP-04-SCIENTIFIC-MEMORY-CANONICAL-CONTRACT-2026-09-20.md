@@ -4,7 +4,7 @@
 **Domain:** Agricultural Science (AGR)
 **Capability:** CAP-04 Governed Scientific Memory. It is not SCS-CAP-04 (Deforestation Evidence Admission), a different capability in another domain.
 **Authority:** DEFINES THE CONTRACT FOR CAP-04: WHAT MAY ENTER GOVERNED SCIENTIFIC MEMORY, HOW IT IS ADMITTED, HELD, QUARANTINED AND SUPERSEDED, HOW ADMITTED MEMORY IS READ, AND THE BOUNDARY WITH CAP-05 AND CAP-09. Establishes no commissioning, production, Gate D, WP05, scientific-validity or regulatory authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
-**Amended:** 2026-09-29, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3): aligned with the platform contracts, and the rehearsal accounted for (see "Amendment of 2026-09-29: canonical alignment, and the rehearsal accounted for"). Amended again on 2026-09-29, with two corrections following CAP-05's canonical amendment (see "Amendment of 2026-09-29: two corrections following CAP-05 canonical amendment"), for challenges to its human decisions (see "Amendment of 2026-09-29: challenges to CAP-04's human decisions"), and for originals stored under the AGR storage profile (see "Amendment of 2026-09-29: originals stored under the AGR storage profile").
+**Amended:** 2026-09-29, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3): aligned with the platform contracts, and the rehearsal accounted for (see "Amendment of 2026-09-29: canonical alignment, and the rehearsal accounted for"). Amended again on 2026-09-29, with two corrections following CAP-05's canonical amendment (see "Amendment of 2026-09-29: two corrections following CAP-05 canonical amendment"), for challenges to its human decisions (see "Amendment of 2026-09-29: challenges to CAP-04's human decisions"), and for originals stored under the AGR storage profile (see "Amendment of 2026-09-29: originals stored under the AGR storage profile"); and 2026-10-02 (integrity, lineage and the AGR vocabulary, under CAP-03), with CAP-03's canonical contract.
 **History:** first written on 2026-09-20 as a governance design contract, resolving the "design decision required before wiring" finding for CAP-04 in `governance/AAB-CAPABILITY-GATEWAY-RECONCILIATION-2026-09-20.md`. It was not part of PR #16. The 2026-09-20 text is in the repository's history.
 
 ## Amendment of 2026-09-29: canonical alignment, and the rehearsal accounted for
@@ -103,6 +103,22 @@ AAB-PLATFORM-04 (actor–subject links) is **not adopted**: CAP-04 has no submis
 **Both prerequisites before any code are now met:** the receipt migration (migration 025, PR #70; the application's capability types open in the extraction's step 2), and the store's parameters (this amendment). CAP-04's code still waits on the dependency audit's independent verification and the extraction.
 
 **Nothing is implemented by this amendment.**
+
+## Amendment of 2026-10-02: integrity, lineage and the AGR vocabulary, under CAP-03
+
+**Why.** CAP-03 now has a contract (`governance/workstream-b/CAP-03-EVIDENCE-INTEGRITY-AND-PROVENANCE-CANONICAL-CONTRACT-2026-10-02.md`). It provides the integrity re-check and lineage AGR's evaluations lacked, and the AGR provenance vocabulary, which every AGR capability adopts before implementation (CAP-03, decision 16). Approved by the Platform Owner in review on 2026-10-02. Nothing else in this contract changes.
+
+**1. Integrity re-check and lineage.** **CAP-04 has no evaluation of its own.** Its admitted records are what CAP-03 verifies: every read shows a record's latest CAP-03 findings, by kind, and whether they are current. **`INTEGRITY_VERIFICATION` is a purpose CAP-03 may declare** to read any admitted record, its original and its provenance; it reads, and changes nothing. **A lineage evaluation** may be requested for any of its admitted records. **No finding is ever shown as "verified" in general,** and none says the evidence is true, sufficient or authentic in the world.
+
+**2. The vocabulary.** CAP-04 adopts `cap-03-vocabulary-1`: **its `sourceType`, `generation.method` and `lineage.relation` lists are the base of the vocabulary, unchanged;** the terms CAP-03 adds are available to CAP-04 records from the next schema version (CAP-03, "Mappings from existing terms"). **No record is renamed.** A term of CAP-04's own, added later, is registered here and mapped to the vocabulary, or refused (`VOCABULARY_TERM_UNMAPPED`).
+
+**3. How its outputs reference CAP-03.** Each of its admitted records may carry `integrity?: { verificationRunIds: string[]; lineageEvaluationId?: string }`, set by the system when a run or evaluation is cited, and shown with the findings by kind and whether they are current.
+
+**4. Failures stay visible.** CAP-03's findings are currency triggers for CAP-04's decisions (CAP-03, "Integrity findings and their consequences"). **A record `INTEGRITY_COMPROMISED` or `UNDETERMINED`** is never changed. It is shown as such on every read, for every purpose, and **its reliance is prohibited or waits as CAP-03's table says.** A restored original is a new admission, superseding the record, with its own provenance. **Historical decisions are never rewritten;** their current reliance changes, derived when read. **Missing or failed mandatory verification is always shown,** never hidden or treated as a pass.
+
+**5. Before implementation.** CAP-04's step 4 (code) uses the vocabulary and CAP-03's verification as adopted here.
+
+**6. What this amendment replaces.** The dependencies gain a row: **CAP-03 Evidence Integrity & Provenance: integrity re-check, lineage, the AGR vocabulary and integrity incidents; `designed`, launch release.**
 
 ## The boundary, in plain English
 

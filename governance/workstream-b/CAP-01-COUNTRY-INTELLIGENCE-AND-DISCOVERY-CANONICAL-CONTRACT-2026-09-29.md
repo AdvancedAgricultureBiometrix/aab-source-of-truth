@@ -5,7 +5,7 @@
 **Capability:** CAP-01 Country Intelligence & Discovery. It is not SCS-CAP-01 (Regulatory Framework Registration), a different capability in another domain.
 **Authority:** DEFINES THE CONTRACT FOR CAP-01: HOW A COUNTRY'S AGRICULTURAL PROBLEMS, RESOURCES, WASTE STREAMS AND OVERLOOKED OPPORTUNITIES ARE RECORDED, EVIDENCED, ASSEMBLED INTO A DISCOVERY DOSSIER, REVIEWED BY A SCIENTIST AND REFERRED FOR INVESTIGATION, AND ITS BOUNDARIES WITH CAP-02, CAP-04, CAP-06, CAP-10 AND THE REHEARSAL'S COGNITIVE LOOP. Establishes no commissioning, production, Gate D, WP05, scientific-validity or regulatory authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
 **Written:** 2026-09-29, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3). CAP-01 had no design contract before this one.
-**Amended:** 2026-10-02 (hazard screens, and the safety label, under CAP-10), with CAP-10's canonical contract.
+**Amended:** 2026-10-02 (hazard screens, and the safety label, under CAP-10), with CAP-10's canonical contract; and 2026-10-02, second (integrity, lineage and the AGR vocabulary, under CAP-03), with CAP-03's canonical contract.
 
 ## Amendment of 2026-10-02: hazard screens, and the safety label, under CAP-10
 
@@ -24,6 +24,22 @@
 - **Decision 8** now reads: safety and ecology are CAP-10's, never CAP-01's; CAP-01 has no safety gate; every dossier and referral discloses `SAFETY_ECOLOGY_NOT_ASSESSED`, always; CAP-10 may screen a resource or waste stream for handling, and the screen is shown, never gating.
 - **The contract gap "CAP-10"** is closed. Safety and ecology are assessed in CAP-10 only once the material is a CAP-06 subject; until then, only its handling may be screened.
 - **The dependencies row for CAP-10** now reads: **optional: hazard screens of resources and waste streams, shown; `designed`.**
+
+## Amendment of 2026-10-02 (second): integrity, lineage and the AGR vocabulary, under CAP-03
+
+**Why.** CAP-03 now has a contract (`governance/workstream-b/CAP-03-EVIDENCE-INTEGRITY-AND-PROVENANCE-CANONICAL-CONTRACT-2026-10-02.md`). It provides the integrity re-check and lineage AGR's evaluations lacked, and the AGR provenance vocabulary, which every AGR capability adopts before implementation (CAP-03, decision 16). Approved by the Platform Owner in review on 2026-10-02. Nothing else in this contract changes.
+
+**1. Integrity re-check and lineage.** A `DISCOVERY_DOSSIER_EVALUATION` may request a CAP-03 verification run over its snapshot's members. The dossier rules become `cap-01-dossier-rules-3`: version 2, with this change. **Where a cited run covers every member, `INTEGRITY_RECHECK_NOT_PERFORMED` is replaced by the run's findings, by kind,** and `integrityRecheck` is `PERFORMED`; otherwise the disclosure stays. **A lineage evaluation** may be requested for any of its discovery dossiers, discovery reviews and referrals. **No finding is ever shown as "verified" in general,** and none says the evidence is true, sufficient or authentic in the world.
+
+**2. The vocabulary.** CAP-01 adopts `cap-03-vocabulary-1`: its citations of admitted evidence map to `SUPPORTS`, `CONTRADICTS` or `REFERS_TO`, as their roles say (CAP-03, "Mappings from existing terms"). **No record is renamed.** A term of CAP-01's own, added later, is registered here and mapped to the vocabulary, or refused (`VOCABULARY_TERM_UNMAPPED`).
+
+**3. How its outputs reference CAP-03.** Each of its discovery dossiers, discovery reviews and referrals may carry `integrity?: { verificationRunIds: string[]; lineageEvaluationId?: string }`, set by the system when a run or evaluation is cited, and shown with the findings by kind and whether they are current.
+
+**4. Failures stay visible.** CAP-03's findings are currency triggers for CAP-01's decisions (CAP-03, "Integrity findings and their consequences"). **A referral whose dossier relied on a record `INTEGRITY_COMPROMISED`** is shown as such to CAP-06, which may not open a candidate from it until a new dossier is reviewed; one relying on a record `UNDETERMINED` waits. **Historical decisions are never rewritten;** their current reliance changes, derived when read. **Missing or failed mandatory verification is always shown,** never hidden or treated as a pass.
+
+**5. Before implementation.** CAP-01's step 4 (code) uses the vocabulary and CAP-03's verification as adopted here.
+
+**6. What this amendment replaces.** The dependencies gain a row: **CAP-03 Evidence Integrity & Provenance: integrity re-check, lineage, the AGR vocabulary and integrity incidents; `designed`, launch release.**
 
 ## Why this contract, and what it adopts
 

@@ -5,7 +5,7 @@
 **Capability:** CAP-10 Safety & Ecological Intelligence. It is not SCS-CAP-10 (Challenge Response and Evidence Retrieval), a different capability in another domain.
 **Authority:** DEFINES THE CONTRACT FOR CAP-10: HOW THE SAFETY AND ECOLOGICAL EFFECT OF AN INGREDIENT, A FORMULATION, A REGISTERED PRODUCT USED OUTSIDE ITS REGISTRATION, OR A RAW MATERIAL HANDLED DURING DISCOVERY IS ASSESSED BY QUALIFIED PEOPLE WITHIN A DECLARED USE BOUNDARY; HOW A SAFETY SIGNAL IS REPORTED, HELD, TRIAGED, DETERMINED AND CLOSED; WHEN FURTHER APPLICATION OR HANDLING IS HELD AUTOMATICALLY; AND ITS BOUNDARIES WITH CAP-01, CAP-04, CAP-05, CAP-06, CAP-07, CAP-08, CAP-09, CAP-11 AND THE PLANNED ECOSYSTEM DOMAIN. Establishes no commissioning, production, Gate D, WP05, scientific-validity, general safety certification or regulatory authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
 **Written:** 2026-10-02, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3). CAP-10 had no design contract, and no description beyond its name, before this one.
-**Amended:** 2026-10-02 (regulatory status, and a clerical correction), with CAP-11's canonical contract; and 2026-10-02, second (manufacture-scale handling, and manufacturing reports), with CAP-12's canonical contract.
+**Amended:** 2026-10-02 (regulatory status, and a clerical correction), with CAP-11's canonical contract; and 2026-10-02, second (manufacture-scale handling, and manufacturing reports), with CAP-12's canonical contract; and 2026-10-02, third (integrity, lineage and the AGR vocabulary, under CAP-03), with CAP-03's canonical contract.
 
 ## Amendment of 2026-10-02: regulatory status, and a clerical correction
 
@@ -43,6 +43,22 @@
 **3. Holds reach CAP-12.** A hold whose scope is a transfer, or the formulation it concerns, is a CAP-12 `TRANSFER_HOLD`; `HANDLING_SUSPENDED` applies to manufacturing handling under the site's outcome.
 
 **4. What this amendment replaces.** **Decision 4**, and the table of assessment types and use stages, gain the fourth use stage. **The notification list** for a signal concerning a transfer is the transfer's named recipients, its rights controller and its reviewer. **The dependencies** gain a row: **CAP-12 Controlled Manufacturing Transfer: relies on site-specific handling outcomes; sends manufacturing reports; receives holds; `designed`, post-launch.**
+
+## Amendment of 2026-10-02 (third): integrity, lineage and the AGR vocabulary, under CAP-03
+
+**Why.** CAP-03 now has a contract (`governance/workstream-b/CAP-03-EVIDENCE-INTEGRITY-AND-PROVENANCE-CANONICAL-CONTRACT-2026-10-02.md`). It provides the integrity re-check and lineage AGR's evaluations lacked, and the AGR provenance vocabulary, which every AGR capability adopts before implementation (CAP-03, decision 16). Approved by the Platform Owner in review on 2026-10-02. Nothing else in this contract changes.
+
+**1. Integrity re-check and lineage.** A `SAFETY_DOSSIER_EVALUATION` may request a CAP-03 verification run over its snapshot's members. The dossier rules become `cap-10-dossier-rules-3`: version 2, with this change. **Where a cited run covers every member, `INTEGRITY_RECHECK_NOT_PERFORMED` is replaced by the run's findings, by kind,** and `integrityRecheck` is `PERFORMED`; otherwise the disclosure stays. **A lineage evaluation** may be requested for any of its safety and ecology dossiers, assessments, and safety signals. **No finding is ever shown as "verified" in general,** and none says the evidence is true, sufficient or authentic in the world.
+
+**2. The vocabulary.** CAP-10 adopts `cap-03-vocabulary-1`: its evidence `origin` maps to a source qualifier, with `SUPPLIER` and `TRADITIONAL_KNOWLEDGE` also mapped to the source types `SUPPLIER_DOCUMENT` and `TRADITIONAL_KNOWLEDGE_RECORD` (CAP-03, "Mappings from existing terms"). **No record is renamed.** A term of CAP-10's own, added later, is registered here and mapped to the vocabulary, or refused (`VOCABULARY_TERM_UNMAPPED`).
+
+**3. How its outputs reference CAP-03.** Each of its safety and ecology dossiers, assessments, and safety signals may carry `integrity?: { verificationRunIds: string[]; lineageEvaluationId?: string }`, set by the system when a run or evaluation is cited, and shown with the findings by kind and whether they are current.
+
+**4. Failures stay visible.** CAP-03's findings are currency triggers for CAP-10's decisions (CAP-03, "Integrity findings and their consequences"). **An outcome whose evidence becomes `INTEGRITY_COMPROMISED` is a safety-driven lapse** (rule `CR-06`), holding what relies on it; `UNDETERMINED` evidence makes the outcome `POTENTIALLY_STALE`. **A safety signal is never closed** on evidence that is `INTEGRITY_COMPROMISED`. **Historical decisions are never rewritten;** their current reliance changes, derived when read. **Missing or failed mandatory verification is always shown,** never hidden or treated as a pass.
+
+**5. Before implementation.** CAP-10's step 4 (code) uses the vocabulary and CAP-03's verification as adopted here.
+
+**6. What this amendment replaces.** The dependencies gain a row: **CAP-03 Evidence Integrity & Provenance: integrity re-check, lineage, the AGR vocabulary and integrity incidents; `designed`, launch release.**
 
 ## Why this contract, and what it adopts
 
