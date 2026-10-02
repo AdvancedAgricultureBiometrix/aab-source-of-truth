@@ -3,6 +3,195 @@
 **Status:** CANONICAL CONTRACT — NOT IMPLEMENTATION
 **Domain:** AAB platform (shared by every domain)
 **Authority:** DEFINES PROVENANCE: WHAT IT RECORDS ABOUT A GOVERNED RECORD, WHICH OF IT IS VERIFIED AND WHICH IS DECLARED, HOW REFERENCES TO OTHER RECORDS ARE RESOLVED, HOW A RECORD IS CORRECTED WITHOUT BEING CHANGED, AND HOW PROVENANCE IS CARRIED INTO WHAT IS BUILT FROM A RECORD. It admits no record, grants no authority to anyone, amends no domain contract and changes no stored record. This contract is PROPOSED_NOT_ADMITTED. No implementation exists.
+**Amended:** 2026-10-02 (the record digest, its calculation, service submitters, supersession, registered resolvers and conformance, with AAB-PLATFORM-10).
+
+## Amendment of 2026-10-02: the record digest, its calculation, and what the domains found
+
+**Why.** Every domain that adopted this contract relies on something it never defined. **A record's digest** is named here (`resolved.recordDigest`) and relied on by AAB-PLATFORM-06 (the admission decision binds it), AAB-PLATFORM-07 (a snapshot member's digest is the admitted record's) and every AGR contract, but its bytes and its envelope were never defined. The AGR contracts written since then also found that this contract's rules on supersession, citation, submitters and fields set after the write were not precise enough, and each began to answer them differently. **This amendment settles them at platform level, before any domain relies on a reading of its own.** Canonicalisation itself is not provenance's: it is defined by **AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests** (`governance/AAB-PLATFORM-10-CANONICAL-SERIALISATION-AND-CRYPTOGRAPHIC-DIGESTS-CANONICAL-CONTRACT-2026-10-02.md`), written in the same change, which this amendment cites.
+
+> **A digest proves equality with the exact canonical data model hashed under the identified canonicalisation and hash algorithms. It does not prove that the record is true, authoritative or sufficient.**
+
+**Decisions recorded on 2026-10-02** (approved by the Platform Owner in review):
+1. **Canonicalisation is AAB-PLATFORM-10's,** never provenance's. A record digest is calculated under it, and identifies its canonicalisation and hash algorithm (AAB-PLATFORM-10, section 5).
+2. **The record-digest envelope** is defined here (section A), and the exact field set is machine-readable for every record schema.
+3. **The digest is calculated in nine steps, in one transaction** (section B). **Nothing may subsequently be inserted into the admitted record.**
+4. **`SERVICE` submitters are permitted, under strict controls** (section C). A service never makes a human decision, and never disguises itself as a human submitter.
+5. **Supersession is system-resolved, not system-invented,** with three platform reasons (section D).
+6. **Citations resolve only through registered resolvers** (section E). The platform never searches a domain's tables.
+7. **Licence, consent, permitted use and lawful basis stay outside the universal provenance object,** while their evidence participates in lineage (section F).
+8. **Adoption is explicit:** every adopting contract states, for each of the six gaps, a limitation, a refusal, or not applicable with a reason, with a matrix covering all its record types (section G).
+9. **SCS adoption is separate.** This amendment changes no SCS code, schema or stored value; SCS's adoption of this contract is a future decision, after the extraction.
+10. **One citation rule.** Every reference a record relies on, as evidence or as a gate, follows the same cite-then-resolve behaviour, whether it is held in `lineage` or in a domain field that the domain's adoption maps to a `lineage` entry. A declared version that differs from the version found is unresolved. Consistency across the platform matters more than preserving the current inconsistency.
+11. **Automated is declared per method term.** Every method term in every vocabulary states `automated: true` or `false` explicitly. Name-based inference (a method containing `AUTOMATED` or `MACHINE`, CAP-03's rule) is a fallback minimum check, never the definition.
+12. **Offline capture is settled** by an optional declared `capture { deviceRecordedAt, deviceCaptureId }` block (section C). CAP-08 already settled the pattern with its own fields; this formalises it at platform level, and closes the open item.
+13. **An `ActorReference` appears in a record's content only for a person who acted in AAB in that role.** A person named in a record's content, such as an author or a QC release person, who did not act in AAB in that role, is declared data, not an `ActorReference`, as decision 5 of 2026-09-27 already says. A correctness fix for CAP-11 and CAP-12, made in the AGR conformance change.
+
+### A. The record-digest envelope
+
+**Every written-once record that adopts this contract has a `recordDigest`:** a `DigestReference` of type `recordDigest` (AAB-PLATFORM-10, sections 5 and 6), set by the system.
+
+**Included:**
+- the schema identifier and version;
+- the record identifier and record version;
+- the country and the domain;
+- the substantive content;
+- the complete provenance, this contract's record, with its resolved references;
+- the resolved supersession (section D);
+- the immutable system acceptance fields, such as the admission time.
+
+**Excluded:**
+- the `recordDigest` itself;
+- database storage internals, indexes and cache fields;
+- derived current status, such as superseded, quarantined or current;
+- later verification results;
+- access logs;
+- presentation-only fields.
+
+**The exact field set is machine-readable for every record schema:** the schema declares, for each field, whether it is in the envelope, so that any verifier can rebuild the exact hashed value from the stored record (AAB-PLATFORM-10, section 6).
+
+**`resolved.recordDigest` is now required** wherever the cited record kind has a record digest (section E), and is a `DigestReference`.
+
+### B. When the digest is calculated
+
+The admission transaction:
+1. validates the submission;
+2. resolves identity and authority;
+3. resolves citations;
+4. assigns record identity and version;
+5. assigns the trusted acceptance time;
+6. constructs the final immutable admitted record;
+7. canonicalises it;
+8. calculates its digest;
+9. writes the record, its provenance, the admission decision and the receipt atomically.
+
+**Nothing may subsequently be inserted into the admitted record.** Later integrity checks, currency evaluations, incidents, verification runs and similar acts are **separate immutable records referring to its digest.** A reference that a domain contract describes as "set by the system when a run is cited" on an already-written record is read as derived when read, never written into it (to be aligned in the AGR conformance change).
+
+**Times** are fixed to AAB-PLATFORM-10's system-time form before step 7, so storing more precision never changes the digest (AAB-PLATFORM-10, section 4).
+
+### C. Submission: people, services, and offline capture
+
+**The submission block, extended:**
+
+```typescript
+submission: {
+  submittedBy: ActorReference;          // set by the system: HUMAN, or SERVICE under the controls below
+  submittedAt: string;                  // set by the system: the trusted acceptance time (section B, step 5)
+  initiatedBy?: ActorReference;         // set by the system: the person who initiated a SERVICE submission
+  service?: {                           // set by the system: required when submittedBy is a SERVICE
+    serviceRegistrationId: string;      // the registered service identity
+    executionIdentity: string;          // the authenticated identity it executed as
+    softwareRelease: string;            // its software and release version
+    correlationId: string;
+    triggerKind: "RECORD" | "SCHEDULED_JOB";
+    triggerRecord?: {                   // when triggerKind is RECORD: the triggering record
+      recordKind: string;
+      recordId: string;
+      recordVersion: number;
+    };
+    triggerJobReference?: string;       // when triggerKind is SCHEDULED_JOB
+    method: string;                     // the deterministic method
+    methodVersion: string;
+  };
+};
+capture?: {                             // declared: offline capture only (decision 12)
+  deviceRecordedAt: string;             // the device's own clock, as declared
+  deviceCaptureId: string;              // the device's own identifier for the capture
+};
+```
+
+**A `SERVICE` may submit only with all of:**
+- a registered identity;
+- a country and domain scope;
+- the record kinds it is permitted to submit;
+- capability-specific authority, granted by the contract that owns the record kind;
+- an authenticated execution identity;
+- its software and release version;
+- a correlation reference;
+- the triggering record, or the scheduled job;
+- a deterministic method and its version;
+- `generation.automated: true`.
+
+**Where a person initiated the operation,** both are recorded: `submittedBy` is the `SERVICE`, and `initiatedBy` is the person's `ActorReference`.
+
+**A service may never:**
+- make a human decision;
+- approve;
+- clear safety;
+- verify regulatory meaning;
+- promote knowledge;
+- commission AAB;
+- disguise itself as a human submitter.
+
+**A domain contract may forbid service submitters entirely** for its record kinds, as CAP-02 does for submissions to CAP-04. Nothing here permits what a domain contract forbids.
+
+**`provenanceVersion` becomes `"2"`** for records written under this amendment, with `initiatedBy`, `service` and `capture`. Records written under version 1 keep it, and are read by it.
+
+### D. Supersession
+
+**The submitter, or the authorised operation, declares:** what should be superseded, the proposed reason, and an explanation.
+
+**The platform resolves and records:** the exact record identifier, version and digest superseded; whether the actor has authority to supersede it; and whether the relationship is valid. **A failed authority or validity check refuses the submission.** The platform never invents the scientific reason for the change.
+
+```typescript
+supersedes?: {
+  declared: {
+    citedId: string;                    // as the submitter gave it
+    citedVersion?: number;
+    reason: "CORRECTION" | "WITHDRAWAL" | "NEW_VERSION";
+    explanation: string;
+    domainClassification?: string;      // a domain's own, more detailed classification
+  };
+  resolved: {                           // set by the system
+    recordKind: string;
+    recordId: string;
+    recordVersion: number;
+    recordDigest: DigestReference;
+  };
+};
+```
+
+- **Three platform reasons:** `CORRECTION`, `WITHDRAWAL` and `NEW_VERSION`. A domain gives more detail in `domainClassification`, never by altering the platform enumeration. A domain's existing reason `UPDATE` maps to `NEW_VERSION`.
+- **Supersession is recorded once, in this field.** A lineage relation that says the same thing, such as CAP-03's `SUPERSEDES`, maps to it, and is never recorded as a second, separate entry.
+- **A record is identified by its identifier and version.** A domain may supersede by a new version of the same identifier, or by a new identifier; either way, the superseded record's identifier, version and digest are resolved.
+- Section 5's other rules stand: at most once, same domain and tenancy, never a deletion, withdrawal only by supersession.
+
+### E. Citation resolution through registered resolvers
+
+**Each written-once record kind that may be cited registers:**
+- its record-kind identifier;
+- its owning domain;
+- its resolver interface;
+- its version rules;
+- its digest field;
+- its country boundary;
+- its disclosure rules.
+
+**The platform resolves a citation only through the resolver registered for the cited record kind.** It never searches a domain's tables for an identifier. This is consistent with the dependency audit's V1 and V13 remedies: domains register how their records are resolved, and the platform does not know their tables.
+
+- **What may be resolved widens** from admitted records to any registered written-once record kind in the same domain and country: admitted records, evaluations (AAB-PLATFORM-07), human decisions (AAB-PLATFORM-08) and receipts, each when its kind is registered.
+- **A lineage entry may name the record kind and a version:** `{ relation, recordKind?, citedId, citedVersion?, resolved? }`. A declared version that differs from the version found is unresolved, and disclosed as `CITATION_UNRESOLVED`.
+- **Cross-domain resolution requires an explicit, governed evidence packet,** which is not yet defined. **Cross-country resolution never happens implicitly.** Until a packet is defined, such a citation stays cited only, and unresolved.
+
+### F. Licence, consent, permitted use and lawful basis
+
+- **They are conditions governing use, not universal provenance,** and stay outside this contract's record, in each domain's own fields (such as CAP-04's `classification.permittedUses`, and CAP-02's permitted-use basis).
+- **But their evidence has provenance:** the documents that support them are admitted evidence; their issuer and authority have provenance; **the applicable version is cited** and resolved, so the governed record resolves the exact evidence it relied on; **expiry and withdrawal are tracked** by the owning domain.
+- They therefore **participate in lineage** without becoming provenance fields.
+
+### G. Adopting this contract, made explicit
+
+Section 7 is strengthened. **Every adopting contract states, for each of the six gaps, one of:** a disclosed limitation, under its code; a refusal, under its code; or **not applicable, with the reason.** It provides **a matrix covering all its record types,** gap by gap, and declares, for every record schema, the machine-readable digest envelope (section A) and, for every record kind that may be cited, its resolver registration (section E). **An adoption without the matrix is incomplete.**
+
+### What this amendment replaces
+
+- **Section 2:** `submission` gains `initiatedBy` and `service`; the record may carry `capture` (decision 12); `lineage` entries may name `recordKind` and `citedVersion`; `resolved.recordDigest` is a required `DigestReference` where the kind has one; `provenanceVersion` `"2"`.
+- **Section 4:** resolution is through registered resolvers, and may reach any registered written-once record kind in the same domain and country (section E).
+- **Section 5:** supersession is declared, then resolved, with three platform reasons (section D).
+- **Section 7:** the explicit adoption and matrix (section G).
+- **Section 10:** a `SERVICE` submitter is valid only under section C's controls; a request that supplies `initiatedBy`, `service`, `supersedes.resolved` or `recordDigest` is refused, as for every system-set field.
+- **Open items:** offline capture is settled (decision 12); canonicalisation is AAB-PLATFORM-10's.
+
+**Sections 2, 4, 5, 7 and 10 are marked "(amended on 2026-10-02)" where they change.** Nothing else in this contract changes. **Nothing is implemented by this amendment.**
 
 ## Sources
 
@@ -39,7 +228,7 @@
 - that the record is sufficient for any purpose;
 - anything about acts after admission.
 
-## 2. The provenance record
+## 2. The provenance record (amended on 2026-10-02)
 
 ```typescript
 interface Provenance {
@@ -128,7 +317,7 @@ type ProvenanceGap =
 - **A failed integrity check is never recorded as provenance.** A declared digest that does not match the stored object it names means the submission is not what it claims to be: it is refused, and nothing is written (AAB-PLATFORM-06, admission). There is no `FAILED` status, because a record never holds a claim the platform has found to be false.
 - **Integrity is established once, at admission.** A later check that the stored object is still intact is a check on the store (AAB-PLATFORM-01), not a change to provenance.
 
-## 4. References to other records: citation and resolution
+## 4. References to other records: citation and resolution (amended on 2026-10-02)
 
 **A reference is cited, then resolved.**
 - **Cited:** the identifier exactly as the submitter gave it. It is always recorded, whatever happens next.
@@ -141,7 +330,7 @@ type ProvenanceGap =
 - **A record never cites itself.**
 - **The relation is the domain's.** The platform records and resolves the reference. What "derived from" or "follows" means, and which relations a record may have, is the domain's vocabulary.
 
-## 5. Correction without change
+## 5. Correction without change (amended on 2026-10-02)
 
 - **A record and its provenance are written once.** Nothing about them is updated or deleted. There is no "last updated" time, because there is no update.
 - **A correction is a new record that supersedes the old one,** naming it. The superseding record has its own provenance: who submitted the correction, when, and why. The superseded record keeps its provenance unchanged.
@@ -157,7 +346,7 @@ type ProvenanceGap =
 - **The domain maps each platform gap to its own consequence:** a limitation disclosed with the admission, or a refusal. The mapping is part of the domain's adoption of this contract (section 7), and it never removes a gap.
 - **A gap is carried wherever the provenance is carried** (section 9).
 
-## 7. Adopting this contract
+## 7. Adopting this contract (amended on 2026-10-02)
 
 A domain adopts this contract by amendment to its admission contracts. The amendment must document:
 - **its vocabularies:** `sourceType`, `generation.method` and `lineage.relation`, with what each value means;
@@ -191,7 +380,7 @@ The admission contracts of both domains were surveyed for this contract. Where t
   - an organisation's identity, and any personal name, cross only when separately authorised;
   - provenance is never stripped to make a record easier to share. A record that cannot be shared with its provenance is not shared. Stripping it would break the provenance-preserving requirement of both documents above, which this contract applies and does not relax.
 
-## 10. Failure rules
+## 10. Failure rules (amended on 2026-10-02)
 
 - **No submitter, no record.** Provenance without a complete `ActorReference` for its submitter cannot be written.
 - **The system-set fields are never taken from the request.** A request that supplies `submittedBy`, `submittedAt`, `objectId`, `integrityStatus`, `resolved` or `gaps` is refused.
@@ -223,6 +412,6 @@ Also as drafted: the three standings (section 1), correction and withdrawal only
 ## Open items
 
 - **Contribution attribution:** crediting the people behind a record's content by role (observation, analysis, review) where governance and privacy permit. It is related to provenance, but it is not provenance, and needs its own treatment.
-- **Offline capture:** provenance captured on a device without a connection, and admitted later. The platform clock sets `submittedAt` at admission; how the device's own time is recorded (as `originatedAt`, or a new declared field) is not yet settled.
-- **Cross-boundary sharing arrangements,** which this contract relies on and does not define.
-- **Implementation:** a shared provenance module, a platform schema (in the `urn:aab:schema:` namespace, as the dependency audit's naming decision requires for new platform schemas), and each domain's adoption amendment.
+- **Offline capture:** provenance captured on a device without a connection, and admitted later. The platform clock sets `submittedAt` at admission; how the device's own time is recorded (as `originatedAt`, or a new declared field) is not yet settled. **Settled (amended on 2026-10-02; decision 12):** a declared `capture { deviceRecordedAt, deviceCaptureId }` block.
+- **Cross-boundary sharing arrangements,** which this contract relies on and does not define. **Still open (amended on 2026-10-02):** cross-domain resolution waits for governed evidence packets, and cross-country resolution never happens implicitly (section E of the amendment).
+- **Implementation:** a shared provenance module, a platform schema (in the `urn:aab:schema:` namespace, as the dependency audit's naming decision requires for new platform schemas), and each domain's adoption amendment. **Added (amended on 2026-10-02):** the record-kind resolver registry (section E), the machine-readable digest envelopes (section A), and the service registry (section C). Canonicalisation is AAB-PLATFORM-10's, with its own open items.

@@ -4,6 +4,13 @@
 **Domain:** AAB platform (shared by every domain)
 **Authority:** DEFINES THE ACTOR–SUBJECT LINK: WHAT IT ASSERTS, HOW IT IS CREATED, USED, SUSPENDED, REVOKED AND SUPERSEDED, AND WHERE IT LIVES. It creates no link, grants no role or authority to anyone, and amends no domain contract. This contract is PROPOSED_NOT_ADMITTED. No implementation exists.
 
+## Amendment of 2026-10-02: canonical JSON is AAB-PLATFORM-10's
+
+**A clerical amendment, with AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests** (`governance/AAB-PLATFORM-10-CANONICAL-SERIALISATION-AND-CRYPTOGRAPHIC-DIGESTS-CANONICAL-CONTRACT-2026-10-02.md`). Approved by the Platform Owner in review on 2026-10-02.
+- **"Canonical JSON" in this contract means `aab-canonical-json-1`** (AAB-PLATFORM-10, section 3). This contract's own description, "object keys sorted, no insignificant whitespace, standard JSON escaping, as for every platform digest" ("What is signed"), is replaced by that reference. **It changes nothing that is signed or stored:** the pilot's link statements, signatures and digests were made under exactly that algorithm, and stay verifiable under it.
+- **Its digests are typed** (AAB-PLATFORM-10, section 6): the link statement is a `statementDigest`'s object and is signed as canonical bytes; `linkDigest` and the status record's `recordDigest` are `recordDigest`s. **Their stored form, `sha256:` and hexadecimal, is kept,** and is read as `aab-canonical-json-1` with `sha-256` (AAB-PLATFORM-10, section 5).
+- **Marked in place "(amended on 2026-10-02)".** Nothing else in this contract changes. **Nothing is implemented by this amendment.**
+
 ## Amendment of 2026-09-27: what is signed, the status record, and the subject's representative
 
 Three structural problems were found while planning the build, and are fixed here before any code:
@@ -140,7 +147,7 @@ interface ActorSubjectLinkStatement {
 ```
 
 **What is signed.**
-- **The link statement,** as canonical JSON: object keys sorted, no insignificant whitespace, standard JSON escaping, as for every platform digest.
+- **The link statement,** as canonical JSON: `aab-canonical-json-1`, as AAB-PLATFORM-10 defines it (amended on 2026-10-02).
 - **The signature** is Ed25519 over the statement's UTF-8 bytes, encoded in base64. It is made by the creator, outside the server, with their own private key. The server verifies it against the key the statement names, which must be active when the server accepts it (AAB-PLATFORM-09; third amendment of 2026-09-28), and never holds a private key.
 - **The record takes its fields from the statement.** The link's `actor`, `subject`, `relation`, validity, evidence and `supersedesLinkId` are exactly the statement's. The statement's `creator` must be the authenticated actor creating the link.
 - **The digest covers everything.** Once the signature verifies, the server sets `linkId`, `createdAt` and `createdBy`, then computes `linkDigest` over the complete record, statement and signature included. The creator's signature binds what they decided, and the digest binds the whole record.
