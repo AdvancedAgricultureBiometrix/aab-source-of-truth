@@ -4,6 +4,14 @@
 **Domain:** AAB platform (shared by every domain)
 **Authority:** DEFINES FROZEN EVALUATION SNAPSHOTS: HOW A SET OF ADMITTED RECORDS IS FIXED AS THE INPUT TO AN EVALUATION, WHAT A SNAPSHOT RECORDS ABOUT EACH RECORD IT INCLUDES AND EACH IT EXCLUDES, HOW IT IS CONTENT-ADDRESSED, HOW AN EVALUATION IS BOUND TO IT, AND HOW A SNAPSHOT IS COMPARED WITH THE STORE AS THE STORE CHANGES. It admits no record, evaluates nothing, decides nothing, grants no authority to anyone, amends no domain contract and changes no stored record. This contract is PROPOSED_NOT_ADMITTED. No implementation exists.
 
+## Amendment of 2026-10-02: canonical JSON is AAB-PLATFORM-10's
+
+**A clerical amendment, with AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests** (`governance/AAB-PLATFORM-10-CANONICAL-SERIALISATION-AND-CRYPTOGRAPHIC-DIGESTS-CANONICAL-CONTRACT-2026-10-02.md`). Approved by the Platform Owner in review on 2026-10-02.
+- **"Canonical JSON" in this contract means `aab-canonical-json-1`** (AAB-PLATFORM-10, section 3). Section 3's definition, "UTF-8 JSON with object keys sorted by code point, no insignificant whitespace, and numbers and strings in their shortest standard form", is replaced by that reference.
+- **A correction, recorded:** the pilot's algorithm sorts object keys **by UTF-16 code unit, not by code point.** The two orders differ only between a character at or above U+10000 and one from U+E000 to U+FFFF (AAB-PLATFORM-10, vector V03). This contract's wording was wrong about the code; the code is what is relied on, and is frozen.
+- **Its digests are typed** (AAB-PLATFORM-10, section 6): `snapshotDigest` and `manifestDigest` are `snapshotDigest`s; `resultDigest` is a digest of the evaluation's result under `aab-canonical-json-1`; a member's digest is the admitted record's `recordDigest`, whose envelope AAB-PLATFORM-05 defines (amendment of 2026-10-02).
+- **Marked in place "(amended on 2026-10-02)".** Nothing else in this contract changes. **Nothing is implemented by this amendment.**
+
 ## What "snapshot" means here
 
 **A frozen evaluation snapshot is a governed record: the fixed, content-addressed input to an evaluation.** The word "snapshot" is used on the platform for other things, and this contract means none of them:
@@ -125,7 +133,7 @@ interface EvaluationSnapshot {
 ```
 
 **Field rules:**
-- **Canonical JSON** is UTF-8 JSON with object keys sorted by code point, no insignificant whitespace, and numbers and strings in their shortest standard form. Every digest in this contract is SHA-256 over it.
+- **Canonical JSON** is `aab-canonical-json-1`, as AAB-PLATFORM-10 defines it: object keys sorted by UTF-16 code unit (amended on 2026-10-02; this line said "by code point", which was wrong about the code). Every digest in this contract is SHA-256 over it.
 - **Arrays are ordered by content, never by time:** members by `recordId`, then `recordVersion`; exclusions by `recordId`, then `reason`; pinned inputs by `kind`, then `id`, then `version`; codes and gaps lexically. The same set always serialises the same way.
 - **Two digests, for two questions:**
   - **`manifestDigest`** answers: is this the same input? Two snapshots with the same manifest have the same `manifestDigest`, whenever and by whomever they were taken;
