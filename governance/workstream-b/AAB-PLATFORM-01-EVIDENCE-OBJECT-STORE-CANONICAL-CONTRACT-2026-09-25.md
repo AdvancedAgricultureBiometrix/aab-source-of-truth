@@ -3,7 +3,7 @@
 **Status:** CANONICAL CONTRACT — NOT IMPLEMENTATION
 **Domain:** Supply Chain Sovereignty (SCS). **Corrected on 2026-09-29:** a platform service, serving SCS and Agricultural Science (AGR), each under its own storage profile (amendment of 2026-09-29).
 **Renamed:** from SCS-PLATFORM-01 on 2026-09-27. Platform contracts are numbered AAB-PLATFORM-NN (AAB-PLATFORM-03, decision 1).
-**Amended:** 2026-09-28 (object store credentials, Object Lock and retention) and 2026-09-29 (storage profiles, and the AGR profile; trial recorders upload under the AGR profile). Since 2026-09-29 it also serves Agricultural Science (AGR), under its own profile.
+**Amended:** 2026-09-28 (object store credentials, Object Lock and retention), 2026-09-29 (storage profiles, and the AGR profile; trial recorders upload under the AGR profile) and 2026-10-02 (the AGR acquisition staging area, under CAP-02). Since 2026-09-29 it also serves Agricultural Science (AGR), under its own profile.
 **Authority:** DEFINES THE CONTRACT FOR THE SCS EVIDENCE OBJECT STORE, A PLATFORM SERVICE SHARED BY ALL SCS CAPABILITIES (CORRECTED ON 2026-09-29: AND, UNDER ITS OWN STORAGE PROFILE, BY AGR). Establishes no commissioning, production, Gate D, WP05, scientific-validity or regulatory authority. PROPOSED_NOT_ADMITTED. A pilot implementation exists in `scs-pilot/packages/api/src/platform/evidence-objects/`. The amendment of 2026-09-28 is built, and `behaviourally proven` for what its proof record covers (note of 2026-09-28, below).
 
 ## Amendment of 2026-09-28: object store credentials, Object Lock and retention
@@ -274,6 +274,73 @@ Recorded with the proof. **Not an amendment: nothing in this contract changes.**
 ## Amendment of 2026-09-29: trial recorders upload under the AGR profile
 
 **Why.** CAP-08 Controlled Trials & Outcomes records trial photographs and files as objects under the AGR profile (CAP-08's canonical contract of 2026-09-29, decision 12). The people who record trial observations hold `TRIAL_RECORDER`, not CAP-04's `MEMORY_SUBMITTER`. **This amendment adds `TRIAL_RECORDER` to the AGR profile's uploaders.** Nothing else changes: the profile's bucket, lock, media types and limits are the same, and an object stored by a trial recorder is under the same hundred-year lock. Marked in place "(amended on 2026-09-29, trial recorders)".
+
+## Amendment of 2026-10-02: the AGR acquisition staging area, under CAP-02
+
+**Why.** CAP-02 Governed Scientific Data Acquisition & Interoperability (`governance/workstream-b/CAP-02-GOVERNED-SCIENTIFIC-DATA-ACQUISITION-AND-INTEROPERABILITY-CANONICAL-CONTRACT-2026-10-02.md`) brings material in from outside AAB. **Most of what a run acquires may never be submitted,** and an object stored under the AGR profile is locked for a hundred years whether or not it is ever admitted (section 8 of the amendment of 2026-09-29). The Platform Owner decided on 2026-10-02 that **acquired bytes wait in a country-local staging area, with their digest and a short retention, and enter the AGR profile only when a person submits them to CAP-04** (CAP-02, decision 7). Approved in review on 2026-10-02. **The SCS and AGR profiles are unchanged.**
+
+### 1. A staging area, not a storage profile
+
+- **The staging area holds acquired bytes before anyone submits them.** Nothing in it is evidence, and **no record ever cites a staged object as its original.** A record cites only the copy in the AGR profile (section 6).
+- **It is deliberately not a profile,** because it departs from two of a profile's guarantees, and only here:
+  - **No Object Lock.** A staged object is protected by the conditional write and the bucket policy, not by a lock. Its digest is recorded by CAP-02, so any change before the copy is detected (section 6). Without a lock, material that must not be held, such as personal information acquired in error, can be removed early by a governed decision, with no override.
+  - **Scheduled expiry.** **The rule that the platform never deletes on a schedule** (section 3 of the amendment of 2026-09-29) **does not apply to the staging area,** and to nothing else. A staged object is not a record anyone relies on, and its digest, size and media type stay recorded in CAP-02 after it expires.
+- **Every other guarantee holds:** the service computes the SHA-256 and stores under it, never overwriting; every read re-hashes; the three identities, with the API's reach limited to its own buckets.
+
+### 2. Its parameters
+
+| Parameter | The AGR acquisition staging area |
+|---|---|
+| Bucket | `agr-acquisition-staging`, without Object Lock |
+| Reference | `agr-staging:sha256:…` |
+| Written by | CAP-02's routes only: a file a steward supplies, and a retrieval within a steward's run. **There is no general upload route** |
+| Media types | The AGR profile's (section 5 of the amendment of 2026-09-29) |
+| Size | **100 MB,** as the AGR profile's standard upload. The large upload route's rules apply to staging when it is built |
+| Retention | **90 days from receipt, the pilot value,** then expiry by the store's lifecycle rule (section 4) |
+| Backup | **Not backed up** (section 5) |
+
+### 3. Who may write and read it
+
+- **Write:** an **`ACQUISITION_STEWARD`** (CAP-02) supplying a file to their run; and **the platform's API identity, performing a retrieval within a run a steward started,** attributed to that person. No other actor writes, and no service actor is ever recorded as an uploader (CAP-02, decision 5).
+- **Read:** CAP-02's `ACQUISITION_STEWARD`, `SOURCE_APPROVER` and `ACQUISITION_GOVERNOR`, and CAP-04's **`MEMORY_SUBMITTER`,** within the country workspace. **Always served as a download,** with its declared type and no content sniffing, never rendered.
+
+### 4. Expiry and early removal
+
+- **Expiry** is set once, at setup, by the admin identity, as a lifecycle rule on the bucket. The API cannot change it, and refuses to start unless the rule reads back as set.
+- **Early removal** happens only under a recorded CAP-02 human decision, `STAGED_ITEM_PURGE` or `RUN_WITHDRAWAL`. The bucket policy lets the API identity delete in this bucket, **and in no other.** The service deletes only the objects a decision names, and writes the receipt `ITEM_PURGED` with it.
+- **The override credential is never used here,** and its governance is not needed for it.
+
+### 5. Backups
+
+- **The staging bucket is not backed up,** and a restored environment has no staged bytes. CAP-02's records of every item, digests included, are backed up as any other records, so an item lost in a restoration shows as expired and can be acquired again.
+- **Why:** staged material is not relied on, and leaving it out keeps the backup's re-hashing to what is relied on.
+
+### 6. The copy into the AGR profile
+
+- **Route:** `POST /agr/v1/evidence-objects/from-staging`, naming the staged item. **Only a `MEMORY_SUBMITTER`,** as for every upload to the AGR profile (section 7 of the amendment of 2026-09-29).
+- **The service reads the staged bytes, re-hashes them, and stores them under the AGR profile** by the conditional write, only if the digest equals both the staged object's key and CAP-02's recorded digest for the item. A mismatch stores nothing (`STAGED_ITEM_INTEGRITY_MISMATCH`). An item that failed CAP-02's malicious content scan is refused (`STAGED_ITEM_UNSAFE`). **If the same bytes are already stored under the AGR profile,** the stored object is returned, and nothing is copied.
+- **The copy is an ordinary AGR object,** `agr-object:sha256:…`, under the profile's hundred-year lock from that moment. **CAP-04's decision 3 is unchanged:** the original is in the profile before the submission.
+- **The staged object stays** until it expires or is purged.
+
+### 7. Tested store behaviour: before build
+
+**Not yet tested.** Before the staging area is built, the store's behaviour it relies on is tested against the pinned store, as sections 7 and 10 were: a lifecycle expiry rule on a bucket without Object Lock, and its read-back; deletion by the API identity confined to this bucket by the policy; the conditional write; and a copy between buckets that re-hashes. **If the pinned store cannot do one of them,** this amendment is revised before any code.
+
+### 8. Failure contract additions
+
+| Code | HTTP | Meaning |
+|---|---:|---|
+| `ROLE_NOT_AUTHORISED` | 403 | A write to the staging area outside CAP-02's routes, or a copy by an actor without `MEMORY_SUBMITTER` |
+| `STAGED_ITEM_EXPIRED` | 410 | The staged item has expired or been purged |
+| `STAGED_ITEM_INTEGRITY_MISMATCH` | 422 | The staged bytes do not re-hash to the item's recorded digest. Nothing is stored |
+| `STAGED_ITEM_UNSAFE` | 422 | The item failed CAP-02's malicious content scan |
+
+### 9. What this amendment does not change
+
+- **The open item "staging for originals never admitted"** (section 8 of the amendment of 2026-09-29) **stays open for CAP-04's own originals,** stored directly by a submitter. This amendment answers it for acquired material only.
+- **No original is cited from the staging area, and nothing in it is admitted.**
+
+**Nothing is implemented by this amendment.**
 
 ## Plain-English boundary statement
 

@@ -5,7 +5,7 @@
 **Capability:** CAP-01 Country Intelligence & Discovery. It is not SCS-CAP-01 (Regulatory Framework Registration), a different capability in another domain.
 **Authority:** DEFINES THE CONTRACT FOR CAP-01: HOW A COUNTRY'S AGRICULTURAL PROBLEMS, RESOURCES, WASTE STREAMS AND OVERLOOKED OPPORTUNITIES ARE RECORDED, EVIDENCED, ASSEMBLED INTO A DISCOVERY DOSSIER, REVIEWED BY A SCIENTIST AND REFERRED FOR INVESTIGATION, AND ITS BOUNDARIES WITH CAP-02, CAP-04, CAP-06, CAP-10 AND THE REHEARSAL'S COGNITIVE LOOP. Establishes no commissioning, production, Gate D, WP05, scientific-validity or regulatory authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
 **Written:** 2026-09-29, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3). CAP-01 had no design contract before this one.
-**Amended:** 2026-10-02 (hazard screens, and the safety label, under CAP-10), with CAP-10's canonical contract; and 2026-10-02, second (integrity, lineage and the AGR vocabulary, under CAP-03), with CAP-03's canonical contract.
+**Amended:** 2026-10-02 (hazard screens, and the safety label, under CAP-10), with CAP-10's canonical contract; and 2026-10-02, second (integrity, lineage and the AGR vocabulary, under CAP-03), with CAP-03's canonical contract; and 2026-10-02, third (external sources and spatial acquisition, under CAP-02), with CAP-02's canonical contract.
 
 ## Amendment of 2026-10-02: hazard screens, and the safety label, under CAP-10
 
@@ -40,6 +40,22 @@
 **5. Before implementation.** CAP-01's step 4 (code) uses the vocabulary and CAP-03's verification as adopted here.
 
 **6. What this amendment replaces.** The dependencies gain a row: **CAP-03 Evidence Integrity & Provenance: integrity re-check, lineage, the AGR vocabulary and integrity incidents; `designed`, launch release.**
+
+## Amendment of 2026-10-02 (third): external sources and spatial acquisition, under CAP-02
+
+**Why.** This contract left two gaps for CAP-02: external sources, and spatial investigation ("Open gaps"). CAP-02 now has a contract (`governance/workstream-b/CAP-02-GOVERNED-SCIENTIFIC-DATA-ACQUISITION-AND-INTEROPERABILITY-CANONICAL-CONTRACT-2026-10-02.md`). Approved by the Platform Owner in review on 2026-10-02. **CAP-01's records, dossier and reviews do not change.**
+
+**1. External sources are CAP-02's.** Material from outside AAB, a published statistic or a dataset among it, reaches CAP-01 **only as admitted CAP-04 records,** submitted by a person, as before (decision 2). CAP-01 never reads CAP-02's staged items, sources or runs. **A dossier shows what a cited record's provenance says of its acquisition,** as for any record: its source, and that it came through a CAP-02 run where it did.
+
+**2. Spatial investigation.** **Acquiring satellite scenes and spatial datasets is CAP-02's** (CAP-02, decision 12). **Interpreting them for resources and environmental burden is CAP-01's,** by people, citing admitted CAP-04 records; interpreting them as field observation is proposed CAP-36's. **A computed spatial metric is automated content,** held in CAP-04 until a reviewer admits it, and **spatial computation is out of launch scope.** No CAP-01 record is created from a scene automatically (decision 9).
+
+**3. Outbound parameters.** No CAP-01 location, resource site or other record may be a parameter of a CAP-02 retrieval (CAP-02, decision 8): CAP-01's records are category 2 (decision 12).
+
+**4. What this amendment replaces.**
+- **The contract gap "external sources"** is closed: CAP-02 has a contract, and its outbound retrievals are governed by it, under the egress specification and Gate D.
+- **The contract gap "spatial investigation"** is closed, as point 2 says. What remains open is spatial computation, recorded in CAP-02.
+- **The rehearsal table's rows** "Source registry, adapters, snapshots, atoms, synthesis" and "Spatial investigation" now read: **CAP-02's, by its contract; not carried across** (CAP-02, "What the rehearsal does").
+- **The dependencies row for CAP-02** now reads: **owns external sources; material it acquires reaches CAP-01 only as CAP-04 evidence; `designed`.**
 
 ## Why this contract, and what it adopts
 
