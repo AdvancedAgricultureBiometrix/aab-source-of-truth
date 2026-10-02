@@ -172,7 +172,7 @@
   - **CAP-03's canonicalisation prerequisite is mostly met** (#118). Only attachment and manifest handling remain open (section 9).
   - **The twelve AGR contracts, CAP-01 to CAP-12, are amended for conformance with AAB-PLATFORM-05 and AAB-PLATFORM-10** (#119), with an adoption matrix (`governance/workstream-b/AGR-PROVENANCE-ADOPTION-MATRIX-2026-10-02.md`) and its generator and checker (`governance/tools/provenance-matrix/`). `SUBMITTER_AUTHORED` replaces `AAB_AUTHORED`; automation constraints take three values; the boundary between CAP-08 and CAP-10 is corrected; a citation-class consequence table is applied across all twelve. No capability's state changes, and nothing is built.
   - **The retrospective decision cross-review is recorded in this change** (`governance/reviews/AAB-RETROSPECTIVE-DECISION-CROSS-REVIEW-2026-10-02.md`): a read-only advisory review by ChatGPT at `a3777de`, not the independent reviewer AAB's admission and Gate D contracts require. Sixteen findings, RD-01 to RD-16, with a correction order. Five are more pressing after #119, in the Platform Owner's assessment: open decisions 12 to 16.
-  - **CI on `91613f8`** (run 36992071741): 752 of 752 tests, isolation, and backup-restore `PROVEN`.
+  - **CI on `91613f8`** (run 36992632633): 752 of 752 tests, isolation, and backup-restore `PROVEN`.
 
 ## 1. What merged since `5d4edfe`
 
@@ -371,7 +371,7 @@ State labels are the platform's maturity states: `named only`, `designed`, `impl
 
 **Update of `3b68e57`:** no code changes since `8132243`: #112 to #115 are governance and contracts only; `scs-pilot/` is unchanged. CI on `main`: run 36966105193 on `5af54d4` (#112), run 36966870260 on `67dfdbf` (#113), run 36977338512 on `27a523d` (#114) and run 36979188604 on `3b68e57` (#115): each 752 of 752 tests, isolation, and backup-restore `PROVEN`.
 
-**Update of `91613f8`:** no code changes since `3b68e57`: #116 to #119 are governance, contracts, and tools outside the application; `scs-pilot/` is unchanged. CI on `main` passed on every merge commit, each with 752 of 752 tests, isolation, and backup-restore `PROVEN`: on `c655eb2` (#116), `de8757a` (#117) and `a3777de` (#118), whose run numbers are not recorded in this update, and run 36992071741 on `91613f8` (#119).
+**Update of `91613f8`:** no code changes since `3b68e57`: #116 to #119 are governance, contracts, and tools outside the application; `scs-pilot/` is unchanged. CI on `main` passed on every merge commit, each with 752 of 752 tests, isolation, and backup-restore `PROVEN`: run 36981758337 on `c655eb2` (#116), run 36982941363 on `de8757a` (#117), run 36987403747 on `a3777de` (#118), and run 36992632633 on `91613f8` (#119).
 
 ### 2.3 Governance records added since the last stock-take
 
