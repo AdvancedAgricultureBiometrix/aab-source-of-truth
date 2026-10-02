@@ -5,7 +5,7 @@
 **Capability:** CAP-10 Safety & Ecological Intelligence. It is not SCS-CAP-10 (Challenge Response and Evidence Retrieval), a different capability in another domain.
 **Authority:** DEFINES THE CONTRACT FOR CAP-10: HOW THE SAFETY AND ECOLOGICAL EFFECT OF AN INGREDIENT, A FORMULATION, A REGISTERED PRODUCT USED OUTSIDE ITS REGISTRATION, OR A RAW MATERIAL HANDLED DURING DISCOVERY IS ASSESSED BY QUALIFIED PEOPLE WITHIN A DECLARED USE BOUNDARY; HOW A SAFETY SIGNAL IS REPORTED, HELD, TRIAGED, DETERMINED AND CLOSED; WHEN FURTHER APPLICATION OR HANDLING IS HELD AUTOMATICALLY; AND ITS BOUNDARIES WITH CAP-01, CAP-04, CAP-05, CAP-06, CAP-07, CAP-08, CAP-09, CAP-11 AND THE PLANNED ECOSYSTEM DOMAIN. Establishes no commissioning, production, Gate D, WP05, scientific-validity, general safety certification or regulatory authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
 **Written:** 2026-10-02, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3). CAP-10 had no design contract, and no description beyond its name, before this one.
-**Amended:** 2026-10-02 (regulatory status, and a clerical correction), with CAP-11's canonical contract.
+**Amended:** 2026-10-02 (regulatory status, and a clerical correction), with CAP-11's canonical contract; and 2026-10-02, second (manufacture-scale handling, and manufacturing reports), with CAP-12's canonical contract.
 
 ## Amendment of 2026-10-02: regulatory status, and a clerical correction
 
@@ -20,6 +20,29 @@
 **4. What this amendment replaces.**
 - **The contract gap "CAP-11"** now reads: regulatory status is CAP-11's; until a CAP-11 outcome or verified regulator decision exists for the subject, version and jurisdiction, `REGULATORY_STATUS_NOT_ASSESSED` stays.
 - **The dependencies row for CAP-11** now reads: **CAP-11 Regulatory Translation & Dossier Support: owns regulatory status; CAP-10 never assesses it; its status is shown beside CAP-10's outcome where one exists; `designed`, post-launch.**
+
+## Amendment of 2026-10-02 (second): manufacture-scale handling, and manufacturing reports
+
+**Why.** CAP-12 (`governance/workstream-b/CAP-12-CONTROLLED-MANUFACTURING-TRANSFER-CANONICAL-CONTRACT-2026-10-02.md`) requires a site-specific CAP-10 handling outcome before manufacturing evaluation, and sends manufacturing reports with a possible safety implication to CAP-10. Approved by the Platform Owner in review on 2026-10-02. Nothing else in this contract changes.
+
+**1. A fourth use stage, `MANUFACTURING_HANDLING`.** Manufacture-scale preparation, mixing, processing, storage, packaging and disposal **at one named site,** by one named manufacturer. Its boundary requires: the site (in `siteTypes`, named exactly), the maximum quantity handled, the processes (`activities` and `routes`), and the exposed populations (workers, neighbours, the receiving environment of the site's effluent and waste).
+- **It takes the outcomes** `ASSESSED_ACCEPTABLE_FOR_HANDLING_WITHIN_BOUNDARY`, `ASSESSED_ACCEPTABLE_WITH_CONDITIONS`, `NOT_ACCEPTABLE_WITHIN_BOUNDARY` and `DEFERRED_EVIDENCE_REQUIRED`.
+- **Its subjects:** a CAP-06 ingredient version or a CAP-07 formulation version.
+- **`TRANSPORT_STORAGE_AND_DISPOSAL` and `HUMAN_HEALTH_HANDLERS_AND_OPERATORS` are applicable,** and cannot be declared otherwise. The risk tier is `ELEVATED` where the site handles live organisms, or the quantity exceeds what the country's policy sets as routine.
+- **An outcome for one site never covers another.**
+- **It never assesses the product's safety in use or on the market.** That remains the regulator's, through CAP-11.
+
+**2. Manufacturing reports as a signal channel.** The safety signal's `channel` gains `MANUFACTURING_REPORT`, and `concerns.kind` gains `MANUFACTURING_TRANSFER` (with the CAP-12 transfer's identifier). **The distinction is kept, always:**
+- **An unverified manufacturing report** is a CAP-12 record. Only one declaring a possible safety implication, or harm, writes a CAP-10 signal, in the same transaction.
+- **A safety signal** is `QUARANTINED` at once, and follows CAP-10's lifecycle; it is never a finding.
+- **A precautionary hold** applies as for any credible human-declared signal (the reporter is a named `MANUFACTURER_RECIPIENT`, authenticated, in their own name), with the scope **the transfer concerned;** the critical rules apply as they do to every channel.
+- **A substantiated safety finding** exists only by a CAP-10 `SIGNAL_DETERMINATION`.
+
+**A deviation never becomes a confirmed safety conclusion automatically,** and may restrict further activity pending a person's assessment. **Who may report** gains a `MANUFACTURER_RECIPIENT` of the transfer concerned.
+
+**3. Holds reach CAP-12.** A hold whose scope is a transfer, or the formulation it concerns, is a CAP-12 `TRANSFER_HOLD`; `HANDLING_SUSPENDED` applies to manufacturing handling under the site's outcome.
+
+**4. What this amendment replaces.** **Decision 4**, and the table of assessment types and use stages, gain the fourth use stage. **The notification list** for a signal concerning a transfer is the transfer's named recipients, its rights controller and its reviewer. **The dependencies** gain a row: **CAP-12 Controlled Manufacturing Transfer: relies on site-specific handling outcomes; sends manufacturing reports; receives holds; `designed`, post-launch.**
 
 ## Why this contract, and what it adopts
 
