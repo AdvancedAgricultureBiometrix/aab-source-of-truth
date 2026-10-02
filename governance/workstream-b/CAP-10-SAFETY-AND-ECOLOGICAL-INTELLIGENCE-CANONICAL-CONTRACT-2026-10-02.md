@@ -5,7 +5,7 @@
 **Capability:** CAP-10 Safety & Ecological Intelligence. It is not SCS-CAP-10 (Challenge Response and Evidence Retrieval), a different capability in another domain.
 **Authority:** DEFINES THE CONTRACT FOR CAP-10: HOW THE SAFETY AND ECOLOGICAL EFFECT OF AN INGREDIENT, A FORMULATION, A REGISTERED PRODUCT USED OUTSIDE ITS REGISTRATION, OR A RAW MATERIAL HANDLED DURING DISCOVERY IS ASSESSED BY QUALIFIED PEOPLE WITHIN A DECLARED USE BOUNDARY; HOW A SAFETY SIGNAL IS REPORTED, HELD, TRIAGED, DETERMINED AND CLOSED; WHEN FURTHER APPLICATION OR HANDLING IS HELD AUTOMATICALLY; AND ITS BOUNDARIES WITH CAP-01, CAP-04, CAP-05, CAP-06, CAP-07, CAP-08, CAP-09, CAP-11 AND THE PLANNED ECOSYSTEM DOMAIN. Establishes no commissioning, production, Gate D, WP05, scientific-validity, general safety certification or regulatory authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
 **Written:** 2026-10-02, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3). CAP-10 had no design contract, and no description beyond its name, before this one.
-**Amended:** 2026-10-02 (regulatory status, and a clerical correction), with CAP-11's canonical contract; and 2026-10-02, second (manufacture-scale handling, and manufacturing reports), with CAP-12's canonical contract; and 2026-10-02, third (integrity, lineage and the AGR vocabulary, under CAP-03), with CAP-03's canonical contract.
+**Amended:** 2026-10-02 (regulatory status, and a clerical correction), with CAP-11's canonical contract; and 2026-10-02, second (manufacture-scale handling, and manufacturing reports), with CAP-12's canonical contract; and 2026-10-02, third (integrity, lineage and the AGR vocabulary, under CAP-03), with CAP-03's canonical contract; and 2026-10-02, fourth (provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10), with AAB-PLATFORM-10's canonical contract.
 
 ## Amendment of 2026-10-02: regulatory status, and a clerical correction
 
@@ -59,6 +59,87 @@
 **5. Before implementation.** CAP-10's step 4 (code) uses the vocabulary and CAP-03's verification as adopted here.
 
 **6. What this amendment replaces.** The dependencies gain a row: **CAP-03 Evidence Integrity & Provenance: integrity re-check, lineage, the AGR vocabulary and integrity incidents; `designed`, launch release.**
+
+## Amendment of 2026-10-02 (fourth): provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10
+
+**Why.** AAB-PLATFORM-05 Governed Provenance is amended, and AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests is new (`governance/AAB-PLATFORM-10-CANONICAL-SERIALISATION-AND-CRYPTOGRAPHIC-DIGESTS-CANONICAL-CONTRACT-2026-10-02.md`; PR #118). **An adoption without its matrix is incomplete** (AAB-PLATFORM-05, amendment of 2026-10-02, section G). This amendment applies their confirmed decisions to CAP-10, record kind by record kind. Approved by the Platform Owner in review on 2026-10-02. **Nothing of CAP-10 is built, so nothing stored is renamed or rewritten.** Its three tables are reproduced exactly in `governance/workstream-b/AGR-PROVENANCE-ADOPTION-MATRIX-2026-10-02.md`, which `governance/tools/provenance-matrix/check_matrix.py` checks against this contract.
+
+**1. Record kinds.** Every record kind CAP-10 writes, and how each adopts AAB-PLATFORM-05 and AAB-PLATFORM-10:
+
+| Record kind | What it is | `source.sourceType` | Generation method (automation constraint) | Submitter | Supersession | Digest | Resolver kind |
+|---|---|---|---|---|---|---|---|
+| `Cap10AssessmentRequest` | Admitted record | `SUBMITTER_AUTHORED` | `HUMAN_DECLARATION` (`REQUIRED_FALSE`) | `HUMAN` | `CORRECTION`, `NEW_VERSION`, `WITHDRAWAL` | `recordDigest` (`DigestReference`, `aab-canonical-json-1`, `sha-256`) | `CAP-10:ASSESSMENT_REQUEST` |
+| `Cap10AssessorQualification` | Admitted record | `SUBMITTER_AUTHORED`; the qualifications it lists are declared by issuer and reference | `HUMAN_DECLARATION` (`REQUIRED_FALSE`) | `HUMAN` (the assessor) | `CORRECTION`, `NEW_VERSION`, `WITHDRAWAL` | `recordDigest` (`DigestReference`, `aab-canonical-json-1`, `sha-256`) | `CAP-10:ASSESSOR_QUALIFICATION` |
+| `Cap10SafetySignal` | Admitted record, quarantined at once | By channel: from a CAP-08 or CAP-12 request, or `MACHINE_GENERATED`, `CAPABILITY_OUTPUT`; `DIRECT_REPORT`, `SUBMITTER_AUTHORED`; `EXTERNAL_REPORT_RECORDED`, as the recorder declares it | From a request or a machine: `DETERMINISTIC_EVALUATION` (`REQUIRED_TRUE`); a direct or recorded report: `HUMAN_DECLARATION` (`REQUIRED_FALSE`) | `SERVICE` (CAP-10's intake service) for a request or a machine signal; `HUMAN` for a direct or recorded report | `CORRECTION`, `NEW_VERSION` | `recordDigest` (`DigestReference`, `aab-canonical-json-1`, `sha-256`) | `CAP-10:SAFETY_SIGNAL` |
+| `PRECAUTIONARY_HOLD` | Admitted record, written once (no interface yet) | `CAPABILITY_OUTPUT` | `DETERMINISTIC_EVALUATION` (`REQUIRED_TRUE`) | `SERVICE`, placed by a rule | Never superseded; released by decision | `recordDigest` (`DigestReference`, `aab-canonical-json-1`, `sha-256`) | `CAP-10:PRECAUTIONARY_HOLD` |
+| `COUNTRY_SAFETY_POLICY`, `EXTERNAL_NOTIFICATION`, acknowledgements | Admitted records, written once (no interface yet) | `SUBMITTER_AUTHORED` | `HUMAN_DECLARATION` (`REQUIRED_FALSE`) | `HUMAN` | Policy: `NEW_VERSION`; others never superseded | `recordDigest` (`DigestReference`, `aab-canonical-json-1`, `sha-256`) | `CAP-10:POLICY`, `CAP-10:NOTIFICATION` |
+| `Cap10SafetyEcologyDossier` | Evaluation (AAB-PLATFORM-07) | — | `DETERMINISTIC_EVALUATION` (`REQUIRED_TRUE`) | Requested by a `HUMAN` | Never superseded | AAB-PLATFORM-07's digests | `CAP-10:SAFETY_ECOLOGY_DOSSIER` |
+| `SAFETY_ASSESSMENT`, `SPECIALIST_CONCURRENCE`, `ASSESSOR_QUALIFICATION_REVIEW`, `COUNTRY_SAFETY_POLICY_APPROVAL`, `CAP10_HELD_RESOLUTION`, `SIGNAL_TRIAGE`, `SIGNAL_DETERMINATION`, `SAFETY_DIRECTION`, `HOLD_RELEASE`, `SIGNAL_CLOSURE`, `CHALLENGE_RESOLUTION` | Human decisions (AAB-PLATFORM-08) | — | `HUMAN_DECISION` (`REQUIRED_FALSE`) | `HUMAN` | AAB-PLATFORM-08's rules | AAB-PLATFORM-08's `recordDigest` | `AAB-PLATFORM-08:HUMAN_DECISION` |
+
+- **Every admitted record kind** carries `provenance: Provenance` (`provenanceVersion` `"2"`) and a **`recordDigest`: a `DigestReference`** (`recordDigest`, `aab-canonical-json-1`, `sha-256`), calculated in AAB-PLATFORM-05's nine steps over its envelope: every field of the record except `recordDigest`, derived status, later verification results, access logs and presentation-only fields. **Each schema declares its envelope, machine-readably,** before step 4. A `"sha256:"` comment on a `recordDigest` in this contract now reads so.
+- **A record kind named here without an interface** is a written-once admitted record under these same rules; its schema, with its envelope, is written before step 4.
+- **Evaluations** keep AAB-PLATFORM-07's digests; **human decisions** keep AAB-PLATFORM-08's, typed as `recordDigest`s of written-once records.
+- **Every digest of a cited or superseded record is resolved by the system,** never declared in a request.
+- **Each resolver kind is registered** (AAB-PLATFORM-05, section E): by identifier, and version where the kind is versioned, in the country workspace, disclosing only what the reader may see under this contract's read rules; what may not be disclosed is unresolved, never revealed.
+
+**2. Written once.** The `integrity?` reference of the amendment of 2026-10-02 (third), on signals, dossiers and assessments, is **derived when read.**
+
+**3. Supersession.** `supersedes` takes the platform's declared and resolved shape on requests, **and is added** to qualifications and signals ("a correction is a new version"); `UPDATE` maps to `NEW_VERSION`. A duplicate signal is linked by `REFERS_TO`, qualifier `DUPLICATE_OF`, never superseded.
+
+**4. Citations.** Every reference CAP-10 relies on follows the same cite-then-resolve behaviour (AAB-PLATFORM-05, decision 10), through the registered resolver of the expected record kind. A declared version that differs from the version found is unresolved. **The consequence of an unresolved citation follows its class:**
+
+| Citation class | Unresolved consequence |
+|---|---|
+| Subject: the record being evaluated, or that the record is about | Refusal |
+| Authority or membership: the basis for the act, or what the record belongs to | Refusal |
+| Superseded record | Refusal |
+| Mandatory evidence: evidence an outcome relies on | Refusal, or `EVIDENCE_REQUIRED` |
+| Optional evidence: supporting or context evidence | Limitation |
+| Related: material not relied on | Limitation, or omitted with a disclosure |
+
+Every citation CAP-10 makes, with its class, relation, expected record kind, whether it is mandatory, and its outcome and failure code. The field names stay:
+
+| Field | Citation class | Relation | Expected record kind | Mandatory | When unresolved |
+|---|---|---|---|---|---|
+| Request `subject` | Subject | `REFERS_TO` | `CAP-06:RECORD`, `CAP-07:RECORD` or `CAP-01:RECORD` | Yes | Refusal `SUBJECT_NOT_FOUND` (check 4) |
+| Request `evidence[]` | Mandatory evidence | `SUPPORTS`, `origin` a source qualifier | `CAP-04:MEMORY_RECORD` | Yes | Refusal `EVIDENCE_NOT_ADMITTED` (check 8) |
+| Request `subject.regulatorDecision` (added; optional) | Optional evidence | `REFERS_TO`, enriching the record only | `CAP-11:REGULATOR_DECISION` | No | Limitation `CITATION_UNRESOLVED`; `REGULATORY_STATUS_NOT_ASSESSED` disclosed where none resolves |
+| Signal: the CAP-08 or CAP-12 safety-signal request | Authority or membership | `REFERS_TO`, qualifier `SIGNAL_REQUEST`, set by the intake service | `CAP-08:SAFETY_SIGNAL_REQUEST`, `CAP-12:SAFETY_SIGNAL_REQUEST` | Yes, for a requested signal | Refusal `RECORD_NOT_FOUND`: no signal is created; the request stays open and is shown as not received |
+| Signal `source`, for a direct or recorded report | Related | `REFERS_TO` | Its record kind | No | Limitation `CITATION_UNRESOLVED`: a signal is never refused for being incomplete (CAP-10's safety rule) |
+| Signal `concerns`, `attachments[]`, `machine.inputs[]` | Related | `REFERS_TO`, each with its record kind; attachments are `objectDigest`s held by their source capability | Trials, decisions, subjects, objects | No | Limitation `CITATION_UNRESOLVED`, for the same reason |
+| Hold: triggering evidence | Authority or membership | `RELIED_ON`, set by the service | The signal, event or record that met the rule | Yes | Cannot be unresolved: set by the system |
+| `supersedes` | Superseded record | The platform's `supersedes` field, never a `lineage` entry | The same record kind | Yes, when declared | Refusal `SUPERSESSION_NOT_PERMITTED` |
+
+**5. The six-gap matrix.**
+
+| Record kind | `SOURCE_UNIDENTIFIED` | `ORIGINAL_NOT_STORED` | `INTEGRITY_UNVERIFIED` | `CITATION_UNRESOLVED` | `CUSTODY_DECLARED_INCOMPLETE` | `CUSTODY_NOT_DECLARED` |
+|---|---|---|---|---|---|---|
+| Assessment request | Limitation `SOURCE_UNIDENTIFIED` (check 10) where an external source is declared; otherwise N/A: `SUBMITTER_AUTHORED` | N/A: no original | N/A: no original | By citation class (section 4) | N/A: no original | N/A: no original |
+| Assessor qualification | N/A: `SUBMITTER_AUTHORED` | Limitation `ORIGINAL_NOT_STORED`: qualification evidence is declared by issuer and reference, not stored | Limitation `INTEGRITY_UNVERIFIED`, for the same reason | By citation class (section 4) | N/A: the evidence is declared by reference | N/A: as for `CUSTODY_DECLARED_INCOMPLETE` |
+| Safety signal | Limitation `SOURCE_UNIDENTIFIED` for `EXTERNAL_REPORT_RECORDED` without an identifier; otherwise N/A | Limitation `ORIGINAL_NOT_STORED` for attachments held outside a trial | Limitation `INTEGRITY_UNVERIFIED`, for the same | By citation class (section 4) | N/A: attachments are held by their source capability | N/A: as for `CUSTODY_DECLARED_INCOMPLETE` |
+| Precautionary hold | N/A: `CAPABILITY_OUTPUT` | N/A: no original | N/A: no original | By citation class (section 4) | N/A: no original | N/A: no original |
+| Policy, notification, acknowledgement | N/A: `SUBMITTER_AUTHORED` | N/A: no original | N/A: no original | By citation class (section 4) | N/A: no original | N/A: no original |
+| Safety and ecology dossier | N/A: evaluation | N/A: evaluation | N/A: evaluation | N/A: evaluation | N/A: evaluation | N/A: evaluation |
+| Human decisions | N/A: human decision | N/A: human decision | N/A: human decision | N/A: human decision | N/A: human decision | N/A: human decision |
+
+*The matrix's reasons:* **no original:** the record holds no original of its own; what it cites are CAP-04 records, whose gaps are carried by reference. **`SUBMITTER_AUTHORED`:** its content was created by the identified human or authorised service submitting it, so its source is the submission itself. **Evaluation:** an AAB-PLATFORM-07 evaluation, whose members' gaps are carried by reference. **Human decision:** an AAB-PLATFORM-08 decision, bound by digest to what it decides. **Status record:** a written-once record of a state change, bound by digest to the record it concerns. **By citation class:** each citation's consequence is its row in section 4.
+
+**6. Vocabulary.** CAP-10 adopts **`cap-03-vocabulary-2`** (CAP-03's amendment of 2026-10-02), in place of version 1: `OTHER` and `SUBMITTER_AUTHORED` among the source types, and **every generation method with an automation constraint** (`REQUIRED_TRUE`, `REQUIRED_FALSE` or `DECLARED_PER_RECORD`), never inferred from its name. A record whose `automated` contradicts its method's constraint is refused.
+
+**7. Submitters.** **Requests, qualifications, policies, notifications, direct reports and recorded external reports are submitted by a `HUMAN`.** **Service-submitted, under AAB-PLATFORM-05, section C, by CAP-10's registered services:**
+  - **a signal from a CAP-08 or CAP-12 safety-signal request,** created by CAP-10's intake service, `initiatedBy` the person who recorded the originating record, `triggerKind` `RECORD` naming the request. **CAP-10's records are written only by CAP-10;**
+  - **a `MACHINE_GENERATED` signal,** from a capability whose contract names CAP-10 as a recipient (none is contracted yet);
+  - **a `PRECAUTIONARY_HOLD` placed by a rule.** **Every automatic hold records:** the rule's identifier and version; the triggering evidence; the service and its release (`service.serviceRegistrationId`, `service.softwareRelease`); the time (`submittedAt`); the affected subject; the reason; and **the human review required** (a `HOLD_RELEASE` by a `SAFETY_GOVERNOR`).
+
+  **The signal's `machine` block maps onto the platform's `service` block and `generation`:** `producer` is the service registration, `ruleOrModelVersion` the method version. **A service never triages, determines, directs, releases or closes.**
+
+**8. People in content.** `requestedBy` stays an `ActorReference`. **`Cap10AssessorQualification.person`** is the submitter, read from `provenance.submission.submittedBy`; the field is kept as a read alias. `affectedPeople` stays declared data.
+
+**9.** **The interface catches up with the amendment of 2026-10-02 (second), points 1 and 2,** which decided them: `useStage` includes `MANUFACTURING_HANDLING`; `channel` includes `MANUFACTURING_REPORT`; `concerns.kind` includes `MANUFACTURING_TRANSFER`. Nothing changes in meaning.
+
+**10.** **The optional regulator-decision citation** (section 4) **never makes CAP-10 depend on CAP-11.** CAP-10 assesses safety without it, disclosing `REGULATORY_STATUS_NOT_ASSESSED` where none is cited or resolved. The citation enriches a record; **it never converts regulatory authority into safety evidence, or safety evidence into regulatory authority.**
+
+**11. What this amendment replaces.** The interfaces, field rules, admission checks' consequences and failure contract are read as above wherever they differ; `RECORD_NOT_FOUND` joins the failure contract where it is named above and is not already there. The dependencies gain a row: **AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests: canonicalisation and digest types; `designed`.** Nothing else in this contract changes. **Nothing is implemented by this amendment.**
 
 ## Why this contract, and what it adopts
 

@@ -5,7 +5,7 @@
 **Capability:** CAP-11 Regulatory Translation & Dossier Support. It is not SCS-CAP-11 (Regulatory Framework Update Management), a different capability in another domain.
 **Authority:** DEFINES THE CONTRACT FOR CAP-11: HOW A JURISDICTION'S REGULATORY REQUIREMENTS ARE RECORDED FROM THEIR AUTHORITATIVE SOURCES, VERIFIED BY TWO QUALIFIED PEOPLE AND KEPT CURRENT; HOW ADMITTED EVIDENCE IS MAPPED TO THEM BY PEOPLE AND ASSEMBLED INTO A GOVERNED REGULATORY DOSSIER; HOW A REGULATOR'S OWN DECISION IS RECORDED; HOW WHETHER A FIELD TRIAL NEEDS A PERMIT IS DETERMINED; HOW A DOSSIER LEAVES THE COUNTRY, AND WHEN; AND ITS BOUNDARIES WITH CAP-04, CAP-06, CAP-07, CAP-08, CAP-10, CAP-12, THE SCS DOMAIN AND THE PLANNED REGULATORY DOMAIN. Establishes no commissioning, production, Gate D, WP05, scientific-validity, legal, compliance, regulatory-approval or market-access authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
 **Written:** 2026-10-02, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3). CAP-11 had no design contract before this one. Its horizon stays **post-launch** in the CAP-34 fidelity manifest.
-**Amended:** 2026-10-02 (market authorisation and manufacturing-activity permits, for CAP-12), with CAP-12's canonical contract; and 2026-10-02, second (integrity, lineage and the AGR vocabulary, under CAP-03), with CAP-03's canonical contract.
+**Amended:** 2026-10-02 (market authorisation and manufacturing-activity permits, for CAP-12), with CAP-12's canonical contract; and 2026-10-02, second (integrity, lineage and the AGR vocabulary, under CAP-03), with CAP-03's canonical contract; and 2026-10-02, third (provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10), with AAB-PLATFORM-10's canonical contract.
 
 ## The governing principle
 
@@ -52,6 +52,89 @@
 **5. Before implementation.** CAP-11's step 4 (code) uses the vocabulary and CAP-03's verification as adopted here.
 
 **6. What this amendment replaces.** The dependencies gain a row: **CAP-03 Evidence Integrity & Provenance: integrity re-check, lineage, the AGR vocabulary and integrity incidents; `designed`, launch release.**
+
+## Amendment of 2026-10-02 (third): provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10
+
+**Why.** AAB-PLATFORM-05 Governed Provenance is amended, and AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests is new (`governance/AAB-PLATFORM-10-CANONICAL-SERIALISATION-AND-CRYPTOGRAPHIC-DIGESTS-CANONICAL-CONTRACT-2026-10-02.md`; PR #118). **An adoption without its matrix is incomplete** (AAB-PLATFORM-05, amendment of 2026-10-02, section G). This amendment applies their confirmed decisions to CAP-11, record kind by record kind. Approved by the Platform Owner in review on 2026-10-02. **Nothing of CAP-11 is built, so nothing stored is renamed or rewritten.** Its three tables are reproduced exactly in `governance/workstream-b/AGR-PROVENANCE-ADOPTION-MATRIX-2026-10-02.md`, which `governance/tools/provenance-matrix/check_matrix.py` checks against this contract.
+
+**1. Record kinds.** Every record kind CAP-11 writes, and how each adopts AAB-PLATFORM-05 and AAB-PLATFORM-10:
+
+| Record kind | What it is | `source.sourceType` | Generation method (automation constraint) | Submitter | Supersession | Digest | Resolver kind |
+|---|---|---|---|---|---|---|---|
+| `Cap11RegulatorySource` | Admitted record | `REGULATORY_SOURCE_TEXT` | `HUMAN_DECLARATION` (`REQUIRED_FALSE`); a translation `TRANSLATION_HUMAN` or `TRANSLATION_MACHINE` | `HUMAN` | `CORRECTION`, `NEW_VERSION`, `WITHDRAWAL` | `recordDigest` (`DigestReference`, `aab-canonical-json-1`, `sha-256`) | `CAP-11:REGULATORY_SOURCE` |
+| `Cap11RegulatoryRequirement`, `Cap11RequirementSet`, `Cap11EvidenceMapping` | Admitted records | `SUBMITTER_AUTHORED` | `HUMAN_DECLARATION` (`REQUIRED_FALSE`) | `HUMAN` | `CORRECTION`, `NEW_VERSION`, `WITHDRAWAL` | `recordDigest` (`DigestReference`, `aab-canonical-json-1`, `sha-256`) | `CAP-11:REGULATORY_REQUIREMENT`, `CAP-11:REQUIREMENT_SET`, `CAP-11:EVIDENCE_MAPPING` |
+| `Cap11RegulatorDecisionRecord` | Admitted record | `REGULATOR_CORRESPONDENCE` | `HUMAN_DECLARATION` (`REQUIRED_FALSE`) | `HUMAN` | `CORRECTION`, `WITHDRAWAL`; a regulator's own change is `changesRegulatorDecision`, never a supersession | `recordDigest` (`DigestReference`, `aab-canonical-json-1`, `sha-256`) | `CAP-11:REGULATOR_DECISION` |
+| `Cap11EgressRecord` | Admitted record | `SUBMITTER_AUTHORED` | `HUMAN_DECLARATION` (`REQUIRED_FALSE`) | `HUMAN` | `CORRECTION`, `WITHDRAWAL` | `recordDigest` (`DigestReference`, `aab-canonical-json-1`, `sha-256`) | `CAP-11:DOSSIER_EGRESS` |
+| Change events, `MONITORING_RECORD`, `COUNTRY_GOVERNANCE_EXEMPTION`, `ASSESSOR_QUALIFICATION`, `COUNTRY_REGULATORY_POLICY` | Admitted records, written once (no interface yet) | `SUBMITTER_AUTHORED` | `HUMAN_DECLARATION` (`REQUIRED_FALSE`) | `HUMAN` | `CORRECTION`, `NEW_VERSION`, `WITHDRAWAL` | `recordDigest` (`DigestReference`, `aab-canonical-json-1`, `sha-256`) | `CAP-11:RECORD` |
+| Machine-proposed candidates (change events, extractions) | Admitted records, held for a person (no interface yet) | `CAPABILITY_OUTPUT` | `AUTOMATED_EXTRACTION` or `TRANSLATION_MACHINE` (`REQUIRED_TRUE`) | `SERVICE` | Never superseded | `recordDigest` (`DigestReference`, `aab-canonical-json-1`, `sha-256`) | `CAP-11:CANDIDATE` |
+| `Cap11RegulatoryDossier`, determination bases | Evaluations (AAB-PLATFORM-07) | — | `DETERMINISTIC_EVALUATION` (`REQUIRED_TRUE`) | Requested by a `HUMAN` | Never superseded | AAB-PLATFORM-07's digests | `CAP-11:REGULATORY_DOSSIER` |
+| `REQUIREMENT_SET_VERIFICATION`, `DOSSIER_ASSESSMENT`, `REGULATOR_DECISION_VERIFICATION`, `PERMIT_DETERMINATION`, `MARKET_AUTHORISATION_DETERMINATION`, `COUNTRY_GOVERNANCE_EXEMPTION_APPROVAL`, `EGRESS_AUTHORISATION`, `ASSESSOR_QUALIFICATION_REVIEW`, `COUNTRY_REGULATORY_POLICY_APPROVAL`, `CAP11_HELD_RESOLUTION`, `CHALLENGE_RESOLUTION` | Human decisions (AAB-PLATFORM-08) | — | `HUMAN_DECISION` (`REQUIRED_FALSE`) | `HUMAN` | AAB-PLATFORM-08's rules | AAB-PLATFORM-08's `recordDigest` | `AAB-PLATFORM-08:HUMAN_DECISION` |
+
+- **Every admitted record kind** carries `provenance: Provenance` (`provenanceVersion` `"2"`) and a **`recordDigest`: a `DigestReference`** (`recordDigest`, `aab-canonical-json-1`, `sha-256`), calculated in AAB-PLATFORM-05's nine steps over its envelope: every field of the record except `recordDigest`, derived status, later verification results, access logs and presentation-only fields. **Each schema declares its envelope, machine-readably,** before step 4. A `"sha256:"` comment on a `recordDigest` in this contract now reads so.
+- **A record kind named here without an interface** is a written-once admitted record under these same rules; its schema, with its envelope, is written before step 4.
+- **Evaluations** keep AAB-PLATFORM-07's digests; **human decisions** keep AAB-PLATFORM-08's, typed as `recordDigest`s of written-once records.
+- **Every digest of a cited or superseded record is resolved by the system,** never declared in a request.
+- **Each resolver kind is registered** (AAB-PLATFORM-05, section E): by identifier, and version where the kind is versioned, in the country workspace, disclosing only what the reader may see under this contract's read rules; what may not be disclosed is unresolved, never revealed.
+
+**2. Written once.** The `integrity?` reference of the amendment of 2026-10-02 (second) is **derived when read.**
+
+**3. Supersession.** **The platform's `supersedes` is added** to sources, requirements, sets and mappings, which check 7 already validates. **The regulator decision's `supersedes` is renamed `changesRegulatorDecision`:** a regulator's amendment, suspension or revocation is the regulator's act, recorded as a new regulator decision naming the decision it changes, never a platform supersession. A regulator decision recorded wrongly is corrected by the platform's `supersedes`, reason `CORRECTION`.
+
+**4. Citations.** Every reference CAP-11 relies on follows the same cite-then-resolve behaviour (AAB-PLATFORM-05, decision 10), through the registered resolver of the expected record kind. A declared version that differs from the version found is unresolved. **The consequence of an unresolved citation follows its class:**
+
+| Citation class | Unresolved consequence |
+|---|---|
+| Subject: the record being evaluated, or that the record is about | Refusal |
+| Authority or membership: the basis for the act, or what the record belongs to | Refusal |
+| Superseded record | Refusal |
+| Mandatory evidence: evidence an outcome relies on | Refusal, or `EVIDENCE_REQUIRED` |
+| Optional evidence: supporting or context evidence | Limitation |
+| Related: material not relied on | Limitation, or omitted with a disclosure |
+
+Every citation CAP-11 makes, with its class, relation, expected record kind, whether it is mandatory, and its outcome and failure code. The field names stay:
+
+| Field | Citation class | Relation | Expected record kind | Mandatory | When unresolved |
+|---|---|---|---|---|---|
+| Source `document` | Subject | `EXTRACTED_FROM` | `CAP-04:MEMORY_RECORD` (`DOCUMENT`) | Yes | Refusal `EVIDENCE_NOT_ADMITTED` (check 3) |
+| Source `translation.of` | Subject | `TRANSLATION_OF`; **now resolved** | `CAP-11:REGULATORY_SOURCE` | Yes, for a translation | Refusal `RECORD_NOT_FOUND` |
+| Requirement `sources[]` | Mandatory evidence | `EXTRACTED_FROM`, the provision a qualifier | `CAP-11:REGULATORY_SOURCE` | Yes | Refusal `AUTHORITATIVE_SOURCE_REQUIRED` (check 4) |
+| Set `requirements[]` | Authority or membership | `PART_OF`; **the digest is resolved by the system,** no longer declared | `CAP-11:REGULATORY_REQUIREMENT` | Yes | Refusal `REQUIREMENT_SET_INCONSISTENT` (check 6) |
+| Mapping `requirementSet`, `requirement`, `subject` | Subject | `REFERS_TO` | `CAP-11:REQUIREMENT_SET`, `CAP-11:REGULATORY_REQUIREMENT`, the subject's kind | Yes | Refusal `REQUIREMENT_SET_NOT_VERIFIED` / Refusal `RECORD_NOT_FOUND` |
+| Mapping `evidence[]` | Mandatory evidence | `SUPPORTS`; **CAP-10 outcomes now cite each decision's identifier and digest** | `CAP-04:MEMORY_RECORD`, `AAB-PLATFORM-08:HUMAN_DECISION`, `CAP-11:REGULATOR_DECISION` | Yes: the mapping is its evidence | Refusal `EVIDENCE_NOT_ADMITTED`; evidence that later stops being current shows as `NOT_MAPPED` in the dossier, as before |
+| Regulator decision `subject` | Subject | `REFERS_TO` | The subject's kind, where it has one | Yes, when it names a record | Refusal `RECORD_NOT_FOUND`; a declared subject stays declared |
+| Regulator decision `authenticityEvidence[].document` | Mandatory evidence | `SUPPORTS` | `CAP-04:MEMORY_RECORD` (`DOCUMENT`) | Yes | Refusal `EVIDENCE_NOT_ADMITTED` |
+| Regulator decision `changesRegulatorDecision` | Subject | `REFERS_TO`, qualifier `CHANGES`: resolves the earlier decision's identifier, version, digest, issuing authority and jurisdiction | `CAP-11:REGULATOR_DECISION` | Yes, when declared | Refusal `RECORD_NOT_FOUND`; a different issuing authority or jurisdiction also refuses (`REQUEST_VALIDATION_FAILED`) |
+| Egress `authorisationDecisionId`, `package` | Authority or membership | `RELIED_ON`; the package by its `packageDigest` and `renditionDigest` | `AAB-PLATFORM-08:HUMAN_DECISION`; the package | Yes | Refusal `EGRESS_NOT_AUTHORISED` |
+| Egress `legalBasisEvidence[]` (added) | Mandatory evidence | `SUPPORTS` | `CAP-04:MEMORY_RECORD` | Yes | Refusal `EVIDENCE_NOT_ADMITTED` |
+| `supersedes` | Superseded record | The platform's `supersedes` field, never a `lineage` entry | The same record kind | Yes, when declared | Refusal `SUPERSESSION_NOT_PERMITTED` |
+
+**5. The six-gap matrix.**
+
+| Record kind | `SOURCE_UNIDENTIFIED` | `ORIGINAL_NOT_STORED` | `INTEGRITY_UNVERIFIED` | `CITATION_UNRESOLVED` | `CUSTODY_DECLARED_INCOMPLETE` | `CUSTODY_NOT_DECLARED` |
+|---|---|---|---|---|---|---|
+| Regulatory source | N/A: its source is the cited CAP-04 `DOCUMENT`, required by check 3 | N/A: no original | N/A: no original | By citation class (section 4) | N/A: no original | N/A: no original |
+| Requirement, requirement set, evidence mapping, egress record | N/A: `SUBMITTER_AUTHORED` | N/A: no original | N/A: no original | By citation class (section 4) | N/A: no original | N/A: no original |
+| Regulator decision | N/A: its source is the regulator, evidenced by the cited `DOCUMENT`s | N/A: no original | N/A: no original | By citation class (section 4) | N/A: no original | N/A: no original |
+| Change event, monitoring record, exemption, qualification, policy | N/A: `SUBMITTER_AUTHORED` | N/A: no original | N/A: no original | By citation class (section 4) | N/A: no original | N/A: no original |
+| Machine-proposed candidate | N/A: `CAPABILITY_OUTPUT` | N/A: no original | N/A: no original | By citation class (section 4) | N/A: no original | N/A: no original |
+| Dossier, determination bases | N/A: evaluation | N/A: evaluation | N/A: evaluation | N/A: evaluation | N/A: evaluation | N/A: evaluation |
+| Human decisions | N/A: human decision | N/A: human decision | N/A: human decision | N/A: human decision | N/A: human decision | N/A: human decision |
+
+*The matrix's reasons:* **no original:** the record holds no original of its own; what it cites are CAP-04 records, whose gaps are carried by reference. **`SUBMITTER_AUTHORED`:** its content was created by the identified human or authorised service submitting it, so its source is the submission itself. **Evaluation:** an AAB-PLATFORM-07 evaluation, whose members' gaps are carried by reference. **Human decision:** an AAB-PLATFORM-08 decision, bound by digest to what it decides. **Status record:** a written-once record of a state change, bound by digest to the record it concerns. **By citation class:** each citation's consequence is its row in section 4.
+
+**6. Vocabulary.** CAP-11 adopts **`cap-03-vocabulary-2`** (CAP-03's amendment of 2026-10-02), in place of version 1: `OTHER` and `SUBMITTER_AUTHORED` among the source types, and **every generation method with an automation constraint** (`REQUIRED_TRUE`, `REQUIRED_FALSE` or `DECLARED_PER_RECORD`), never inferred from its name. A record whose `automated` contradicts its method's constraint is refused.
+
+**7. Submitters.** **Every CAP-11 record is submitted by a `HUMAN`,** except **machine-proposed candidates,** service-submitted under AAB-PLATFORM-05, section C, and held for a person.
+
+**8. People in content.** **`interpretation.author` is exactly one of** `actorReference` (when the author acted in AAB in that role, as the submitting curator) **or `declaredPerson`** (`{ name, role, qualification? }`, as declared: an author outside AAB, such as an external legal professional) (AAB-PLATFORM-05, decision 13). `preparedBy` and `irreversibilityAcknowledgedBy` act in AAB, and stay `ActorReference`s.
+
+**9.** **Digests inside records are typed** (AAB-PLATFORM-10): `sourceDigest`, `sourceDigests[]` and `documentDigest` are `objectDigest`s of the cited documents' originals, set by the system from CAP-04; the egress `packageDigest` and `renditionDigest` are those types.
+
+**10.** **`Cap11EgressRecord` gains `recordVersion`** (always 1: written once, corrected only by supersession).
+
+**11.** **The egress `legalBasis`** stays a declared statement, and **cites the evidence it rests on** in the added `legalBasisEvidence[]`, as admitted CAP-04 documents by version (AAB-PLATFORM-05, section F).
+
+**12. What this amendment replaces.** The interfaces, field rules, admission checks' consequences and failure contract are read as above wherever they differ; `RECORD_NOT_FOUND` joins the failure contract where it is named above and is not already there. The dependencies gain a row: **AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests: canonicalisation and digest types; `designed`.** Nothing else in this contract changes. **Nothing is implemented by this amendment.**
 
 ## Why this contract, and what it adopts
 

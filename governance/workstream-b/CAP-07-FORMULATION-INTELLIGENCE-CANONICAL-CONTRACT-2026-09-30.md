@@ -5,7 +5,7 @@
 **Capability:** CAP-07 Formulation Intelligence.
 **Authority:** DEFINES THE CONTRACT FOR CAP-07: HOW A FORMULATION OBJECTIVE IS DECLARED, HOW RESEARCH FORMULATIONS ARE COMPOSED FROM ACCEPTED INGREDIENTS, VERSIONED, DERIVED AND COMPARED, ASSEMBLED INTO A FORMULATION DOSSIER, REVIEWED BY A SCIENTIST AND ACCEPTED FOR TRIAL, AND ITS BOUNDARIES WITH CAP-01, CAP-04, CAP-06, CAP-08, CAP-10, CAP-11 AND CAP-12. Establishes no commissioning, production, Gate D, WP05, scientific-validity, safety, regulatory or manufacturing authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
 **Written:** 2026-09-30, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3). CAP-07 had no design contract before this one.
-**Amended:** 2026-10-02 (safety and ecology, governed by CAP-10), with CAP-10's canonical contract; and 2026-10-02, second (regulatory status, governed by CAP-11), with CAP-11's canonical contract; and 2026-10-02, third (composition for manufacturing transfer, governed by CAP-12), with CAP-12's canonical contract; and 2026-10-02, fourth (integrity, lineage and the AGR vocabulary, under CAP-03), with CAP-03's canonical contract.
+**Amended:** 2026-10-02 (safety and ecology, governed by CAP-10), with CAP-10's canonical contract; and 2026-10-02, second (regulatory status, governed by CAP-11), with CAP-11's canonical contract; and 2026-10-02, third (composition for manufacturing transfer, governed by CAP-12), with CAP-12's canonical contract; and 2026-10-02, fourth (integrity, lineage and the AGR vocabulary, under CAP-03), with CAP-03's canonical contract; and 2026-10-02, fifth (provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10), with AAB-PLATFORM-10's canonical contract.
 
 ## Amendment of 2026-10-02: safety and ecology, governed by CAP-10
 
@@ -92,6 +92,73 @@
 **5. Before implementation.** CAP-07's step 4 (code) uses the vocabulary and CAP-03's verification as adopted here.
 
 **6. What this amendment replaces.** The dependencies gain a row: **CAP-03 Evidence Integrity & Provenance: integrity re-check, lineage, the AGR vocabulary and integrity incidents; `designed`, launch release.**
+
+## Amendment of 2026-10-02 (fifth): provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10
+
+**Why.** AAB-PLATFORM-05 Governed Provenance is amended, and AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests is new (`governance/AAB-PLATFORM-10-CANONICAL-SERIALISATION-AND-CRYPTOGRAPHIC-DIGESTS-CANONICAL-CONTRACT-2026-10-02.md`; PR #118). **An adoption without its matrix is incomplete** (AAB-PLATFORM-05, amendment of 2026-10-02, section G). This amendment applies their confirmed decisions to CAP-07, record kind by record kind. Approved by the Platform Owner in review on 2026-10-02. **Nothing of CAP-07 is built, so nothing stored is renamed or rewritten.** Its three tables are reproduced exactly in `governance/workstream-b/AGR-PROVENANCE-ADOPTION-MATRIX-2026-10-02.md`, which `governance/tools/provenance-matrix/check_matrix.py` checks against this contract.
+
+**1. Record kinds.** Every record kind CAP-07 writes, and how each adopts AAB-PLATFORM-05 and AAB-PLATFORM-10:
+
+| Record kind | What it is | `source.sourceType` | Generation method (automation constraint) | Submitter | Supersession | Digest | Resolver kind |
+|---|---|---|---|---|---|---|---|
+| `Cap07Objective` | Admitted record | `SUBMITTER_AUTHORED` | `HUMAN_DECLARATION` (`REQUIRED_FALSE`) | `HUMAN` | `CORRECTION`, `NEW_VERSION`, `WITHDRAWAL` | `recordDigest` (`DigestReference`, `aab-canonical-json-1`, `sha-256`) | `CAP-07:RECORD` |
+| `Cap07Formulation` | Admitted record | `SUBMITTER_AUTHORED` | `HUMAN_DECLARATION` (`REQUIRED_FALSE`) | `HUMAN` | `CORRECTION`, `NEW_VERSION`, `WITHDRAWAL` | `recordDigest` (`DigestReference`, `aab-canonical-json-1`, `sha-256`) | `CAP-07:RECORD` |
+| `Cap07FormulationDossier` | Evaluation (AAB-PLATFORM-07) | — | `DETERMINISTIC_EVALUATION` (`REQUIRED_TRUE`) | Requested by a `HUMAN` | Never superseded | AAB-PLATFORM-07's digests | `CAP-07:FORMULATION_DOSSIER` |
+| `FORMULATION_REVIEW`, `CAP07_HELD_RESOLUTION`, `COMPOSITION_ACCESS_GRANT`, `CHALLENGE_RESOLUTION` | Human decisions (AAB-PLATFORM-08) | — | `HUMAN_DECISION` (`REQUIRED_FALSE`) | `HUMAN` | AAB-PLATFORM-08's rules | AAB-PLATFORM-08's `recordDigest` | `AAB-PLATFORM-08:HUMAN_DECISION` |
+
+- **Every admitted record kind** carries `provenance: Provenance` (`provenanceVersion` `"2"`) and a **`recordDigest`: a `DigestReference`** (`recordDigest`, `aab-canonical-json-1`, `sha-256`), calculated in AAB-PLATFORM-05's nine steps over its envelope: every field of the record except `recordDigest`, derived status, later verification results, access logs and presentation-only fields. **Each schema declares its envelope, machine-readably,** before step 4. A `"sha256:"` comment on a `recordDigest` in this contract now reads so.
+- **A record kind named here without an interface** is a written-once admitted record under these same rules; its schema, with its envelope, is written before step 4.
+- **Evaluations** keep AAB-PLATFORM-07's digests; **human decisions** keep AAB-PLATFORM-08's, typed as `recordDigest`s of written-once records.
+- **Every digest of a cited or superseded record is resolved by the system,** never declared in a request.
+- **Each resolver kind is registered** (AAB-PLATFORM-05, section E): by identifier, and version where the kind is versioned, in the country workspace, disclosing only what the reader may see under this contract's read rules; what may not be disclosed is unresolved, never revealed.
+
+**2. Written once.** The `integrity?` reference of the amendment of 2026-10-02 (fourth), on dossiers and acceptances for trial, is **derived when read.** `acceptanceReliedOn` is unaffected: it is set at admission.
+
+**3. Supersession.** `supersedes` takes the platform's declared and resolved shape on objectives and formulations; `UPDATE` maps to `NEW_VERSION`.
+
+**4. Citations.** Every reference CAP-07 relies on follows the same cite-then-resolve behaviour (AAB-PLATFORM-05, decision 10), through the registered resolver of the expected record kind. A declared version that differs from the version found is unresolved. **The consequence of an unresolved citation follows its class:**
+
+| Citation class | Unresolved consequence |
+|---|---|
+| Subject: the record being evaluated, or that the record is about | Refusal |
+| Authority or membership: the basis for the act, or what the record belongs to | Refusal |
+| Superseded record | Refusal |
+| Mandatory evidence: evidence an outcome relies on | Refusal, or `EVIDENCE_REQUIRED` |
+| Optional evidence: supporting or context evidence | Limitation |
+| Related: material not relied on | Limitation, or omitted with a disclosure |
+
+Every citation CAP-07 makes, with its class, relation, expected record kind, whether it is mandatory, and its outcome and failure code. The field names stay:
+
+| Field | Citation class | Relation | Expected record kind | Mandatory | When unresolved |
+|---|---|---|---|---|---|
+| Objective `problemReportIds[]` | Related | `REFERS_TO`; **now each with a declared version** | `CAP-01:RECORD` | No | Limitation `CITATION_UNRESOLVED` |
+| Formulation `objective` | Subject | `REFERS_TO` | `CAP-07:RECORD` | Yes | Refusal `OBJECTIVE_NOT_FOUND` (check 4) |
+| `components[].ingredient` | Authority or membership | `DERIVED_FROM` | `CAP-06:RECORD` | Yes | Refusal `COMPONENT_NOT_ACCEPTED` (check 5) |
+| `components[].acceptanceReliedOn` | Authority or membership | `RELIED_ON`, set by the system at admission | `AAB-PLATFORM-08:HUMAN_DECISION` | Yes | Cannot be unresolved: set by the system |
+| `derivedFrom` | Subject | `DERIVED_FROM`, `variantKind` a qualifier; **now resolved to the declared version** | `CAP-07:RECORD` | Yes, when declared | Refusal `LINEAGE_NOT_VALID` (check 7) |
+| `evidence[]` | Optional evidence | `SUPPORTS`, the aspect a qualifier | `CAP-04:MEMORY_RECORD` | No | Limitation `EVIDENCE_UNRESOLVED` (check 9) |
+| `supersedes` | Superseded record | The platform's `supersedes` field, never a `lineage` entry | The same record kind | Yes, when declared | Refusal `SUPERSESSION_NOT_PERMITTED` |
+
+**5. The six-gap matrix.**
+
+| Record kind | `SOURCE_UNIDENTIFIED` | `ORIGINAL_NOT_STORED` | `INTEGRITY_UNVERIFIED` | `CITATION_UNRESOLVED` | `CUSTODY_DECLARED_INCOMPLETE` | `CUSTODY_NOT_DECLARED` |
+|---|---|---|---|---|---|---|
+| Objective | N/A: `SUBMITTER_AUTHORED` | N/A: no original | N/A: no original | By citation class (section 4) | N/A: no original | N/A: no original |
+| Formulation | N/A: `SUBMITTER_AUTHORED` | N/A: no original | N/A: no original | By citation class (section 4) | N/A: no original | N/A: no original |
+| Formulation dossier | N/A: evaluation | N/A: evaluation | N/A: evaluation | N/A: evaluation | N/A: evaluation | N/A: evaluation |
+| Human decisions | N/A: human decision | N/A: human decision | N/A: human decision | N/A: human decision | N/A: human decision | N/A: human decision |
+
+*The matrix's reasons:* **no original:** the record holds no original of its own; what it cites are CAP-04 records, whose gaps are carried by reference. **`SUBMITTER_AUTHORED`:** its content was created by the identified human or authorised service submitting it, so its source is the submission itself. **Evaluation:** an AAB-PLATFORM-07 evaluation, whose members' gaps are carried by reference. **Human decision:** an AAB-PLATFORM-08 decision, bound by digest to what it decides. **Status record:** a written-once record of a state change, bound by digest to the record it concerns. **By citation class:** each citation's consequence is its row in section 4.
+
+**6. Vocabulary.** CAP-07 adopts **`cap-03-vocabulary-2`** (CAP-03's amendment of 2026-10-02), in place of version 1: `OTHER` and `SUBMITTER_AUTHORED` among the source types, and **every generation method with an automation constraint** (`REQUIRED_TRUE`, `REQUIRED_FALSE` or `DECLARED_PER_RECORD`), never inferred from its name. A record whose `automated` contradicts its method's constraint is refused.
+
+**7. Submitters.** **Every CAP-07 record is submitted by a `HUMAN`.**
+
+**8. People in content.** `requestedBy` stays an `ActorReference`. **The person named in a `COMPOSITION_ACCESS_GRANT`** acts in AAB by reading under it, and is an `ActorReference`.
+
+**9.** **Check 8's `SOURCE_UNIDENTIFIED`** applies where an objective or formulation declares an external source; for `SUBMITTER_AUTHORED` it is not applicable.
+
+**10. What this amendment replaces.** The interfaces, field rules, admission checks' consequences and failure contract are read as above wherever they differ; `RECORD_NOT_FOUND` joins the failure contract where it is named above and is not already there. The dependencies gain a row: **AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests: canonicalisation and digest types; `designed`.** Nothing else in this contract changes. **Nothing is implemented by this amendment.**
 
 ## Why this contract, and what it adopts
 
