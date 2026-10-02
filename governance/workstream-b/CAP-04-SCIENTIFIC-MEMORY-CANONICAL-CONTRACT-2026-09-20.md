@@ -4,7 +4,7 @@
 **Domain:** Agricultural Science (AGR)
 **Capability:** CAP-04 Governed Scientific Memory. It is not SCS-CAP-04 (Deforestation Evidence Admission), a different capability in another domain.
 **Authority:** DEFINES THE CONTRACT FOR CAP-04: WHAT MAY ENTER GOVERNED SCIENTIFIC MEMORY, HOW IT IS ADMITTED, HELD, QUARANTINED AND SUPERSEDED, HOW ADMITTED MEMORY IS READ, AND THE BOUNDARY WITH CAP-05 AND CAP-09. Establishes no commissioning, production, Gate D, WP05, scientific-validity or regulatory authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
-**Amended:** 2026-09-29, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3): aligned with the platform contracts, and the rehearsal accounted for (see "Amendment of 2026-09-29: canonical alignment, and the rehearsal accounted for"). Amended again on 2026-09-29, with two corrections following CAP-05's canonical amendment (see "Amendment of 2026-09-29: two corrections following CAP-05 canonical amendment"), for challenges to its human decisions (see "Amendment of 2026-09-29: challenges to CAP-04's human decisions"), and for originals stored under the AGR storage profile (see "Amendment of 2026-09-29: originals stored under the AGR storage profile"); and 2026-10-02 (integrity, lineage and the AGR vocabulary, under CAP-03), with CAP-03's canonical contract.
+**Amended:** 2026-09-29, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3): aligned with the platform contracts, and the rehearsal accounted for (see "Amendment of 2026-09-29: canonical alignment, and the rehearsal accounted for"). Amended again on 2026-09-29, with two corrections following CAP-05's canonical amendment (see "Amendment of 2026-09-29: two corrections following CAP-05 canonical amendment"), for challenges to its human decisions (see "Amendment of 2026-09-29: challenges to CAP-04's human decisions"), and for originals stored under the AGR storage profile (see "Amendment of 2026-09-29: originals stored under the AGR storage profile"); and 2026-10-02 (integrity, lineage and the AGR vocabulary, under CAP-03), with CAP-03's canonical contract; and 2026-10-02, second (acquired material, under CAP-02), with CAP-02's canonical contract.
 **History:** first written on 2026-09-20 as a governance design contract, resolving the "design decision required before wiring" finding for CAP-04 in `governance/AAB-CAPABILITY-GATEWAY-RECONCILIATION-2026-09-20.md`. It was not part of PR #16. The 2026-09-20 text is in the repository's history.
 
 ## Amendment of 2026-09-29: canonical alignment, and the rehearsal accounted for
@@ -119,6 +119,56 @@ AAB-PLATFORM-04 (actor–subject links) is **not adopted**: CAP-04 has no submis
 **5. Before implementation.** CAP-04's step 4 (code) uses the vocabulary and CAP-03's verification as adopted here.
 
 **6. What this amendment replaces.** The dependencies gain a row: **CAP-03 Evidence Integrity & Provenance: integrity re-check, lineage, the AGR vocabulary and integrity incidents; `designed`, launch release.**
+
+## Amendment of 2026-10-02 (second): acquired material, under CAP-02
+
+**Why.** CAP-02 now has a contract (`governance/workstream-b/CAP-02-GOVERNED-SCIENTIFIC-DATA-ACQUISITION-AND-INTEROPERABILITY-CANONICAL-CONTRACT-2026-10-02.md`). **Everything CAP-02 acquires reaches AGR only as a CAP-04 submission by a `MEMORY_SUBMITTER`,** in their own name (CAP-02, decision 5). This amendment adds what that needs: a batch route, a reference to the acquired item, and a check that the item's basis holds. Approved by the Platform Owner in review on 2026-10-02. **Nothing about what is admitted, held or refused changes for a record that cites no acquired item.**
+
+**1. The batch route.** `POST /agr/v1/memory-records/batches` accepts **up to 200 submissions** (the pilot value) from one `MEMORY_SUBMITTER`.
+- **Each is a complete submission,** decided by the same checks as one made singly, **in its own transaction,** with its own record, decision and receipt. **A batch is not atomic:** one item's refusal leaves the others as they were decided.
+- **The response lists every item's result,** in order: admitted, held, or the refusal with its reasons.
+- **Idempotency:** the batch carries an `Idempotency-Key`; each item is keyed by it and its position. A replay returns every item's original result.
+- **It is open to any submitter,** with or without CAP-02.
+
+**2. The acquisition reference.** A record may carry, **set by the system** from the request's `acquisitionItemId`:
+
+```typescript
+acquisition?: {
+  acquisitionItemId: string;            // the CAP-02 staged item
+  runId: string;
+  sourceRegistrationId: string;
+  registrationVersion: number;
+  sourceApprovalDecisionId: string;
+  mappingId?: string;                   // when the content was produced by an approved mapping
+  mappingVersion?: number;
+};
+```
+
+It is part of the record, and of `recordDigest`. A request that supplies the object itself, rather than the item's identifier, is refused (`REQUEST_VALIDATION_FAILED`), as for every system-set field.
+
+**3. Check 13, `ACQUISITION_BASIS_VALID`.** Evaluated with the refusing checks, after check 5; numbered 13 so that every existing number keeps its meaning. **`PASSED`, or `NOT_EVALUATED` when no acquired item is cited.** It refuses, with **`ACQUISITION_BASIS_INVALID`** (422), naming each reason, when:
+- the item does not exist in the workspace, or was purged or withdrawn;
+- the record's original is not the item: its stored object's digest differs from the item's recorded digest;
+- the source approval the run relied on was not valid and current when the run started;
+- `classification.permittedUses` includes a purpose outside the approval's `permittedPurposes`;
+- `provenance.source.sourceType` is not among the registration's `sourceTypes`;
+- the content was produced by a mapping (`generation.method` `AUTOMATED_MAPPING`) and the mapping version cited was not approved, or does not belong to the registration;
+- the item failed CAP-02's malicious content scan.
+
+**The rules become `cap-04-admission-3`:** version 2, with check 13. Version 2 was never in force: nothing of CAP-04 is built.
+
+**4. The vocabulary.** CAP-02's generation method `AUTOMATED_MAPPING` (CAP-02, decision 23), mapped to `AUTOMATED_EXTRACTION`, is accepted. It contains `AUTOMATED`, so check 9 holds every record that uses it.
+
+**5. The purpose `ACQUISITION_GOVERNANCE`.** CAP-02's `SOURCE_APPROVER` and `ACQUISITION_GOVERNOR` may declare it to read the admitted documents that evidence a permitted-use basis. It reads, and changes nothing.
+
+**6. What does not change.** Check 9 still holds automated content; **check 10 still holds a record whose submitter's grant is not scoped to the owning institution, whether or not a CAP-02 source approval exists** (CAP-02, "Open gaps"); an original is still in the AGR profile before the submission (decision 3), now possibly copied there from CAP-02's staging area (AAB-PLATFORM-01's amendment of 2026-10-02).
+
+**7. What this amendment replaces.**
+- **The failure contract** gains `ACQUISITION_BASIS_INVALID` (422): the cited acquired item's basis does not hold.
+- **The routes** gain `POST /agr/v1/memory-records/batches`.
+- **The dependencies** gain a row: **CAP-02 Governed Scientific Data Acquisition & Interoperability: acquired items, their source approvals and mappings; `designed`, launch release.**
+
+**Nothing is implemented by this amendment.**
 
 ## The boundary, in plain English
 
