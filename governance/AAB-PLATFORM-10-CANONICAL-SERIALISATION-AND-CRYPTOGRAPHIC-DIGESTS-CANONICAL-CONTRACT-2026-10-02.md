@@ -5,6 +5,16 @@
 **Authority:** DEFINES HOW A GOVERNED VALUE BECOMES THE EXACT BYTES THAT ARE HASHED, AND HOW A DIGEST IS CONSTRUCTED, NAMED AND REFERENCED: THE CANONICALISATION `aab-canonical-json-1`, THE INPUT RULES FOR ANYTHING NEW THAT WILL BE SIGNED, HASHED OR ADMITTED, THE DIGEST TYPES AND WHAT EACH COVERS, THE DIGEST REFERENCE, HOW CANONICALISATION VERSIONS COEXIST, AND THE CONFORMANCE VECTORS EVERY IMPLEMENTATION MUST PASS. It covers serialisation and digest construction only: **not key management, not signature authority, and not scientific meaning.** It changes no stored record, digest or signature, and amends no domain contract. This contract is PROPOSED_NOT_ADMITTED. No implementation exists beyond the SCS pilot's existing algorithm, which this contract records and freezes.
 **Written:** 2026-10-02, with the amendment of AAB-PLATFORM-05 that cites it.
 
+## Amendment of 2026-10-03: a human decision's digest is a `recordDigest`
+
+**Consequential to AAB-PLATFORM-07's amendment of 2026-10-03** (finding RD-01 of the retrospective decision cross-review), and approved with it by the Platform Owner in review on 2026-10-03. **Approved draft:** `governance/reviews/RD-01-AAB-PLATFORM-07-AMENDMENT-DRAFT-2026-10-03-r4.md`, SHA-256 `da9a41aac8feb6e41849d2c16fd5896cd1213b0bb466f13d11f722f13ca346b2`; its approval and review history: `governance/reviews/RD-01-AMENDMENT-APPROVAL-RECORD-2026-10-03.md`.
+- **Section 6, the `recordDigest` row:**
+  - the semantic object **"An admitted, written-once record"** now reads ***"A written-once governed record: an admitted record, a human decision, or a status record"***;
+  - the included fields are, for a human decision, every field of AAB-PLATFORM-08's `HumanDecision` except `decisionDigest` and `signature`;
+  - this states what the legacy mappings for AAB-PLATFORM-04 status records and the key registry's records already do (section 5).
+- **Section 5, legacy forms,** gains a row: `decisionDigest` (AAB-PLATFORM-08), `sha256:` plus hexadecimal; interpreted as `recordDigest`, `aab-canonical-json-1`, `sha-256`.
+- **No new digest type.** There are still seven types. No stored value changes. Nothing is implemented.
+
 ## What a digest proves
 
 > **A digest proves equality with the exact canonical data model hashed under the identified canonicalisation and hash algorithms. It does not prove that the record is true, authoritative or sufficient.**

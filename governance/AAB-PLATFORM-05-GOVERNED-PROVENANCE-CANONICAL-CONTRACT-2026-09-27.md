@@ -3,7 +3,7 @@
 **Status:** CANONICAL CONTRACT — NOT IMPLEMENTATION
 **Domain:** AAB platform (shared by every domain)
 **Authority:** DEFINES PROVENANCE: WHAT IT RECORDS ABOUT A GOVERNED RECORD, WHICH OF IT IS VERIFIED AND WHICH IS DECLARED, HOW REFERENCES TO OTHER RECORDS ARE RESOLVED, HOW A RECORD IS CORRECTED WITHOUT BEING CHANGED, AND HOW PROVENANCE IS CARRIED INTO WHAT IS BUILT FROM A RECORD. It admits no record, grants no authority to anyone, amends no domain contract and changes no stored record. This contract is PROPOSED_NOT_ADMITTED. No implementation exists.
-**Amended:** 2026-10-02 (the record digest, its calculation, service submitters, supersession, registered resolvers and conformance, with AAB-PLATFORM-10).
+**Amended:** 2026-10-02 (the record digest, its calculation, service submitters, supersession, registered resolvers and conformance, with AAB-PLATFORM-10); and 2026-10-03 (the admission basis on resolved citations, and the reliance-closure assessment, with AAB-PLATFORM-07's amendment of 2026-10-03).
 
 ## Amendment of 2026-10-02: the record digest, its calculation, and what the domains found
 
@@ -192,6 +192,17 @@ Section 7 is strengthened. **Every adopting contract states, for each of the six
 - **Open items:** offline capture is settled (decision 12); canonicalisation is AAB-PLATFORM-10's.
 
 **Sections 2, 4, 5, 7 and 10 are marked "(amended on 2026-10-02)" where they change.** Nothing else in this contract changes. **Nothing is implemented by this amendment.**
+
+## Amendment of 2026-10-03: the admission basis on resolved citations, and the reliance-closure assessment
+
+**Consequential to AAB-PLATFORM-07's amendment of 2026-10-03** (finding RD-01 of the retrospective decision cross-review), and approved with it by the Platform Owner in review on 2026-10-03. **Approved draft:** `governance/reviews/RD-01-AAB-PLATFORM-07-AMENDMENT-DRAFT-2026-10-03-r4.md`, SHA-256 `da9a41aac8feb6e41849d2c16fd5896cd1213b0bb466f13d11f722f13ca346b2`; its approval and review history: `governance/reviews/RD-01-AMENDMENT-APPROVAL-RECORD-2026-10-03.md`.
+
+- **Section 4 and amendment section E, the resolved citation:** `resolved` gains `admissionBasis` (AAB-PLATFORM-07, amendment of 2026-10-03, point 3). It is required where the cited record kind is admitted evidence, and is system-set at resolution and covered by the citing record's `recordDigest`. A citation is never re-resolved, and its basis is never refreshed.
+- **`RELIANCE_CLOSURE_ASSESSMENT`** is a platform record kind:
+  - written once, with `Provenance` (`provenanceVersion` "2") and a `recordDigest`;
+  - submitted by a registered service under section C, or by a named person;
+  - resolvable through its registered resolver, so that a notification or audit can cite it.
+- **It is never admitted evidence, and never a basis for reliance.**
 
 ## Sources
 

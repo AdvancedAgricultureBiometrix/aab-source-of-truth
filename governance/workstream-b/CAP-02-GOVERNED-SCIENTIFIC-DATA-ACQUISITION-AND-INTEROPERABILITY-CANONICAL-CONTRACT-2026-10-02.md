@@ -5,7 +5,7 @@
 **Capability:** CAP-02 Governed Scientific Data Acquisition & Interoperability. It is not SCS-CAP-02 (Operator and Supplier Identity Registration), a different capability in another domain.
 **Authority:** DEFINES THE CONTRACT FOR CAP-02: HOW AN EXTERNAL SOURCE OF SCIENTIFIC DATA IS REGISTERED, AND APPROVED FOR ACQUISITION ON A RECORDED PERMITTED-USE BASIS; HOW A PERSON STARTS AN ACQUISITION RUN, FROM FILES THEY SUPPLY OR FROM AN ALLOWLISTED PUBLIC SOURCE; HOW WHAT IS ACQUIRED IS STAGED, WITH A DIGEST THE PLATFORM COMPUTES; HOW A SOURCE'S FIELDS, TERMS AND UNITS ARE MAPPED BY APPROVED, VERSIONED MAPPINGS; HOW ACQUIRED MATERIAL IS HANDED TO CAP-04 BY A PERSON, AS A SUBMISSION LIKE ANY OTHER; HOW A RUN IS WITHDRAWN; AND ITS BOUNDARIES WITH CAP-01, CAP-03, CAP-04, PROPOSED CAP-36, THE PLANNED DOMAINS AND THE SOVEREIGN DATA BOUNDARY. Establishes no commissioning, production, Gate D, WP05, scientific-validity, source-authority or regulatory authority, authorises no outbound connection, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
 **Written:** 2026-10-02, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3). CAP-02 had no design contract before this one. Its horizon stays **launch release** in the CAP-34 fidelity manifest; what launches is limited by decision 21.
-**Amended:** 2026-10-02 (provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10), with AAB-PLATFORM-10's canonical contract.
+**Amended:** 2026-10-02 (provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10), with AAB-PLATFORM-10's canonical contract; and 2026-10-03 (invalidated admissions, under AAB-PLATFORM-07), with AAB-PLATFORM-07's amendment of 2026-10-03.
 
 ## The governing principle
 
@@ -105,6 +105,56 @@ Each such passage keeps its original wording, followed by a current reading labe
 **This note changes no rule or meaning.** It is not an amendment, and no **Amended:** line changes. **Where a mark and the amendment or contract it names differ, the amendment or contract governs.** Nothing of this capability is built.
 
 **Dependency rows added by amendment (Note of 2026-10-02):** the Dependencies table does not show one row that amendments add: AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests ("Amendment of 2026-10-02: provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10", point 13). Each row reads exactly as its amendment states it, and **the amendment controls.** This note creates and changes no table row.
+
+## Amendment of 2026-10-03: invalidated admissions, under AAB-PLATFORM-07
+
+**Why.** AAB-PLATFORM-07 is amended (amendment of 2026-10-03: an admission invalidated after a snapshot), with consequential amendments to AAB-PLATFORM-05, 06, 08 and 10. Where a reviewer's admission of a record is invalidated by an upheld challenge, everything relying on it must stop being relied on, and must be reassessed by a person. This amendment is CAP-02's adoption, as that amendment's point 14 requires, and closes the contract side of finding RD-01 for CAP-02. Approved by the Platform Owner in review on 2026-10-03, as the adoption the approved draft specifies for this capability (`governance/reviews/RD-01-AAB-PLATFORM-07-AMENDMENT-DRAFT-2026-10-03-r4.md`, SHA-256 `da9a41aac8feb6e41849d2c16fd5896cd1213b0bb466f13d11f722f13ca346b2`; section 2, and point 14 of its amendment text). **Nothing is implemented by this amendment.**
+
+**1. Its own records.** CAP-02 has no reviewer's admission of its own records, so none of its records can have an admission invalidated. It relies on admitted CAP-04 records, below.
+
+**2. The admission basis** (AAB-PLATFORM-07, amendment of 2026-10-03, point 3). From this amendment, every new reliance pins its basis, set by the system:
+- **Path B2:** `Cap02PermittedUseBasis.evidence` of a `SOURCE_APPROVAL` (mandatory evidence) carry `resolved.admissionBasis`;
+- what was written before this amendment is governed by the legacy, fail-closed mapping (point 13 there), never by an assumed basis.
+
+**3. Reliance edges, and the consequence of each** (point 14 there). An activity in progress takes the highest consequence among its affected edges. Every new reliance on an invalidated basis is refused, whatever the consequence below:
+
+| Path | Edge | Consequence |
+|---|---|---|
+| B2 | A source approval's basis evidence, relied on by `startRun` | **Stop at once:** no new run starts under the approval. Items already staged or submitted keep the basis they were acquired under, shown with its state |
+
+**4. Refusals.** CAP-02 uses the platform's codes: `SNAPSHOT_MEMBER_ADMISSION_INVALIDATED`, `RELIED_ADMISSION_INVALIDATED`, `CITED_ADMISSION_INVALIDATED`, `ADMISSION_BASIS_UNDETERMINED` and `ADMISSION_BASIS_DUPLICATE`, with AAB-PLATFORM-08's refusal for path C. A refusal writes nothing.
+
+**5. Restoration.** Human reassessment is mandatory, and nothing restores an old basis (point 10 there):
+
+| Path | What restores reliance |
+|---|---|
+| B2 | A new `SOURCE_APPROVAL`, whose basis evidence resolves afresh; and, where needed, `RUN_WITHDRAWAL` |
+
+**6. Who is told.** For each item the reliance-closure assessment names:
+
+| Recipient | CAP-02 role |
+|---|---|
+| The holder of the role accountable for the invalidated record | `MEMORY_REVIEWER` (CAP-04), for a CAP-04 record |
+| The holder of the role accountable for each affected output or activity | `SOURCE_APPROVER`, for a `SOURCE_APPROVAL`; `ACQUISITION_STEWARD`, for the runs it started |
+| For a stop-at-once edge, the governing role of the capability whose evidence is affected | `ACQUISITION_GOVERNOR` (CAP-02) |
+| Where the closure is `INCOMPLETE`, an audit or governance role | **No role defined:** CAP-30 Governed Country Assurance & Audit is `named only`. An open item of this adoption. Until an authorised audit or governance role is defined, the notification this row requires is unsatisfied, and the closure's completeness is EVIDENCE REQUIRED. The closure may not be represented as complete, and no assurance or commissioning decision that requires a complete closure may rely on it. This does not delay the invalidation, holds, refusals or other propagation, and the other recipients are still told. Every operation remains bound by AAB-PLATFORM-07's requirement to prove its own complete reliance basis (amendment of 2026-10-03, point 9). |
+| The original decider of each affected decision, only while still authorised, and permitted to receive the information | The decider named on the decision |
+
+**Which holder is notified.** For the first two rows, "the holder of the role" means the current actor specifically assigned or recorded as accountable for the affected record, output or activity, while still authorised and permitted to receive the information. For the governing role of a stop-at-once edge, it means the holders of that role whose scoped authority grant (AAB-PLATFORM-03) covers the affected item. It never means every actor who holds the role, and the platform never broadcasts a notification to a role population. If a recipient cannot be resolved with certainty, that recipient's notification is EVIDENCE REQUIRED: no recipient is guessed, and no protected information is disclosed. This does not delay the invalidation, holds, refusals or other propagation. The original decider is notified only while still authorised and permitted to receive the information.
+
+The notification cites the invalidating resolution and the closure assessment, and reveals nothing the recipient may not see.
+
+**When.** The notification record is written in the same transaction as the reliance-closure assessment that names the affected item. A later assessment that names further items writes their notifications in its own transaction. How quickly a person is told therefore follows the closure assessment, written promptly after the invalidating resolution by a registered service in its own transaction (AAB-PLATFORM-07, amendment of 2026-10-03, point 11). A missing or late assessment, or a missing notification record, is a governance defect: it grants no authority, restores no reliance and suppresses no propagation. Notification never conditions propagation.
+
+**Delivery.** Delivery joins CAP-10's open item on notification delivery. When delivery is defined, its receipt or failure is recorded, and failure never prevents a hold, stale state or refusal.
+
+**7.** **Not an AAB-PLATFORM-07 adopter.** CAP-02 reviews no snapshot, so it has no change-kind trigger. Path B2 is applied as a domain check, at approval and at run start.
+
+**8.** **A correction:** the open gap's words "as in CAP-01 and CAP-03 to CAP-12" read "as in CAP-01 and CAP-04 to CAP-12": CAP-03 records no such gap.
+
+**9. Status.** The open gap "invalidated admission" is **`CONTRACT-RESOLVED — IMPLEMENTATION AND VERIFICATION OPEN`**. It is not closed. It closes only when the implementation is built and every required test passes.
+
+**10. What this amendment replaces.** Read as above wherever CAP-02's text differs. Nothing else in this contract changes. **Nothing is implemented by this amendment.**
 
 ## Why this contract, and what it adopts
 
