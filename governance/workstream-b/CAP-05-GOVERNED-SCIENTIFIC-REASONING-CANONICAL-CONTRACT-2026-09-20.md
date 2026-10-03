@@ -4,7 +4,7 @@
 **Domain:** Agricultural Science (AGR)
 **Capability:** CAP-05 Governed Scientific Reasoning. It is not SCS-CAP-05 (Supply Chain Custody Evidence Admission), a different capability in another domain.
 **Authority:** DEFINES THE CONTRACT FOR CAP-05: HOW A SCIENTIST'S QUESTION IS EVALUATED OVER A FROZEN SET OF CAP-04 ADMITTED EVIDENCE, WHAT THE RESULTING EVIDENCE LANDSCAPE CONTAINS AND DOES NOT, HOW IT IS RECORDED, REVIEWED AND COMPARED WITH LATER EVIDENCE, AND ITS BOUNDARY WITH THE REHEARSAL'S COGNITIVE LOOP, EVIDENCE WATCH AND CAP-09. Establishes no commissioning, production, Gate D, WP05, scientific-validity or regulatory authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
-**Amended:** 2026-09-29, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3): aligned with the platform contracts and with CAP-04 as amended, and the rehearsal accounted for (see "Amendment of 2026-09-29: canonical alignment, and the rehearsal accounted for"). Amended again on 2026-09-29, for challenges to landscape reviews (see "Amendment of 2026-09-29: challenges to landscape reviews"); and 2026-10-02 (integrity, lineage and the AGR vocabulary, under CAP-03), with CAP-03's canonical contract; and 2026-10-02, second (provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10), with AAB-PLATFORM-10's canonical contract.
+**Amended:** 2026-09-29, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3): aligned with the platform contracts and with CAP-04 as amended, and the rehearsal accounted for (see "Amendment of 2026-09-29: canonical alignment, and the rehearsal accounted for"). Amended again on 2026-09-29, for challenges to landscape reviews (see "Amendment of 2026-09-29: challenges to landscape reviews"); and 2026-10-02 (integrity, lineage and the AGR vocabulary, under CAP-03), with CAP-03's canonical contract; and 2026-10-02, second (provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10), with AAB-PLATFORM-10's canonical contract; and 2026-10-03 (invalidated admissions, under AAB-PLATFORM-07), with AAB-PLATFORM-07's amendment of 2026-10-03.
 **History:** first written on 2026-09-20 as a governance design contract, resolving the "design decision required before wiring" finding for CAP-05 in `governance/AAB-CAPABILITY-GATEWAY-RECONCILIATION-2026-09-20.md`. It was not part of PR #16. The 2026-09-20 text is in the repository's history.
 
 ## Amendment of 2026-09-29: canonical alignment, and the rehearsal accounted for
@@ -144,6 +144,58 @@ Each such passage keeps its original wording, followed by a current reading labe
 **This note changes no rule or meaning.** It is not an amendment, and no **Amended:** line changes. **Where a mark and the amendment or contract it names differ, the amendment or contract governs.** Nothing of this capability is built.
 
 **Dependency rows added by amendment (Note of 2026-10-02):** this contract has no Dependencies section. Its amendments add two rows: CAP-03 Evidence Integrity & Provenance ("Amendment of 2026-10-02: integrity, lineage and the AGR vocabulary, under CAP-03", point 6); AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests ("Amendment of 2026-10-02 (second): provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10", point 11). Each row reads exactly as its amendment states it, and **the amendment controls.** This note creates no section and no row.
+
+## Amendment of 2026-10-03: invalidated admissions, under AAB-PLATFORM-07
+
+**Why.** AAB-PLATFORM-07 is amended (amendment of 2026-10-03: an admission invalidated after a snapshot), with consequential amendments to AAB-PLATFORM-05, 06, 08 and 10. Where a reviewer's admission of a record is invalidated by an upheld challenge, everything relying on it must stop being relied on, and must be reassessed by a person. This amendment is CAP-05's adoption, as that amendment's point 14 requires, and closes the contract side of finding RD-01 for CAP-05. Approved by the Platform Owner in review on 2026-10-03, as the adoption the approved draft specifies for this capability (`governance/reviews/RD-01-AAB-PLATFORM-07-AMENDMENT-DRAFT-2026-10-03-r4.md`, SHA-256 `da9a41aac8feb6e41849d2c16fd5896cd1213b0bb466f13d11f722f13ca346b2`; section 2, and point 14 of its amendment text). **Nothing is implemented by this amendment.**
+
+**1. Its own records.** CAP-05 has no reviewer's admission of its own records, so none of its records can have an admission invalidated. It relies on admitted CAP-04 records, below.
+
+**2. The trigger.** `MEMBER_ADMISSION_INVALIDATED` is a trigger for every `LANDSCAPE_REVIEW`, and is never declared otherwise. A review whose snapshot reports it is `POTENTIALLY_STALE`, or `UNDETERMINED` where it cannot be checked, and never becomes current again. **"Triggers and lapse"**: "all ten platform change kinds declared" now reads "all eleven declared".
+
+**3. The admission basis** (AAB-PLATFORM-07, amendment of 2026-10-03, point 3). From this amendment, every new reliance pins its basis, set by the system:
+- **Path A:** `Cap05EvidenceLandscape.subjects[].members[]` carry `admittedBy`;
+- what was written before this amendment is governed by the legacy, fail-closed mapping (point 13 there), never by an assumed basis.
+
+**4. Reliance edges, and the consequence of each** (point 14 there). An activity in progress takes the highest consequence among its affected edges. Every new reliance on an invalidated basis is refused, whatever the consequence below:
+
+| Path | Edge | Consequence |
+|---|---|---|
+| A | A landscape's members, relied on by a `LANDSCAPE_REVIEW` | Mark for reassessment |
+| C | CAP-09's reliance on a `LANDSCAPE_REVIEW` (`FIT_AS_EVIDENCE_BASIS`) | Mark for reassessment; path C then refuses `PROMOTE` |
+
+**5. Refusals.** CAP-05 uses the platform's codes: `SNAPSHOT_MEMBER_ADMISSION_INVALIDATED`, `RELIED_ADMISSION_INVALIDATED`, `CITED_ADMISSION_INVALIDATED`, `ADMISSION_BASIS_UNDETERMINED` and `ADMISSION_BASIS_DUPLICATE`, with AAB-PLATFORM-08's refusal for path C. A refusal writes nothing.
+
+**6. Restoration.** Human reassessment is mandatory, and nothing restores an old basis (point 10 there):
+
+| Path | What restores reliance |
+|---|---|
+| A | A new landscape on a new snapshot, and a new `LANDSCAPE_REVIEW` |
+| C | A new, valid and `CURRENT` `LANDSCAPE_REVIEW` |
+
+**7. Who is told.** For each item the reliance-closure assessment names:
+
+| Recipient | CAP-05 role |
+|---|---|
+| The holder of the role accountable for the invalidated record | `MEMORY_REVIEWER` (CAP-04), for a CAP-04 record |
+| The holder of the role accountable for each affected output or activity | `LANDSCAPE_REVIEWER`, for a `LANDSCAPE_REVIEW`; `LEARNING_REVIEWER` (CAP-09), for CAP-09's reliance on it |
+| For a stop-at-once edge, the governing role of the capability whose evidence is affected | None of CAP-05's edges stops at once |
+| Where the closure is `INCOMPLETE`, an audit or governance role | **No role defined:** CAP-30 Governed Country Assurance & Audit is `named only`. An open item of this adoption. Until an authorised audit or governance role is defined, the notification this row requires is unsatisfied, and the closure's completeness is EVIDENCE REQUIRED. The closure may not be represented as complete, and no assurance or commissioning decision that requires a complete closure may rely on it. This does not delay the invalidation, holds, refusals or other propagation, and the other recipients are still told. Every operation remains bound by AAB-PLATFORM-07's requirement to prove its own complete reliance basis (amendment of 2026-10-03, point 9). |
+| The original decider of each affected decision, only while still authorised, and permitted to receive the information | The decider named on the decision |
+
+**Which holder is notified.** For the first two rows, "the holder of the role" means the current actor specifically assigned or recorded as accountable for the affected record, output or activity, while still authorised and permitted to receive the information. For the governing role of a stop-at-once edge, it means the holders of that role whose scoped authority grant (AAB-PLATFORM-03) covers the affected item. It never means every actor who holds the role, and the platform never broadcasts a notification to a role population. If a recipient cannot be resolved with certainty, that recipient's notification is EVIDENCE REQUIRED: no recipient is guessed, and no protected information is disclosed. This does not delay the invalidation, holds, refusals or other propagation. The original decider is notified only while still authorised and permitted to receive the information.
+
+The notification cites the invalidating resolution and the closure assessment, and reveals nothing the recipient may not see.
+
+**When.** The notification record is written in the same transaction as the reliance-closure assessment that names the affected item. A later assessment that names further items writes their notifications in its own transaction. How quickly a person is told therefore follows the closure assessment, written promptly after the invalidating resolution by a registered service in its own transaction (AAB-PLATFORM-07, amendment of 2026-10-03, point 11). A missing or late assessment, or a missing notification record, is a governance defect: it grants no authority, restores no reliance and suppresses no propagation. Notification never conditions propagation.
+
+**Delivery.** Delivery joins CAP-10's open item on notification delivery. When delivery is defined, its receipt or failure is recorded, and failure never prevents a hold, stale state or refusal.
+
+**8.** **"Review of a landscape", Currency, Triggers** gains: *an admission of a member invalidated (`MEMBER_ADMISSION_INVALIDATED`), always.* Its existing declarations are unchanged.
+
+**9. Status.** The open gap "invalidated admission" is **`CONTRACT-RESOLVED — IMPLEMENTATION AND VERIFICATION OPEN`**. It is not closed. It closes only when the implementation is built and every required test passes.
+
+**10. What this amendment replaces.** Read as above wherever CAP-05's text differs. Nothing else in this contract changes. **Nothing is implemented by this amendment.**
 
 ## The boundary, in plain English
 

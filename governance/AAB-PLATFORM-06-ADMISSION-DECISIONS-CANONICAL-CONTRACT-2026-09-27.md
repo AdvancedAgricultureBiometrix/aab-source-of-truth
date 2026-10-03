@@ -22,6 +22,17 @@
 
 **Sections 3 and 9 are corrected to match.** Nothing else changes, and nothing is implemented by this amendment.
 
+## Amendment of 2026-10-03: a resolution invalidated, and the record held again
+
+**Consequential to AAB-PLATFORM-07's amendment of 2026-10-03** (finding RD-01 of the retrospective decision cross-review), and approved with it by the Platform Owner in review on 2026-10-03. **Approved draft:** `governance/reviews/RD-01-AAB-PLATFORM-07-AMENDMENT-DRAFT-2026-10-03-r4.md`, SHA-256 `da9a41aac8feb6e41849d2c16fd5896cd1213b0bb466f13d11f722f13ca346b2`; its approval and review history: `governance/reviews/RD-01-AMENDMENT-APPROVAL-RECORD-2026-10-03.md`.
+- **Section 6:**
+  - **"A held decision is resolved at most once"** now reads: *a held decision has at most one valid resolution.* Where a resolution that admitted or rejected the record is `INVALIDATED` (AAB-PLATFORM-08, section 8), the record is held again, derived when read, and may be resolved again by a new resolution, which supersedes the invalidated one. A resolution may be superseded only after it is invalidated.
+- **Section 1:**
+  - **"except through quarantine (section 7) and supersession"** gains: *and, for a record a reviewer admitted, the invalidation of that resolution (section 6).*
+- **Reading:**
+  - an admitted record is read with its decision **and, where a reviewer admitted it, that resolution and its validity.**
+- **Unchanged:** no record, decision or status changes. Nothing is implemented.
+
 ## Record admission is not capability admission
 
 **This contract is about records, not capabilities.** The word "admission" has two meanings on the platform, and they must never be confused:

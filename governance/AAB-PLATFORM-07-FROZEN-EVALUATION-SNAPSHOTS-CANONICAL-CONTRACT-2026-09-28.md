@@ -12,6 +12,226 @@
 - **Its digests are typed** (AAB-PLATFORM-10, section 6): `snapshotDigest` and `manifestDigest` are `snapshotDigest`s; `resultDigest` is a digest of the evaluation's result under `aab-canonical-json-1`; a member's digest is the admitted record's `recordDigest`, whose envelope AAB-PLATFORM-05 defines (amendment of 2026-10-02).
 - **Marked in place "(amended on 2026-10-02)".** Nothing else in this contract changes. **Nothing is implemented by this amendment.**
 
+## Amendment of 2026-10-03: an admission invalidated after a snapshot
+
+**Why.** A member of a snapshot is an admitted record. Where a reviewer admitted it, resolving a held record (AAB-PLATFORM-06, section 6), its admission rests on that human decision. AAB-PLATFORM-08 lets a human decision be challenged and invalidated (section 8). When a challenge to the admitting resolution is upheld, the record is no longer admitted, and is derived as held again. This contract had no change kind for that. A comparison showed the member's current state, no review relying on the snapshot became stale, and anything built on the record, or citing it, could go on relying on it as if it were still admitted. The gap was open in every AGR contract, and is finding RD-01 of the retrospective decision cross-review (`governance/reviews/AAB-RETROSPECTIVE-DECISION-CROSS-REVIEW-2026-10-02.md`). Approved by the Platform Owner in review on 2026-10-03. **Nothing is implemented by this amendment.**
+
+**Approved draft:** `governance/reviews/RD-01-AAB-PLATFORM-07-AMENDMENT-DRAFT-2026-10-03-r4.md`, SHA-256 `da9a41aac8feb6e41849d2c16fd5896cd1213b0bb466f13d11f722f13ca346b2`; its approval and review history: `governance/reviews/RD-01-AMENDMENT-APPROVAL-RECORD-2026-10-03.md`.
+
+**1. What invalidates an admission.** An admission is invalidated when, and only when, **the human decision that admitted the record becomes `INVALIDATED`** under AAB-PLATFORM-08, section 8. That happens when a challenge to the decision, made by a person holding the domain's challenging role with grounds, is resolved `UPHELD` by a person who is neither the challenger nor the decider. That `CHALLENGE_RESOLUTION` is the **invalidating resolution**. Nothing else invalidates an admission:
+- **an automated admission** is not a human decision, and is never invalidated. A record wrongly admitted at submission is quarantined or superseded, which this contract already compares;
+- **an open challenge** suspends nothing: the admission stands until the challenge is upheld (point 3 records it);
+- **an integrity finding** is not an invalidation of admission. It is the domain's integrity process (for AGR, CAP-03), with its own triggers;
+- **no service, rule or automated process** invalidates an admission. It is always a person's resolution of a person's challenge.
+
+**2. What is written.**
+- **No record represents the invalidation itself, and no status is written.** The invalidation *is* the challenge and its `UPHELD` resolution. Each is written once, attributable, signed and receipted under AAB-PLATFORM-08 (sections 2, 4 and 8), and the resolution names the challenged decision and its digest. That the admission is invalidated, and that the record is held again, are **derived when read** from those decisions (AAB-PLATFORM-06, section 6). It is never stored on the record, the decision, a snapshot or an evaluation, and never enters any `recordDigest` (AAB-PLATFORM-05, amendment of 2026-10-02, section A).
+- **The invalidation's provenance** is that of those decisions: decider, verified authority, independence checks, reasoning, time, signature and digest.
+- **One separate record is required: the reliance-closure assessment (point 11).** It records what was found to have relied on the admission, at a time, for audit and notification. It is not the invalidation, and never authoritative.
+
+**3. The admission basis.** **Every new act that relies on an admitted record pins the basis of that admission** in its own written-once content. The system sets it, in the same consistent read as the act. The basis is normative, and has one shape wherever it is carried:
+```typescript
+interface AdmissionBasis {
+  recordId: string;
+  recordVersion: number;
+  recordDigest: DigestReference;            // the admitted record's recordDigest (AAB-PLATFORM-10)
+  admissionDecisionId: string;              // the decision made at submission (AAB-PLATFORM-06)
+  admissionOutcome: "ADMITTED" | "ADMITTED_WITH_LIMITATIONS" | "HELD_FOR_REVIEW";   // that decision's outcome
+  mode: "AUTOMATED" | "REVIEW";
+  effectiveOutcome: "ADMITTED" | "ADMITTED_WITH_LIMITATIONS";   // the outcome under which it is relied on
+  resolution?: {                            // required where mode is "REVIEW"; absent where "AUTOMATED"
+    decisionId: string;                     // the reviewer's resolution that admitted this version
+    decisionDigest: DigestReference;        // digestType "recordDigest": AAB-PLATFORM-08's decisionDigest (AAB-PLATFORM-10, as clarified on 2026-10-03)
+    validityAtBasis: "VALID" | "UNDER_CHALLENGE";
+  };
+  basisAt: string;                          // the platform's time of the consistent read that pinned it
+}
+```
+
+**Where it is carried:**
+
+| Path | Carrier | Field |
+|---|---|---|
+| **A.** A snapshot member | `EvaluationSnapshot.manifest.members[]` (this contract) | `admittedBy: { mode, effectiveOutcome, resolution? }`. The member's existing `recordId`, `recordVersion`, `recordDigest`, `admissionDecisionId` and `admissionOutcome`, with the snapshot's `cutoffAt` as `basisAt`, complete the basis. `validityAtBasis` is the validity at the cut-off |
+| **B1.** Direct reliance by a record | The relying record's own content, inside its `recordDigest` envelope (AAB-PLATFORM-05, section A) | `reliedAdmissions: AdmissionBasis[]`, with `reliedAdmissionRoles` (below) |
+| **B1.** Direct reliance by a human decision | `HumanDecision` (AAB-PLATFORM-08, as amended on 2026-10-03) | `decidedOn.admissionBasis` where `decidedOn.kind` is `RECORD`; `reliedAdmissions: AdmissionBasis[]`, with `reliedAdmissionRoles`, for admitted records the decision relies on but does not decide |
+| **B2.** A resolved citation | Every `lineage` entry, and every domain citation field resolved through a registered resolver (AAB-PLATFORM-05, sections 4 and E), whose cited record kind is admitted evidence | `resolved.admissionBasis: AdmissionBasis`, set when the citation is resolved, at the citing record's admission |
+
+- **System-set, never from a request.** A request that supplies an admission basis, or any part of one, is refused, as for every system-set field.
+- **Pinned and covered.** It is part of its carrier's digest: `snapshotDigest`, the record's `recordDigest`, or the decision's `decisionDigest`. It is never changed and never refreshed.
+- **One entry per record version, in one carrier.** `reliedAdmissions` never holds two entries with the same `recordId` and `recordVersion`. Within one act, a record version has exactly one admission basis, pinned in that act's one consistent read. A carrier with a duplicate entry is refused (`ADMISSION_BASIS_DUPLICATE`). Two versions of the same record are two entries.
+- **Ordered by content:** `reliedAdmissions` by `recordId`, then `recordVersion`. Because duplicates are prohibited, that order is total, and the same set always serialises the same way (AAB-PLATFORM-10, section 3).
+- **Roles are recorded separately from the basis.** Where one record version serves the act in several semantic roles (for example as safety evidence and as rights evidence), the roles are not recorded by duplicating its basis. They are listed in:
+  ```typescript
+  reliedAdmissionRoles: Array<{ recordId: string; recordVersion: number; role: string }>;   // the domain's role vocabulary
+  ```
+  - **Order:** by `recordId`, then `recordVersion`, then `role`;
+  - **No duplicates:** a duplicate triple is refused (`ADMISSION_BASIS_DUPLICATE`);
+  - **Matching:** every entry names a record version present in `reliedAdmissions`, and, where the domain defines roles, every `reliedAdmissions` entry has at least one role;
+  - **Set by:** the system, from the act's declared use, and covered by the carrier's digest.
+
+  Roles are what make each reliance edge distinct (point 14). A role never changes the basis.
+- **Citations.** In AAB-PLATFORM-05's `lineage`, the same record version may be cited in several entries with different relations: the relation is the citation's role. Each entry's `resolved.admissionBasis` is then identical, because all are pinned at the citing record's one admission. Entries whose bases differ for the same record version are refused (`ADMISSION_BASIS_DUPLICATE`).
+- **Only an admitted record can be pinned.** A record that is not admitted when the act's consistent read is taken, including one whose admitting resolution is `INVALIDATED`, cannot be relied on, and no basis is pinned for it.
+- **For an automated admission,** `mode` is `"AUTOMATED"`, `effectiveOutcome` equals `admissionOutcome`, and there is no `resolution`. The admission decision is never invalidated, and has no digest of its own (AAB-PLATFORM-06).
+- **For a reviewer's admission,** `admissionDecisionId` and `admissionOutcome` keep their existing relationship: the submission-time decision and its outcome, `HELD_FOR_REVIEW`. `effectiveOutcome` and `resolution` identify the act that admitted it.
+- **Legacy.** Records, decisions and version `"1"` snapshots written before this amendment carry no basis. They are governed by the fail-closed mapping of point 13, never by an assumed basis.
+
+**3a. Snapshot members.** `snapshotVersion` becomes `"2"`, and each member carries `admittedBy` (point 3). A member is never admitted by an invalidated decision: a record whose admitting resolution is `INVALIDATED` at the cut-off is not a member. `validityAtBasis` is recorded as it stood at the cut-off, like `quarantined`; a later challenge, upheld or dismissed, does not change the snapshot. Version `"1"` snapshots are not rewritten (point 13).
+
+**4. Exclusions.** The exclusion reason `HELD_FOR_REVIEW` now applies when "the record is held, and **no valid resolution** has admitted or rejected it". A record held again because its admitting resolution was invalidated is excluded as `HELD_FOR_REVIEW`, with `detail` naming the invalidating resolution. If a new resolution has since rejected it, it is `REJECTED`. If a new resolution has admitted it again, it is a candidate under that resolution. The order of reasons is unchanged.
+
+**5. A ninth change kind.** Section 8's comparison gains:
+
+| Change | Meaning |
+|---|---|
+| `MEMBER_ADMISSION_INVALIDATED` | The resolution that admitted a member, valid at the cut-off, has been invalidated since the cut-off |
+
+- **It is permanent for the snapshot.** It is reported whenever an invalidating resolution for the member's admitting resolution has been decided after the cut-off. **That stays true whatever happens later:** the record held again, rejected, or admitted again by a new resolution; the challenge reconsidered; the invalidating resolution itself challenged. Nothing rehabilitates a historical snapshot. **Reliance requires a new snapshot and a new human decision** (point 10).
+- **It is derived from written-once records only:** the existence of an `UPHELD` resolution of a challenge to the member's admitting resolution, decided after the cut-off. It is never stored.
+- **It is never masked.** A member that is also superseded, withdrawn or quarantined has each change reported. The comparison names every change for every member.
+- **It is reported with:** the member; the invalidated resolution and its digest; the invalidating resolution, its digest and time; and the record's present derived state.
+- **The counts:**
+  - this contract's comparison now has **nine change kinds**;
+  - with AAB-PLATFORM-08's two review triggers (`EVALUATION_SUPERSEDED`, `RULES_VERSION_CHANGED`), there are **eleven platform review triggers**;
+  - decision 10 now reads "in nine platform change kinds".
+
+**6. It is always a trigger.** Every other change kind is declared a trigger or not by each domain (AAB-PLATFORM-08, section 10). **`MEMBER_ADMISSION_INVALIDATED` is a trigger in every adoption, and no adoption may declare it otherwise.**
+- A review whose snapshot reports it is `POTENTIALLY_STALE` (AAB-PLATFORM-08, section 9), and may not be relied on.
+- Because the change is permanent for the snapshot (point 5), **the review never becomes current again.**
+
+**7. Fail closed: the trigger.** Where the comparison cannot establish whether a member's admitting resolution has been invalidated since the cut-off, **the trigger's result is `NOT_EVALUATED`, and the review is `UNDETERMINED`** (AAB-PLATFORM-08, section 10). This applies where:
+- a decision cannot be read or resolved;
+- a version `"1"` member cannot be mapped;
+- validity cannot be derived in the same consistent read;
+- the record is outside the reader's domain or country.
+
+The result is never `UNCHANGED`. The basis `NO_OPERATION_EXISTS` applies to this change kind only for a member admitted `AUTOMATED`, and is disclosed as such.
+
+**8. No new reliance on an invalidated basis.** **Preserving history and prohibiting new reliance are different.** Everything already written stays as it was, and readable (point 12). What is prohibited is **new reliance**: a new decision, evaluation, package, gate, or operational act that uses an invalidated admission as part of its basis. Before it writes, whatever relies on admitted evidence checks its basis, in the same consistent read as its own write, along each path by which it relies:
+
+| Path | What is relied on | The check | Refusal |
+|---|---|---|---|
+| **A. Snapshot and evaluation** | An evaluation, directly, or through a human decision, package, gate or later evaluation that pins it | For every member, the pinned `admittedBy.resolution` has not been invalidated since the snapshot's cut-off | `SNAPSHOT_MEMBER_ADMISSION_INVALIDATED` |
+| **B1. Direct reliance on an admitted record** | An admitted record used directly as an input or gate, not through a snapshot. This includes records named as safety, regulatory, rights or quality-control evidence | **A new act** pins the record's current, valid basis (point 3). **An act relying on an earlier basis**, pinned by a record or decision it relies on, checks that the pinned `resolution` has not been invalidated since `basisAt` | `RELIED_ADMISSION_INVALIDATED` |
+| **B2. Resolved evidence citations** | A record or decision relied on now, whose citations to admitted records were resolved earlier (AAB-PLATFORM-05, section 4) | For every citation it relies on, the pinned `resolved.admissionBasis.resolution` has not been invalidated since `basisAt` | `CITED_ADMISSION_INVALIDATED` |
+| **C. Human decisions** | A human decision relied on | **Every human decision relied on must be `VALID`** (AAB-PLATFORM-08, section 8). **A review of an evaluation must also be `CURRENT`** (section 9), whose currency now includes point 6; no other human decision has currency. The decision's own pinned bases (B1, B2) and any further checks its domain defines also apply | AAB-PLATFORM-08's refusal, or the domain's |
+
+- **Where any check cannot be completed, the operation's basis is unresolved: it returns `UNDETERMINED`, and is refused** (`ADMISSION_BASIS_UNDETERMINED`). This rule is point 9.
+- **Paths B1 and B2 never refresh a basis or re-resolve a citation.** Resolution stays pinned at admission (AAB-PLATFORM-05, decision 6). The checks are reliance checks at the time of use, and change nothing written.
+- **A refusal writes nothing,** and reveals no more than the requester may see (section 9).
+- **Never refused by this check:**
+  - **authorised reading, display and governed rendition for inspection** (AAB-PLATFORM-02), by a reader who may already read the item, under the existing access, disclosure, country-boundary, institutional-confidentiality and egress controls. **This exemption:**
+    - **creates no access right.** A reader who may not read an item may not read it, its basis, its marker or its closure;
+    - **permits no cross-country transfer, and no egress of protected data.** A rendition or export leaving the environment remains subject to the domain's egress authorisation and the sovereign data boundary, exactly as before;
+    - **does not bypass confidentiality.** Protected information classes, compositions, personal information and traditional knowledge stay as restricted as before;
+    - **never presents an invalidated basis as current evidence.** Every reading, display and rendition shows the derived markers of point 12;
+  - audit and reconstruction;
+  - a challenge;
+  - **reassessment** on a new snapshot;
+  - **protective acts that reduce reliance:** a quarantine, a hold, a supersession or withdrawal, a notification, a closure assessment.
+
+**9. Every relying operation proves its own basis.** The platform does not classify what it cannot reach. **An operation that relies on admitted evidence must establish, in its own consistent read, the complete basis it relies on**: every evaluation (path A), every admitted record (B1), every resolved citation (B2) and every human decision (C), **together with the admission bases those elements themselves pin.** It must also show that no element rests on an invalidated admission. An element that cannot be resolved makes the basis **unresolved**, and the operation returns `UNDETERMINED` and is refused. No operation may assume an element is sound because a closure assessment did not mention it.
+
+**10. Restoration, by path.** **Human reassessment is mandatory.** Nothing resting on an invalidated admission is ever relied on again. New reliance needs a **new basis**, established by a new act. No rule, service, re-admission, or later decision about the challenge restores the old basis. **What restores reliance depends on the path:**
+
+| Path | What restores reliance | What never does |
+|---|---|---|
+| **A.** Snapshot and evaluation | **A new snapshot**, taken after the invalidation; **a new evaluation** bound to it; and **the human decision the domain requires** on that evaluation, which supersedes the stale decision with the reason `RECONSIDERATION` or `NEW_OBJECT` (AAB-PLATFORM-08, section 6) | A new comparison of the old snapshot; a re-admission of the record |
+| **B1.** Direct reliance | **A newly established direct basis,** after a valid re-admission: a new act pinning the new admission basis (a new resolution, with its digest) under point 3, **with the human approval the domain requires** for that reliance | Re-reading the old record under its new admission; any update to the old act's pinned basis |
+| **B2.** Resolved citation | **A new record, a new version, or a governed decision** that establishes a new citation basis: its citation is resolved afresh at its own admission, and pins the new basis | Refreshing or re-resolving the old citation; inferring that the old citation now points at a re-admitted record |
+| **C.** Human decision | **A new, valid human decision.** Where it reviews an evaluation, it is made on **a new snapshot** (path A), and must be `CURRENT` when relied on | The old decision becoming valid or current again by any route |
+
+**11. The reliance-closure assessment: required, separate, non-authoritative.** What relied on an invalidated admission is **derived when read** as its reliance closure:
+1. **Through every admission-basis carrier of point 3:** whatever pins a basis naming the invalidated resolution:
+   - every persisted snapshot whose member's `admittedBy` names it (path A);
+   - every record whose `reliedAdmissions[]` names it (B1);
+   - every human decision whose `decidedOn.admissionBasis` names it (B1);
+   - every human decision whose `reliedAdmissions[]` names it (B1);
+   - every record or decision whose `resolved.admissionBasis`, on a `lineage` entry or on a domain citation resolved through a registered resolver, names it (B2);
+2. **Through legacy references** (point 13): every version `"1"` snapshot member, existing direct reference and existing resolved citation naming the invalidated record version, where the legacy mapping assigns it to the invalidated resolution. Where the mapping cannot decide, the edge is unresolved (below);
+3. **Through the dependants of everything reached:**
+   - every evaluation bound to a reached snapshot (section 7);
+   - every human decision on a reached evaluation, and every act whose recorded currency assessment names a reached decision (AAB-PLATFORM-08, section 11);
+   - every record or decision whose resolved citations name anything reached (AAB-PLATFORM-05, sections 4 and E), through the registered resolvers;
+   - and, for every reached item that is itself an admitted record, every carrier of point 3 whose basis names it;
+4. repeated until nothing new is reached.
+
+**Every standard carrier of point 3 is traversed.** A closure that did not search one is incomplete, and says which.
+
+- **Scope is demonstrated, never assumed:** the closure is computed from resolved references only.
+- **An edge that cannot be resolved makes the closure incomplete,** and the closure says where. The closure **does not classify, and may not claim anything about, what lies beyond an unresolved edge**, and **may not claim completeness.** That something is absent from an incomplete closure says nothing about it; its own reliance is governed by point 9.
+- **A closure grants no authority,** complete or incomplete. Presence in it marks nothing, and absence from it permits nothing.
+- **A closure assessment is required at every invalidation,** for audit and notification. It is written promptly after the invalidating resolution, by a registered service or by a named person. It is **a separate record, written once**, of the record kind `RELIANCE_CLOSURE_ASSESSMENT`.
+- **Its provenance, when a service writes it** (AAB-PLATFORM-05, section C):
+  - `submittedBy` is the `SERVICE`;
+  - `service` gives the service's `serviceRegistrationId`, `executionIdentity`, `softwareRelease`, `correlationId`, `method` and `methodVersion`;
+  - `triggerKind` is `RECORD`, and `triggerRecord` is the invalidating resolution;
+  - **`initiatedBy` is recorded only when a person actually initiated that execution,** for example by requesting a new assessment. It is never filled in automatically, and the run is **never attributed to the resolution's decider**, who decided the challenge and did not run the assessment;
+  - where a named person writes it, `submittedBy` is that person.
+- **Its content:**
+  - the invalidating resolution and its digest;
+  - `assessedAt`;
+  - `completeness`, `COMPLETE` or `INCOMPLETE`, with every unresolved edge;
+  - the closure found;
+  - its `recordDigest`.
+- **It is non-authoritative and time-bound.** It states what was found as at `assessedAt`, and is never read as current. It marks nothing, prevents nothing and permits nothing: propagation is derived (points 5 to 9), whether or not an assessment exists. **More assessments may follow, each as at its own time.**
+- **A missing or late assessment is a defect,** disclosed in the domain's operations. It never delays propagation.
+
+**12. Historical outputs are preserved and shown, never rewritten.**
+- Every snapshot, evaluation, decision, package and record that relied on the invalidated admission **keeps its content and digest, and is still readable** as it was.
+- When it is read, the reader is shown, derived at that time:
+  - for a snapshot or evaluation, each `MEMBER_ADMISSION_INVALIDATED`, with the invalidating resolution;
+  - for a review, its currency, `POTENTIALLY_STALE` or `UNDETERMINED`, with the trigger;
+  - for anything else, that its basis included an admission since invalidated, and when.
+- **An invalidated basis is never presented as current evidence.**
+
+**13. Legacy, fail closed.** What was written before this amendment carries no admission basis. It is mapped when read, never assumed:
+- **Version `"1"` snapshot members:**
+  - where `admissionOutcome` is `ADMITTED` or `ADMITTED_WITH_LIMITATIONS` and the decision is the submission-time decision, the member was admitted `AUTOMATED`;
+  - where the named decision is a reviewer's resolution, or the submission-time decision was `HELD_FOR_REVIEW`, the admitting resolution is the resolution that was valid at the cut-off, derived from the domain's decisions.
+- **Existing direct reliance (B1) and existing resolved citations (B2):**
+  - the admitting resolution is the one that was valid at the relying act's time, or at the citation's resolution, derived from the domain's decisions;
+  - where that resolution has been invalidated at any time since, the basis is invalidated.
+- **Where the admitting resolution cannot be established with certainty, the basis is undetermined** (points 7 and 9), and reliance on it is refused.
+
+**14. What a domain's adoption must state.**
+- **For every record kind that may be a member or be cited:** whether a reviewer can admit it, and so invalidate the admission.
+- **For every reliance edge:**
+  - an edge is one relying act's use of one admitted record, along one path (point 8), in one role;
+  - its consequence is either **stop at once** or **mark for reassessment**:
+    - **stop at once:** new reliance is refused, and an activity in progress is held under the domain's hold rules until a person reassesses it;
+    - **mark for reassessment:** new reliance is refused, nothing in progress is held, and the output is shown as resting on an invalidated basis;
+  - **an activity in progress with several affected edges takes the highest consequence among them.** One affected edge that is mandatory safety, regulatory, rights or quality-control evidence is enough to stop it at once;
+  - an adoption that does not classify an edge is incomplete.
+- **Who must be told,** how quickly, and by what record. Notification is never a precondition of propagation.
+- **Its refusal codes,** mapped to point 8's.
+- **The mapping of its existing members** (point 13).
+
+**15. Audit and reconstruction.** Everything needed is written once and kept:
+- the admitting resolution;
+- the challenge and the invalidating resolution, with their receipts;
+- the snapshots and evaluations;
+- the currency assessment every relying act records (AAB-PLATFORM-08, section 11);
+- the closure assessments.
+
+**Whether a past act relied on an admission before it was invalidated** is answered by comparing that act's recorded time with the invalidating resolution's `decidedAt`. What a reader saw at a time is reproducible from the same records.
+
+**16. What this amendment replaces.**
+- **Section 3:**
+  - `snapshotVersion`;
+  - the member gains `admittedBy`;
+  - `admissionOutcome`'s enumeration gains `"HELD_FOR_REVIEW"`, so that it can always hold the outcome of `admissionDecisionId`;
+  - "`quarantined` is recorded as it stood at the cut-off" gains `admittedBy.resolution.validityAtBasis`, recorded as at the cut-off;
+  - the `HELD_FOR_REVIEW` exclusion row (point 4).
+- **Section 7:** the reliance checks of points 8 and 9, and the restoration rules of point 10.
+- **Throughout:** the admission basis of point 3, which this contract defines, and which AAB-PLATFORM-05 and 08 carry (their amendments of 2026-10-03).
+- **Section 8:** the ninth change kind, points 5 to 7.
+- **Section 10:** the adoption's additions (point 14).
+- **Decision 10:** nine change kinds.
+
+Nothing else in this contract changes. **Nothing is implemented by this amendment.**
+
 ## What "snapshot" means here
 
 **A frozen evaluation snapshot is a governed record: the fixed, content-addressed input to an evaluation.** The word "snapshot" is used on the platform for other things, and this contract means none of them:

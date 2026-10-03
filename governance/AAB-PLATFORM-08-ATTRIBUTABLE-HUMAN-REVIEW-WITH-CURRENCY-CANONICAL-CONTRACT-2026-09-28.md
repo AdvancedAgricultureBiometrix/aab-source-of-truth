@@ -12,6 +12,22 @@ Signing-key history, on which this contract's signatures depend (sections 4 and 
 
 Not an amendment: nothing in this contract changes. **AAB-PLATFORM-09's section 11 proof exists** (`governance/workstream-b/AAB-PLATFORM-09-KEY-REGISTRY-PROOF-2026-09-28.md`, merged in PR #59). **The condition in section 13 is met:** a signature is verified against the key the decider held when the server accepted it, and that is proven for rotation, restoration, compromise and cross-issuer evidence. Signing-key history no longer stands in the way of a domain adoption going live with real data. Each adoption still needs its own amendment, and the other open items below remain.
 
+## Amendment of 2026-10-03: nine change kinds, one always a trigger
+
+**Consequential to AAB-PLATFORM-07's amendment of 2026-10-03** (finding RD-01 of the retrospective decision cross-review), and approved with it by the Platform Owner in review on 2026-10-03. **Approved draft:** `governance/reviews/RD-01-AAB-PLATFORM-07-AMENDMENT-DRAFT-2026-10-03-r4.md`, SHA-256 `da9a41aac8feb6e41849d2c16fd5896cd1213b0bb466f13d11f722f13ca346b2`; its approval and review history: `governance/reviews/RD-01-AMENDMENT-APPROVAL-RECORD-2026-10-03.md`.
+- **Section 10:**
+  - **"the eight change kinds of AAB-PLATFORM-07 (section 8)"** now reads ***"the nine change kinds"***. With `EVALUATION_SUPERSEDED` and `RULES_VERSION_CHANGED`, a review has **eleven platform triggers**.
+  - **"every platform change kind is either a trigger, or declared not a trigger"** gains: *except `MEMBER_ADMISSION_INVALIDATED`, which is a trigger in every adoption (AAB-PLATFORM-07, amendment of 2026-10-03, point 6).*
+  - **`NO_OPERATION_EXISTS`** is never the basis for `MEMBER_ADMISSION_INVALIDATED` on a member admitted by a reviewer.
+- **The decision record:**
+  - **`decidedOn.admissionBasis`** (an `AdmissionBasis`, AAB-PLATFORM-07, amendment of 2026-10-03, point 3) is required where `decidedOn.kind` is `RECORD`, alongside `admissionDecisionId`;
+  - **`reliedAdmissions: AdmissionBasis[]`**, with **`reliedAdmissionRoles`**, is added for admitted records a decision relies on but does not decide, under point 3's canonical rule: one entry per record version, ordered, with roles kept separately. All are system-set, and covered by `decisionDigest`;
+  - **`decisionDigest` is the decision's `recordDigest`** (AAB-PLATFORM-10, as clarified on 2026-10-03): over every field of the decision except `decisionDigest` and `signature`. Where an adopting contract names a human decision's "`recordDigest`", it means this digest.
+- **Section 11, relying on a decision:** every human decision relied on must be `VALID`. Only a review of an evaluation has currency, and it must also be `CURRENT`. Its pinned admission bases, and any check its domain adds, also apply (AAB-PLATFORM-07, amendment of 2026-10-03, point 8, path C).
+- **Section 13:**
+  - every existing adoption is read, from this amendment, as declaring `MEMBER_ADMISSION_INVALIDATED` a trigger. Its own wording is corrected by its own amendment.
+- **Unchanged:** nothing else changes. Nothing is implemented.
+
 ## What "decision", "review" and "currency" mean here
 
 **A human decision is a permanent record of one named person's judgement on exactly one governed object.** The words are used on the platform for other things, and this contract means none of them:

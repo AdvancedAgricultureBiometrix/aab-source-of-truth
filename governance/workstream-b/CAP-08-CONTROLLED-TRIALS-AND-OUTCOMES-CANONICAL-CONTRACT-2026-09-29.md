@@ -5,7 +5,7 @@
 **Capability:** CAP-08 Controlled Trials & Outcomes. It is not SCS-CAP-08 (Due Diligence Package Compilation), a different capability in another domain.
 **Authority:** DEFINES THE CONTRACT FOR CAP-08: HOW A CONTROLLED TRIAL IS DESIGNED, AUTHORISED, OBSERVED UNDER ITS PROTOCOL, SUMMARISED, REVIEWED AND CLOSED, HOW ITS RESULTS ARE OFFERED TO CAP-04, AND ITS BOUNDARIES WITH CAP-04, CAP-07, CAP-09, CAP-10 AND PROPOSED CAP-36. Establishes no commissioning, production, Gate D, WP05, scientific-validity, efficacy or regulatory authority, and makes no Supabase or other provider change. This capability is PROPOSED_NOT_ADMITTED. No implementation exists.
 **Written:** 2026-09-29, step 1 of the AGR rehearsal migration workstream (`governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`, section 8.3). CAP-08 had no design contract before this one.
-**Amended:** 2026-09-30 (the test material, governed by CAP-07 and CAP-06), with CAP-07's canonical contract; and 2026-10-02 (safety and ecology, governed by CAP-10), with CAP-10's canonical contract; and 2026-10-02, second (permits, governed by CAP-11), with CAP-11's canonical contract; and 2026-10-02, third (pilot batches as trial material, from CAP-12), with CAP-12's canonical contract; and 2026-10-02, fourth (integrity, lineage and the AGR vocabulary, under CAP-03), with CAP-03's canonical contract; and 2026-10-02, fifth (provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10), with AAB-PLATFORM-10's canonical contract.
+**Amended:** 2026-09-30 (the test material, governed by CAP-07 and CAP-06), with CAP-07's canonical contract; and 2026-10-02 (safety and ecology, governed by CAP-10), with CAP-10's canonical contract; and 2026-10-02, second (permits, governed by CAP-11), with CAP-11's canonical contract; and 2026-10-02, third (pilot batches as trial material, from CAP-12), with CAP-12's canonical contract; and 2026-10-02, fourth (integrity, lineage and the AGR vocabulary, under CAP-03), with CAP-03's canonical contract; and 2026-10-02, fifth (provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10), with AAB-PLATFORM-10's canonical contract; and 2026-10-03 (invalidated admissions, under AAB-PLATFORM-07), with AAB-PLATFORM-07's amendment of 2026-10-03.
 
 ## Amendment of 2026-09-30: the test material, governed by CAP-07 and CAP-06
 
@@ -250,6 +250,62 @@ Each such passage keeps its original wording, followed by a current reading labe
 **Dependency rows added by amendment (Note of 2026-10-02):** the Dependencies table does not show four rows that amendments add: CAP-11 Regulatory Translation & Dossier Support ("Amendment of 2026-10-02 (second): permits, governed by CAP-11", point 5); CAP-12 Controlled Manufacturing Transfer ("Amendment of 2026-10-02 (third): pilot batches as trial material, from CAP-12", point 4); CAP-03 Evidence Integrity & Provenance ("Amendment of 2026-10-02 (fourth): integrity, lineage and the AGR vocabulary, under CAP-03", point 6); AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests ("Amendment of 2026-10-02 (fifth): provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10", point 13). Each row reads exactly as its amendment states it, and **the amendment controls.** This note creates and changes no table row.
 
 **Dependency rows whose current reading has changed (Note of 2026-10-02):** the Dependencies table keeps its original wording, and three existing rows now read as follows. The CAP-07 and CAP-06 rows (CAP-07 Formulation Intelligence and CAP-06 Ingredient Intelligence): "required when the material is a formulation, or an ingredient; `designed`." ("Amendment of 2026-09-30: the test material, governed by CAP-07 and CAP-06", point 6). The CAP-10 row (CAP-10 Safety & Ecological Intelligence): "required at activation for every applied material, except a registered product used within its registration; receives safety signals; its holds and directions are read into the trial's state; `designed`." ("Amendment of 2026-10-02: safety and ecology, governed by CAP-10", point 9). Nothing of CAP-07, CAP-06 and CAP-10 is built. For each row, the governing amendment or contract named controls. This note creates and changes no table row.
+
+## Amendment of 2026-10-03: invalidated admissions, under AAB-PLATFORM-07
+
+**Why.** AAB-PLATFORM-07 is amended (amendment of 2026-10-03: an admission invalidated after a snapshot), with consequential amendments to AAB-PLATFORM-05, 06, 08 and 10. Where a reviewer's admission of a record is invalidated by an upheld challenge, everything relying on it must stop being relied on, and must be reassessed by a person. This amendment is CAP-08's adoption, as that amendment's point 14 requires, and closes the contract side of finding RD-01 for CAP-08. Approved by the Platform Owner in review on 2026-10-03, as the adoption the approved draft specifies for this capability (`governance/reviews/RD-01-AAB-PLATFORM-07-AMENDMENT-DRAFT-2026-10-03-r4.md`, SHA-256 `da9a41aac8feb6e41849d2c16fd5896cd1213b0bb466f13d11f722f13ca346b2`; section 2, and point 14 of its amendment text). **Nothing is implemented by this amendment.**
+
+**1. Its own records.** A CAP-08 record admitted by a reviewer's `CAP08_HELD_RESOLUTION` can have that admission invalidated. It is then held again, derived when read, and excluded from new reliance. It may be resolved again by a new `CAP08_HELD_RESOLUTION`, which supersedes the invalidated one (AAB-PLATFORM-06, amendment of 2026-10-03). A record admitted at submission, automatically, is never invalidated.
+
+**2. The trigger.** `MEMBER_ADMISSION_INVALIDATED` is a trigger for every `TRIAL_OUTCOME_REVIEW`, and is never declared otherwise. A review whose snapshot reports it is `POTENTIALLY_STALE`, or `UNDETERMINED` where it cannot be checked, and never becomes current again. **"Triggers and lapse"**: "All ten change kinds" now reads "all eleven: AAB-PLATFORM-07's nine change kinds and AAB-PLATFORM-08's two review triggers".
+
+**3. The admission basis** (AAB-PLATFORM-07, amendment of 2026-10-03, point 3). From this amendment, every new reliance pins its basis, set by the system:
+- **Path A:** `Cap08OutcomeSummary`'s members (CAP-08's own observations) carry `admittedBy`;
+- **Path B1:** `Cap08TrialRegistration.preconditions.safetyEvidence`, with the role `SAFETY_EVIDENCE`, carry `reliedAdmissions[]` and `reliedAdmissionRoles`;
+- what was written before this amendment is governed by the legacy, fail-closed mapping (point 13 there), never by an assumed basis.
+
+**4. Reliance edges, and the consequence of each** (point 14 there). An activity in progress takes the highest consequence among its affected edges. Every new reliance on an invalidated basis is refused, whatever the consequence below:
+
+| Path | Edge | Consequence |
+|---|---|---|
+| A | An outcome summary's members, relied on by a `TRIAL_OUTCOME_REVIEW` | Mark for reassessment |
+| B1 | `preconditions.safetyEvidence` | **Stop at once:** a new activation is refused; an active trial relying on it is held, as a safety-driven lapse |
+| C | An activation gate resting on CAP-10, CAP-11 or CAP-12 evidence | **Stop at once:** a new activation is refused; an active trial relying on it is held, as a safety-driven lapse |
+| C | An activation gate resting on CAP-06 or CAP-07 | A new activation is refused; for an active trial, mark for reassessment (an administrative lapse) unless another affected edge stops it |
+
+**5. Refusals.** CAP-08 uses the platform's codes: `SNAPSHOT_MEMBER_ADMISSION_INVALIDATED`, `RELIED_ADMISSION_INVALIDATED`, `CITED_ADMISSION_INVALIDATED`, `ADMISSION_BASIS_UNDETERMINED` and `ADMISSION_BASIS_DUPLICATE`, with AAB-PLATFORM-08's refusal for path C. A refusal writes nothing.
+
+**6. Restoration.** Human reassessment is mandatory, and nothing restores an old basis (point 10 there):
+
+| Path | What restores reliance |
+|---|---|
+| A | A new outcome summary, and a new `TRIAL_OUTCOME_REVIEW` |
+| B1 | A new trial registration version, pinning a valid basis for its safety evidence, with a new `TRIAL_ACTIVATION` |
+| C | Valid and current gates, then a new `TRIAL_ACTIVATION`; a hold is released only as the gate's capability provides |
+
+**7. Who is told.** For each item the reliance-closure assessment names:
+
+| Recipient | CAP-08 role |
+|---|---|
+| The holder of the role accountable for the invalidated record | `MEMORY_REVIEWER` (CAP-04), for a CAP-04 record; `TRIAL_REVIEWER`, for a CAP-08 record |
+| The holder of the role accountable for each affected output or activity | `TRIAL_REVIEWER`, for a `TRIAL_ACTIVATION`, a `TRIAL_OUTCOME_REVIEW` and an active trial; `TRIAL_DESIGNER`, for the registration whose safety evidence is affected |
+| For a stop-at-once edge, the governing role of the capability whose evidence is affected | The governor of the capability behind each gate: `SAFETY_GOVERNOR` (CAP-10), for the safety evidence (activation's safety gate is CAP-10's outcome) and for a CAP-10 gate; `REGULATORY_GOVERNOR` (CAP-11), for a CAP-11 gate; `TRANSFER_GOVERNOR` (CAP-12), for a CAP-12 gate |
+| Where the closure is `INCOMPLETE`, an audit or governance role | **No role defined:** CAP-30 Governed Country Assurance & Audit is `named only`. An open item of this adoption. Until an authorised audit or governance role is defined, the notification this row requires is unsatisfied, and the closure's completeness is EVIDENCE REQUIRED. The closure may not be represented as complete, and no assurance or commissioning decision that requires a complete closure may rely on it. This does not delay the invalidation, holds, refusals or other propagation, and the other recipients are still told. Every operation remains bound by AAB-PLATFORM-07's requirement to prove its own complete reliance basis (amendment of 2026-10-03, point 9). |
+| The original decider of each affected decision, only while still authorised, and permitted to receive the information | The decider named on the decision |
+
+**Which holder is notified.** For the first two rows, "the holder of the role" means the current actor specifically assigned or recorded as accountable for the affected record, output or activity, while still authorised and permitted to receive the information. For the governing role of a stop-at-once edge, it means the holders of that role whose scoped authority grant (AAB-PLATFORM-03) covers the affected item. It never means every actor who holds the role, and the platform never broadcasts a notification to a role population. If a recipient cannot be resolved with certainty, that recipient's notification is EVIDENCE REQUIRED: no recipient is guessed, and no protected information is disclosed. This does not delay the invalidation, holds, refusals or other propagation. The original decider is notified only while still authorised and permitted to receive the information.
+
+The notification cites the invalidating resolution and the closure assessment, and reveals nothing the recipient may not see.
+
+**When.** The notification record is written in the same transaction as the reliance-closure assessment that names the affected item. A later assessment that names further items writes their notifications in its own transaction. How quickly a person is told therefore follows the closure assessment, written promptly after the invalidating resolution by a registered service in its own transaction (AAB-PLATFORM-07, amendment of 2026-10-03, point 11). A missing or late assessment, or a missing notification record, is a governance defect: it grants no authority, restores no reliance and suppresses no propagation. Notification never conditions propagation.
+
+**Delivery.** Delivery joins CAP-10's open item on notification delivery. When delivery is defined, its receipt or failure is recorded, and failure never prevents a hold, stale state or refusal.
+
+**8.** **An active trial takes the highest consequence among its affected edges.** One stop-at-once edge holds it (AAB-PLATFORM-07, amendment of 2026-10-03, point 14).
+
+**9. Status.** The open gap "invalidated admission" is **`CONTRACT-RESOLVED — IMPLEMENTATION AND VERIFICATION OPEN`**. It is not closed. It closes only when the implementation is built and every required test passes.
+
+**10. What this amendment replaces.** Read as above wherever CAP-08's text differs. Nothing else in this contract changes. **Nothing is implemented by this amendment.**
 
 ## Why this contract, and what it adopts
 
