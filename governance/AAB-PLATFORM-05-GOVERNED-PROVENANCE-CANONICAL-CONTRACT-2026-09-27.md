@@ -3,7 +3,7 @@
 **Status:** CANONICAL CONTRACT — NOT IMPLEMENTATION
 **Domain:** AAB platform (shared by every domain)
 **Authority:** DEFINES PROVENANCE: WHAT IT RECORDS ABOUT A GOVERNED RECORD, WHICH OF IT IS VERIFIED AND WHICH IS DECLARED, HOW REFERENCES TO OTHER RECORDS ARE RESOLVED, HOW A RECORD IS CORRECTED WITHOUT BEING CHANGED, AND HOW PROVENANCE IS CARRIED INTO WHAT IS BUILT FROM A RECORD. It admits no record, grants no authority to anyone, amends no domain contract and changes no stored record. This contract is PROPOSED_NOT_ADMITTED. No implementation exists.
-**Amended:** 2026-10-02 (the record digest, its calculation, service submitters, supersession, registered resolvers and conformance, with AAB-PLATFORM-10); and 2026-10-03 (the admission basis on resolved citations, and the reliance-closure assessment, with AAB-PLATFORM-07's amendment of 2026-10-03).
+**Amended:** 2026-10-02 (the record digest, its calculation, service submitters, supersession, registered resolvers and conformance, with AAB-PLATFORM-10); and 2026-10-03 (the admission basis on resolved citations, and the reliance-closure assessment, with AAB-PLATFORM-07's amendment of 2026-10-03); and 2026-10-03 (service registration and its record kinds, with AAB-PLATFORM-11).
 
 ## Amendment of 2026-10-02: the record digest, its calculation, and what the domains found
 
@@ -203,6 +203,16 @@ Section 7 is strengthened. **Every adopting contract states, for each of the six
   - submitted by a registered service under section C, or by a named person;
   - resolvable through its registered resolver, so that a notification or audit can cite it.
 - **It is never admitted evidence, and never a basis for reliance.**
+
+## Amendment of 2026-10-03: service registration under AAB-PLATFORM-11, and its record kinds
+
+**Consequential to AAB-PLATFORM-11** (finding RD-02), approved with it by the Platform Owner on 2026-10-03. **Approved draft:** `governance/reviews/RD-02-AAB-PLATFORM-11-DRAFT-2026-10-03-r8.md`, SHA-256 `36b7eab6208155c46f0febd4022d1b4b584901eea867ccd045d157933c58e10e`; decision sheet `governance/reviews/RD-02-AAB-PLATFORM-11-DECISION-SHEET-r8.md`, SHA-256 `cc365e3eb3d59c67fe59f2cdaa5f3b004d2b110bcd30d7332440f48adb622735`; approval and review history: `governance/reviews/RD-02-AAB-PLATFORM-11-APPROVAL-RECORD-2026-10-03.md`. Nothing else in this contract changes.
+- **Section C, "a registered identity"** (P05:103) means a `SERVICE_REGISTRATION` under AAB-PLATFORM-11, section 9, with a named human sponsor accountable for it. `serviceRegistrationId` (P05:81) is that registration's identifier.
+- **"capability-specific authority, granted by the contract that owns the record kind"** (P05:106) is a service grant under AAB-PLATFORM-11, in the class `SERVICE`.
+- **`initiatedBy`** (P05:114) records the person who initiated the act. Their authority is never transferred to the service, and the service never inherits its sponsor's authority (AAB-PLATFORM-11, I4).
+- **A service whose registration is not in force,** or whose sponsorship is unresolved, may not submit (`SERVICE_NOT_REGISTERED`, `SERVICE_SPONSOR_UNRESOLVED`).
+- **AAB-PLATFORM-11's eight record kinds adopt this contract** (AAB-PLATFORM-11, §13.1): governed provenance, the record-digest envelope, system-set fields and registered resolvers (sections A, C and E).
+- **The open item "the service registry (section C)"** (P05:428) is governed by AAB-PLATFORM-11, section 9. Its implementation stays open.
 
 ## Sources
 
