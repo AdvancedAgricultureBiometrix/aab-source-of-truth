@@ -6,10 +6,42 @@
 **Platform Owner approval:** approved as drafted, 2026-10-02, with the first experiment's packages to be chosen when they are opened (section 9)  
 **Date:** 2026-10-02, drafted at `main` `67dfdbf`  
 **Type:** Platform development operating procedure  
-**Applies to:** all development work on this repository when more than one AI system works on AAB at the same time, Claude Code and ChatGPT among them, and the Platform Owner's coordination of that work  
+**Applies to:** all development work on this repository when more than one AI system works on AAB at the same time, Claude Code and ChatGPT among them, and the Platform Owner's coordination of that work. The pull request rule added on 2026-10-03 applies to every pull request, whether or not parallel development is active.\
 **Supplements:** governance/AAB-PLATFORM-ROADMAP-2026-09-27.md, sections 8.3 to 8.5 (the governed migration path, its order and its prerequisites); governance/AAB-PLATFORM-DOMAIN-SEPARATION-DECISION-2026-09-25.md; governance/AAB-COUNTRY-SCIENTIFIC-DATA-NON-RETURN-BOUNDARY-2026-09-13.md
 
 **Authority:** ESTABLISHES HOW PARALLEL DEVELOPMENT ON AAB IS ORGANISED, RECORDED, REVIEWED, MERGED AND RECOVERED. Grants no AI system merge authority. Changes no contract, no capability's state and no decision recorded elsewhere. Does not start the extraction of the platform primitives, satisfy the dependency audit's independent verification, satisfy Gate D or begin WP05.
+
+**Amended:** 2026-10-03, with the pull request rule (see "Amendment of 2026-10-03: the pull request rule").
+
+---
+
+## Amendment of 2026-10-03: the pull request rule
+
+**Why.** The rule every pull request has followed in review was given by the Platform Owner in session, and the merge subject was recorded as proposed, not adopted (stock-take, section 3, update of `59a0dfe`). A rule that exists only inside a chat breaks section 2's principle. Rule 8 also says "Only the Platform Owner merges to `main`", while in practice the developer executes the merge on the Platform Owner's instruction. This amendment writes the rule into the repository, and supersedes rule 8's first sentence (point 2).
+
+**1. Every pull request.** Every pull request to this repository follows this rule, however small or clerical, whether or not more than one AI system is working on AAB at the time.
+
+**2. Merging is the Platform Owner's decision.** For the purposes of rule 8, its first sentence is superseded by the following: Only the Platform Owner possesses merge-decision authority. A developer or AI system may execute the mechanical merge operation only under a fresh, explicit, one-time Platform Owner instruction, given after the final report and naming the reviewed head SHA. That execution grants no autonomous or continuing merge authority.
+- The instruction is "merge it", naming the head SHA.
+- The developer merges only if the PR's head is still that SHA, with the merge pinned to it, by this command: `gh pr merge <PR-number> --merge --match-head-commit <full-head-sha> --subject "Merge PR #NNN — <PR title>"`. If the head has moved, the developer does not merge: it stops and reports.
+- Never while CI is running. Never on the developer's own initiative.
+- **Rule 8's other requirements are unchanged:** the instruction is given after the report, never in the same turn; auto-merge is never enabled; an earlier approval never covers a later merge.
+- This agrees with the protocol's Authority header: "Grants no AI system merge authority."
+
+**3. The report on opening a pull request.** The developer reports:
+- the PR's number and link;
+- the full head SHA;
+- CI on that head: the test count, the isolation result, and the backup-restore outcome with its step count.
+
+It is given in this form: "PR #NNN is open at head <sha>. CI: N of N tests passed, isolation passed, backup-restore PROVEN. I'll merge when you say merge it, tied to <sha>." **If CI has not finished,** the developer says so, and checks again only when asked.
+
+**4. The merge subject.** "Merge PR #NNN — <PR title>", set by the command in point 2.
+
+**5. Hashes.** Every hash reported is produced by a command from its source, and compared by a script. None is copied by hand. A shortened hash is for reading only; the full value is authoritative.
+
+**6. The report after a merge.** The developer reports the merge commit, its parents, and that `main` points to it.
+
+**What this amendment does not change.** Apart from rule 8's first sentence, superseded in point 2, rules 1 to 12 and sections 4 to 11 are unchanged. It changes no contract, no capability's state and no decision recorded elsewhere. It authorises no implementation and no extraction.
 
 ---
 
