@@ -1,0 +1,62 @@
+/* Keeps governed discovery results visually separate from user-defined investigations. */
+.hero h1 {
+  max-width: none;
+  font-size: clamp(38px, 5.25vw, 70px);
+  white-space: nowrap;
+}
+
+.experienceHead h2 {
+  max-width: none;
+  font-size: clamp(26px, 3.25vw, 43px);
+  white-space: nowrap;
+}
+
+.resultsPanel { display: flex; flex-direction: column; }
+.resultsHead { order: 1; }
+.findingFilters { order: 2; }
+.findingsGrid { order: 3; }
+
+.spatialWorkspace {
+  order: 4;
+  margin-top: 22px;
+  border: 1px solid rgba(85, 201, 149, .24);
+  border-radius: 14px;
+  background: rgba(85, 201, 149, .025);
+}
+
+.spatialWorkspace > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 15px 17px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.spatialWorkspace > summary::-webkit-details-marker { display: none; }
+.spatialWorkspace > summary span { display: flex; flex-direction: column; gap: 4px; }
+.spatialWorkspace > summary b { color: var(--green); font-size: 11px; }
+.spatialWorkspace > summary small { color: #838a84; font-size: 8px; }
+.spatialWorkspace > summary em { color: var(--green); font-size: 9px; font-style: normal; }
+.spatialWorkspace[open] > summary { border-bottom: 1px solid rgba(85, 201, 149, .16); }
+.spatialWorkspace[open] > summary em { font-size: 0; }
+.spatialWorkspace[open] > summary em::after { content: "Close workspace ↑"; font-size: 9px; }
+.spatialWorkspace > .scanPlanner,
+.spatialWorkspace > .areaInvestigations { margin: 16px; }
+
+@media (max-width: 850px) {
+  .hero h1,
+  .experienceHead h2 { white-space: normal; }
+}
+
+.jurisdictionChooser{margin:28px auto 8px;max-width:1400px;padding:18px;border:1px solid rgba(216,170,84,.22);border-radius:16px;background:linear-gradient(135deg,rgba(216,170,84,.05),rgba(85,201,149,.025));display:flex;align-items:center;justify-content:space-between;gap:24px}.jurisdictionChooser>div:first-child{display:flex;flex-direction:column;gap:5px}.jurisdictionChooser small{color:var(--gold);font:700 8px var(--font-geist-mono);letter-spacing:.1em}.jurisdictionChooser strong{color:#eef1ee;font-size:16px}.jurisdictionChooser span{color:#8f9891;font-size:9px}.jurisdictionTabs{display:flex;gap:8px}.jurisdictionTabs button{min-width:190px;padding:12px 14px;border:1px solid rgba(255,255,255,.09);border-radius:10px;background:#111512;color:#8f9891;text-align:left;display:flex;flex-direction:column;gap:3px}.jurisdictionTabs button.active{border-color:rgba(85,201,149,.55);background:rgba(85,201,149,.08);box-shadow:0 0 0 1px rgba(85,201,149,.08)}.jurisdictionTabs button b{color:#e1e5e1;font-size:11px}.jurisdictionTabs button.active b{color:var(--green)}
+
+.candidateScanGate{margin:14px 0;padding:14px;border:1px solid rgba(85,201,149,.22);border-radius:12px;background:rgba(85,201,149,.035);display:grid;grid-template-columns:1fr auto;align-items:center;gap:16px}.candidateScanGate>div{display:flex;flex-direction:column;gap:4px}.candidateScanGate small{color:var(--green);font:700 7px var(--font-geist-mono);letter-spacing:.09em}.candidateScanGate strong{color:#e1e5e1;font-size:12px}.candidateScanGate span{color:#8f9791;font-size:8px}.candidateScanGate button{padding:10px 13px;border:1px solid rgba(85,201,149,.35);border-radius:8px;background:rgba(85,201,149,.1);color:var(--green);font-size:9px}.candidateScanGate.unresolved{border-color:rgba(216,170,84,.24);background:rgba(216,170,84,.03)}.candidateScanGate.unresolved small{color:var(--gold)}.candidateScanGate button:disabled{border-color:rgba(216,170,84,.2);background:transparent;color:#766b57;cursor:not-allowed}.candidateActionNotice{margin:0 0 14px;padding:11px;border-left:2px solid var(--gold);background:rgba(216,170,84,.035);color:#929990;font-size:8px;line-height:1.5}.candidateActionNotice b{color:var(--gold)}
+.spatialScopeExplanation{padding:18px!important;text-align:left!important;align-items:stretch!important}.spatialScopeExplanation>div:first-child{display:flex;flex-direction:column;gap:6px}.spatialScopeExplanation>div:first-child small{color:var(--gold);font:700 7px var(--font-geist-mono);letter-spacing:.1em}.spatialScopeExplanation>div:first-child strong{color:#eef1ee;font-size:17px}.spatialScopeExplanation>div:first-child p{margin:0;color:#9ba39d;font-size:9px;line-height:1.6}.scopeDecision{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:14px}.scopeDecision section{padding:13px;border:1px solid rgba(255,255,255,.08);border-radius:9px;background:rgba(255,255,255,.015)}.scopeDecision small{color:var(--green);font:700 7px var(--font-geist-mono)}.scopeDecision p{margin:7px 0 0;color:#969e98;font-size:8px;line-height:1.55}.scopeDecision b{color:#dfe3df}.scopeRequirement{margin-top:14px;padding:12px 14px;border:1px solid rgba(216,170,84,.26);border-radius:9px;background:rgba(216,170,84,.035);display:flex;flex-direction:column;gap:5px}.scopeRequirement small{color:var(--gold);font:700 7px var(--font-geist-mono)}.scopeRequirement strong{color:#e4e7e4;font-size:11px}.scopeRequirement span{color:#858d87;font-size:8px}.spatialScopeExplanation.unresolved .scopeDecision small{color:var(--gold)}
+.regionalScanSummary{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}.regionalScanSummary span{padding:10px;border:1px solid rgba(255,255,255,.07);border-radius:8px;display:flex;flex-direction:column;gap:5px}.regionalScanSummary small{color:#7f8881;font-size:7px}.regionalScanSummary b{color:#dfe3df;font-size:9px}.regionalProvenance{margin:11px 0 0!important;padding:9px 11px;border-left:2px solid var(--gold);color:#7f8881!important;font-size:7px!important}.regionalProvenance b{color:var(--gold)}
+
+.thailandDemo{max-width:1400px;margin:18px auto 44px;padding:24px;border:1px solid rgba(216,170,84,.24);border-radius:18px;background:#0d110e}.thailandHead{display:flex;justify-content:space-between;gap:28px;align-items:flex-start}.thailandHead h2{margin:7px 0 8px;color:#f0f2ef;font-size:clamp(28px,4vw,48px)}.thailandHead p:not(.eyebrow){max-width:820px;color:#9aa29c;font-size:10px;line-height:1.6}.thailandHead>span{padding:10px 12px;border:1px solid rgba(216,170,84,.25);border-radius:9px;color:#8f9690;font-size:7px;display:flex;flex-direction:column;gap:4px}.thailandHead>span b{color:var(--gold)}.thailandBoundary{margin:18px 0;padding:13px 15px;border-left:3px solid var(--green);background:rgba(85,201,149,.04);display:flex;gap:10px;align-items:center}.thailandBoundary b{color:var(--green);font-size:10px}.thailandBoundary span{color:#a0a8a2;font-size:9px}.thailandLayers{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.thailandLayers button{padding:14px;border:1px solid rgba(255,255,255,.08);border-radius:10px;background:#121613;text-align:left;display:flex;flex-direction:column;gap:4px;color:#828a84}.thailandLayers button b{color:#d9ddd9;font-size:11px}.thailandLayers button span{font-size:8px}.thailandLayers button.active{border-color:rgba(216,170,84,.48);background:rgba(216,170,84,.06)}.thailandLayers button.active b{color:var(--gold)}.thailandScope{margin-top:14px;padding:18px;border:1px solid rgba(255,255,255,.08);border-radius:12px;display:grid;grid-template-columns:1fr 220px auto;align-items:end;gap:18px}.thailandScope h3{margin:5px 0;color:#e5e8e5}.thailandScope p{margin:0;color:#858d87;font-size:8px}.thailandScope label{color:#8f9791;font-size:8px;display:flex;flex-direction:column;gap:6px}.thailandScope select{padding:10px;border:1px solid rgba(255,255,255,.12);border-radius:7px;background:#111512;color:#dce1dc}.airEvidenceGrid{margin-top:14px;display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.airEvidenceGrid article{padding:14px;border:1px solid rgba(255,255,255,.07);border-radius:10px;background:#101411;display:flex;flex-direction:column;gap:6px}.airEvidenceGrid small{color:var(--gold);font:700 7px var(--font-geist-mono)}.airEvidenceGrid strong{color:#e1e5e1;font-size:10px}.airEvidenceGrid span{color:#7f8881;font-size:7px}.airOutput{margin-top:14px;display:grid;grid-template-columns:minmax(300px,.85fr) 1.15fr;gap:14px}.airOutput>div{padding:18px;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:#101411}.airMapPlaceholder{min-height:280px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}.airMapPlaceholder>span{width:128px;height:190px;border:1px solid rgba(216,170,84,.5);border-radius:44% 38% 55% 40%;display:grid;place-items:center;color:var(--gold);font:800 24px var(--font-geist-mono);background:radial-gradient(circle at 40% 25%,rgba(216,170,84,.14),transparent 45%),radial-gradient(circle at 60% 68%,rgba(85,201,149,.12),transparent 45%)}.airMapPlaceholder i{position:absolute;width:190px;height:190px;border:1px solid rgba(85,201,149,.14);border-radius:50%;animation:pulse 3s infinite}.airMapPlaceholder b{margin-top:12px;color:#e1e5e1}.airMapPlaceholder small{margin-top:5px;color:#7e8680}.airOutput h3{margin:6px 0 9px;color:#e1e5e1}.airOutput ul{padding-left:18px;color:#9da59f;font-size:9px;line-height:1.75}.airOutput p{color:#9da59f;font-size:9px;line-height:1.6}.privateLayerPlaceholder{margin-top:14px;min-height:230px;padding:26px;border:1px dashed rgba(216,170,84,.25);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px}.privateLayerPlaceholder b{color:var(--gold);font-size:18px}.privateLayerPlaceholder span{max-width:650px;color:#8e9690;font-size:9px;line-height:1.6}.thailandMemoryLock{margin-top:14px;padding:12px 14px;border:1px solid rgba(85,201,149,.18);border-radius:9px;display:flex;justify-content:space-between;gap:12px}.thailandMemoryLock b{color:var(--green);font-size:8px}.thailandMemoryLock span{color:#858d87;font-size:8px}
+
+@media(max-width:900px){.jurisdictionChooser,.thailandHead,.thailandBoundary,.thailandMemoryLock{align-items:stretch;flex-direction:column}.jurisdictionTabs,.thailandLayers{grid-template-columns:1fr}.jurisdictionTabs{display:grid}.jurisdictionTabs button{min-width:0}.thailandScope,.airOutput,.scopeDecision{grid-template-columns:1fr}.airEvidenceGrid,.regionalScanSummary{grid-template-columns:1fr 1fr}.candidateScanGate{grid-template-columns:1fr}}
+@media(max-width:560px){.airEvidenceGrid{grid-template-columns:1fr}.thailandDemo{padding:16px}}
