@@ -96,6 +96,16 @@ Every citation CAP-02 makes, with its class, relation, expected record kind, whe
 
 **13. What this amendment replaces.** The interfaces, field rules, admission checks' consequences and failure contract are read as above wherever they differ; `RECORD_NOT_FOUND` joins the failure contract where it is named above and is not already there. The dependencies gain a row: **AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests: canonicalisation and digest types; `designed`.** Nothing else in this contract changes. **Nothing is implemented by this amendment.**
 
+## Note of 2026-10-02: clerical reconciliation
+
+Later amendments and contracts made some current-facing text in this contract stale. The stale text includes open gaps, dependency rows, interim positions, current rules-version statements, answer tables and interface comments. It was found by the retrospective decision cross-review (`governance/reviews/AAB-RETROSPECTIVE-DECISION-CROSS-REVIEW-2026-10-02.md`, finding RD-15) and by the review of the reconciliation plan.
+
+Each such passage keeps its original wording, followed by a current reading labelled "Current reading (Note of 2026-10-02; <STATUS>)". The status is CLOSED, PARTIALLY CLOSED or SUPERSEDED, and the reading names the amendment or contract that gives it.
+
+**This note changes no rule or meaning.** It is not an amendment, and no **Amended:** line changes. **Where a mark and the amendment or contract it names differ, the amendment or contract governs.** Nothing of this capability is built.
+
+**Dependency rows added by amendment (Note of 2026-10-02):** the Dependencies table does not show one row that amendments add: AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests ("Amendment of 2026-10-02: provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10", point 13). Each row reads exactly as its amendment states it, and **the amendment controls.** This note creates and changes no table row.
+
 ## Why this contract, and what it adopts
 
 **Why.** Committed records already place CAP-02:
@@ -113,7 +123,7 @@ The evidence is the step 0 snapshots, **with every acquisition, source, adapter,
 - **AAB-PLATFORM-05 (governed provenance)** and **AAB-PLATFORM-06 (admission decisions):** every CAP-02 record carries the platform's provenance, and is refused or written in one transaction.
 - **AAB-PLATFORM-08 (attributable human review):** source approval, mapping approval, outbound destination approval, run withdrawal, staged-item purge and challenge are human decisions.
 - **AAB-PLATFORM-01 (evidence object store),** as amended on 2026-10-02 with this contract: **the AGR acquisition staging area,** where acquired bytes wait, and the copy of a staged item into the AGR profile when a person submits it.
-- **CAP-03 (evidence integrity and provenance):** `cap-03-vocabulary-1`, with one term registered here (decision 23); CAP-03's verification of the CAP-04 records CAP-02 hands over.
+- **CAP-03 (evidence integrity and provenance):** `cap-03-vocabulary-1`, with one term registered here (decision 23); CAP-03's verification of the CAP-04 records CAP-02 hands over. **Current reading (Note of 2026-10-02; SUPERSEDED):** `cap-03-vocabulary-2`, in place of version 1 (amendment of 2026-10-02, section 6); `AUTOMATED_MAPPING` has the automation constraint `REQUIRED_TRUE` (section 11).
 - **CAP-04 as amended:** every licence, agreement and terms document a permitted-use basis cites is an admitted CAP-04 `DOCUMENT` record, read for the purpose `ACQUISITION_GOVERNANCE`; every acquired item reaches AGR only by a CAP-04 submission, through the batch route and check 13 its amendment adds.
 - **The platform's observation and brain governance,** the brain boundary, **the domain register and cognitive architecture**, **the non-return boundary** and **the egress specification:** CAP-02 is bound by them, and cites them.
 
@@ -231,7 +241,7 @@ interface Cap02SourceRegistration {
     | "INDIVIDUAL" | "OTHER";
   sourceIdentifier?: string;            // the source's own identifier: a DOI, accession, dataset id
   jurisdiction: string;                 // where the publisher operates, as declared
-  sourceTypes: string[];                // cap-03-vocabulary-1 source types its material carries
+  sourceTypes: string[];                // cap-03-vocabulary-1 source types its material carries; current reading (Note of 2026-10-02; SUPERSEDED): cap-03-vocabulary-2 source types, see the amendment of 2026-10-02, section 6
   accessMethod: "PERSON_SUPPLIED_FILE" | "ALLOWLISTED_PUBLIC_RETRIEVAL";   // decision 21
   description?: string;
 
@@ -461,7 +471,7 @@ interface Cap02StagedItem {
 | `ACQUISITION_READER` | Read sources, approvals, mappings, runs and item records, never staged bytes, in the country workspace |
 | `MEMORY_SUBMITTER` (CAP-04) | Read staged items; copy them into the AGR profile; submit them to CAP-04 |
 
-- **Each role is a scoped grant,** resolved by the platform; a grant with no country is never read as covering every country. **Every actor is `HUMAN`,** in their own name. **Every read is authenticated,** within one country workspace.
+- **Each role is a scoped grant,** resolved by the platform; a grant with no country is never read as covering every country. **Every actor is `HUMAN`,** in their own name. **Current reading (Note of 2026-10-02; SUPERSEDED):** registrations, mappings, outbound destinations, runs and supplied files are submitted by a `HUMAN`, in their own name; a staged item from a retrieval is written by the platform's acquisition service, under AAB-PLATFORM-05, section C (amendment of 2026-10-02, section 7). **Every read is authenticated,** within one country workspace.
 
 ## Receipts, operations and routes
 

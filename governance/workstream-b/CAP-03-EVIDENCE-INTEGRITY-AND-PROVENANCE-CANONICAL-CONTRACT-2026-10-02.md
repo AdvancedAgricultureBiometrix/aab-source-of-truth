@@ -109,6 +109,18 @@ Every citation CAP-03 makes, with its class, relation, expected record kind, whe
 
 **12. What this amendment replaces.** The interfaces, field rules, admission checks' consequences and failure contract are read as above wherever they differ; `RECORD_NOT_FOUND` joins the failure contract where it is named above and is not already there. The dependencies gain a row: **AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests: canonicalisation and digest types; `designed`.** Nothing else in this contract changes. **Nothing is implemented by this amendment.**
 
+## Note of 2026-10-02: clerical reconciliation
+
+Later amendments and contracts made some current-facing text in this contract stale. The stale text includes open gaps, dependency rows, interim positions, current rules-version statements, answer tables and interface comments. It was found by the retrospective decision cross-review (`governance/reviews/AAB-RETROSPECTIVE-DECISION-CROSS-REVIEW-2026-10-02.md`, finding RD-15) and by the review of the reconciliation plan.
+
+Each such passage keeps its original wording, followed by a current reading labelled "Current reading (Note of 2026-10-02; <STATUS>)". The status is CLOSED, PARTIALLY CLOSED or SUPERSEDED, and the reading names the amendment or contract that gives it.
+
+**This note changes no rule or meaning.** It is not an amendment, and no **Amended:** line changes. **Where a mark and the amendment or contract it names differ, the amendment or contract governs.** Nothing of this capability is built.
+
+**Dependency rows added by amendment (Note of 2026-10-02):** the Dependencies table does not show one row that amendments add: AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests ("Amendment of 2026-10-02: provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10", point 12). Each row reads exactly as its amendment states it, and **the amendment controls.** This note creates and changes no table row.
+
+**Dependency rows whose current reading has changed (Note of 2026-10-02):** the Dependencies table keeps its original wording, and one existing row now reads as follows. The row "CAP-01, CAP-05 to CAP-12": the adopters of the vocabulary and verification also include CAP-02 Governed Scientific Data Acquisition & Interoperability, which the row does not name: it adopts them by its own contract (decision 23), now as `cap-03-vocabulary-2`; `designed` (CAP-02's canonical contract, decision 23, and CAP-02's "Amendment of 2026-10-02: provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10", point 6; CAP-02's amendment governs). Nothing of CAP-02 is built. For each row, the governing amendment or contract named controls. This note creates and changes no table row.
+
 ## Why this contract, and what it adopts
 
 **Why.** Most of what CAP-03's name describes is already a platform primitive with a contract:
@@ -323,7 +335,7 @@ AAB-PLATFORM-04 and 06 are **not adopted:** CAP-03 admits no submitted record an
 |---|---|
 | Scope rules; selection | `cap-03-lineage-scope` v1: **`SCOPE_DERIVED`**, everything reached by resolved references; quarantined members shown, never excluded silently |
 | Integrity re-check | **Performed:** this is CAP-03's purpose |
-| Evaluator and rules versioning | `cap-03-lineage-rules-1`, `cap-03-profiles-1`, `cap-03-vocabulary-1`; `evaluatedAt` |
+| Evaluator and rules versioning | `cap-03-lineage-rules-1`, `cap-03-profiles-1`, `cap-03-vocabulary-1`; `evaluatedAt` **Current reading (Note of 2026-10-02; SUPERSEDED):** the vocabulary is `cap-03-vocabulary-2` (amendment of 2026-10-02, sections 6 and 10); `cap-03-lineage-rules-1` and `cap-03-profiles-1` are unchanged. |
 | Decision kinds | `INCIDENT_CLOSURE`, `INCIDENT_SCOPE_CONFIRMATION`, `ASSESSOR_QUALIFICATION_REVIEW`, `COUNTRY_INTEGRITY_POLICY_APPROVAL`, `CHALLENGE_RESOLUTION` |
 | Triggers | `INTEGRITY_COMPROMISED` and `UNDETERMINED` on a member, for every adopting capability |
 

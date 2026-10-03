@@ -141,6 +141,18 @@ Every citation CAP-10 makes, with its class, relation, expected record kind, whe
 
 **11. What this amendment replaces.** The interfaces, field rules, admission checks' consequences and failure contract are read as above wherever they differ; `RECORD_NOT_FOUND` joins the failure contract where it is named above and is not already there. The dependencies gain a row: **AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests: canonicalisation and digest types; `designed`.** Nothing else in this contract changes. **Nothing is implemented by this amendment.**
 
+## Note of 2026-10-02: clerical reconciliation
+
+Later amendments and contracts made some current-facing text in this contract stale. The stale text includes open gaps, dependency rows, interim positions, current rules-version statements, answer tables and interface comments. It was found by the retrospective decision cross-review (`governance/reviews/AAB-RETROSPECTIVE-DECISION-CROSS-REVIEW-2026-10-02.md`, finding RD-15) and by the review of the reconciliation plan.
+
+Each such passage keeps its original wording, followed by a current reading labelled "Current reading (Note of 2026-10-02; <STATUS>)". The status is CLOSED, PARTIALLY CLOSED or SUPERSEDED, and the reading names the amendment or contract that gives it.
+
+**This note changes no rule or meaning.** It is not an amendment, and no **Amended:** line changes. **Where a mark and the amendment or contract it names differ, the amendment or contract governs.** Nothing of this capability is built.
+
+**Dependency rows added by amendment (Note of 2026-10-02):** the Dependencies table does not show three rows that amendments add: CAP-12 Controlled Manufacturing Transfer ("Amendment of 2026-10-02 (second): manufacture-scale handling, and manufacturing reports", point 4); CAP-03 Evidence Integrity & Provenance ("Amendment of 2026-10-02 (third): integrity, lineage and the AGR vocabulary, under CAP-03", point 6); AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests ("Amendment of 2026-10-02 (fourth): provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10", point 11). Each row reads exactly as its amendment states it, and **the amendment controls.** This note creates and changes no table row.
+
+**Dependency rows whose current reading has changed (Note of 2026-10-02):** the Dependencies table keeps its original wording, and one existing row now reads as follows. The CAP-11 row: "CAP-11 Regulatory Translation & Dossier Support: owns regulatory status; CAP-10 never assesses it; its status is shown beside CAP-10's outcome where one exists; `designed`, post-launch." ("Amendment of 2026-10-02: regulatory status, and a clerical correction", points 1 and 4; point 1 corrects the row's name, "CAP-11 Regulatory Intelligence"). Nothing of CAP-11 is built. For each row, the governing amendment or contract named controls. This note creates and changes no table row.
+
 ## Why this contract, and what it adopts
 
 **Why.** Five committed contracts defer safety and ecology to CAP-10, and carry `SAFETY_ECOLOGY_NOT_ASSESSED` until it exists:
@@ -420,7 +432,7 @@ interface Cap10AssessmentRequest {
 | `manifest.scope.scopeRule` | `cap-10-dossier-scope`, version `1` |
 | `manifest.selection.mode` | `REQUESTER_LISTED`: the request's citations; quarantined `EXCLUDE`, disclosed; policy `ALL_ADMITTED`, version `1` |
 | `pinnedInputs[]` | The subject's version and its current acceptance; the country safety policy in force; the safety signals on the subject; for a formulation, its components' versions, any CAP-10 outcomes on them, and the CAP-07 composition access grants naming the request |
-| `integrityRecheck` | `NOT_PERFORMED`, disclosed |
+| `integrityRecheck` | `NOT_PERFORMED`, disclosed **Current reading (Note of 2026-10-02; SUPERSEDED):** a CAP-03 verification run may be requested; where a cited run covers every member, `integrityRecheck` is `PERFORMED`, otherwise `NOT_PERFORMED`, disclosed (amendment of 2026-10-02, third, point 1). |
 | `cutoffAt` | The platform's clock; shown on every outcome as the evidence cut-off |
 
 ```typescript
@@ -429,7 +441,7 @@ interface Cap10SafetyEcologyDossier {
   capabilityId: "CAP-10";
   resultType: "SAFETY_ECOLOGY_DOSSIER";
   schemaVersion: "urn:aab:schema:agr:cap-10:dossier:1";
-  binding: SnapshotBinding;              // rulesVersion "cap-10-dossier-rules-1"
+  binding: SnapshotBinding;              // rulesVersion "cap-10-dossier-rules-1"; current reading (Note of 2026-10-02; SUPERSEDED): rulesVersion "cap-10-dossier-rules-3", amendments of 2026-10-02 (first, point 2; third, point 1)
   request: { recordId: string; recordVersion: number };
   subject: Cap10AssessmentRequest["subject"];
   boundary: Cap10UseBoundary;
@@ -801,8 +813,8 @@ Each is defined in that capability's amendment of 2026-10-02; in summary:
 | Required by the platform | CAP-10 |
 |---|---|
 | Scope rules; selection policies | `cap-10-dossier-scope` v1; `ALL_ADMITTED` v1, `REQUESTER_LISTED`, quarantined `EXCLUDE`, disclosed |
-| Pinned inputs; integrity re-check; empty snapshot | The subject, its acceptance, the policy, the signals, and a formulation's components; not required, disclosed; **an empty snapshot is allowed,** and gives every applicable dimension `EVIDENCE_REQUIRED` |
-| Evaluator and rules versioning; non-reproducible fields | `cap-10-dossier-rules-1`, `cap-10-dimensions-1`, `cap-10-critical-rules-1`; `evaluatedAt` |
+| Pinned inputs; integrity re-check; empty snapshot | The subject, its acceptance, the policy, the signals, and a formulation's components; not required, disclosed; **an empty snapshot is allowed,** and gives every applicable dimension `EVIDENCE_REQUIRED` **Current reading (Note of 2026-10-02; SUPERSEDED):** integrity re-check: a CAP-03 verification run may be requested; `PERFORMED` where a cited run covers every member, otherwise not performed, disclosed (amendment of 2026-10-02, third, point 1). |
+| Evaluator and rules versioning; non-reproducible fields | `cap-10-dossier-rules-1`, `cap-10-dimensions-1`, `cap-10-critical-rules-1`; `evaluatedAt` **Current reading (Note of 2026-10-02; SUPERSEDED):** dossier rules `cap-10-dossier-rules-3` (amendments of 2026-10-02, first, point 2, and third, point 1); `cap-10-dimensions-1` and `cap-10-critical-rules-1` are unchanged. |
 | Existing evaluations and decisions | **None.** The rehearsal's gate rows, scores and bands are not mapped |
 | Decision kinds, roles | `SAFETY_ASSESSMENT`, `SPECIALIST_CONCURRENCE`, `ASSESSOR_QUALIFICATION_REVIEW`, `COUNTRY_SAFETY_POLICY_APPROVAL`, `CAP10_HELD_RESOLUTION`, `SIGNAL_TRIAGE`, `SIGNAL_DETERMINATION`, `SAFETY_DIRECTION`, `HOLD_RELEASE`, `SIGNAL_CLOSURE`, `CHALLENGE_RESOLUTION` |
 | Separation of duties beyond the platform's | "The deciders": the subject's curators, authors and reviewers; the trial's designer and activator; declared conflicts; the reporter of a signal |
@@ -824,7 +836,7 @@ Each is defined in that capability's amendment of 2026-10-02; in summary:
 
 - **Each role is a scoped grant covering the country workspace,** resolved by the platform. A grant with no country is never read as covering every country.
 - **A `SAFETY_GOVERNOR` never reviews their own qualification.** A governor who also holds a qualification may assess, under the same rules as any assessor, and never reviews the qualification of another decider on the same dossier.
-- **Every actor is `HUMAN`,** in their own name, except the system records named in this contract (a hold placed by a rule, a machine-generated signal). **Every read is authenticated,** within one country workspace; people are named by their names, never by their email addresses.
+- **Every actor is `HUMAN`,** in their own name, except the system records named in this contract (a hold placed by a rule, a machine-generated signal). **Current reading (Note of 2026-10-02; SUPERSEDED):** the service-submitted records are those of the amendment of 2026-10-02 (fourth), point 7: a signal created by CAP-10's intake service from a CAP-08 or CAP-12 safety-signal request, a `MACHINE_GENERATED` signal, and a `PRECAUTIONARY_HOLD` placed by a rule. **Every read is authenticated,** within one country workspace; people are named by their names, never by their email addresses.
 
 ## Receipts, operations and routes
 
@@ -962,7 +974,7 @@ interface Cap10Failure {
 
 **Contract gap: reports from people without a role.** Farmers, landholders and neighbours who are not actors cannot report directly; a person with a role records their report. How they report, and are told, is proposed CAP-36's and CAP-24's.
 
-**Contract gap: CAP-11.** Regulatory status is not assessed by anyone until CAP-11 exists. `REGULATORY_STATUS_NOT_ASSESSED` stays on every outcome.
+**Contract gap: CAP-11.** Regulatory status is not assessed by anyone until CAP-11 exists. **Current reading (Note of 2026-10-02; SUPERSEDED):** regulatory status is CAP-11's; until a CAP-11 outcome or verified regulator decision exists for the subject, version and jurisdiction, `REGULATORY_STATUS_NOT_ASSESSED` stays (amendment of 2026-10-02, regulatory status, point 4). CAP-11 has a contract and is not built. `REGULATORY_STATUS_NOT_ASSESSED` stays on every outcome.
 
 **Contract gap: material outside AAB's governed records.** A material of the kind `OTHER` in CAP-08 cannot be activated (CAP-08's amendment); it must first be registered in CAP-06, or be a registered product.
 

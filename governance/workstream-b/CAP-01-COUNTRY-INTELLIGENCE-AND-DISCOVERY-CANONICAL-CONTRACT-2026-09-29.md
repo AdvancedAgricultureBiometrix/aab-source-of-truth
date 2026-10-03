@@ -120,6 +120,18 @@ Every citation CAP-01 makes, with its class, relation, expected record kind, whe
 
 **9. What this amendment replaces.** The interfaces, field rules, admission checks' consequences and failure contract are read as above wherever they differ; `RECORD_NOT_FOUND` joins the failure contract where it is named above and is not already there. The dependencies gain a row: **AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests: canonicalisation and digest types; `designed`.** Nothing else in this contract changes. **Nothing is implemented by this amendment.**
 
+## Note of 2026-10-02: clerical reconciliation
+
+Later amendments and contracts made some current-facing text in this contract stale. The stale text includes open gaps, dependency rows, interim positions, current rules-version statements, answer tables and interface comments. It was found by the retrospective decision cross-review (`governance/reviews/AAB-RETROSPECTIVE-DECISION-CROSS-REVIEW-2026-10-02.md`, finding RD-15) and by the review of the reconciliation plan.
+
+Each such passage keeps its original wording, followed by a current reading labelled "Current reading (Note of 2026-10-02; <STATUS>)". The status is CLOSED, PARTIALLY CLOSED or SUPERSEDED, and the reading names the amendment or contract that gives it.
+
+**This note changes no rule or meaning.** It is not an amendment, and no **Amended:** line changes. **Where a mark and the amendment or contract it names differ, the amendment or contract governs.** Nothing of this capability is built.
+
+**Dependency rows added by amendment (Note of 2026-10-02):** the Dependencies table does not show two rows that amendments add: CAP-03 Evidence Integrity & Provenance ("Amendment of 2026-10-02 (second): integrity, lineage and the AGR vocabulary, under CAP-03", point 6); AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests ("Amendment of 2026-10-02 (fourth): provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10", point 9). Each row reads exactly as its amendment states it, and **the amendment controls.** This note creates and changes no table row.
+
+**Dependency rows whose current reading has changed (Note of 2026-10-02):** the Dependencies table keeps its original wording, and three existing rows now read as follows. The CAP-06 row (CAP-06 Ingredient Intelligence): receives referrals, each received, and closed, only by an `INGREDIENT_REVIEWER`'s `REFERRAL_RECEIPT`; `designed` (CAP-06's canonical contract, "Referrals from CAP-01", lines 425 and 432; its contract governs this row). The CAP-10 row (CAP-10 Safety & Ecological Intelligence): "optional: hazard screens of resources and waste streams, shown; `designed`." ("Amendment of 2026-10-02: hazard screens, and the safety label, under CAP-10", point 4). The CAP-02 row (CAP-02 Governed Scientific Data Acquisition & Interoperability): "owns external sources; material it acquires reaches CAP-01 only as CAP-04 evidence; `designed`." ("Amendment of 2026-10-02 (third): external sources and spatial acquisition, under CAP-02", point 4). Nothing of CAP-06, CAP-10 and CAP-02 is built. For each row, the governing amendment or contract named controls. This note creates and changes no table row.
+
 ## Why this contract, and what it adopts
 
 **Why.** CAP-01 is third in the workstream's order (roadmap, decision 22). The identity decisions of 2026-09-29 gave it the rehearsal's resource intelligence (13 gateway actions) and two cognitive actions, `submit_problem_signal` and `create_transformation_opportunity` (`governance/workstream-b/AGR-CAPABILITY-IDENTITY-DECISIONS-2026-09-29.md`, sections 2 and 3, and its note of 2026-09-29). The evidence is the step 0 snapshots, `agr-rehearsal/snapshot-2026-09-28/` and `agr-rehearsal/snapshot-2026-09-28-supplementary/`, **with `agriculture`, `country_core` and `cognitive_core` read in full for this contract** ("What the rehearsal does").
@@ -172,7 +184,7 @@ CAP-01 is a governed register and a discovery workbench, not an oracle. It does 
 | Should this resource be investigated as a possible ingredient? | **A scientist,** by a discovery review in CAP-01 |
 | Is the evidence admitted, and is it what it says it is? | CAP-04 |
 | What does the admitted evidence say about a scientific question? | CAP-05 |
-| Is this material safe, and what is its ecological effect? | CAP-10, which has no contract yet |
+| Is this material safe, and what is its ecological effect? | CAP-10, which has no contract yet **Current reading (Note of 2026-10-02; CLOSED):** CAP-10 now has a canonical contract (amendment of 2026-10-02); for a CAP-01 resource or waste stream it may screen handling only, and `SAFETY_ECOLOGY_NOT_ASSESSED` stays on every dossier and referral. Nothing of CAP-10 is built. |
 | Can this material become an ingredient? | CAP-06, after a referral |
 | How is data brought in from external sources? | CAP-02 |
 | Who is in the country, and what are its national objectives? | The country's tenancy and participation capabilities (CAP-16, CAP-24), which have no contracts yet |
@@ -226,9 +238,9 @@ CAP-01 is a governed register and a discovery workbench, not an oracle. It does 
 | Problem signal, with a spoofable origin | **A problem report,** made by a person; the origin is declared, and `AAB_DETECTION` is not a value |
 | Transformation opportunity stamped `AAB_DETECTION` | **An opportunity,** proposed by a person, citing the problem and any resources |
 | Country bootstrap, brief, recommendation, economic facts | **Not carried across** (decision 11). A published statistic is CAP-04 evidence, cited by CAP-01 |
-| Source registry, adapters, snapshots, atoms, synthesis | **CAP-02's,** when it is contracted. Not CAP-01's |
+| Source registry, adapters, snapshots, atoms, synthesis | **CAP-02's,** when it is contracted. Not CAP-01's **Current reading (Note of 2026-10-02; SUPERSEDED):** CAP-02's, by its contract; not carried across (amendment of 2026-10-02, third, point 4). |
 | Starter ingredient library, ingredient availability | **CAP-06's** |
-| Spatial investigation | **Not carried across.** An open gap |
+| Spatial investigation | **Not carried across.** An open gap **Current reading (Note of 2026-10-02; SUPERSEDED):** CAP-02's, by its contract; not carried across (amendment of 2026-10-02, third, point 4). Spatial computation remains open, recorded in CAP-02. |
 
 **Not carried across, in any form:** caller-chosen country; country checks that pass on a null country; cross-tenant reads; self-asserted evidence strength; scores and bands; the gate that cannot pass; overwrites; deletes; the missing audit; reviewers reviewing themselves; `AAB_DETECTION` from a caller; fixed narration presented as scanning; literal `VERIFIED` statuses; ingestion without authority.
 
@@ -362,7 +374,7 @@ CAP-01 adopts AAB-PLATFORM-06. The rules below are **rules version `cap-01-admis
 | `manifest.selection.quarantined` | `EXCLUDE` |
 | `manifest.selection.policy` | `ALL_ADMITTED`, version `1`: every admitted record, limitations included and disclosed |
 | `pinnedInputs[]` | `NATIONAL_OBJECTIVES`: the country register's version, when the subject names objectives |
-| `integrityRecheck` | `NOT_PERFORMED`, disclosed |
+| `integrityRecheck` | `NOT_PERFORMED`, disclosed **Current reading (Note of 2026-10-02; SUPERSEDED):** `PERFORMED`, with the run's findings by kind, where a cited CAP-03 verification run covers every member; otherwise `NOT_PERFORMED`, disclosed (amendment of 2026-10-02, second, point 1). CAP-03 is not built, so until it is the disclosure stays. |
 | `cutoffAt` | The platform's clock. No historical dossiers |
 
 ```typescript
@@ -371,7 +383,7 @@ interface Cap01DiscoveryDossier {
   capabilityId: "CAP-01";
   resultType: "DISCOVERY_DOSSIER";
   schemaVersion: "urn:aab:schema:agr:cap-01:discovery-dossier:1";
-  binding: SnapshotBinding;              // rulesVersion "cap-01-dossier-rules-1"
+  binding: SnapshotBinding;              // rulesVersion "cap-01-dossier-rules-1"; current reading (Note of 2026-10-02; SUPERSEDED): "cap-01-dossier-rules-3", see the amendment of 2026-10-02 (second), point 1
   subject: { recordId: string; recordKind: "COUNTRY_RESOURCE" | "OPPORTUNITY" };
   requestedBy: ActorReference;
   cutoffAt: string;
@@ -465,7 +477,7 @@ interface Cap01DiscoveryDossier {
 | Selection policies | `ALL_ADMITTED`, version `1`; mode `SCOPE_DERIVED`; quarantined records always `EXCLUDE` |
 | Pinned inputs | `NATIONAL_OBJECTIVES` |
 | Integrity re-check; empty snapshot | Not required, disclosed. A dossier always has its subject as a member, so it is never empty |
-| Evaluator and rules versioning | `evaluatorVersion` names the code; `rulesVersion` is `cap-01-dossier-rules-1`. The rules are code, so no `rulesDigest` |
+| Evaluator and rules versioning | `evaluatorVersion` names the code; `rulesVersion` is `cap-01-dossier-rules-1`. The rules are code, so no `rulesDigest` **Current reading (Note of 2026-10-02; SUPERSEDED):** `rulesVersion` is `cap-01-dossier-rules-3` (version 2 by the amendment of 2026-10-02, point 2; version 3 by the amendment of 2026-10-02, second, point 1). |
 | Non-reproducible fields | `evaluatedAt`. `evaluationId` is derived from the snapshot's digest and the evaluator and rules versions; finding identifiers from their content |
 | Refusal codes | "Failure contract" |
 | Existing evaluations and decisions | **None.** The rehearsal's discovery runs and reviews are not CAP-01 evaluations or decisions, and are not mapped ("What the rehearsal does") |
@@ -604,17 +616,17 @@ interface Cap01Failure {
 | CAP-05 Governed Scientific Reasoning | **Optional.** A scientist may ask CAP-05 what the evidence on a resource says; a dossier does not depend on it | `designed` |
 | The country's tenancy, membership and national objectives (CAP-16, CAP-24) | **The workspace and the objectives register** CAP-01 reads | `named only` |
 
-Under the admission authority's checklist (item 5), each dependency must be admitted before CAP-01, or in the same decision. CAP-10, CAP-16 and CAP-24 have no contracts.
+Under the admission authority's checklist (item 5), each dependency must be admitted before CAP-01, or in the same decision. CAP-10, CAP-16 and CAP-24 have no contracts. **Current reading (Note of 2026-10-02; PARTIALLY CLOSED):** CAP-10 now has a contract (amendment of 2026-10-02); CAP-16 and CAP-24 still have none. No dependency is admitted or built.
 
 ## Open gaps
 
-**Contract gap: CAP-10.** Safety and ecology have no contract and no description. Until they do, every dossier and referral says they are not assessed, and CAP-06 must not read a referral as safe.
+**Contract gap: CAP-10.** Safety and ecology have no contract and no description. **Current reading (Note of 2026-10-02; CLOSED):** closed as a contract gap by the amendment of 2026-10-02, point 4: CAP-10 has a contract. Safety and ecology are assessed in CAP-10 only once the material is a CAP-06 subject; `SAFETY_ECOLOGY_NOT_ASSESSED` stays on every dossier and referral, and CAP-06 still must not read a referral as safe. Nothing of CAP-10 is built. Until they do, every dossier and referral says they are not assessed, and CAP-06 must not read a referral as safe.
 
 **Contract gap: national objectives.** The register of a country's objectives, who sets them and how they are versioned, belongs to the country's tenancy capabilities, which have no contract. Until it is defined, objective codes are matched as given, and unresolved ones are disclosed.
 
-**Contract gap: external sources.** CAP-02 has no contract. The rehearsal's source registry, adapters and evidence snapshots are its concern, and any outbound retrieval is an explicit outbound surface under the egress specification and Gate D.
+**Contract gap: external sources.** CAP-02 has no contract. **Current reading (Note of 2026-10-02; CLOSED):** closed as a contract gap by the amendment of 2026-10-02 (third), point 4: CAP-02 has a contract. Outbound retrieval still needs the egress specification and Gate D; nothing of CAP-02 is built. The rehearsal's source registry, adapters and evidence snapshots are its concern, and any outbound retrieval is an explicit outbound surface under the egress specification and Gate D.
 
-**Contract gap: spatial investigation.** Satellite and spatial observation of resources and burden, modelled in the rehearsal with no code behind it, is not defined here. It may be CAP-01's, CAP-02's or observation's (proposed CAP-36).
+**Contract gap: spatial investigation.** Satellite and spatial observation of resources and burden, modelled in the rehearsal with no code behind it, is not defined here. **Current reading (Note of 2026-10-02; PARTIALLY CLOSED):** the allocation is settled by the amendment of 2026-10-02 (third), points 2 and 4: acquisition is CAP-02's, interpretation for resources and burden is CAP-01's, field observation is proposed CAP-36's. Spatial computation remains open, out of launch scope, recorded in CAP-02. It may be CAP-01's, CAP-02's or observation's (proposed CAP-36).
 
 **Contract gap: traditional knowledge.** As in CAP-04: records linked to traditional knowledge are held, and the basis on which they may be held and used is the country's to set with its institutions.
 
@@ -622,7 +634,7 @@ Under the admission authority's checklist (item 5), each dependency must be admi
 
 **Contract gap: automated discovery.** No automated signal, opportunity or prioritisation is defined. Any future automated method would be a new rules version, disclosed in every output, never a decision, and its outputs held for a person.
 
-**Contract gap: closing a referral.** A referral stays open until CAP-06 closes it, and CAP-06 has no contract. Until it does, a second referral of the same subject to CAP-06 is refused.
+**Contract gap: closing a referral.** A referral stays open until CAP-06 closes it, and CAP-06 has no contract. **Current reading (Note of 2026-10-02; CLOSED):** closed as a contract gap: CAP-06's canonical contract closes a referral by a `REFERRAL_RECEIPT` (`OPENED_AS_CANDIDATE` or `DECLINED`), and only by one. Until a receipt is recorded, a second referral of the same subject to CAP-06 is still refused. Nothing of CAP-06 is built. Until it does, a second referral of the same subject to CAP-06 is refused.
 
 **Platform gap: an invalidated admission.** As in CAP-04 and CAP-05: AAB-PLATFORM-07 has no change kind for a member whose admission is invalidated by an upheld challenge, so a review's triggers do not fire on it. It is AAB-PLATFORM-07's to settle.
 

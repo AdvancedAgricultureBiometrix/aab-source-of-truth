@@ -238,6 +238,16 @@ Every citation CAP-04 makes, with its class, relation, expected record kind, whe
 
 **13. What this amendment replaces.** The interfaces, field rules, admission checks' consequences and failure contract are read as above wherever they differ; `RECORD_NOT_FOUND` joins the failure contract where it is named above and is not already there. The dependencies gain a row: **AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests: canonicalisation and digest types; `designed`.** Nothing else in this contract changes. **Nothing is implemented by this amendment.**
 
+## Note of 2026-10-02: clerical reconciliation
+
+Later amendments and contracts made some current-facing text in this contract stale. The stale text includes open gaps, dependency rows, interim positions, current rules-version statements, answer tables and interface comments. It was found by the retrospective decision cross-review (`governance/reviews/AAB-RETROSPECTIVE-DECISION-CROSS-REVIEW-2026-10-02.md`, finding RD-15) and by the review of the reconciliation plan.
+
+Each such passage keeps its original wording, followed by a current reading labelled "Current reading (Note of 2026-10-02; <STATUS>)". The status is CLOSED, PARTIALLY CLOSED or SUPERSEDED, and the reading names the amendment or contract that gives it.
+
+**This note changes no rule or meaning.** It is not an amendment, and no **Amended:** line changes. **Where a mark and the amendment or contract it names differ, the amendment or contract governs.** Nothing of this capability is built.
+
+**Dependency rows added by amendment (Note of 2026-10-02):** this contract has no Dependencies section. Its amendments add three rows: CAP-03 Evidence Integrity & Provenance ("Amendment of 2026-10-02: integrity, lineage and the AGR vocabulary, under CAP-03", point 6); CAP-02 Governed Scientific Data Acquisition & Interoperability ("Amendment of 2026-10-02 (second): acquired material, under CAP-02", point 7); AAB-PLATFORM-10 Canonical Serialisation and Cryptographic Digests ("Amendment of 2026-10-02 (third): provenance and digests, under AAB-PLATFORM-05 and AAB-PLATFORM-10", point 13). Each row reads exactly as its amendment states it, and **the amendment controls.** This note creates no section and no row.
+
 ## The boundary, in plain English
 
 > **CAP-04 allows AAB to remember something responsibly. CAP-09 allows an authorised scientist to decide whether AAB may treat a conclusion drawn from it as validated knowledge.**
@@ -480,7 +490,7 @@ interface MeasurementObservation {
 
 ## Admission rules
 
-CAP-04 adopts AAB-PLATFORM-06 by this amendment. The rules below are **rules version `cap-04-admission-2`** (amended on 2026-09-29, storage profile); version 1 was never in force. A change to them is a new version, and decisions made under earlier rules keep theirs.
+CAP-04 adopts AAB-PLATFORM-06 by this amendment. The rules below are **rules version `cap-04-admission-2`** (amended on 2026-09-29, storage profile); version 1 was never in force. **Current reading (Note of 2026-10-02; SUPERSEDED):** the rules are `cap-04-admission-3`: version 2 with check 13, `ACQUISITION_BASIS_VALID` (amendment of 2026-10-02, second, point 3; amendment of 2026-10-02, third, point 11). Neither version 2 nor version 3 has been in force: nothing of CAP-04 is built. A change to them is a new version, and decisions made under earlier rules keep theirs.
 
 ### Outcomes
 
@@ -587,7 +597,7 @@ The decision is the platform's `AdmissionDecision` (AAB-PLATFORM-06, section 3),
 ```typescript
 interface Cap04MemoryAdmissionDecision extends AdmissionDecision {
   // recordId is the memoryRecordId; recordVersion and recordDigest are the record's
-  rulesVersion: "cap-04-admission-2";
+  rulesVersion: "cap-04-admission-2"; // Original: "cap-04-admission-2". Current reading (Note of 2026-10-02; SUPERSEDED): "cap-04-admission-3"; see the amendment of 2026-10-02 (third), point 11
 
   boundary: {
     admissionIsNotVerification: true;         // the platform's three
@@ -667,7 +677,7 @@ Every governed write has its receipt, in the same transaction:
 | `MEMORY_DECISION_CHALLENGE` | A human decision is challenged (amended on 2026-09-29, challenges) |
 | `MEMORY_CHALLENGE_RESOLUTION` | A challenge is resolved |
 
-The receipt names `capabilityId: "CAP-04"`, the decision type, the record as its subject, the requester and the decision's digest. **The pilot's receipt table accepts only SCS capability identifiers and AAB-PLATFORM-09.** Extending it to AGR capability identifiers is a platform migration, and a prerequisite before any CAP-04 endpoint is built ("Open gaps").
+The receipt names `capabilityId: "CAP-04"`, the decision type, the record as its subject, the requester and the decision's digest. **The pilot's receipt table accepts only SCS capability identifiers and AAB-PLATFORM-09.** **Current reading (Note of 2026-10-02; PARTIALLY CLOSED):** the receipt table's extension is met in the database by migration 025 (PR #70), as "Open gaps" records; the application's capability and error types open only in the extraction's step 2. Nothing of CAP-04 is built. Extending it to AGR capability identifiers is a platform migration, and a prerequisite before any CAP-04 endpoint is built ("Open gaps").
 
 ## Human decisions, and signatures
 
@@ -819,7 +829,7 @@ CAP-09's promotion decision, first sketched in this contract on 2026-09-20, is *
 - **A learning claim cites admitted CAP-04 records** by identifier, version and admission decision, never raw or unadmitted material. A held, rejected, superseded or quarantined record is never cited as support.
 - **Promoted knowledge is never written into CAP-04.** CAP-04 holds evidence. A promotion lives in CAP-09, and cites the evidence it relied on.
 - **CAP-09 never changes a CAP-04 record.** Anything CAP-09 concludes about evidence, such as a contradiction, is CAP-09's record, citing CAP-04's.
-- **The rehearsal's gateway group is CAP-09's.** When CAP-09 is contracted, `AAB_LEARNING_MEMORY_ACTIONS` is renamed so it no longer claims "memory", and `agriculture.scientific_memory_entry` is named as CAP-09's register of promoted learning. They are separated together (roadmap, section 5.2).
+- **The rehearsal's gateway group is CAP-09's.** When CAP-09 is contracted, `AAB_LEARNING_MEMORY_ACTIONS` is renamed so it no longer claims "memory", and `agriculture.scientific_memory_entry` is named as CAP-09's register of promoted learning. **Current reading (Note of 2026-10-02; SUPERSEDED):** CAP-09 is contracted, and its decision 16 meets this requirement differently: the rehearsal's `AAB_LEARNING_MEMORY_ACTIONS` and `scientific_memory_entry` are not carried across, rather than renamed; CAP-09's records are learning claims and promoted knowledge, never "memory". They are separated together (roadmap, section 5.2).
 
 ## What the scientist sees, and when
 
