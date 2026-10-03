@@ -28,6 +28,17 @@ Not an amendment: nothing in this contract changes. **AAB-PLATFORM-09's section 
   - every existing adoption is read, from this amendment, as declaring `MEMBER_ADMISSION_INVALIDATED` a trigger. Its own wording is corrected by its own amendment.
 - **Unchanged:** nothing else changes. Nothing is implemented.
 
+## Amendment of 2026-10-03: authority grants under AAB-PLATFORM-11
+
+**Consequential to AAB-PLATFORM-11** (finding RD-02), approved with it by the Platform Owner on 2026-10-03. **Approved draft:** `governance/reviews/RD-02-AAB-PLATFORM-11-DRAFT-2026-10-03-r8.md`, SHA-256 `36b7eab6208155c46f0febd4022d1b4b584901eea867ccd045d157933c58e10e`; decision sheet `governance/reviews/RD-02-AAB-PLATFORM-11-DECISION-SHEET-r8.md`, SHA-256 `cc365e3eb3d59c67fe59f2cdaa5f3b004d2b110bcd30d7332440f48adb622735`; approval and review history: `governance/reviews/RD-02-AAB-PLATFORM-11-APPROVAL-RECORD-2026-10-03.md`. Nothing else in this contract changes.
+- **Section 2, "Authority is verified, never declared"** (P08:93): the grant named in a decision is an AAB-PLATFORM-11 grant, resolved by AAB-PLATFORM-11, §5.1 at the time of the decision. `authority.grantId` (P08:135) is its `grantId`. **Founding attestations alone** name the founding ceremony record instead: `authority: { role; foundingCeremonyRecordId }` (AAB-PLATFORM-11, Annex A, P1).
+- **`decidedOn.kind`** (P08:118) gains `GRANT_PROPOSAL`, `GRANT`, `GRANT_EVENT` (a suspension, for reinstatement), `REVOCATION_REQUEST` and `FOUNDING_CEREMONY_RECORD`, for AAB-PLATFORM-11's decision kinds (AAB-PLATFORM-11, §13.5). `objectDigest` is the decided record's `recordDigest`.
+- **More than one decider** (P08:200-204): AAB-PLATFORM-11's two-person decisions are several decisions under section 7, each on the same object. They are not supersession under section 6, and the second never supersedes the first. AAB-PLATFORM-11, §4.6 and §6.4 are the combining rules.
+- **Independence** (P08:97-106): AAB-PLATFORM-11, §4.4 and §4.7 add the grant-specific rules.
+- **Challenge** (P08:208-215): AAB-PLATFORM-11's decisions are challengeable by the roles AAB-PLATFORM-11, Annex A, P11 names, after an admissibility check (AAB-PLATFORM-11, §10.3). A submission that is unauthorised, malformed or groundless is a platform refusal, and opens nothing. A correctly lodged challenge is open at once. Challenges are resolved internally by the resolvers AAB-PLATFORM-11, Annex A, P12 names, within their periods. What an upheld challenge does is AAB-PLATFORM-11, §10.4. A body outside AAB makes no decision under this contract unless it holds registered authority; its determination is evidence for AAB-PLATFORM-11, §10.5.
+- **The open item "How authority grants are issued, scoped and revoked"** (P08:326) is closed at contract level by AAB-PLATFORM-11. "It grants no authority, and does not define how authority grants are issued" (P08:297) now reads: *it grants no authority. AAB-PLATFORM-11 defines how authority grants are issued.*
+- **Existing decisions without a `grantId`** are read under AAB-PLATFORM-11, Annex A, P7. They are never rewritten, and an authority recorded only as declared stays disclosed as unverified (P08:286).
+
 ## What "decision", "review" and "currency" mean here
 
 **A human decision is a permanent record of one named person's judgement on exactly one governed object.** The words are used on the platform for other things, and this contract means none of them:

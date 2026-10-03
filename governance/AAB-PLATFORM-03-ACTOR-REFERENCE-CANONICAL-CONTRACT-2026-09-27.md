@@ -16,6 +16,36 @@ Signing keys, and their history, are defined by AAB-PLATFORM-09 Governed Public-
 
 Not an amendment: nothing in this contract changes. **AAB-PLATFORM-09's section 11 proof exists** (`governance/workstream-b/AAB-PLATFORM-09-KEY-REGISTRY-PROOF-2026-09-28.md`, merged in PR #59), and so does the proof of its bootstrap. **Both bootstrap ceremonies are proven in tests:** the Platform Owner's first key, and a country registry's first key registered by its representative and co-signed by the Platform Owner. The procedure is `scs-pilot/KEY-BOOTSTRAP-CEREMONY-RUNBOOK.md`. **No real ceremony has been performed,** so no signing key has yet been issued for a real governance decision. A country's ceremony waits on its authorised representative being identified.
 
+## Amendment of 2026-10-03: grants under AAB-PLATFORM-11, and two corrections
+
+**Consequential to AAB-PLATFORM-11** (finding RD-02), approved with it by the Platform Owner on 2026-10-03. **Approved draft:** `governance/reviews/RD-02-AAB-PLATFORM-11-DRAFT-2026-10-03-r8.md`, SHA-256 `36b7eab6208155c46f0febd4022d1b4b584901eea867ccd045d157933c58e10e`; decision sheet `governance/reviews/RD-02-AAB-PLATFORM-11-DECISION-SHEET-r8.md`, SHA-256 `cc365e3eb3d59c67fe59f2cdaa5f3b004d2b110bcd30d7332440f48adb622735`; approval and review history: `governance/reviews/RD-02-AAB-PLATFORM-11-APPROVAL-RECORD-2026-10-03.md`. Nothing else in this contract changes.
+
+**1. Grants**. `authorityBasis` entries resolved under AAB-PLATFORM-11 carry their `grantId`, which is required for every grant so resolved. P03:111 ("Once protected membership records exist, grants come from them, and carry their `grantId`") now reads: *grants come from AAB-PLATFORM-11's grant records, and carry their `grantId`.*
+
+**2. Role references** (AAB-PLATFORM-11, §2.8; P6):
+- `authorityBasis` entries gain `roleDomain`, `roleOwner` and `roleVersion`, alongside `role`, which keeps its name, syntax and validator.
+- This is `referenceVersion: "3"`. Stored version 1 and version 2 references are never rewritten, and stay readable, as P6 sets out.
+
+**3. Scope types** (P03:81 and 108):
+- `COUNTRY` and `SUBJECT` are granted under AAB-PLATFORM-11.
+- `INSTITUTION` is not honoured until RD-03 defines institutional authority.
+- `DOMAIN` and `PLATFORM` never confer authority inside a country environment (AAB-PLATFORM-11, I3 and I6).
+- `DEPLOYMENT` is legacy pilot configuration only.
+
+**4. The open items** "Protected membership records for the SCS pilot" (P03:234) and "`PARTY_REPRESENTATIVE` added to the role registry" (P03:238) are governed by AAB-PLATFORM-11: its grant records, and its canonical index. Implementing them stays open.
+
+**5. Correction (C3): version 2 is implemented.**
+- The Authority line (P03:5) says "version 2, defined here, is not implemented".
+- The field rules (P03:121) say "New records use version 2 once it is implemented".
+- "What this contract does not establish" (P03:212) says "It does not implement version 2".
+- The open items (P03:237) list "Implementing version 2 in the pilot".
+
+Each is out of date: version 2 is issued for every new record since PR #39, and version 1 records stay readable (RM:195; ST:314). **They now read:** *version 2 is implemented in the SCS pilot, and issued for every new record; version 1 records stay readable.* The open item at P03:237 is closed for the pilot. What remains open is grants with `grantId`, under AAB-PLATFORM-11.
+
+**6. Correction (C4): pilot scopes.** P03:110 says pilot grants "come from the actors file with `scopeType: DEPLOYMENT`". The pilot also issues `SUBJECT` grants from the same file, as SCS-CAP-02 requires for `PARTY_REPRESENTATIVE` (SCS-CAP-02:1172; `scs-pilot/packages/api/src/foundation/auth.ts:253`). **It now reads:** *in the pilot, grants come from the actors file, with `scopeType: DEPLOYMENT` or `SUBJECT`, and have no `grantId`. They are legacy operator configuration (AAB-PLATFORM-11, section 11).*
+
+**7. Unchanged:** stored references are never rewritten (P03:205). Revoking a grant never changes a reference already recorded (P03:58).
+
 ## Sources
 
 - `scs-pilot/packages/api/src/schemas/shared/actor-reference.schema.json`: the pilot definition, recorded "because no contract defines it"
