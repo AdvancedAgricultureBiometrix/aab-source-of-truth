@@ -68,12 +68,12 @@
 | **"Never silently excluded"** (purpose and values, revision lines 161-166) | Consistent with boundary 6 |
 | **Every capability's failure contract** (fail closed; 29 of the 33 canonical contracts state it expressly) | Unchanged |
 
-## 4. Points for the Platform Owner's confirmation
+## 4. Platform Owner confirmations
 
-- **T1: admission is tightened.** Today the records file `TODO(tenant-scope)`, `TODO(tenant-network-policy)` and `TODO(backup-encryption)` under "before live operation" (stock-take, section 5), not under admission. Section 1's wording makes isolation and recoverability gaps block **admission** as well.
-  - **Recommended:** adopt it as written. It strengthens a gate; it weakens none.
+- **T1 accepted: admission is tightened.** Today the records file `TODO(tenant-scope)`, `TODO(tenant-network-policy)` and `TODO(backup-encryption)` under "before live operation" (stock-take, section 5), not under admission. Section 1's wording makes isolation and recoverability gaps block **admission** as well.
+  - **Accepted by the Platform Owner on 2026-10-05.** It strengthens a gate; it weakens none.
   - Until the downstream records are aligned (section 6), this decision governs where they read less strictly.
-- **T2: "appropriate authorities" are named when a review is convened.** Where a country is involved, the national authority is the founding country institution's authorised representative (admission authority, section 3), or another named authority. The record of the review names them.
+- **T2 accepted: "appropriate authorities" are named when a review is convened.** Where a country is involved, the national authority is the founding country institution's authorised representative (admission authority, section 3), or another named authority. The record of the review names them.
 
 ## 5. What this does not change
 
