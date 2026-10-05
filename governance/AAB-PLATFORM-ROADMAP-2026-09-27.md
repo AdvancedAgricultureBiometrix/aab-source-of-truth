@@ -102,6 +102,7 @@
 - **PR #99, omitted from the update of `625007d`, is recorded:** the roadmap and the stock-take at `adda4e8` (head `5a24e1f`, merged as `4a65254`).
 - **#125's merge authority is not held in this repository's records.** The merge is evidenced by its merge commit; the Platform Owner's separate instruction to merge is not recorded here. An open evidence item.
 **Recorded (2026-10-05), in this change:** RD-01 Stage 1 item 4, the independent review of the platform amendment, is outstanding (decision 71; `governance/reviews/RD-01-STAGE-1-ITEM-4-DECISION-RECORD-2026-10-05.md`). No contract, approved text, check or status label changes; RD-01's label is read with that qualification.
+**Recorded (2026-10-05), in this change:** the security-gap continuation principle (decision 72; `governance/AAB-PLATFORM-SECURITY-GAP-CONTINUATION-DECISION-2026-10-05.md`). Production authority is withheld while a safeguard is undemonstrated, and the work continues. No gate is weakened, and nothing is authorised.
 **Authority:** RECORDS THE STATE OF EVERY AAB PLATFORM PRIMITIVE AND CAPABILITY, AS DEMONSTRATED BY THE CONTRACTS, CODE, TESTS AND PROOFS ON `main` AT `9f17cc2`, UPDATED TO `634295a`, TO `67b6ba8`, TO `c1586c6`, TO `fa84240`, TO `16d21cc`, TO `dbb2408`, TO `f1bb47d`, TO `d1bc453`, TO `695bc18`, TO `46e3e09`, TO `7e7bbc0`, TO `0461bfb`, TO `a0f0082`, TO `0370bbc`, TO `cb0540d`, TO `4e26c78`, TO `adda4e8`, TO `625007d`, TO `b2c5c10`, TO `591f167`, TO `8132243`, TO `3b68e57`, TO `91613f8`, TO `59a0dfe`, TO `f6fc458` AND TO `388a7e3`, AND WHAT MUST EXIST BEFORE WHAT. Admits no capability, grants no implementation, commissioning, production, regulatory or scientific authority, changes no control's status, and does not satisfy Gate D or begin WP05.
 **Sources:**
 - `governance/AAB-PLATFORM-PURPOSE-AND-VALUES-REVISION-2026-09-25.md`
@@ -1154,6 +1155,15 @@ These points came up while compiling the roadmap and were decided in review.
     - **Extraction planning:** permitted, as the approval record authorises; each plan states that the amendment is subject to the outstanding independent review, and may change as a result.
     - **Extraction execution:** prohibited. The dependency audit's independent verification, and RD-02, RD-03 and RD-04 at least contract-resolved, remain required. The Platform Owner confirms under decision 71 that extraction execution may not begin until RD-01 Stage 1, including item 4, is complete. This confirmation does not authorise extraction or implementation.
     - **Open:** who performs the review, and what independence requires (stock-take, open decision 19).
+
+## Decisions recorded on 2026-10-05, after `a612b87`
+
+72. **The security-gap continuation principle** (this change; `governance/AAB-PLATFORM-SECURITY-GAP-CONTINUATION-DECISION-2026-10-05.md`). If confidentiality, isolation, authority or recoverability cannot yet be demonstrated, the capability must not be admitted, commissioned or exposed to real information. That does not end the work: the gap is documented, contained and investigated, and alternatives are designed and tested in isolated, disposable environments until the safeguard is demonstrated or every reasonable option is exhausted. Then the Platform Owner and the appropriate scientific, security, legal and national authorities review the evidence before any redesign, restriction, deferral or exclusion.
+    - **Unchanged:** controls stay non-compensating; Gate D and admission still fail closed; no real, personal, confidential, production or country information is introduced to test a gap; work on a gap uses synthetic material, or expressly authorised non-production material containing no real information as defined by the decision record, only.
+    - **Not indefinite:** each gap records its attempts, results, remaining risk and a next decision point.
+    - **Never silent:** any restriction, deferral or exclusion is an explicit recorded authority decision.
+    - **Admission is tightened** (the record, section 4, T1): a gap in the four safeguards for an admitted operation is not a disclosed limitation. Downstream alignment is listed in the record, section 6.
+    - **Authorises nothing:** no implementation, deployment, production access or live-data use, and no gate is weakened.
 
 **Still open, noted in the text:**
 - The mapping of the eleven primitives to landscape capabilities (section 4) is proposed by this roadmap, not established.
