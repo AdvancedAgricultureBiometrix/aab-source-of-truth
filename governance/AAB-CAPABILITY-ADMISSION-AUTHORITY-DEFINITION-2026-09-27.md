@@ -1,6 +1,6 @@
 # AAB Capability Admission Authority — Definition — 2026-09-27
 
-**Status:** GOVERNANCE DEFINITION — AMENDED 2026-09-27 (see "Amendment of 2026-09-27")
+**Status:** GOVERNANCE DEFINITION — AMENDED 2026-09-27 AND 2026-10-06 (see "Amendment of 2026-09-27" and "Amendment of 2026-10-06")
 **Authority:** DEFINES WHAT CAPABILITY ADMISSION DECIDES, THE EVIDENCE IT REQUIRES, WHO MAY DECIDE IT, AND ITS FAIL-CLOSED RULE. This document admits no capability, grants Gate D to nothing, commissions nothing, and changes no control's status.
 **Sources:**
 - `governance/AAB-PLATFORM-PURPOSE-AND-VALUES-REVISION-2026-09-25.md` (the five maturity states)
@@ -17,6 +17,7 @@
 - `governance/AAB-GATE-D-DEPLOYMENT-QUALIFICATION-DEFINITION-2026-09-27.md`
 - `governance/AAB-PLATFORM-ROADMAP-2026-09-27.md`
 - `governance/AAB-CAPABILITY-ADMISSION-REGISTRY-DEFINITION-2026-09-27.md`
+- `governance/AAB-PLATFORM-SECURITY-GAP-CONTINUATION-DECISION-2026-10-05.md` (decision 72)
 
 ## Amendment of 2026-09-27
 
@@ -25,6 +26,15 @@ This definition was merged earlier on 2026-09-27 (PR #28) with the Platform Owne
 - **Admission is scoped.** Pilot admission is country-scoped: to one country, capability, contract version, implementation commit and scope. Platform-wide admission needs a separately established governance authority, **which does not yet exist**, and the pilot joint authority is not that body.
 - **Change is classified, not automatically stale** (section 4). The five change classifications of the registry definition replace "any change makes the admission stale", and a safety or authority defect suspends the admission.
 - **Scope includes commodities, jurisdictions and the country,** as well as operations (section 1).
+
+## Amendment of 2026-10-06
+
+This amendment aligns the definition with the security-gap continuation principle (decision 72; `governance/AAB-PLATFORM-SECURITY-GAP-CONTINUATION-DECISION-2026-10-05.md`, section 2, boundary 2, and section 4, T1), as that record's section 6 requires. It changes no other rule.
+- **The four safeguards are mandatory for admission.** Confidentiality, isolation, authority and recoverability must be demonstrated for the operations being admitted, at the admitted scope (section 2.3).
+- **A gap in one of them is not a disclosed limitation.** It refuses admission of the affected scope. Every other limitation rule is unchanged (sections 1 and 2.3).
+- **A narrower scope** is admissible only if it does not depend on the undemonstrated safeguard (section 1).
+- **The work continues.** Work on each gap continues under decision 72, boundaries 3 to 5: in isolated, disposable environments, with synthetic material or expressly authorised non-production material containing no real information, and with each gap recorded with a next decision point (the stock-take's security-gap register).
+- **Nothing else changes.** Gate D, commissioning, every control's status and the fail-closed rule (section 4) are unchanged.
 
 ## Why this definition is needed
 
@@ -87,7 +97,7 @@ flowchart LR
 - **The contract version:** the canonical contract at the commit assessed.
 - **The implementation:** the commit of the code assessed.
 - **The admitted scope:** the operations, and the commodities, jurisdictions and other scope dimensions the capability's contract defines, and, under the pilot, the country. Admission to a wider scope later is a `SCOPE_EXTENSION` (registry definition), assessed in its own right.
-- **The admitted operations:** the contract operations covered by the admission. A capability is admitted for what it does, at the scope proven, with every limitation and deferred operation disclosed. An operation the contract defines but that is not built or not proven is outside the admission. It stays unavailable, and must be refused at runtime, as the pilot refuses it today. Admitting only complete capabilities would be a false binary: it would exclude every SCS capability today.
+- **The admitted operations:** the contract operations covered by the admission. A capability is admitted for what it does, at the scope proven, with every limitation and deferred operation disclosed. An operation the contract defines but that is not built or not proven is outside the admission. It stays unavailable, and must be refused at runtime, as the pilot refuses it today. Admitting only complete capabilities would be a false binary: it would exclude every SCS capability today. A gap in confidentiality, isolation, authority or recoverability for an admitted operation is not a limitation (decision 72, T1; section 2.3). A narrower scope is admissible only if it does not depend on the undemonstrated safeguard.
 
 **The result is one of two outcomes:**
 - **`ADMISSION_GRANTED`:** every requirement in section 2 is satisfied for the named scope.
@@ -150,7 +160,8 @@ flowchart LR
 
 - **A shared `ActorReference` contract** (`TODO(actor-reference)`): "before any capability is admitted".
 - **Independent review:** a written assessment by an independent admission reviewer (section 3), covering every item in section 2.
-- **Disclosed limitations:** every open gap, deferred operation and `TODO(` in the capability's contract, README and code is listed in the admission evidence. A limitation does not refuse admission by itself. It is recorded in the admission, and follows the capability into every Gate D assessment that includes it.
+- **Disclosed limitations:** every open gap, deferred operation and `TODO(` in the capability's contract, README and code is listed in the admission evidence. A limitation does not refuse admission by itself, except a gap in confidentiality, isolation, authority or recoverability for an admitted operation, which is not a limitation and refuses admission of the affected scope (decision 72, T1). It is recorded in the admission, and follows the capability into every Gate D assessment that includes it.
+- **Demonstrated safeguards** (decision 72): confidentiality, isolation, authority and recoverability are demonstrated for every admitted operation, at the admitted scope, by the evidence the governing contract, this definition or Gate D requires. A statement, an intention or a disclosed limitation does not count.
 - **Preconditions that name admission are met.** A TODO or gap whose own stated precondition is "before admission" must be resolved. `TODO(actor-reference)` is the one such item today.
 - **The platform–domain separation holds.** The admission introduces no new dependency of a platform primitive on a domain module, identifier or vocabulary (platform–domain separation decision).
 
@@ -238,6 +249,7 @@ flowchart LR
   - no admission reviewer appointed;
   - no founding country institution representative identified;
   - the CAP-34 fidelity manifest does not include the SCS capabilities.
+- **Also blocking, for every scope that depends on them** (decision 72, T1): the security gaps recorded in the stock-take's security-gap register. Today: `TODO(tenant-scope)`, `TODO(tenant-network-policy)`, `TODO(backup-encryption)`, actor-directory history, unsigned party-scoped grants, recovery objectives and point-in-time recovery, `PH2-SEC-CC-RLS-ADVISORY-01`, and the override credential's governance.
 - **No platform-wide admission is possible:** no platform-wide governance authority exists.
 
 ## Decisions recorded on 2026-09-27
@@ -265,6 +277,7 @@ Both were made in PR #28:
 2. **The shared `ActorReference` contract** (`TODO(actor-reference)`).
 3. **The first independent admission reviewer,** appointed under section 3.
 4. **The founding country institution representative,** identified, with the basis of their authorisation recorded. This is a country-specific decision.
+5. **The four safeguards demonstrated** for the scope assessed, or a narrower scope that does not depend on any undemonstrated one (decision 72, T1; the stock-take's security-gap register).
 
 ### Required before the first SCS admission
 

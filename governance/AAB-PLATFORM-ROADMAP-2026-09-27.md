@@ -103,6 +103,7 @@
 - **#125's merge authority is not held in this repository's records.** The merge is evidenced by its merge commit; the Platform Owner's separate instruction to merge is not recorded here. An open evidence item.
 **Recorded (2026-10-05), in this change:** RD-01 Stage 1 item 4, the independent review of the platform amendment, is outstanding (decision 71; `governance/reviews/RD-01-STAGE-1-ITEM-4-DECISION-RECORD-2026-10-05.md`). No contract, approved text, check or status label changes; RD-01's label is read with that qualification.
 **Recorded (2026-10-05), in this change:** the security-gap continuation principle (decision 72; `governance/AAB-PLATFORM-SECURITY-GAP-CONTINUATION-DECISION-2026-10-05.md`). Production authority is withheld while a safeguard is undemonstrated, and the work continues. No gate is weakened, and nothing is authorised.
+**Recorded (2026-10-06), in this change:** decision 72's downstream alignment (the record, section 6). The capability admission authority and registry definitions state its T1 rule; Gate D and the parallel development protocol cross-reference it; the roadmap (sections 5.5, 6.1, 6.4 and 7.3) and the stock-take (sections 5 to 8) classify the isolation, recoverability, authority and confidentiality gaps as blocking admission of the affected scope; and the stock-take records the security-gap register (boundary 5; section 5.1 there). No control status, gate or other rule changes, and the work on each gap continues in isolated, disposable environments.
 **Authority:** RECORDS THE STATE OF EVERY AAB PLATFORM PRIMITIVE AND CAPABILITY, AS DEMONSTRATED BY THE CONTRACTS, CODE, TESTS AND PROOFS ON `main` AT `9f17cc2`, UPDATED TO `634295a`, TO `67b6ba8`, TO `c1586c6`, TO `fa84240`, TO `16d21cc`, TO `dbb2408`, TO `f1bb47d`, TO `d1bc453`, TO `695bc18`, TO `46e3e09`, TO `7e7bbc0`, TO `0461bfb`, TO `a0f0082`, TO `0370bbc`, TO `cb0540d`, TO `4e26c78`, TO `adda4e8`, TO `625007d`, TO `b2c5c10`, TO `591f167`, TO `8132243`, TO `3b68e57`, TO `91613f8`, TO `59a0dfe`, TO `f6fc458` AND TO `388a7e3`, AND WHAT MUST EXIST BEFORE WHAT. Admits no capability, grants no implementation, commissioning, production, regulatory or scientific authority, changes no control's status, and does not satisfy Gate D or begin WP05.
 **Sources:**
 - `governance/AAB-PLATFORM-PURPOSE-AND-VALUES-REVISION-2026-09-25.md`
@@ -704,6 +705,7 @@ flowchart LR
 - **The capability registry and the CAP-34 fidelity manifest updated together** (checklist items 8 and 9).
   - The fidelity manifest does not list the SCS capabilities at all.
   - CAP-34's SCS roadmap preview (`simulation/cap34/scs-roadmap-preview.js`) shows them as `DESIGN_CONTRACT_COMPLETE_NOT_IMPLEMENTED`, or `CONCEPT_PREVIEW_NOT_IMPLEMENTED`.
+- **The four safeguards demonstrated** for every admitted operation, at the admitted scope (decision 72, T1; recorded 2026-10-06). A gap in confidentiality, isolation, authority or recoverability is not a disclosed limitation. The gaps in the stock-take's security-gap register (its section 5.1; sections 6.1 and 6.4 here) block admission of every scope that depends on them. Work on them continues in isolated, disposable environments.
 
 Gate D is not an admission prerequisite. It follows admission, and blocks commissioning (section 7.3).
 
@@ -711,17 +713,17 @@ Gate D is not an admission prerequisite. It follows admission, and blocks commis
 
 **How the groups were set:** by the precondition the source itself states. Where a source states none, the TODO is grouped by what it limits. The grouping is this roadmap's, for review.
 
-### 6.1 Blocks real data or live operation
+### 6.1 Blocks real data, admission of the affected scope, or live operation
 
 | TODO | Gap | Stated precondition |
 |---|---|---|
 | `TODO(object-store-credentials)`: **resolved** (update of `dbb2408`) | The API's object store identity had admin rights | Built by PR #65 and proven (`governance/workstream-b/AAB-PLATFORM-01-OBJECT-STORE-PROOF-2026-09-28.md`). It no longer blocks real data. As first recorded: "Before any real data is stored": a put/read-only identity with object locking |
-| The override credential's governance (no tag; AAB-PLATFORM-01, amendment of 2026-09-28, section 4) | Who holds the override credential, what a use requires, and how each use is recorded, are not defined. Nor is what an erasure leaves behind: citing records, packages (each records its objects' SHA-256) and backups | **"Must be defined before any real data is admitted"** (section 4). **The remaining blocker before real data** since object-store credentials were proven (update of `dbb2408`). Until it is defined, the credential is never used. **Update of `46e3e09`:** legal hold's governance is defined with it, and also before real data (AAB-PLATFORM-01, amendment of 2026-09-29, section 4) |
-| `TODO(backup-encryption)` | Backups are unencrypted and unsigned, and hold credentials and country data | Egress spec §6: backups follow the primary data's sovereignty classification |
-| `TODO(tenant-scope)` | RLS is `USING (true)`: no organisation-level row filtering | "Sufficient only while each country deployment serves one organisation" |
-| `TODO(tenant-network-policy)` | Environments on one host are not isolated from each other | Separate hosts, or host firewall or kernel-level network policy |
+| The override credential's governance (no tag; AAB-PLATFORM-01, amendment of 2026-09-28, section 4) | Who holds the override credential, what a use requires, and how each use is recorded, are not defined. Nor is what an erasure leaves behind: citing records, packages (each records its objects' SHA-256) and backups | **"Must be defined before any real data is admitted"** (section 4). **The remaining blocker before real data** since object-store credentials were proven (update of `dbb2408`). Until it is defined, the credential is never used. **Update of `46e3e09`:** legal hold's governance is defined with it, and also before real data (AAB-PLATFORM-01, amendment of 2026-09-29, section 4). **Decision 72 (T1: authority and confidentiality; recorded 2026-10-06):** it also blocks admission of every scope or store reachable through the credential, until its purpose, custody, issue, access, use, audit, rotation, revocation and emergency conditions are governed and demonstrated. Its earlier blocking position is unchanged |
+| `TODO(backup-encryption)` | Backups are unencrypted and unsigned, and hold credentials and country data | Egress spec §6: backups follow the primary data's sovereignty classification. **Also blocks admission of any scope that depends on it** (decision 72, T1: confidentiality and recoverability; recorded 2026-10-06) |
+| `TODO(tenant-scope)` | RLS is `USING (true)`: no organisation-level row filtering | "Sufficient only while each country deployment serves one organisation". **Also blocks admission of any scope that depends on it** (decision 72, T1: isolation; recorded 2026-10-06) |
+| `TODO(tenant-network-policy)` | Environments on one host are not isolated from each other | Separate hosts, or host firewall or kernel-level network policy. **Also blocks admission of any scope that depends on it** (decision 72, T1: isolation; recorded 2026-10-06) |
 | `TODO(actor-reference)` | The contract exists (AAB-PLATFORM-03), and version 2 is implemented (PR #39); the contract is proposed, not admitted | "Before any capability is admitted" |
-| Actor-directory history (no tag yet) | The accountable name held for a decider at the time of a human decision cannot be established later, within the country | Raised by AAB-PLATFORM-08 ("Open items"). **Blocking for production:** without it, a human decision cannot be fully verified after the fact. **For the pilot,** with its fixed actors file, a disclosed limitation, not an immediate blocker (stock-take of 2026-09-28, section 5) |
+| Actor-directory history (no tag yet) | The accountable name held for a decider at the time of a human decision cannot be established later, within the country | Raised by AAB-PLATFORM-08 ("Open items"). **Blocking for production:** without it, a human decision cannot be fully verified after the fact. **For the pilot,** with its fixed actors file, a disclosed limitation, not an immediate blocker (stock-take of 2026-09-28, section 5). **Decision 72 (T1: authority; recorded 2026-10-06):** for admission it is not a disclosed limitation. It blocks admission of any scope whose authority or later auditability depends on reconstructing historical actor-directory state; a narrower scope may proceed only if it uses a demonstrated history mechanism from its beginning and does not rely on the unverifiable earlier history |
 
 **Resolved: `TODO(signing-key-history)`.** It blocked real data because a signature was verified against the signer's current key, so a replaced key invalidated every link and status record it signed. AAB-PLATFORM-09 replaced that: built by PRs #53 to #59, its section 11 conditions proven in CI (`governance/workstream-b/AAB-PLATFORM-09-KEY-REGISTRY-PROOF-2026-09-28.md`). The tag is gone from the code; it remains only in dated records.
 
@@ -760,14 +762,14 @@ Gate D is not an admission prerequisite. It follows admission, and blocks commis
 **Operations the contracts define but that are not built:** listed per capability in section 2.2. Nearly every SCS read endpoint is among them.
 
 **Other disclosed gaps:**
-- **Proof:** no independent security review; `SHA256SUMS` unsigned; no recovery objectives; no point-in-time recovery.
-- **Party-scoped grants:** `PARTY_REPRESENTATIVE` and `PARTY_AUTHORITY_REPRESENTATIVE` grants are operator configuration in the actors file. In production, each must be a signed, evidenced act with a receipt (SCS-CAP-02, open item).
+- **Proof:** no independent security review; `SHA256SUMS` unsigned; no recovery objectives; no point-in-time recovery. **Recovery objectives and point-in-time recovery** (decision 72, T1: recoverability; recorded 2026-10-06): they block admission of every scope creating or relying on durable state until the required objectives are defined and the recovery behaviour is demonstrated. A genuinely stateless scope may be assessed separately, but must not depend on persistent state indirectly.
+- **Party-scoped grants:** `PARTY_REPRESENTATIVE` and `PARTY_AUTHORITY_REPRESENTATIVE` grants are operator configuration in the actors file. In production, each must be a signed, evidenced act with a receipt (SCS-CAP-02, open item). **Decision 72 (T1: authority; recorded 2026-10-06):** blocks admission of every operation relying on an unsigned, unevidenced or unreceipted party-scoped grant. Operator configuration is not demonstrated authority.
 - **Reserved outcomes:** `REJECTED` and `QUARANTINED` in every admission capability.
 - **Undefined reviewer and verifier authority:** SCS-CAP-02 verifying authorities; SCS-CAP-09 reviewer authority. AAB-PLATFORM-08 requires a decider's authority to be verified through a scoped grant; how grants for deciding roles are issued, scoped and revoked is not defined anywhere.
 - **Unsupported languages and scripts:** AAB-PLATFORM-02 and SCS-CAP-08 are English only.
 - **AGR candidate:** the eight remediation items for the cross-institutional landscape candidate.
 - **Phase 2 security:**
-  - `PH2-SEC-CC-RLS-ADVISORY-01` is OPEN.
+  - `PH2-SEC-CC-RLS-ADVISORY-01` is OPEN. **Decision 72 (T1: isolation, evidence required; recorded 2026-10-06):** isolation is undemonstrated for the affected scope; "advisory" does not prevent decision 72 from applying. It blocks admission of operations reading or writing affected `country_core` tables, unless a reviewed scope analysis demonstrates that the operation does not depend on the unresolved isolation condition. It is not recorded as a proven cross-country leak.
   - `PH2-SEC-RESTORE-FUNCTION-GRANT-01` has an open reconstruction root cause, and is recorded as an open mandatory Gate D item.
 
 ### 6.5 Documentation that no longer matches the code
@@ -858,7 +860,7 @@ This is evidence for the SCS pilot stack only. It changes no control's status.
     - it is the AAB authority decision between capability admission and country commissioning;
     - it is granted to one deployment (one country environment, one release, a named set of admitted capabilities), never to a capability in the abstract;
     - it is decided by the Platform Owner on an independent reviewer's assessment.
-  - **Gate D follows admission.** An ungranted Gate D blocks commissioning. It does not block admission, which is blocked by its own prerequisites: an admission authority, the ten-point checklist, the shared `ActorReference` contract and independent review (section 5.5).
+  - **Gate D follows admission.** An ungranted Gate D blocks commissioning. It does not block admission, which is blocked by its own prerequisites: an admission authority, the ten-point checklist, the shared `ActorReference` contract, the four safeguards demonstrated for the admitted scope (decision 72) and independent review (section 5.5).
   - **No deployment has been assessed, and none could be granted today.** Three items block the first assessment: the admission authority, now defined (PR #28, #29) but not constituted, and with its registry not built; the first independent reviewer appointment; and the commissioning governance document.
 
 ## 8. Workstream: the AGR rehearsal migration
@@ -1164,6 +1166,7 @@ These points came up while compiling the roadmap and were decided in review.
     - **Never silent:** any restriction, deferral or exclusion is an explicit recorded authority decision.
     - **Admission is tightened** (the record, section 4, T1): a gap in the four safeguards for an admitted operation is not a disclosed limitation. Downstream alignment is listed in the record, section 6.
     - **Authorises nothing:** no implementation, deployment, production access or live-data use, and no gate is weakened.
+    - **Update (recorded 2026-10-06):** the downstream alignment of the record's section 6 is made in this change (see the "Recorded (2026-10-06)" note at the head of this roadmap). This entry is unchanged.
 
 **Still open, noted in the text:**
 - The mapping of the eleven primitives to landscape capabilities (section 4) is proposed by this roadmap, not established.
