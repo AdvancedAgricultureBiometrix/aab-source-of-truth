@@ -1,0 +1,29 @@
+:root{--launch-line:var(--line);--launch-soft:#eef2e8;--launch-gold-soft:#f3ead7}
+.launch-section{padding:var(--section-space) var(--page-gutter)}
+.launch-section.alt{background:var(--launch-soft)}
+.launch-section.dark{background:var(--forest);color:#fff}
+.launch-heading{max-width:900px}
+.launch-heading h2{margin:15px 0 24px}
+.launch-heading>p:last-child{max-width:760px;color:#59675f;font-size:var(--text-lead);line-height:1.75}
+.launch-section.dark .launch-heading>p:last-child{color:#adc0b7}
+.proof-grid,.partner-grid,.insight-grid,.trust-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:52px}
+.proof-card,.partner-card,.insight-card,.trust-card{background:#fff;border:1px solid var(--launch-line);border-radius:var(--radius-panel);padding:32px;min-height:260px;display:flex;flex-direction:column}
+.proof-card>span,.partner-card>span,.insight-card>span,.trust-card>span,.journey-step>span{font-size:10px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:#6f8d6b}
+.proof-card h3,.partner-card h3,.insight-card h3,.trust-card h3{margin:34px 0 13px}
+.proof-card p,.partner-card p,.insight-card p,.trust-card p{color:#5a6861;line-height:1.68;margin-bottom:0}
+.proof-card strong,.partner-card strong,.insight-card strong{margin-top:auto;padding-top:24px;color:#315b47;font-size:13px}
+.proof-card.future{background:#dfe9d8}
+.journey{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin-top:52px;border:1px solid rgba(255,255,255,.15);border-radius:var(--radius-panel);overflow:hidden}
+.journey-step{min-height:235px;padding:26px 22px;border-right:1px solid rgba(255,255,255,.13);display:flex;flex-direction:column}
+.journey-step:last-child{border-right:0}.journey-step>span{color:#a8cd83}.journey-step h3{margin:36px 0 12px}.journey-step p{color:#a9bbb3;line-height:1.6;margin:0}.journey-step small{margin-top:auto;padding-top:20px;color:#d7c28b}
+.founder-layout{display:grid;grid-template-columns:.7fr 1.3fr;gap:7vw;align-items:start}
+.founder-note{background:var(--forest);color:#fff;border-radius:var(--radius-panel);padding:38px}.founder-note strong{display:block;font-family:var(--font-display);font-size:var(--text-subheading);line-height:1.25}.founder-note p{color:#adc0b7;line-height:1.7;margin-bottom:0}
+.founder-copy h2{margin:15px 0 25px}.founder-copy>p{font-size:var(--text-lead);line-height:1.75;color:#53615b}.founder-signoff{border-left:3px solid var(--gold);padding:8px 0 8px 22px;margin-top:28px}.founder-signoff strong,.founder-signoff span{display:block}.founder-signoff span{color:#6a776f;margin-top:4px}
+.pilot-banner{margin-top:52px;background:var(--forest);color:#fff;border-radius:var(--radius-panel);padding:clamp(30px,5vw,55px);display:grid;grid-template-columns:1fr auto;gap:35px;align-items:center}.pilot-banner p{color:#adc0b7;max-width:720px}.pilot-banner .button{white-space:nowrap}
+.partner-fit{display:grid;grid-template-columns:.8fr 1.2fr;gap:6vw;margin-top:55px}.partner-fit ol{margin:0;padding:0;list-style:none;counter-reset:fit}.partner-fit li{counter-increment:fit;border-top:1px solid var(--launch-line);padding:22px 0 22px 52px;position:relative;color:#53615b}.partner-fit li:before{content:"0" counter(fit);position:absolute;left:0;color:#668663;font-weight:800}
+.contact-panel{background:#fff;border:1px solid var(--launch-line);border-radius:var(--radius-panel);padding:clamp(28px,5vw,48px);display:grid;grid-template-columns:1fr auto;gap:35px;align-items:center}.contact-panel p{color:#59675f;max-width:720px}.contact-panel a{white-space:nowrap}
+.truth-list{margin-top:45px}.truth-list article{display:grid;grid-template-columns:190px 1fr;gap:30px;padding:25px 0;border-top:1px solid var(--launch-line)}.truth-list strong{font-family:var(--font-display)}.truth-list p{margin:0;color:#58665f}
+.insight-card time{color:#76867e;font-size:11px}.insight-card a{margin-top:auto;padding-top:24px;color:#315b47;font-weight:800;font-size:13px}
+@media(max-width:1050px){.proof-grid,.partner-grid,.insight-grid,.trust-grid{grid-template-columns:1fr 1fr}.journey{grid-template-columns:1fr 1fr}.journey-step{border-bottom:1px solid rgba(255,255,255,.13)}.journey-step:last-child{grid-column:1/-1}.founder-layout,.partner-fit{grid-template-columns:1fr}}
+@media(max-width:720px){.launch-section{padding:75px 22px}.proof-grid,.partner-grid,.insight-grid,.trust-grid,.journey{grid-template-columns:1fr}.journey-step,.journey-step:last-child{grid-column:auto;border-right:0}.pilot-banner,.contact-panel{grid-template-columns:1fr}.truth-list article{grid-template-columns:1fr;gap:8px}}
+
