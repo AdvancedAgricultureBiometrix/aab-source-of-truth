@@ -10,10 +10,19 @@ Every new chat, agent or contributor must read these records completely before i
 
 1. [AAB Canonical System Definition](handovers/AAB-CANONICAL-SYSTEM-DEFINITION.md) — what AAB is as a complete governed scientific-intelligence and agricultural-development operating system.
 2. [AAB Country Onboarding Path — Canonical Continuity Record](handovers/AAB-COUNTRY-ONBOARDING-CANONICAL-PATH.md) — the authoritative identity, participation, provisioning, activation, institution and role-routing sequence.
+3. [AAB Sovereign Country Runtime and Controlled Cleanup Path](handovers/AAB-SOVEREIGN-COUNTRY-RUNTIME-AND-CLEANUP-PATH.md) — the mandatory central-control-plane/country-runtime separation, sovereign deployment profile, contamination boundary and safe cleanup sequence.
+4. [WA Hostinger Rehearsal Continuation](handovers/AAB-WA-HOSTINGER-REHEARSAL-CONTINUATION-2026-09-02.md) — the current cleanup, upload, isolation and new-chat continuation state.
+5. [Cleanup v20 and WA Hostinger Checkpoint](governance/validations/AAB-CLEANUP-V20-AND-WA-HOSTINGER-CHECKPOINT.md) — source hashes, cleanup evidence, package identity and unproven gates.
+6. [AAB Persistence Migration Boundary](architecture/AAB-PERSISTENCE-MIGRATION-BOUNDARY.md) — the governed replacement path from SQLite/Airtable and browser shortcuts to Supabase Auth and persisted memberships.
+7. [WA Hostinger Rehearsal Manifest v1](deployment/wa-rehearsal/WA-HOSTINGER-REHEARSAL-MANIFEST-v1.md) — the WA-only runtime identity, permitted services and live-validation gate.
+8. [WA Authority Routing Repair](governance/validations/AAB-WA-AUTHORITY-ROUTING-REPAIR-2026-09-02.md) — the fail-closed WA-specific resolver repair, observed reset state and next validation sequence.
+9. [AAB Trust, Access, Compliance and Conversation Intelligence](architecture/AAB-TRUST-ACCESS-COMPLIANCE-AND-CONVERSATION-INTELLIGENCE.md) — guided pathways, Trust Gate, privacy-minimised audit, sovereign messaging, screenshot controls and governed conversation intelligence.
+10. [AAB Authentication Assurance Contract v0.1](identity/contracts/AAB-AUTHENTICATION-ASSURANCE-CONTRACT-v0.1.md) — the design-only progression from verified email OTP to role-sensitive MFA, `aal2` enforcement and step-up authentication.
+11. [AAB MFA Trust Gate Rehearsal Validation v0.1](identity/tests/AAB-MFA-TRUST-GATE-REHEARSAL-VALIDATION-v0.1.md) — the mandatory ordered enrollment, routing, step-up, recovery, privacy and isolation tests.
 
 Then read any task-specific canonical record linked from this README or the relevant domain directory.
 
-The system definition prevents AAB from being reduced to one interface such as Discovery, onboarding or a dashboard. The onboarding record defines the testing-versus-live boundary and supersedes older statements that treated the main AAB Supabase and a country Supabase as an architecture mismatch.
+The system definition prevents AAB from being reduced to one interface such as Discovery, onboarding or a dashboard. The onboarding record defines the testing-versus-live boundary. The sovereign-runtime record establishes that every country receives the same governed application and onboarding foundation while operating through isolated country infrastructure and mutable state.
 
 ## What AAB is
 
@@ -38,7 +47,8 @@ Country Discovery is the governed intelligence-acquisition layer near the beginn
 ## Governing architecture
 
 - **Main AAB Supabase:** platform control plane, identity, participation requests and Platform Owner provisioning decisions.
-- **Country Supabase:** a private isolated country tenancy for membership, documents, evidence, Discovery, scientific work and later institution/professional records.
+- **Country runtime:** one isolated operational AAB deployment per country, containing that country's Discovery workspace, onboarding, dashboards and governed scientific workflows.
+- **Country Supabase:** a private isolated country tenancy for membership, documents, evidence, Discovery, scientific work and institution/professional records.
 - **Governed provisioning bridge:** protected server-to-server handoff between the two; no database consolidation and no Platform Owner country membership merely to provision.
 - **Cognitive and domain-brain layers:** advisory, evidence-bound scientific intelligence that cannot replace human scientific or governance authority.
 - **Downstream development layers:** ingredients, formulations, trials, observations, safety, regulatory dossiers and manufacturing transfer, each governed by its own persisted gates.
@@ -77,7 +87,8 @@ A schema, interface or code path is not proof of successful operation or live au
 
 ## Non-negotiable boundaries
 
-- Preserve email → Turnstile/risk control → OTP; do not introduce passwords as the default identity path.
+- Preserve email → Turnstile/risk control → OTP as the initial identity path; do not introduce passwords as the default public entry merely to appear stronger.
+- Governed roles require a separately proven assurance gate: mandatory approved second factor, `aal2` enforcement and step-up authentication for sensitive actions.
 - Provide a secure email-verification route when automatic browser verification cannot complete, without turning a successful email sign-in into membership authority.
 - Authentication is not authority. Persisted protected records determine authority.
 - Sites-owner access is recovery/testing access, not persisted country authority.
@@ -111,7 +122,13 @@ A schema, interface or code path is not proof of successful operation or live au
 
 ## Current next objective
 
-Exercise and prove the controlled institution journey using an explicitly internal rehearsal institution:
+The first Hostinger validation proved the WA page, HTTPS and PHP boundary, then stopped at Turnstile initialization. The source repair is now recorded in `governance/validations/AAB-WA-AUTHORITY-ROUTING-REPAIR-2026-09-02.md`: Turnstile waits for the explicit `render()` API and entry routing uses only the three WA-specific persisted rehearsal authority functions. Upload the two-file runtime patch and repeat the entry validation. With zero active WA memberships after the intentional reset, a verified identity must currently be denied; do not manufacture membership to make the test pass.
+
+The protected source backup and cleanup v20 checkpoint are recorded. SQLite and Airtable executable dependencies are legacy/transitional and must be replaced through bounded, evidence-backed migration to the applicable country Supabase, Supabase Auth and persisted memberships.
+
+The next security workstream is governed authentication assurance. The current inspected state contains no enrolled MFA factors in the main or WA Auth projects. Preserve OTP as identity verification, then build and rehearsal-test TOTP enrollment, `aal2` routing, server/API/database enforcement, factor management, step-up actions and governed recovery as one coherent flow. Do not enforce MFA before enrollment and recovery exist, and do not treat beta passkeys as production-critical.
+
+The proven rehearsal sequence is:
 
 ```text
 persisted WA HEAD_ADMIN
@@ -127,3 +144,5 @@ persisted WA HEAD_ADMIN
 ```
 
 The Country Head Admin may govern institutions and invitations within the authorised rehearsal envelope. Institution Admins may configure their team only within that country-approved envelope. Neither administrative role can create scientific approval, regulatory approval, ingredient status, trial eligibility or production authority.
+
+Each future country receives this same governed onboarding structure plus its own Discovery workspace, database, Auth, Storage, secrets, backups and role-resolved operational dashboards. Canonical code and brain definitions may be released across countries; live evidence, cognitive state, decisions and learning never synchronise automatically to the central system or another country.

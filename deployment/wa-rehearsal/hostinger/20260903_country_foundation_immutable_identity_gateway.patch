@@ -1,0 +1,52 @@
+# AAB WA country-foundation immutable identity gateway repair
+# Date: 2026-09-03
+# Classification: WA clean-room rehearsal
+# Target: public_html/aab-local/app/_rebuild/api.php
+#
+# Apply only to the AAB-COUNTRY-FOUNDATION-GATEWAY-01 block.
+# This patch removes dashboard-time actor/access provisioning. It resolves only
+# the exact active Supabase UUID identity link already persisted in the WA
+# tenancy. It creates no actor, role, membership, access assignment or authority.
+
+--- api.php.before
++++ api.php
+@@
+ if (in_array($action,$AAB_COUNTRY_ACTIONS,true)) {
+   try {
+     $auth=require_auth();
+-    $email=strtolower(trim((string)($auth['user']['email']??'')));$localRole=strtolower(trim((string)($auth['user']['role']??'user')));
++    $authUserId=trim((string)($auth['user']['id']??$auth['session']['user_id']??''));
++    if(!preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i',$authUserId))throw new RuntimeException('IMMUTABLE_AUTH_SUBJECT_REQUIRED');
+     $factory=require __DIR__.'/api/agriculture/bootstrap.php';$ag=$factory();if(!isset($ag['pdo'])||!($ag['pdo'] instanceof PDO))throw new RuntimeException('POSTGRES_PDO_NOT_AVAILABLE');$pg=$ag['pdo'];
+-    $as=$pg->prepare('SELECT * FROM agriculture.api_resolve_authenticated_actor(:email,:role,:display_name)');$as->execute(['email'=>$email,'role'=>$localRole,'display_name'=>$email]);$actor=$as->fetch(PDO::FETCH_ASSOC);$actorId=(string)($actor['actor_id']??'');if($actorId==='')throw new RuntimeException('ACTOR_RESOLUTION_FAILED');
++    $as=$pg->prepare("SELECT i.actor_id,a.actor_type,NULL::text AS access_profile_code,NULL::text AS authority_role_code FROM platform.auth_actor_identity i JOIN agriculture.actor a ON a.actor_id=i.actor_id WHERE i.auth_user_id=CAST(:auth_user_id AS uuid) AND i.active AND a.active AND a.external_subject=:external_subject LIMIT 1");
++    $as->execute(['auth_user_id'=>$authUserId,'external_subject'=>'supabase-auth:'.$authUserId]);
++    $actor=$as->fetch(PDO::FETCH_ASSOC)?:[];$actorId=(string)($actor['actor_id']??'');if($actorId==='')throw new RuntimeException('EXACT_PERSISTED_ACTOR_IDENTITY_REQUIRED');
+@@
+-  } catch(Throwable $e){$msg=$e->getMessage();$status=str_contains($msg,'AUTHORITY_REQUIRED')?403:500;jexit(['ok'=>false,'error'=>'aab_country_foundation_gateway_failed','source'=>'POSTGRESQL_COUNTRY_CORE','fail_closed'=>true,'detail'=>defined('AAB_DEBUG')&&AAB_DEBUG?$msg:null],$status);}
++  } catch(Throwable $e){
++    $msg=$e->getMessage();$status=500;$error='aab_country_foundation_gateway_failed';
++    if(str_contains($msg,'IMMUTABLE_AUTH_SUBJECT_REQUIRED')||str_contains($msg,'EXACT_PERSISTED_ACTOR_IDENTITY_REQUIRED')){$status=403;$error='persisted_actor_identity_required';}
++    elseif(str_contains($msg,'AUTHORITY_REQUIRED')){$status=403;$error='country_authority_required';}
++    elseif(str_contains($msg,'PRIVATE_POSTGRESQL_CONFIG_')||str_contains($msg,'POSTGRESQL_CONFIG_')||str_contains($msg,'AAB_PG_ENVIRONMENT_')){$status=503;$error='country_database_configuration_unavailable';}
++    elseif(str_contains($msg,'POSTGRESQL_')||str_contains($msg,'PDO_PGSQL')){$status=503;$error='country_database_connection_unavailable';}
++    jexit(['ok'=>false,'error'=>$error,'source'=>'POSTGRESQL_COUNTRY_CORE','fail_closed'=>true,'detail'=>defined('AAB_DEBUG')&&AAB_DEBUG?$msg:null],$status);
++  }
+ }
+
+Validation evidence before deployment:
+- WA activation is USED.
+- The authenticated Supabase UUID has one active platform.auth_actor_identity link.
+- The linked actor is active and has one active HEAD_ADMIN workspace membership.
+- country_core.api_personal_dashboard(exact_actor_uuid) returns the WA workspace.
+- The previous country-foundation route called agriculture.api_resolve_authenticated_actor(email, role, display_name), which is a SECURITY DEFINER write-capable resolver and is inappropriate for dashboard reads.
+- Static replacement diff reviewed. PHP CLI was unavailable in the authoring workspace, so live Hostinger syntax/runtime validation remains required.
+
+Expected fail-closed responses:
+- persisted_actor_identity_required (403)
+- country_authority_required (403)
+- country_database_configuration_unavailable (503)
+- country_database_connection_unavailable (503)
+- aab_country_foundation_gateway_failed (500)
+
+Do not apply this replacement to the separate governed Agriculture write routes in the same file without an independent authority review.
