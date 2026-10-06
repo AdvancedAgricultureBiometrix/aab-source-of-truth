@@ -109,6 +109,8 @@ A chat is a working surface, not a record. It can lag behind `main`, be compacte
 
     An AI system is given only what is on the public repository, or what the Platform Owner chooses to give it. Test data is synthetic.
 
+**Safeguard investigation** (decision 72, boundary 4; `governance/AAB-PLATFORM-SECURITY-GAP-CONTINUATION-DECISION-2026-10-05.md`): work on an unresolved confidentiality, isolation, authority or recoverability safeguard uses rule 11 environments and rule 12 material only: isolated and disposable, with synthetic material or expressly authorised non-production material containing no real information. Rules 11 and 12 are unchanged.
+
 ---
 
 ## 4. The work package: `WORK-PACKAGE.md`

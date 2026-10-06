@@ -83,7 +83,7 @@ These decisions were made by the Platform Owner in review. This definition imple
 | `reviewerAssessment` | A reference, by digest, to the independent reviewer's written assessment, and to their appointment record and signed declaration. |
 | `dependencies` | Every admitted capability this one depends on, each with its `admissionId`. Each must be current in the same scope when the record is written. |
 | `outcome` | `ADMISSION_GRANTED` or `ADMISSION_REFUSED`. For a refusal, every unsatisfied item. |
-| `disclosedLimitations` | Every limitation, deferred operation and open `TODO(` of the capability, as recorded in the admission evidence. |
+| `disclosedLimitations` | Every limitation, deferred operation and open `TODO(` of the capability, as recorded in the admission evidence. A gap in confidentiality, isolation, authority or recoverability for an admitted operation is never recorded here as a limitation: it refuses admission of the affected scope (decision 72, T1). |
 | `supersedes` | Where the record supersedes an earlier one (for example a re-admission after a material change), that record's `admissionId`. |
 | `timestamp` | When the record was written. |
 | `digest` | SHA-256 over the canonical JSON of every other field. |
