@@ -1,0 +1,5 @@
+.candidateSiteMap{margin-top:12px;padding:14px;border:1px solid rgba(85,201,149,.2);border-radius:13px;background:#080c0a}
+.candidateSiteMap .scientificMap{min-height:420px}
+.candidateSiteMap .scientificMapWorkspace{margin-top:10px}
+.candidateSiteMap .aabMapTileLabel{white-space:nowrap}
+.candidateSiteMap .mapWorkspaceHead strong{color:var(--green)}

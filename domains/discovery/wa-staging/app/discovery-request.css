@@ -1,0 +1,18 @@
+.interfaceSelectionCount {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px solid rgba(85, 201, 149, .2);
+  border-radius: 8px;
+  background: rgba(85, 201, 149, .04);
+  font: 700 10px var(--font-geist-mono);
+}
+
+.interfaceSelectionCount b { color: var(--green); }
+.interfaceSelectionCount span { color: var(--gold); }
+
+@media (max-width: 760px) {
+  .interfaceSelectionCount { flex-direction: column; }
+}
