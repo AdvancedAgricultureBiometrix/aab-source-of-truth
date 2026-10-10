@@ -305,7 +305,15 @@ export function evaluate(input: EvaluationInput): EvaluationOutcome {
       ? "admitted evidence reports an adverse finding or a conflict, which is never set aside"
       : null;
   applies.set("DEF-TEMPORAL-COVERAGE", defReason);
-  applies.set("DEF-SPATIAL-COVERAGE", th.allPlotsHaveDeforestationEvidence ? "sufficiencyThreshold.allPlotsHaveDeforestationEvidence is true" : null);
+  // Amendment of 2026-10-11 (F-B): in the pilot, spatial coverage always applies. It cannot be
+  // evaluated (no spatial database), so it is disclosed for every plot and no pilot evaluation
+  // can be SUFFICIENT; when the threshold is off, that disclosure is its only gap.
+  applies.set(
+    "DEF-SPATIAL-COVERAGE",
+    th.allPlotsHaveDeforestationEvidence
+      ? "sufficiencyThreshold.allPlotsHaveDeforestationEvidence is true"
+      : "the pilot cannot evaluate spatial coverage (no spatial database), so it is disclosed for every plot and no pilot evaluation can be SUFFICIENT",
+  );
   applies.set("DEF-SOURCE-TYPE", "always");
   applies.set("DEF-RESOLUTION", f.minimumResolutionMetres !== null ? `minimumResolutionMetres is ${f.minimumResolutionMetres}` : null);
   applies.set("DEF-RECENCY", f.minimumRecencyDays !== null ? `minimumRecencyDays is ${f.minimumRecencyDays}` : null);
@@ -414,7 +422,7 @@ export function evaluate(input: EvaluationInput): EvaluationOutcome {
   for (const p of plots) {
     const cover = covering.get(p.plotId) ?? [];
     if (on("DEF-SPATIAL-COVERAGE")) {
-      if (cover.length === 0) gap("DEF-SPATIAL-COVERAGE", "EVIDENCE_ABSENT", plotSubject(p.plotId), `No admitted evidence covers plot ${p.plotId}.`);
+      if (th.allPlotsHaveDeforestationEvidence && cover.length === 0) gap("DEF-SPATIAL-COVERAGE", "EVIDENCE_ABSENT", plotSubject(p.plotId), `No admitted evidence covers plot ${p.plotId}.`);
       if (f.requiredCoverageType !== "FULL_PLOT_COVERAGE") {
         gap("DEF-SPATIAL-COVERAGE", "COVERAGE_TYPE_NOT_EVALUATED", plotSubject(p.plotId), `The specification requires ${f.requiredCoverageType}, which is not defined and is not evaluated in the pilot.`);
       } else {

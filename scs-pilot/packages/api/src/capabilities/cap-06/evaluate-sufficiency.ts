@@ -67,8 +67,8 @@ import {
 /** The only role that may request an evaluation (contract 0fd8c25). */
 export const REQUESTOR_ROLE = "COMPLIANCE_OFFICER";
 
-/** ScsSufficiencyEvaluationResult.evaluatorVersion (contract 0fd8c25). */
-export const EVALUATOR_VERSION = "scs-cap06-pilot-1";
+/** ScsSufficiencyEvaluationResult.evaluatorVersion (contract 0fd8c25). pilot-2 from the amendment of 2026-10-11 (F-B); recorded pilot-1 evaluations keep their version and meaning. */
+export const EVALUATOR_VERSION = "scs-cap06-pilot-2";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
