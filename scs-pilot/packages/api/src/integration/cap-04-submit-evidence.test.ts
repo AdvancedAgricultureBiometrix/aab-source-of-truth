@@ -400,6 +400,16 @@ test("invalid coverage geometry (open ring, wrong CRS, bad excluded area) → 42
   ]);
 });
 
+test("a coverage triangle with no area (collinear positions) → 422 COVERAGE_GEOMETRY_INVALID (F-D, 2026-10-11)", async () => {
+  const body = evidenceRequest(strict, await storedObject(), (r) => {
+    r.spatialCoverage.coverageGeometry = { geometryType: "POLYGON", coordinates: [[[101.4, 13.4], [101.5, 13.4], [101.6, 13.4], [101.4, 13.4]]], coordinateReferenceSystem: "EPSG:4326" };
+  });
+  const r = await assertRefused(body, 422, "COVERAGE_GEOMETRY_INVALID");
+  assert.deepEqual(r.json["reasons"], [
+    "/spatialCoverage/coverageGeometry/coordinates/0: the ring intersects itself (it has no area: its positions are collinear or repeated).",
+  ]);
+});
+
 test("coverage bounding box does not touch the plot's → 422 EVIDENCE_NOT_RELATED_TO_PLOT", async () => {
   const body = evidenceRequest(strict, await storedObject(), (r) => (r.spatialCoverage.coverageGeometry.coordinates = [ELSEWHERE]));
   const r = await assertRefused(body, 422, "EVIDENCE_NOT_RELATED_TO_PLOT");

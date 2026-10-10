@@ -59,3 +59,23 @@ test("never throws on malformed input", () => {
     assert.ok(Array.isArray(validateGeometry("POINT", bad, undefined)));
   }
 });
+
+test("rings: a triangle with no area (collinear or repeated positions) intersects itself; a real triangle does not (F-D, 2026-10-11)", () => {
+  const refused = (problems: string[], at: RegExp) => {
+    assert.equal(problems.length, 1, JSON.stringify(problems));
+    assert.match(problems[0]!, /intersects itself \(it has no area: its positions are collinear or repeated\)/);
+    assert.match(problems[0]!, at);
+  };
+  refused(validateGeometry("POLYGON", [[[5, 5], [5, 5], [5, 5], [5, 5]]], 1), /^\/plot\/geometry\/coordinates\/0:/);
+  refused(validateGeometry("POLYGON", [[[0, 0], [1, 0], [2, 0], [0, 0]]], 1), /coordinates\/0:/);
+  refused(validateGeometry("POLYGON", [[[0, 0], [1, 1], [1, 1], [0, 0]]], 1), /coordinates\/0:/);
+  // a degenerate hole, and a degenerate part of a multipolygon
+  refused(validateGeometry("POLYGON", [SQUARE, [[101.5002, 13.5002], [101.5003, 13.5002], [101.5004, 13.5002], [101.5002, 13.5002]]], 1.2), /coordinates\/1:/);
+  refused(validateGeometry("MULTIPOLYGON", [[SQUARE], [[[5, 5], [5, 5], [5, 5], [5, 5]]]], 2.4), /coordinates\/1\/0:/);
+  // the same check for SCS-CAP-04 coverage geometries (no area rule)
+  refused(validateGeometry("POLYGON", [[[101.4, 13.4], [101.5, 13.4], [101.6, 13.4], [101.4, 13.4]]], undefined, { base: "/spatialCoverage/coverageGeometry", areaRule: false }), /^\/spatialCoverage\/coverageGeometry\/coordinates\/0:/);
+  // unchanged: real triangles, however small, are valid
+  assert.deepEqual(validateGeometry("POLYGON", [[[0, 0], [1, 0], [0, 1], [0, 0]]], 1), []);
+  assert.deepEqual(validateGeometry("POLYGON", [[[0, 0], [1e-9, 0], [0, 1e-9], [0, 0]]], 1), []);
+  assert.deepEqual(validateGeometry("POLYGON", [SQUARE, [[101.5002, 13.5002], [101.5004, 13.5002], [101.5004, 13.5004], [101.5002, 13.5002]]], 1.2), [], "the triangle hole above");
+});

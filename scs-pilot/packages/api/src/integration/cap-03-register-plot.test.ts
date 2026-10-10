@@ -278,6 +278,7 @@ test("invalid GeoJSON geometry → 422 GEOMETRY_INVALID naming each problem", as
   const bowtie = [[0, 0], [1, 1], [1, 0], [0, 1], [0, 0]];
   for (const [geometry, reason] of [
     [{ coordinates: [bowtie] }, /intersects itself/],
+    [{ coordinates: [[[101.5, 13.5], [101.501, 13.5], [101.502, 13.5], [101.5, 13.5]]] }, /intersects itself \(it has no area/], // F-D, 2026-10-11
     [{ coordinates: [SQUARE.slice(0, 4)] }, /not closed/],
     [{ coordinates: [[[101.5, 13.5], [101.6, 13.5], [101.5, 13.5]]] }, /at least 4 positions/],
     [{ coordinates: [SQUARE.map(([x, y]) => [x! + 100, y!])] }, /longitude .* is outside/],
