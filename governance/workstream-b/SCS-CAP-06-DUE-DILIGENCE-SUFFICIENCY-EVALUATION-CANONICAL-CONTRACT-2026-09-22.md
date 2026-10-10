@@ -4,6 +4,45 @@
 **Domain:** Supply Chain Sovereignty (SCS)
 **Authority:** DEFINES THE CONTRACT FOR SCS-CAP-06. Establishes no commissioning, production, Gate D, WP05, scientific-validity or regulatory authority. This capability is PROPOSED_NOT_ADMITTED. A pilot implementation exists; what it covers is recorded in `scs-pilot/packages/api/src/capabilities/cap-06/README.md`.
 
+## Amendment of 2026-10-11: in the pilot, spatial coverage always applies
+
+**Finding F-B of the AAB substance verification of 2026-10-11** (a zero-evidence `SUFFICIENT`). Remediation option B1 was approved for preparation by the Platform Owner on 2026-10-11, conditionally; **this text is subject to the Platform Owner's review before it is published.** This block states the changes; the body below is not edited (the overlay convention, as in AAB-PLATFORM-10).
+
+**The conflict it resolves.** Two clauses of this contract disagreed:
+- "Outcomes and the honest pilot result" says: **no pilot evaluation can be `SUFFICIENT`**, because spatial coverage is `NOT_EVALUATED` for every plot and `SUFFICIENT` requires every spatial evaluation to pass. "Current system limit: spatial evaluation" says the same.
+- But the "Requirement catalogue" applies `DEF-SPATIAL-COVERAGE` only when `sufficiencyThreshold.allPlotsHaveDeforestationEvidence` is true; otherwise it is `NOT_APPLICABLE`.
+- So a specification with every threshold false, evaluated over plots with no evidence at all, satisfied every applicable requirement and reached `SUFFICIENT`, with no gap. The pilot rule above, and the statements that SCS-CAP-08 (`packageLimitations`) and SCS-CAP-09 ("The honest pilot result") make on its strength, were then false for that evaluation.
+- **This amendment resolves the conflict in favour of the pilot rule.**
+
+**Changes:**
+- **"Requirement catalogue", the `DEF-SPATIAL-COVERAGE` row:** "Applies when" now reads ***"`sufficiencyThreshold.allPlotsHaveDeforestationEvidence`; and, in the pilot, always (see the amendment of 2026-10-11)"***.
+- **When `allPlotsHaveDeforestationEvidence` is `true`,** nothing changes: an uncovered plot is `EVIDENCE_ABSENT` (missing evidence), and every plot also has the verification gap `SPATIAL_COVERAGE_NOT_EVALUATED` (or `COVERAGE_TYPE_NOT_EVALUATED` when `requiredCoverageType` is not `FULL_PLOT_COVERAGE`).
+- **When it is `false`,** the requirement applies only as the disclosure of the pilot limit:
+  - every plot has the verification gap `SPATIAL_COVERAGE_NOT_EVALUATED` (or `COVERAGE_TYPE_NOT_EVALUATED`);
+  - there is **no** `EVIDENCE_ABSENT` gap, because the specification does not demand deforestation evidence;
+  - the requirement is therefore `GAP_REQUIRES_HUMAN_DECISION`, and its explanation says the pilot cannot evaluate spatial coverage.
+- **Consequence:** "no pilot evaluation can be `SUFFICIENT`" now holds for every specification. A subject always names at least one plot (the request schema's `plotIds` has `minItems: 1`), and every plot carries the disclosure gap. The best pilot outcome is `GAPS_REQUIRE_HUMAN_DECISION`.
+- **"Authority and system-set fields":** `evaluatorVersion`, "the constant `scs-cap06-pilot-1`", now reads ***"the constant `scs-cap06-pilot-2`"*** for every evaluation recorded under this amendment.
+
+**Recorded evaluations keep their version and their meaning.**
+- An evaluation recorded as `scs-cap06-pilot-1` is unchanged and is never re-derived. It was evaluated under the catalogue as first written.
+- A `pilot-1` result of `SUFFICIENT` was possible only under a specification with `allPlotsHaveDeforestationEvidence` false. It means sufficient under that catalogue, in which spatial coverage did not apply: **it is not a finding that spatial coverage was evaluated.**
+- Re-evaluating the same subject records a new `pilot-2` evaluation, disclosed as a repetition, never blocked ("Repeated evaluations").
+
+**Unchanged:**
+- the definition of `SUFFICIENT`;
+- the gap classification (`SPATIAL_COVERAGE_NOT_EVALUATED` and `COVERAGE_TYPE_NOT_EVALUATED` are already verification gaps);
+- the requirement-state and overall-state precedence;
+- the failure contract;
+- every other catalogue row and every `sufficiencyThreshold` flag's meaning when `true`;
+- SCS-CAP-01's thresholds;
+- the human gate of SCS-CAP-09.
+
+**What this amendment does not do:**
+- **It evaluates nothing new:** spatial coverage is still not evaluated (`TODO(postgis)`).
+- **It adds no reasoning,** grants no authority, and changes no stored record.
+- **No other contract is amended.** SCS-CAP-08, SCS-CAP-09, the Gate D definition and the roadmap already state that no pilot evaluation can be `SUFFICIENT`; this amendment makes that true for every specification.
+
 ## Plain-English boundary statement
 
 SCS-CAP-06 evaluates the collective admitted evidence for a specific operator, commodity, regulatory framework version, and relevant period — producing an honest, structured sufficiency landscape that identifies what is satisfied, what is missing, what is conflicting, and what requires human decision. It does not make legal compliance determinations. It does not produce or authorise due diligence statements. It does not resolve conflicts by selecting the more convenient evidence. It does not treat simple date-union as proof of continuous temporal coverage.
