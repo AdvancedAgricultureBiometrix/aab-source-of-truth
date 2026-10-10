@@ -3,7 +3,9 @@
 // Receipts, request digests and idempotency fingerprints are hashes of JSON.
 // The same content must always hash to the same value, whatever order a
 // client sent its keys in, so everything is hashed in canonical form:
-// object keys sorted by code point, no whitespace, standard JSON escaping.
+// object keys sorted by UTF-16 code unit (Array.prototype.sort), no
+// whitespace, standard JSON escaping. This is aab-canonical-json-1
+// (AAB-PLATFORM-10, section 3).
 // Values that JSON cannot represent faithfully are refused rather than
 // silently changed (undefined, functions, symbols, bigint, NaN, ±Infinity,
 // and objects that are not plain objects or arrays).
