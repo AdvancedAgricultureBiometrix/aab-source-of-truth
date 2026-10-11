@@ -6,7 +6,7 @@
 
 ## Amendment of 2026-10-11: in the pilot, spatial coverage always applies
 
-**Finding F-B of the AAB substance verification of 2026-10-11** (a zero-evidence `SUFFICIENT`). Remediation option B1 was approved for preparation by the Platform Owner on 2026-10-11, conditionally; **this text is subject to the Platform Owner's review before it is published.** This block states the changes; the body below is not edited (the overlay convention, as in AAB-PLATFORM-10).
+**Finding F-B of the AAB substance verification of 2026-10-11** (a zero-evidence `SUFFICIENT`). Remediation option B1 was approved by the Platform Owner on 2026-10-11, and the Platform Owner authorised this amendment's publication through PR #130 on 2026-10-11. This block states the changes; the body below is not edited (the overlay convention, as in AAB-PLATFORM-10).
 
 **The conflict it resolves.** Two clauses of this contract disagreed:
 - "Outcomes and the honest pilot result" says: **no pilot evaluation can be `SUFFICIENT`**, because spatial coverage is `NOT_EVALUATED` for every plot and `SUFFICIENT` requires every spatial evaluation to pass. "Current system limit: spatial evaluation" says the same.
