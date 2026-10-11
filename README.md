@@ -10,6 +10,7 @@ Every new chat, agent or contributor must read these records completely before i
 
 1. [AAB Canonical System Definition](handovers/AAB-CANONICAL-SYSTEM-DEFINITION.md) — what AAB is as a complete governed scientific-intelligence and agricultural-development operating system.
 2. [AAB Country Onboarding Path — Canonical Continuity Record](handovers/AAB-COUNTRY-ONBOARDING-CANONICAL-PATH.md) — the authoritative identity, participation, provisioning, activation, institution and role-routing sequence.
+3. [AAB Capability Truth and Delivery Policy](governance/AAB-PLATFORM-CAPABILITY-TRUTH-AND-DELIVERY-POLICY-2026-10-11.md) (AAB-GOV-DEC-CAPABILITY-TRUTH-01) — how any claim about what AAB can do is evidenced, classified, challenged and recorded.
 
 Then read any task-specific canonical record linked from this README or the relevant domain directory.
 

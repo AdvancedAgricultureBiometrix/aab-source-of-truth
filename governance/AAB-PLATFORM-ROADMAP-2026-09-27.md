@@ -104,6 +104,7 @@
 **Recorded (2026-10-05), in this change:** RD-01 Stage 1 item 4, the independent review of the platform amendment, is outstanding (decision 71; `governance/reviews/RD-01-STAGE-1-ITEM-4-DECISION-RECORD-2026-10-05.md`). No contract, approved text, check or status label changes; RD-01's label is read with that qualification.
 **Recorded (2026-10-05), in this change:** the security-gap continuation principle (decision 72; `governance/AAB-PLATFORM-SECURITY-GAP-CONTINUATION-DECISION-2026-10-05.md`). Production authority is withheld while a safeguard is undemonstrated, and the work continues. No gate is weakened, and nothing is authorised.
 **Recorded (2026-10-06), in this change:** decision 72's downstream alignment (the record, section 6). The capability admission authority and registry definitions state its T1 rule; Gate D and the parallel development protocol cross-reference it; the roadmap (sections 5.5, 6.1, 6.4 and 7.3) and the stock-take (sections 5 to 8) classify the isolation, recoverability, authority and confidentiality gaps as blocking admission of the affected scope; and the stock-take records the security-gap register (boundary 5; section 5.1 there). No control status, gate or other rule changes, and the work on each gap continues in isolated, disposable environments.
+**Recorded (2026-10-11), in this change:** decision 73, the capability truth and delivery policy (`governance/AAB-PLATFORM-CAPABILITY-TRUTH-AND-DELIVERY-POLICY-2026-10-11.md`). No state label, status, gate or other rule changes.
 **Authority:** RECORDS THE STATE OF EVERY AAB PLATFORM PRIMITIVE AND CAPABILITY, AS DEMONSTRATED BY THE CONTRACTS, CODE, TESTS AND PROOFS ON `main` AT `9f17cc2`, UPDATED TO `634295a`, TO `67b6ba8`, TO `c1586c6`, TO `fa84240`, TO `16d21cc`, TO `dbb2408`, TO `f1bb47d`, TO `d1bc453`, TO `695bc18`, TO `46e3e09`, TO `7e7bbc0`, TO `0461bfb`, TO `a0f0082`, TO `0370bbc`, TO `cb0540d`, TO `4e26c78`, TO `adda4e8`, TO `625007d`, TO `b2c5c10`, TO `591f167`, TO `8132243`, TO `3b68e57`, TO `91613f8`, TO `59a0dfe`, TO `f6fc458` AND TO `388a7e3`, AND WHAT MUST EXIST BEFORE WHAT. Admits no capability, grants no implementation, commissioning, production, regulatory or scientific authority, changes no control's status, and does not satisfy Gate D or begin WP05.
 **Sources:**
 - `governance/AAB-PLATFORM-PURPOSE-AND-VALUES-REVISION-2026-09-25.md`
@@ -1167,6 +1168,16 @@ These points came up while compiling the roadmap and were decided in review.
     - **Admission is tightened** (the record, section 4, T1): a gap in the four safeguards for an admitted operation is not a disclosed limitation. Downstream alignment is listed in the record, section 6.
     - **Authorises nothing:** no implementation, deployment, production access or live-data use, and no gate is weakened.
     - **Update (recorded 2026-10-06):** the downstream alignment of the record's section 6 is made in this change (see the "Recorded (2026-10-06)" note at the head of this roadmap). This entry is unchanged.
+
+## Decisions recorded on 2026-10-11, after `df17e07`
+
+73. **The capability truth and delivery policy** (this change; `governance/AAB-PLATFORM-CAPABILITY-TRUTH-AND-DELIVERY-POLICY-2026-10-11.md`, AAB-GOV-DEC-CAPABILITY-TRUTH-01). AAB must demonstrably do what it claims to do.
+    - **Evidence:** every claim of capability carries evidence with separately stated provenance (source, dependencies, dataset origin, data nature, lawful-use restrictions, environment, method, verifier). Each aspect carries an evidence class and a dependency-aware currency state.
+    - **Challenge:** anyone may challenge a classification; contradictory evidence flags it `DISPUTED` at once; only the governance process reclassifies.
+    - **Preserved:** failed verification is preserved; no unsupported public claim is made; independent verification is recorded only when independence, qualifications, scope and signed findings are established.
+    - **Unchanged:** the state labels above stay the single record of each capability's state. The policy's mapping to them is advisory and promotes or demotes nothing. Admission, Gate D, commissioning and activation are unchanged.
+    - **Authorises nothing:** no implementation; no register or automated check yet (each needs its own approval); no reviewer appointed (open decisions 8 and 19 stay open).
+    - **Discovery:** `CLAUDE.md` at the repository root and the README's continuity reading now point to the policy; the System Definition records it by amendment.
 
 **Still open, noted in the text:**
 - The mapping of the eleven primitives to landscape capabilities (section 4) is proposed by this roadmap, not established.
