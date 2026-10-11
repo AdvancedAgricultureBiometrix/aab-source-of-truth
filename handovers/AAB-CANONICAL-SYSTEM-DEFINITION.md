@@ -2,7 +2,19 @@
 
 **Status:** CURRENT AND AUTHORITATIVE  
 **Established:** 30 August 2026 (AWST)  
+**Amended:** 2026-10-11 (see "Amendment of 2026-10-11: capability truth and evidence")  
 **Applies to:** the identity, purpose, architecture, operating model and authority boundaries of Advanced Agriculture Biometrix (AAB)
+
+## Amendment of 2026-10-11: capability truth and evidence
+
+Roadmap decision 73 adopts `governance/AAB-PLATFORM-CAPABILITY-TRUTH-AND-DELIVERY-POLICY-2026-10-11.md` (AAB-GOV-DEC-CAPABILITY-TRUTH-01). In this record:
+
+- **"Architecture is not the same as operational proof":** the five operational states remain. A claim that a capability is in one of them is supported by evidence as that policy requires, including its data nature and test environment.
+- **"Instructions for every future chat", step 5:** this now also reads *"and, for any claim that an aspect works, state its evidence class, the evidence relied on, and who verified it, as the capability truth and delivery policy requires"*.
+- **Step 4** ("Retrieve and inspect the existing source and live persisted state"): live persisted state is inspected only where access is separately authorised. Where it is not, the state is recorded as not inspected, never assumed.
+- **The policy's evidence classes are advisory** in relation to these five operational states and to the roadmap's state labels. They promote or demote nothing.
+
+Nothing else in this record changes.
 
 ## Authority of this record
 
