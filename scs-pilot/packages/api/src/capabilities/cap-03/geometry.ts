@@ -10,7 +10,8 @@
 // Checked: positions ([longitude, latitude], an optional altitude ignored;
 // finite numbers; longitude −180..180, latitude −90..90); a POINT is one
 // position; every polygon ring has at least 4 positions, is closed and does
-// not intersect itself; a MULTIPOLYGON is a non-empty list of polygons; the
+// not intersect itself (a triangle ring with no area — collinear or repeated
+// positions — intersects itself; finding F-D of 2026-10-11); a MULTIPOLYGON is a non-empty list of polygons; the
 // EUDR area rule (polygons declare areaHectares; a point declares at most 4).
 // Not checked (contract gaps): holes inside their outer ring, overlap between
 // multipolygon parts, winding order (RFC 7946 §3.1.6 says not to reject on it),
@@ -100,6 +101,12 @@ function ring(value: unknown, at: string, problems: string[], budget: { position
   // segments i = pts[i]→pts[i+1]; adjacent segments share an endpoint by
   // design, as do the first and last (the ring closes)
   const n = pts.length - 1;
+  // A triangle (4 positions) has no non-adjacent segment pair for the loop below to
+  // compare, so it is checked here: it intersects itself only when it has no area.
+  if (n === 3 && cross(pts[0]!, pts[1]!, pts[2]!) === 0) {
+    problems.push(`${at}: the ring intersects itself (it has no area: its positions are collinear or repeated).`);
+    return;
+  }
   for (let i = 0; i < n; i++) {
     for (let j = i + 1; j < n; j++) {
       if (j === i + 1 || (i === 0 && j === n - 1)) continue;

@@ -28,3 +28,7 @@ coverage/
 *.tar
 *.tar.gz
 .claude/
+
+# Python bytecode (generated when governance/tools run; never committed)
+__pycache__/
+*.pyc

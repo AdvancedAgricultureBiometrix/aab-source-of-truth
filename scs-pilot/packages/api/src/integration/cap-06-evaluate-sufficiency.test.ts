@@ -326,7 +326,7 @@ test("end to end over real admitted CAP-04 and CAP-05 records → 201 GAPS_REQUI
   assert.equal(d.custodyChain![0]!.chainAssessment, "CONTINUOUS");
   assert.deepEqual(d.custodyChain![0]!.documentTypesMissing, []);
   assert.equal(d.evaluationPeriod.referenceDate, "2020-12-31", "the specification's cut-off, set by the system");
-  assert.equal(d.evaluatorVersion, "scs-cap06-pilot-1");
+  assert.equal(d.evaluatorVersion, "scs-cap06-pilot-2", "pilot-2 from the contract amendment of 2026-10-11");
   assert.equal(d.evidenceCutoffAt, d.evaluatedAt);
   assert.ok(d.nextSteps.every((n) => n.priority !== "BLOCKING"), "nothing blocking: only human decisions remain");
   assert.ok(d.evaluationExplanation.includes("Evaluation cannot reach SUFFICIENT because:"));
@@ -383,6 +383,28 @@ test("missing coverage is INSUFFICIENT: an uncovered interval is a missing-evide
   assert.equal(g.automaticFailure, true);
   assert.equal(d.temporalCoverage[0]!.uncoveredIntervals[0]!.gapId, g.gapId);
   assert.ok(d.evaluationExplanation.some((x) => x.includes("Human review cannot remove this missing-evidence fact.")));
+});
+
+test("a permissive specification (every threshold false) with no evidence → GAPS_REQUIRE_HUMAN_DECISION, never SUFFICIENT (amendment of 2026-10-11, F-B)", async () => {
+  const permissive = await registerFramework((e) => {
+    e.sufficiencyThreshold = { allPlotsRegistered: false, allPlotsHaveDeforestationEvidence: false, custodyChainComplete: false, noUnresolvedGaps: false, humanReviewCompleted: false };
+    e.custodyEvidence.requiredDocumentTypes = [];
+    e.plotRequirements.geolocationRequired = false;
+  });
+  const plot = await registerPlot(permissive);
+  const d = await evaluateOk(evaluationRequest(permissive, [plot.plotId]));
+  assert.deepEqual(d.evaluatedEvidence.manifest, [], "nothing is in scope");
+  assert.equal(d.overallState, "GAPS_REQUIRE_HUMAN_DECISION");
+  assert.equal(d.evaluatorVersion, "scs-cap06-pilot-2");
+  assert.equal(stateOf(d, "DEF-SPATIAL-COVERAGE"), "GAP_REQUIRES_HUMAN_DECISION");
+  assert.deepEqual(gapTypes(d), ["SPATIAL_COVERAGE_NOT_EVALUATED"], "the pilot limit is the only gap, disclosed for the plot");
+  assert.ok(d.allGaps.every((g) => g.humanDecisionRequired && !g.automaticFailure));
+  assert.ok(d.evaluationExplanation.some((x) => x.includes("Evaluation cannot reach SUFFICIENT because:")));
+
+  // the empty-scope boundary: a subject must name at least one plot
+  const empty = await post(EVALUATIONS, evaluationRequest(permissive, []));
+  assert.equal(empty.status, 400, JSON.stringify(empty.json));
+  assert.equal(empty.json["error"], "REQUEST_VALIDATION_FAILED");
 });
 
 // ── getEvaluationResult ──────────────────────────────────────────────────────
