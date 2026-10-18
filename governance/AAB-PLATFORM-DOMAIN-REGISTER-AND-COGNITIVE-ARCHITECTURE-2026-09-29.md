@@ -3,9 +3,40 @@
 **Document:** AAB-PLATFORM-DOMAIN-REGISTER-AND-COGNITIVE-ARCHITECTURE-2026-09-29  
 **Internal reference:** AAB-GOV-DEC-DOMAIN-COGNITIVE-01  
 **Status:** APPROVED — reviewed and approved in governance session 2026-09-30  
+**Amended:** 2026-10-17 (cross-domain claims, and development sectors as governed context); see "Amendment of 2026-10-17" below (prepared 2026-10-17; approval and merge dates recorded there)  
 **Type:** Platform-wide governance architecture  
 **Applies to:** every AAB domain, every AAB brain and reasoning service, CAP-01, CAP-04, CAP-05, CAP-06, CAP-07, CAP-08, CAP-09, CAP-31, CAP-32, CAP-33, CAP-35 (candidate), CAP-36 (proposed)  
 **Supplements:** governance/AAB-PLATFORM-OBSERVATION-AND-BRAIN-GOVERNANCE-2026-09-29.md (AAB-GOV-DEC-OBSERVATION-BRAIN-01); governance/AAB-PLATFORM-DOMAIN-SEPARATION-DECISION-2026-09-25.md; governance/AAB-COUNTRY-SCIENTIFIC-DATA-NON-RETURN-BOUNDARY-2026-09-13.md
+
+---
+
+## Amendment of 2026-10-17: cross-domain claims, and development sectors as governed context
+
+**Dates.** Prepared: 2026-10-17. Approved by the Platform Owner: 2026-10-18. Merged to `main`: [to be recorded at merge]. The amendment keeps its preparation date in its title and in the **Amended:** line.
+
+**Why.** A read-only review of the main brain's cross-domain intelligence, made at `main` `31b815f`, confirmed that cross-domain reasoning is part of AAB's approved architecture (section 1, item 4; section 8; section 16), and that CAP-33 Cross-Domain Scientific Reasoning is `named only`, with no contract. This document did not say how different kinds of cross-domain statement are to be told apart, or how sectors outside the planned domains enter AAB reasoning. External practitioner testimony, recorded unverified in `governance/AAB-STRATEGIC-RESEARCH-HYPOTHESES-REGISTER-2026-10-17.md` (SRH-006), reports that agricultural outcomes depend on connected developments in education, health, water, sanitation, transport and industry.
+
+**1. Three kinds of cross-domain statement.** A cross-domain statement is always one of the following, labelled as such, and never presented as a stronger kind:
+
+| Kind | What it is | What it is not |
+|---|---|---|
+| **Association** | A co-occurrence or statistical relationship found in governed evidence, stated with its data, method, uncertainty and limitations. | Not a dependency and not a cause. "A historical association is not automatically a scientific conclusion or causal finding" (`governance/AAB-RESEARCHER-ADOPTION-AND-SCIENTIFIC-MEMORY-PRINCIPLES.md`). |
+| **Declared dependency** | An explicitly recorded statement that one domain's condition or output is an input to, or a constraint on, another's question, with who declared it, its source and its scope. For example: irrigation-water salinity declared as a condition of a crop-yield question. | A declared dependency is a modelling assumption. It is not evidence that the dependency operates as declared, or how strongly. |
+| **Scientifically supported causation** | A causal relationship supported by evidence capable of supporting causal inference, by an appropriate scientific design and analysis (for example controlled or randomised experiments, replicated studies, or an established mechanism with supporting evidence), assessed by qualified domain experts, and recorded through governed learning (CAP-09, `EFFECT` or `MECHANISM` claims) within its applicability boundary. | Not an association, a declared dependency, a hypothesis or an expert opinion relabelled. |
+
+**2. Human review is necessary, never sufficient.** No human review, approval, consensus or seniority by itself establishes causation. A causal statement requires evidence capable of supporting causal inference. Review assesses that evidence; it never substitutes for it. Where reviewers accept a relationship without such evidence, it stays an association, a declared dependency or a hypothesis, and is labelled as one.
+
+**3. Automated outputs.** A brain, including the Main Brain, may propose associations, candidate dependencies and causal hypotheses, each labelled under section 11 (for example HYPOTHESIS). None is ever presented as a causal finding. No brain recommends an intervention on the strength of an association or a declared dependency. Whether the Main Brain may rank or recommend at all remains open (section 16.6; open question 6).
+
+**4. Development sectors as governed context.** Sectors that affect agricultural and environmental outcomes but are not planned AAB domains (section 3), among them education, health, sanitation, transport and infrastructure, and industry, enter AAB reasoning now only as **governed context**:
+
+- as cited evidence, acquired and held under the existing capabilities (CAP-02 acquisition, CAP-03 provenance, CAP-04 scientific memory), with its provenance, licence and permitted uses, inside the country boundary;
+- used as declared conditions or declared dependencies (point 1), never as a domain's canonical knowledge;
+- owned by no AAB domain brain.
+
+**This does not exclude any of them from future domain consideration.** Section 4 already allows "other country-priority scientific domains admitted through future governance", and lists public health. Admitting any sector as an AAB domain, or as part of an existing domain (sanitation, for example, may fall within Water or within public health), needs its own approved governance decision, and its own contracts. Until then, none is presented as a designed or admitted AAB domain.
+
+**5. What this amendment does not do.** It creates no capability, admits no domain, changes no capability state label or maturity classification, and changes no contract. CAP-33 stays `named only`. Open questions 5 to 7 stay open. It decides nothing about the testimony it cites, which stays unverified.
 
 ---
 
@@ -565,6 +596,8 @@ Every AAB brain, including the Main Brain:
 5. The Main Brain's canonical name and identity, and its relationship to CAP-33.
 6. Whether the Main Brain may rank or recommend.
 7. The governed knowledge packet and the Intelligent Node Model as contracts.
+8. CAP-33's scope for associations, declared dependencies and causal claims, and the evidence standard each needs (amendment of 2026-10-17).
+9. How sectors outside the planned domains are modelled: as governed context only, as parts of existing domains, or as future domains, each by its own decision (amendment of 2026-10-17).
 
 ---
 

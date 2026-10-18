@@ -695,6 +695,8 @@ Under the admission authority's checklist (item 5), each dependency must be admi
 
 **Current system limit: no implementation.** Nothing of CAP-01 is built. It is built only after CAP-04, the dependency audit's independent verification and the extraction.
 
+**Contract gap: institutional coordination gaps** (Note of 2026-10-17, prepared 2026-10-17; approved 2026-10-18; merged [to be recorded at merge]). CAP-01 records problems, resources, waste streams and opportunities, and a dossier discloses gaps in their evidence. It cannot record that a problem or opportunity depends on responsibilities that are unassigned, unclear or contested, or held by institutions that do not share information, or that a country has no integrated development strategy against which its objectives are set. Any such record would depend on the national-objectives gap above, and on the stock-take's open decisions 13, 20 and 21 (access between institutions, sharing between government agencies, and programme responsibilities). As for every CAP-01 output, it would be disclosed, never scored, ranked or recommended. The gap was found by a read-only review of the main brain's cross-domain intelligence made at `main` `31b815f`; unverified, anonymised practitioner testimony in `governance/AAB-STRATEGIC-RESEARCH-HYPOTHESES-REGISTER-2026-10-17.md` (SRH-003 to SRH-005) reports that such gaps can delay or prevent programmes. **This note changes no rule or meaning.** It is not an amendment, and no **Amended:** line changes. It creates no record type, field, disclosure code or capability.
+
 ## What this document does not establish
 
 - It does not implement, deploy or migrate anything. No code, Supabase or other provider change is made or authorised.
