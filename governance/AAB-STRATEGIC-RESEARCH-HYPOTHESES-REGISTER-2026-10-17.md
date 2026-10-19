@@ -6,7 +6,7 @@
 **Type:** Platform-wide governance register
 **Prepared:** 2026-10-17
 **Approved:** 2026-10-18
-**Published:** [to be recorded at merge to `main`]
+**Published:** 2026-10-18
 **Recorded from:** the read-only main brain cross-domain intelligence review of 2026-10-17, made at `main` `31b815f34c16b067ad3d96c1c3215505df0be0e9`, and accepted by the Platform Owner as a basis for further governance review, not as proof of implemented capability.
 **Related records:** `governance/AAB-PLATFORM-DOMAIN-REGISTER-AND-COGNITIVE-ARCHITECTURE-2026-09-29.md` (amendment of 2026-10-17); `governance/AAB-STOCK-TAKE-2026-09-28.md` (open decisions 20 to 24); `governance/workstream-b/CAP-01-COUNTRY-INTELLIGENCE-AND-DISCOVERY-CANONICAL-CONTRACT-2026-09-29.md` (note of 2026-10-17).
 **Authority:** RECORDS UNVERIFIED STRATEGIC RESEARCH HYPOTHESES AND EXTERNAL PRACTITIONER TESTIMONY SO THAT THEY ARE PRESERVED WITHOUT BEING OVERSTATED. It creates no capability, admits no evidence, changes no state label, maturity classification, contract, enum or gate, and grants no person or AI system any authority.

@@ -12,7 +12,7 @@
 
 ## Amendment of 2026-10-17: cross-domain claims, and development sectors as governed context
 
-**Dates.** Prepared: 2026-10-17. Approved by the Platform Owner: 2026-10-18. Merged to `main`: [to be recorded at merge]. The amendment keeps its preparation date in its title and in the **Amended:** line.
+**Dates.** Prepared: 2026-10-17. Approved by the Platform Owner: 2026-10-18. Merged to `main`: 2026-10-18. The amendment keeps its preparation date in its title and in the **Amended:** line.
 
 **Why.** A read-only review of the main brain's cross-domain intelligence, made at `main` `31b815f`, confirmed that cross-domain reasoning is part of AAB's approved architecture (section 1, item 4; section 8; section 16), and that CAP-33 Cross-Domain Scientific Reasoning is `named only`, with no contract. This document did not say how different kinds of cross-domain statement are to be told apart, or how sectors outside the planned domains enter AAB reasoning. External practitioner testimony, recorded unverified in `governance/AAB-STRATEGIC-RESEARCH-HYPOTHESES-REGISTER-2026-10-17.md` (SRH-006), reports that agricultural outcomes depend on connected developments in education, health, water, sanitation, transport and industry.
 
