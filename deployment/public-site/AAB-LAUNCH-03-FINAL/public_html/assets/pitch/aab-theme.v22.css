@@ -1,0 +1,524 @@
+:root{
+  /* Keep existing variable names so nothing breaks */
+  --bg:#06080b;                 /* near-black */
+  --panel:rgba(255,255,255,0.045);
+  --panel2:rgba(255,255,255,0.06);
+  --text:rgba(255,255,255,0.92);
+  --muted:rgba(255,255,255,0.66);
+  --border:rgba(255,255,255,0.12);
+  --shadow:0 18px 60px rgba(0,0,0,0.55);
+
+  --ok:#35d07f;
+  --attn:#f3b74f;
+  --halt:#ff5b6e;
+
+  /* Gold accent (IndexDASH vibe) */
+  --accent:#d6a84f;
+
+  --radius:18px;
+  --radius2:24px;
+  --pad:14px;
+  --pad2:18px;
+  --max:1100px;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  /* Remove blue/green cast; keep subtle neutral + gold glow */
+  background:
+    radial-gradient(900px 520px at 20% -10%, rgba(255,255,255,.06), rgba(255,255,255,0) 60%),
+    radial-gradient(900px 520px at 90% 5%, rgba(214,168,79,.07), rgba(214,168,79,0) 60%),
+    linear-gradient(180deg, #070a0e, var(--bg) 45%, #05070a);
+  color:var(--text);
+  font-family:var(--sans);
+  line-height:1.35;
+}
+
+a{color:inherit}
+
+.aab-wrap{max-width:var(--max);margin:0 auto;padding:18px}
+
+.aab-header{
+  position:sticky;top:0;z-index:20;
+  backdrop-filter: blur(12px);
+  background: linear-gradient(to bottom, rgba(0,0,0,0.72), rgba(0,0,0,0.35));
+  border-bottom:1px solid rgba(255,255,255,0.08);
+}
+/* Gold hairline like IndexDASH */
+.aab-header::before{
+  content:"";
+  position:absolute;left:0;right:0;top:0;
+  height:2px;
+  background: linear-gradient(90deg, rgba(214,168,79,0), rgba(214,168,79,.55), rgba(214,168,79,0));
+}
+
+.aab-header-inner{max-width:var(--max);margin:0 auto;padding:14px 18px;display:flex;gap:14px;align-items:flex-start;justify-content:space-between}
+
+.aab-title{display:flex;flex-direction:column;gap:3px;min-width:180px}
+.aab-title h1{font-size:18px;margin:0;font-weight:650;letter-spacing:0.2px}
+.aab-title p{font-size:12px;margin:0;color:var(--muted)}
+
+.aab-pillrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+
+.pill{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:7px 10px;
+  border:1px solid rgba(255,255,255,0.12);
+  background:rgba(255,255,255,0.04);
+  border-radius:999px;
+  font-size:12px;
+  color:rgba(255,255,255,0.86);
+  user-select:none;
+}
+.pill .dot{width:8px;height:8px;border-radius:999px;background:rgba(255,255,255,0.22);box-shadow:0 0 0 3px rgba(255,255,255,0.06)}
+.pill.ok .dot{background:var(--ok);box-shadow:0 0 0 3px rgba(53,208,127,0.14)}
+.pill.attn .dot{background:var(--attn);box-shadow:0 0 0 3px rgba(243,183,79,0.14)}
+.pill.halt .dot{background:var(--halt);box-shadow:0 0 0 3px rgba(255,91,110,0.14)}
+
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:8px 12px;
+  border:1px solid rgba(255,255,255,0.12);
+  background:rgba(255,255,255,0.035);
+  color:rgba(255,255,255,0.88);
+  border-radius:999px;
+  cursor:pointer;
+  font-size:12px;
+}
+.btn:hover{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.18)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{border-color:rgba(214,168,79,0.38);background:rgba(214,168,79,0.10)}
+.btn.primary:hover{border-color:rgba(214,168,79,0.55);background:rgba(214,168,79,0.13)}
+.btn.danger{border-color:rgba(255,91,110,0.5);background:rgba(255,91,110,0.12)}
+
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+
+.card{
+  border:1px solid rgba(255,255,255,0.10);
+  background:
+    radial-gradient(120% 140% at 50% 0%, rgba(255,255,255,.06), rgba(255,255,255,0) 65%),
+    linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+  border-radius:var(--radius2);
+  box-shadow:var(--shadow);
+}
+.card .card-h{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.card .card-h h2{font-size:14px;margin:0;font-weight:650}
+.card .card-b{padding:14px 16px}
+
+.grid{display:grid;gap:12px}
+.grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:860px){.grid.two{grid-template-columns:1fr}}
+
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:12px;color:var(--muted)}
+.field input,.field select,.field textarea{
+  padding:10px 12px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,0.12);
+  background:rgba(0,0,0,0.22);
+  color:rgba(255,255,255,0.90);
+  outline:none;
+}
+.field textarea{min-height:86px;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{
+  border-color:rgba(214,168,79,0.45);
+  box-shadow:0 0 0 4px rgba(214,168,79,0.12);
+}
+
+.small{font-size:12px;color:var(--muted)}
+
+.toast-host{position:fixed;right:14px;bottom:14px;z-index:60;display:flex;flex-direction:column;gap:10px;max-width:380px}
+.toast{
+  border:1px solid rgba(255,255,255,0.12);
+  background:rgba(0,0,0,0.70);
+  border-radius:16px;
+  padding:10px 12px;
+  box-shadow:var(--shadow);
+}
+
+/* --- Option B: Gold-accent neutral pills (premium) --- */
+.pill.goldline{
+  color: rgba(255,255,255,.86);
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(214,168,79,.22);
+}
+.pill.goldline:hover{
+  border-color: rgba(214,168,79,.38);
+  background: rgba(255,255,255,.045);
+}
+.dot.gold{
+  background: rgba(214,168,79,.92);
+  box-shadow: 0 0 0 3px rgba(214,168,79,.12);
+}
+
+
+/* --- Gold tinge edge around buttons & pills --- */
+.btn, .pill{
+  border-color: rgba(214,168,79,.22) !important;
+}
+.btn:hover, .pill:hover{
+  border-color: rgba(214,168,79,.36) !important;
+}
+.btn:focus-visible{
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(214,168,79,.16) !important;
+}
+
+
+
+/* --- Modal (System Health) --- */
+.modal-backdrop{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(6px);
+  z-index: 1000;
+  display: none;
+}
+.modal{
+  position: fixed;
+  left: 50%;
+  top: 10vh;
+  transform: translateX(-50%);
+  width: min(920px, calc(100% - 40px));
+  z-index: 1001;
+  display: none;
+}
+.modal .card{
+  max-height: 70vh;
+  overflow: auto;
+}
+
+/* --- Subtle gold glow for active pill --- */
+.pill.aab-active{
+  box-shadow: 0 0 0 1px rgba(214,168,79,.22), 0 10px 30px rgba(214,168,79,.10);
+  background: rgba(214,168,79,.06);
+}
+
+/* --- Dashboard governance panels (under header) --- */
+.aab-govrow{
+  max-width: 1180px;
+  margin: 10px auto 0;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+@media (max-width: 980px){
+  .aab-govrow{ grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 520px){
+  .aab-govrow{ grid-template-columns: 1fr; }
+}
+.gov-panel{
+  border-radius: 18px;
+  background:
+    radial-gradient(120% 140% at 50% 0%, rgba(255,255,255,.06), rgba(255,255,255,0) 65%),
+    linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+  border: 1px solid rgba(214,168,79,.22);
+  box-shadow: 0 14px 40px rgba(0,0,0,.45);
+  padding: 12px 14px;
+}
+.gov-h{
+  display:flex; align-items:center; gap:10px;
+  color: rgba(255,255,255,.86);
+  font-size: 13px;
+  letter-spacing:.2px;
+}
+.gov-t{ font-weight:600; }
+.gov-s{
+  margin-top: 8px;
+  color: rgba(255,255,255,.70);
+  font-size: 13px;
+  line-height: 1.25;
+}
+
+
+/* --- AAB operating loop banner (Dashboard) --- */
+.aab-loop-banner{
+  text-align: center;
+  max-width: 1180px;
+  margin: 10px auto 0;
+  padding: 10px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.14);
+  box-shadow:
+    0 0 0 1px rgba(214,168,79,.10),
+    0 16px 40px rgba(0,0,0,.35);
+  background:
+    radial-gradient(120% 120% at 50% 0%, rgba(255,255,255,.05), rgba(255,255,255,0) 60%),
+    linear-gradient(180deg, rgba(0,0,0,.20), rgba(0,0,0,.10));
+  color: rgba(255,255,255,.80);
+  font-size: 12.5px;
+  letter-spacing: .3px;
+  line-height: 1.25;
+}
+
+
+/* Date pill spacing */
+#aabDatePill{ min-width: 120px; justify-content:center; }
+
+/* --- Governance Snapshot Status Pill --- */
+.aab-snapshot-status-pill{
+  display:inline-flex;
+  align-items:center;
+  width:fit-content;
+  margin-top:8px;
+  padding:4px 10px;
+
+  border-radius:999px;
+
+  font-size:11px;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+
+  border:1px solid rgba(255,255,255,.14);
+
+  background:rgba(255,255,255,.03);
+  color:rgba(255,255,255,.82);
+
+  opacity:.95;
+}
+
+/* Prepared / valid */
+.aab-snapshot-status-pill.is-valid{
+  border-color:rgba(110,231,183,.55);
+  background:rgba(110,231,183,.08);
+}
+
+/* Incomplete */
+.aab-snapshot-status-pill.is-incomplete{
+  border-color:rgba(251,191,36,.65);
+  background:rgba(251,191,36,.08);
+}
+
+/* Invalid */
+.aab-snapshot-status-pill.is-invalid{
+  border-color:rgba(248,113,113,.65);
+  background:rgba(248,113,113,.08);
+}
+
+/* Unknown */
+.aab-snapshot-status-pill.is-unknown{
+  border-color:rgba(148,163,184,.45);
+  background:rgba(148,163,184,.06);
+}
+
+/* --- Governance Snapshot Review Panel Compact Fit (BUILD-17B) --- */
+.aab-snapshot-card{
+  width:100%;
+  max-width:100%;
+  margin:0;
+  padding:16px 18px;
+  border-radius:22px;
+  border:1px solid rgba(255,255,255,.10);
+  background:
+    radial-gradient(120% 140% at 50% 0%, rgba(255,255,255,.045), rgba(255,255,255,0) 62%),
+    linear-gradient(180deg, rgba(255,255,255,.038), rgba(255,255,255,.020));
+  box-shadow:0 18px 55px rgba(0,0,0,.38);
+}
+
+.aab-snapshot-header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:14px;
+  padding-bottom:12px;
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+
+.aab-snapshot-title{
+  margin:0;
+  font-size:15px;
+  line-height:1.2;
+  font-weight:700;
+  letter-spacing:.01em;
+}
+
+.aab-snapshot-subtitle{
+  margin:5px 0 0;
+  color:rgba(255,255,255,.64);
+  font-size:12px;
+  line-height:1.35;
+}
+
+.aab-snapshot-section{
+  margin-top:14px;
+  padding-top:12px;
+  border-top:1px solid rgba(255,255,255,.055);
+}
+
+.aab-snapshot-section:first-of-type{
+  margin-top:0;
+  padding-top:0;
+  border-top:0;
+}
+
+.aab-snapshot-section-title{
+  margin:0 0 9px;
+  color:rgba(255,255,255,.92);
+  font-size:12px;
+  line-height:1.2;
+  font-weight:700;
+  letter-spacing:.02em;
+}
+
+.aab-snapshot-row{
+  display:grid;
+  grid-template-columns:minmax(145px, 210px) minmax(0, 1fr);
+  gap:12px;
+  align-items:start;
+  min-height:24px;
+  padding:3px 0;
+}
+
+.aab-snapshot-label{
+  color:rgba(255,255,255,.58);
+  font-size:12px;
+  line-height:1.35;
+}
+
+.aab-snapshot-value{
+  color:rgba(255,255,255,.88);
+  font-size:12px;
+  line-height:1.35;
+  word-break:break-word;
+}
+
+.aab-snapshot-list{
+  margin:6px 0 0;
+  padding-left:18px;
+  color:rgba(255,255,255,.78);
+  font-size:12px;
+  line-height:1.45;
+}
+
+.aab-snapshot-list li{
+  margin:3px 0;
+}
+
+.aab-snapshot-muted{
+  color:rgba(255,255,255,.50);
+}
+
+@media (min-width:900px){
+  .aab-snapshot-card{
+    padding:18px 20px;
+  }
+}
+
+@media (max-width:640px){
+  .aab-snapshot-header{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .aab-snapshot-row{
+    grid-template-columns:1fr;
+    gap:2px;
+    padding:5px 0;
+  }
+}
+/* --- EG-12 Scientific Attention Inbox --- */
+.eg12-doctrine{
+  margin-bottom:12px;
+  padding:10px 12px;
+  border-radius:16px;
+  border:1px solid rgba(214,168,79,.22);
+  background:rgba(214,168,79,.055);
+  color:rgba(255,255,255,.76);
+}
+
+.eg12-list{
+  display:grid;
+  gap:12px;
+}
+
+.eg12-attention-card{
+  border:1px solid rgba(255,255,255,.10);
+  background:
+    radial-gradient(120% 140% at 50% 0%, rgba(255,255,255,.05), rgba(255,255,255,0) 65%),
+    linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.025));
+  border-radius:22px;
+  padding:14px;
+  box-shadow:0 14px 42px rgba(0,0,0,.36);
+}
+
+.eg12-attention-main{
+  display:flex;
+  justify-content:space-between;
+  gap:14px;
+  align-items:flex-start;
+}
+
+.eg12-eyebrow{
+  color:rgba(214,168,79,.86);
+  font-size:11px;
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  margin-bottom:5px;
+}
+
+.eg12-attention-card h3{
+  margin:0;
+  font-size:15px;
+  line-height:1.25;
+}
+
+.eg12-attention-card p{
+  margin:6px 0 0;
+  color:rgba(255,255,255,.70);
+  font-size:13px;
+  line-height:1.35;
+}
+
+.eg12-pill-stack{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+
+.eg12-route-row{
+  margin-top:12px;
+  display:flex;
+  gap:8px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.eg12-details{
+  margin-top:10px;
+}
+
+.eg12-history-row{
+  margin-top:8px;
+  padding:8px 10px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.09);
+  background:rgba(255,255,255,.035);
+}
+
+.eg12-warning{
+  margin-top:8px;
+  padding:8px 10px;
+  border-radius:14px;
+  border:1px solid rgba(255,91,110,.35);
+  background:rgba(255,91,110,.08);
+  color:rgba(255,255,255,.82);
+}
+
+@media (max-width:700px){
+  .eg12-attention-main{
+    flex-direction:column;
+  }
+
+  .eg12-pill-stack{
+    justify-content:flex-start;
+  }
+}
